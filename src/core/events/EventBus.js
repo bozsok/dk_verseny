@@ -1,0 +1,320 @@
+/**
+ * EventBus - Modulok közötti kommunikációs rendszer
+ * 
+ * Centralizált eseménykezelő rendszer, amely lehetővé teszi
+ * a különböző modulok közötti laza kapcsolatot.
+ */
+class EventBus {
+    constructor() {
+        this.listeners = new Map();
+        this.middleware = [];
+        this.eventHistory = [];
+        this.maxHistorySize = 100;
+        this.logger = null;
+    }
+
+    /**
+     * Logger beállítása
+     */
+    setLogger(logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Middleware regisztrálása
+     */
+    use(middleware) {
+        if (typeof middleware === 'function') {
+            this.middleware.push(middleware);
+            if (this.logger) {
+                this.logger.debug('Middleware registered', {
+                    name: middleware.name || 'anonymous'
+                });
+            }
+        }
+    }
+
+    /**
+     * Event listener regisztrálása
+     */
+    on(event, callback, options = {}) {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, new Map());
+        }
+
+        const listenerId = this.generateListenerId();
+        const listenerInfo = {
+            id: listenerId,
+            callback,
+            once: options.once || false,
+            priority: options.priority || 0,
+            context: options.context || null,
+            metadata: {
+                registered: new Date().toISOString(),
+                event
+            }
+        };
+
+        // Prioritás alapú rendezés
+        const eventListeners = this.listeners.get(event);
+        eventListeners.set(listenerId, listenerInfo);
+        this.sortListenersByPriority(event);
+
+        if (this.logger) {
+            this.logger.debug('Event listener registered', {
+                event,
+                listenerId,
+                once: options.once
+            });
+        }
+
+        return listenerId;
+    }
+
+    /**
+     * Egyszer használatos listener
+     */
+    once(event, callback, options = {}) {
+        return this.on(event, callback, { ...options, once: true });
+    }
+
+    /**
+     * Event emisszió
+     */
+    emit(event, data = {}, options = {}) {
+        try {
+            const eventData = {
+                event,
+                data,
+                timestamp: new Date().toISOString(),
+                source: options.source || 'unknown'
+            };
+
+            // Middleware futtatása
+            const processedData = this.runMiddleware(eventData);
+
+            // History mentése
+            this.addToHistory(eventData);
+
+            if (this.logger) {
+                this.logger.debug('Event emitted', {
+                    event,
+                    dataKeys: Object.keys(data),
+                    source: options.source
+                });
+            }
+
+            // Listener-ek értesítése
+            return this.notifyListeners(event, processedData);
+        } catch (error) {
+            if (this.logger) {
+                this.logger.error('Event emission failed', {
+                    event,
+                    error: error.message
+                });
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Listener eltávolítása
+     */
+    off(event, listenerId = null) {
+        try {
+            if (listenerId) {
+                // Specifikus listener eltávolítása
+                if (this.listeners.has(event)) {
+                    const removed = this.listeners.get(event).delete(listenerId);
+                    if (removed && this.logger) {
+                        this.logger.debug('Event listener removed', {
+                            event,
+                            listenerId
+                        });
+                    }
+                    return removed;
+                }
+            } else {
+                // Teljes event listener-ek eltávolítása
+                const hadListeners = this.listeners.has(event);
+                this.listeners.delete(event);
+                if (hadListeners && this.logger) {
+                    this.logger.debug('All event listeners removed', { event });
+                }
+                return hadListeners;
+            }
+        } catch (error) {
+            if (this.logger) {
+                this.logger.error('Failed to remove event listener', {
+                    event,
+                    listenerId,
+                    error: error.message
+                });
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Event listener-ek számának lekérése
+     */
+    listenerCount(event) {
+        return this.listeners.has(event) ? this.listeners.get(event).size : 0;
+    }
+
+    /**
+     * Regisztrált event-ek listázása
+     */
+    getRegisteredEvents() {
+        return Array.from(this.listeners.keys());
+    }
+
+    /**
+     * Middleware futtatása
+     */
+    runMiddleware(eventData) {
+        let processedData = eventData;
+
+        for (const middleware of this.middleware) {
+            try {
+                processedData = middleware(processedData) || processedData;
+            } catch (error) {
+                if (this.logger) {
+                    this.logger.error('Middleware execution failed', {
+                        middlewareName: middleware.name || 'anonymous',
+                        event: eventData.event,
+                        error: error.message
+                    });
+                }
+            }
+        }
+
+        return processedData;
+    }
+
+    /**
+     * Listener-ek értesítése prioritás szerint
+     */
+    notifyListeners(event, eventData) {
+        if (!this.listeners.has(event)) {
+            return true;
+        }
+
+        const eventListeners = this.listeners.get(event);
+        const listeners = Array.from(eventListeners.values())
+            .sort((a, b) => b.priority - a.priority);
+
+        let success = true;
+        const listenersToRemove = [];
+
+        for (const listener of listeners) {
+            try {
+                const result = listener.callback.call(
+                    listener.context,
+                    eventData.data,
+                    eventData
+                );
+
+                // Egyszer használatos listener-ek eltávolítása
+                if (listener.once) {
+                    listenersToRemove.push(listener.id);
+                }
+
+                // Promise kezelése
+                if (result instanceof Promise) {
+                    result.catch(error => {
+                        if (this.logger) {
+                            this.logger.error('Async event listener failed', {
+                                event,
+                                listenerId: listener.id,
+                                error: error.message
+                            });
+                        }
+                    });
+                }
+            } catch (error) {
+                success = false;
+                if (this.logger) {
+                    this.logger.error('Event listener execution failed', {
+                        event,
+                        listenerId: listener.id,
+                        error: error.message
+                    });
+                }
+            }
+        }
+
+        // Egyszer használatos listener-ek eltávolítása
+        listenersToRemove.forEach(id => {
+            eventListeners.delete(id);
+        });
+
+        return success;
+    }
+
+    /**
+     * Listener-ek prioritás szerinti rendezése
+     */
+    sortListenersByPriority(event) {
+        if (this.listeners.has(event)) {
+            const eventListeners = this.listeners.get(event);
+            const sorted = new Map(
+                Array.from(eventListeners.entries())
+                    .sort((a, b) => b[1].priority - a[1].priority)
+            );
+            this.listeners.set(event, sorted);
+        }
+    }
+
+    /**
+     * Egyedi listener ID generálása
+     */
+    generateListenerId() {
+        return `listener_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    /**
+     * Event history-hoz adás
+     */
+    addToHistory(eventData) {
+        this.eventHistory.push(eventData);
+
+        if (this.eventHistory.length > this.maxHistorySize) {
+            this.eventHistory.shift();
+        }
+    }
+
+    /**
+     * EventBus reset
+     */
+    reset() {
+        this.listeners.clear();
+        this.middleware = [];
+        this.eventHistory = [];
+
+        if (this.logger) {
+            this.logger.info('EventBus reset');
+        }
+    }
+
+    /**
+     * Statisztikák lekérése
+     */
+    getStats() {
+        const eventStats = {};
+        for (const [event, listeners] of this.listeners) {
+            eventStats[event] = listeners.size;
+        }
+
+        return {
+            totalEvents: this.listeners.size,
+            totalListeners: Array.from(this.listeners.values())
+                .reduce((sum, listeners) => sum + listeners.size, 0),
+            middlewareCount: this.middleware.length,
+            historySize: this.eventHistory.length,
+            eventStats
+        };
+    }
+}
+
+export default EventBus;

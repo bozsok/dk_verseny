@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Digitális Kultúra Verseny - Interaktív oktatási játék diákoknak">
+    <meta name="keywords" content="digitális kultúra, oktatás, játék, verseny, diákok">
+    <meta name="author" content="Digitális Kultúra Verseny Team">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Digitális Kultúra Verseny">
+    <meta property="og:description" content="Interaktív digitális kultúra verseny diákoknak">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/assets/og-image.png">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Digitális Kultúra Verseny">
+    <meta name="twitter:description" content="Interaktív digitális kultúra verseny diákoknak">
+    <meta name="twitter:image" content="/assets/twitter-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <!-- CSS -->
+    <!-- <link rel="stylesheet" href="/src/ui/styles/design-system.css"> -->
+
+    <!-- Title -->
+    <title>Digitális Kultúra Verseny</title>
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#3b82f6">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval';
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: https:;
+        connect-src 'self';
+        media-src 'self';
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+        upgrade-insecure-requests;
+    ">
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="dkv-loading-screen">
+        <div class="dkv-loading-content">
+            <div class="dkv-loading-spinner">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-dasharray="31.416" stroke-dashoffset="31.416" opacity="0.3" />
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-dasharray="31.416" stroke-dashoffset="23.562" class="dkv-spinner-circle" />
+                </svg>
+            </div>
+            <h2 class="dkv-loading-title">Digitális Kultúra Verseny</h2>
+            <p class="dkv-loading-text">Betöltés folyamatban...</p>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="app" class="dkv-app">
+        <!-- Hub will be rendered here -->
+    </div>
+
+    <!-- Error Boundary -->
+    <div id="error-boundary" class="dkv-error-boundary" style="display: none;">
+        <div class="dkv-error-content">
+            <div class="dkv-error-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+            </div>
+            <h2 class="dkv-error-title">Hiba történt</h2>
+            <p class="dkv-error-message">Valami hiba történt az alkalmazás betöltése közben.</p>
+            <button class="dkv-btn dkv-btn-primary" onclick="location.reload()">
+                Újratöltés
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        // Application entry point
+        import './src/main.js';
+    </script>
+
+    <!-- Fallback for browsers without module support -->
+    <script nomodule>
+        document.getElementById('app').innerHTML = `
+            <div class="dkv-browser-unsupported">
+                <h2>Böngésző nem támogatott</h2>
+                <p>Kérjük, használjon modernebb böngészőt az alkalmazás használatához.</p>
+                <p>Ajánlott böngészők: Chrome, Firefox, Safari, Edge</p>
+            </div>
+        `;
+    </script>
+
+    <!-- Analytics (placeholder) -->
+    <script>
+        // Analytics placeholder - GDPR compliant
+        if (localStorage.getItem('dkv-analytics-consent') === 'true') {
+            // Load analytics scripts here
+            console.log('Analytics enabled');
+        }
+    </script>
+</body>
+
+</html>

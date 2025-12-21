@@ -1,0 +1,453 @@
+/**
+ * GameLogger - Strukturált naplózási rendszer
+ * 
+ * GDPR-compliant logging rendszer, amely:
+ * - Különböző log szinteket támogat
+ * - LocalStorage és console output-ot kezel
+ * - Performance optimalizált
+ * - Időbélyegek és context információkat tartalmaz
+ */
+class GameLogger {
+  constructor(options = {}) {
+    this.levels = {
+      ERROR: 0,
+      WARN: 1,
+      INFO: 2,
+      DEBUG: 3
+    };
+
+    this.config = {
+      level: options.level || 'INFO',
+      enableConsole: options.enableConsole !== false,
+      enableStorage: options.enableStorage !== false,
+      maxStorageEntries: options.maxStorageEntries || 1000,
+      enableTimestamps: options.enableTimestamps !== false,
+      enableContext: options.enableContext !== false,
+      performanceMode: options.performanceMode || false
+    };
+
+    this.currentLevel = this.levels[this.config.level] || this.levels.INFO;
+    this.logHistory = [];
+    this.listeners = new Map();
+    
+    // GDPR compliance - user consent tracking
+    this.userConsent = this.checkUserConsent();
+    
+    // Performance tracking
+    this.startTime = performance.now();
+    this.logCount = 0;
+  }
+
+  /**
+   * Felhasználói hozzájárulás ellenőrzése (GDPR)
+   */
+  checkUserConsent() {
+    try {
+      const consent = localStorage.getItem('dkv-logging-consent');
+      return consent === 'true';
+    } catch (error) {
+      // Ha localStorage nem elérhető, alapértelmezetten engedélyezzük a console logolást
+      return this.config.enableConsole;
+    }
+  }
+
+  /**
+   * Hozzájárulás beállítása
+   */
+  setUserConsent(granted) {
+    this.userConsent = Boolean(granted);
+    try {
+      localStorage.setItem('dkv-logging-consent', String(granted));
+    } catch (error) {
+      // localStorage hiba esetén továbbra is működik console-ban
+    }
+  }
+
+  /**
+   * Log szint beállítása
+   */
+  setLevel(level) {
+    if (this.levels[level] !== undefined) {
+      this.config.level = level;
+      this.currentLevel = this.levels[level];
+    }
+  }
+
+  /**
+   * ERROR szintű naplózás
+   */
+  error(message, context = {}) {
+    this.log('ERROR', message, context);
+  }
+
+  /**
+   * WARN szintű naplózás
+   */
+  warn(message, context = {}) {
+    this.log('WARN', message, context);
+  }
+
+  /**
+   * INFO szintű naplózás
+   */
+  info(message, context = {}) {
+    this.log('INFO', message, context);
+  }
+
+  /**
+   * DEBUG szintű naplózás
+   */
+  debug(message, context = {}) {
+    this.log('DEBUG', message, context);
+  }
+
+  /**
+   * Alapvető logolási metódus
+   */
+  log(level, message, context = {}) {
+    try {
+      // Szint ellenőrzés
+      const messageLevel = this.levels[level];
+      if (messageLevel > this.currentLevel) {
+        return false;
+      }
+
+      // Log entry létrehozása
+      const logEntry = this.createLogEntry(level, message, context);
+
+      // History-hoz adás
+      this.addToHistory(logEntry);
+
+      // Console output
+      if (this.config.enableConsole && this.shouldLog(level)) {
+        this.outputToConsole(logEntry);
+      }
+
+      // LocalStorage output
+      if (this.config.enableStorage && this.userConsent && this.shouldLog(level)) {
+        this.outputToStorage(logEntry);
+      }
+
+      // Event emit
+      this.emit('log', logEntry);
+
+      this.logCount++;
+      return true;
+    } catch (error) {
+      // Végső fallback console log
+      console.error('Logger error:', error.message, 'Original message:', message);
+      return false;
+    }
+  }
+
+  /**
+   * Log entry létrehozása
+   */
+  createLogEntry(level, message, context) {
+    const entry = {
+      id: this.generateId(),
+      timestamp: this.config.enableTimestamps ? new Date().toISOString() : null,
+      level,
+      message: String(message),
+      context: this.config.enableContext ? this.sanitizeContext(context) : {}
+    };
+
+    // Performance információ
+    if (!this.config.performanceMode) {
+      entry.performance = {
+        elapsedTime: performance.now() - this.startTime,
+        logSequence: this.logCount
+      };
+    }
+
+    // Session információ
+    if (!this.config.performanceMode) {
+      entry.session = {
+        sessionId: this.getSessionId(),
+        userAgent: this.getUserAgent(),
+        url: this.getCurrentUrl()
+      };
+    }
+
+    return entry;
+  }
+
+  /**
+   * Context tisztítása (GDPR compliance)
+   */
+  sanitizeContext(context) {
+    const sanitized = { ...context };
+    
+    // Személyes adatok eltávolítása
+    const sensitiveKeys = ['password', 'email', 'name', 'user', 'person'];
+    for (const key in sanitized) {
+      if (sensitiveKeys.some(sensitive => 
+        key.toLowerCase().includes(sensitive)
+      )) {
+        sanitized[key] = '[REDACTED]';
+      }
+    }
+
+    // Túl nagy objektumok lerövidítése
+    const jsonString = JSON.stringify(sanitized);
+    if (jsonString.length > 1000) {
+      return {
+        ...sanitized,
+        _truncated: true,
+        _originalSize: jsonString.length
+      };
+    }
+
+    return sanitized;
+  }
+
+  /**
+   * Console output
+   */
+  outputToConsole(entry) {
+    const { level, message, context, timestamp } = entry;
+    const formattedMessage = `[DKV ${timestamp}] ${level}: ${message}`;
+    
+    switch (level) {
+      case 'ERROR':
+        console.error(formattedMessage, context);
+        break;
+      case 'WARN':
+        console.warn(formattedMessage, context);
+        break;
+      case 'INFO':
+        console.info(formattedMessage, context);
+        break;
+      case 'DEBUG':
+        console.debug(formattedMessage, context);
+        break;
+      default:
+        console.log(formattedMessage, context);
+    }
+  }
+
+  /**
+   * LocalStorage output
+   */
+  outputToStorage(entry) {
+    try {
+      const storageKey = 'dkv-game-logs';
+      const existingLogs = this.getStorageLogs();
+      
+      existingLogs.push(entry);
+      
+      // Méret korlátozás
+      if (existingLogs.length > this.config.maxStorageEntries) {
+        existingLogs.splice(0, existingLogs.length - this.config.maxStorageEntries);
+      }
+      
+      localStorage.setItem(storageKey, JSON.stringify(existingLogs));
+    } catch (error) {
+      // LocalStorage hiba esetén továbbra is működik a console
+      console.warn('Failed to save log to storage:', error.message);
+    }
+  }
+
+  /**
+   * LocalStorage logok lekérése
+   */
+  getStorageLogs() {
+    try {
+      const storageKey = 'dkv-game-logs';
+      const logs = localStorage.getItem(storageKey);
+      return logs ? JSON.parse(logs) : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * Loggolás szükségességének ellenőrzése
+   */
+  shouldLog(level) {
+    const messageLevel = this.levels[level];
+    return messageLevel <= this.currentLevel;
+  }
+
+  /**
+   * History-hoz adás
+   */
+  addToHistory(entry) {
+    this.logHistory.push(entry);
+    
+    // History méret korlátozás
+    if (this.logHistory.length > this.config.maxStorageEntries) {
+      this.logHistory.shift();
+    }
+  }
+
+  /**
+   * Log history lekérése
+   */
+  getHistory(limit = 100, levelFilter = null) {
+    let history = this.logHistory;
+    
+    if (levelFilter) {
+      history = history.filter(entry => entry.level === levelFilter);
+    }
+    
+    return history.slice(-limit);
+  }
+
+  /**
+   * Logok szűrése
+   */
+  filterLogs(filters) {
+    return this.logHistory.filter(entry => {
+      if (filters.level && entry.level !== filters.level) {
+        return false;
+      }
+      if (filters.startDate && new Date(entry.timestamp) < new Date(filters.startDate)) {
+        return false;
+      }
+      if (filters.endDate && new Date(entry.timestamp) > new Date(filters.endDate)) {
+        return false;
+      }
+      if (filters.search && !entry.message.toLowerCase().includes(filters.search.toLowerCase())) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  /**
+   * Logok exportálása
+   */
+  exportLogs(format = 'json') {
+    const logs = this.getStorageLogs();
+    
+    switch (format.toLowerCase()) {
+      case 'json':
+        return JSON.stringify(logs, null, 2);
+      case 'csv':
+        return this.convertToCSV(logs);
+      default:
+        return JSON.stringify(logs, null, 2);
+    }
+  }
+
+  /**
+   * CSV formátum konvertálás
+   */
+  convertToCSV(logs) {
+    const headers = ['timestamp', 'level', 'message', 'context'];
+    const csvRows = [headers.join(',')];
+    
+    for (const log of logs) {
+      const row = [
+        log.timestamp || '',
+        log.level || '',
+        `"${(log.message || '').replace(/"/g, '""')}"`,
+        `"${JSON.stringify(log.context || {}).replace(/"/g, '""')}"`
+      ];
+      csvRows.push(row.join(','));
+    }
+    
+    return csvRows.join('\n');
+  }
+
+  /**
+   * Logok törlése
+   */
+  clearLogs() {
+    this.logHistory = [];
+    try {
+      localStorage.removeItem('dkv-game-logs');
+    } catch (error) {
+      console.warn('Failed to clear logs from storage:', error.message);
+    }
+  }
+
+  /**
+   * Statisztikák lekérése
+   */
+  getStats() {
+    const levelCounts = {};
+    for (const level of Object.keys(this.levels)) {
+      levelCounts[level] = this.logHistory.filter(log => log.level === level).length;
+    }
+
+    return {
+      totalLogs: this.logHistory.length,
+      levelCounts,
+      currentLevel: this.config.level,
+      userConsent: this.userConsent,
+      sessionDuration: performance.now() - this.startTime,
+      config: this.config
+    };
+  }
+
+  /**
+   * Event emitter funkciók
+   */
+  on(event, callback) {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
+    }
+    this.listeners.get(event).add(callback);
+  }
+
+  off(event, callback) {
+    if (this.listeners.has(event)) {
+      this.listeners.get(event).delete(callback);
+    }
+  }
+
+  emit(event, data) {
+    if (this.listeners.has(event)) {
+      this.listeners.get(event).forEach(callback => {
+        try {
+          callback(data);
+        } catch (error) {
+          console.error('Logger event listener error:', error);
+        }
+      });
+    }
+  }
+
+  /**
+   * Helper metódusok
+   */
+  generateId() {
+    return `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  getSessionId() {
+    if (!this.sessionId) {
+      this.sessionId = this.generateId();
+    }
+    return this.sessionId;
+  }
+
+  getUserAgent() {
+    return typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown';
+  }
+
+  getCurrentUrl() {
+    return typeof window !== 'undefined' ? window.location.href : 'unknown';
+  }
+
+  /**
+   * Performance optimized mode beállítása
+   */
+  setPerformanceMode(enabled) {
+    this.config.performanceMode = Boolean(enabled);
+  }
+
+  /**
+   * Logger reset
+   */
+  reset() {
+    this.logHistory = [];
+    this.logCount = 0;
+    this.startTime = performance.now();
+    this.emit('reset');
+  }
+}
+
+export default GameLogger;

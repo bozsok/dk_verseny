@@ -1,0 +1,511 @@
+/**
+ * DIGITÁLIS KULTÚRA VERSENY - DESIGN SYSTEM
+ * DARK FANTASY THEME
+ */
+
+:root {
+  /* === SZÍNPALETTA (DARK THEME) === */
+
+  /* Primary - Neon Blue */
+  --dkv-primary-50: #0a101f;
+  --dkv-primary-100: #111a33;
+  --dkv-primary-200: #1a2747;
+  --dkv-primary-300: #24345c;
+  --dkv-primary-400: #2e4475;
+  --dkv-primary-500: #3b82f6;
+  /* Base blue (megtartjuk referenciának) */
+  --dkv-primary-600: #2563eb;
+  --dkv-primary-glow: #00ffff;
+  /* Neon cyan glow */
+
+  /* Backgrounds */
+  --dkv-bg-dark: #02040a;
+  --dkv-bg-card: rgba(20, 30, 50, 0.7);
+  --dkv-bg-card-hover: rgba(30, 45, 70, 0.85);
+
+  /* Text */
+  --dkv-text-main: #ffffff;
+  --dkv-text-muted: #94a3b8;
+  --dkv-text-highlight: #60a5fa;
+
+  /* Tipográfia */
+  --dkv-font-sans: 'Inter', system-ui, sans-serif;
+  --dkv-font-display: 'Montserrat', 'Inter', sans-serif;
+  /* Ha lenne díszesebb */
+}
+
+/* ============================================
+   GLOBAL RESET & BASE
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--dkv-font-sans);
+  background-color: var(--dkv-bg-dark);
+  color: var(--dkv-text-main);
+  line-height: 1.6;
+
+  /* Background Image Setup */
+  background-image: url('/assets/hub-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* Sötét Overlay a háttérre, hogy olvasható legyen a szöveg */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+h1,
+h2,
+h3 {
+  color: var(--dkv-text-main);
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.dkv-hub-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+  color: var(--dkv-text-highlight);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  font-weight: 900;
+  /* Neon Glow Effect */
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.dkv-hub-subtitle {
+  text-align: center;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--dkv-text-muted);
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   CARD SYSTEM (Glassmorphism)
+   ============================================ */
+
+.dkv-grades-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.dkv-card {
+  position: relative;
+  background: var(--dkv-bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+
+  /* Flex layout for horizontal card */
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.dkv-card::before {
+  /* Glow border effect on hover */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  padding: 2px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dkv-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  background: var(--dkv-bg-card-hover);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(59, 130, 246, 0.2);
+  /* Kék glow */
+  border-color: rgba(96, 165, 250, 0.4);
+}
+
+.dkv-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Content Styling */
+.dkv-card-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dkv-text-highlight);
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.dkv-card-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+}
+
+.dkv-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dkv-card-title {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.dkv-card-description {
+  color: var(--dkv-text-highlight);
+  font-size: 0.95rem;
+  margin: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+/* Locked State */
+.dkv-card-locked {
+  filter: grayscale(1);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dkv-card-locked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================
+   CONTAINER & LAYOUT
+   ============================================ */
+
+.dkv-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.dkv-hub-header {
+  padding-top: 1rem;
+  text-align: center;
+}
+
+body {
+  font-family: var(--dkv-font-sans);
+  background-color: var(--dkv-bg-dark);
+  color: var(--dkv-text-main);
+  line-height: 1.6;
+
+  /* Background Image Setup */
+  background-image: url('/assets/hub-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* Sötét Overlay a háttérre, hogy olvasható legyen a szöveg */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+h1,
+h2,
+h3 {
+  color: var(--dkv-text-main);
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.dkv-hub-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+  color: var(--dkv-text-highlight);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  font-weight: 900;
+  /* Neon Glow Effect */
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.dkv-hub-subtitle {
+  text-align: center;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--dkv-text-muted);
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   CARD SYSTEM (Glassmorphism)
+   ============================================ */
+
+.dkv-grades-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.dkv-card {
+  position: relative;
+  background: var(--dkv-bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+
+  /* Flex layout for horizontal card */
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.dkv-card::before {
+  /* Glow border effect on hover */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  padding: 2px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dkv-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  background: var(--dkv-bg-card-hover);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(59, 130, 246, 0.2);
+  /* Kék glow */
+  border-color: rgba(96, 165, 250, 0.4);
+}
+
+.dkv-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Content Styling */
+.dkv-card-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dkv-text-highlight);
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.dkv-card-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+}
+
+.dkv-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dkv-card-title {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.dkv-card-description {
+  color: var(--dkv-text-highlight);
+  font-size: 0.95rem;
+  margin: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+/* Locked State */
+.dkv-card-locked {
+  filter: grayscale(1);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dkv-card-locked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================
+   CONTAINER & LAYOUT
+   ============================================ */
+
+.dkv-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.dkv-hub-header {
+  padding-top: 4rem;
+  /* Hely a vizuális egyensúlyhoz */
+  text-align: center;
+}
+
+/* Helper Utilities */
+.dkv-hidden {
+  display: none !important;
+}
+
+.dkv-hub-selection-title {
+  margin-top: 6rem;
+  /* 3x nagyobb távolság */
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  color: white;
+  text-align: center;
+  font-weight: 800;
+  text-transform: none;
+  /* Nem csupa nagybetű */
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* === TIMER DISPLAY === */
+.dkv-timer-display {
+  display: none;
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: var(--dkv-bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1.25rem;
+  border-radius: 16px;
+  /* Match card radius */
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  font-family: var(--dkv-font-sans);
+  font-weight: 700;
+  font-size: 1.25rem;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.dkv-timer-icon {
+  color: var(--dkv-text-highlight);
+}
+
+.dkv-timer-finished {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.dkv-timer-value {
+  font-variant-numeric: tabular-nums;
+}
+/* === VIDEO PLAYER & SLIDES === */
+.dkv-video-container { width: 100%; max-width: 800px; margin: 2rem auto; background: black; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(59, 130, 246, 0.3); }
+.dkv-video-player { width: 100%; display: block; }
+.dkv-video-completed { border-color: #10b981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); }
+
+.dkv-slide-container { width: 100%; max-width: 1000px; margin: 0 auto; padding: 2rem; text-align: center; animation: fadeIn 0.5s ease-out; }
+.dkv-slide-title { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--dkv-text-highlight); }
+.dkv-slide-description { font-size: 1.2rem; color: var(--dkv-text-muted); margin-bottom: 2rem; }
+.dkv-button { padding: 1rem 2rem; font-size: 1.25rem; font-weight: 700; background: var(--dkv-primary-600); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+.dkv-button:hover { background: var(--dkv-primary-500); transform: translateY(-2px); }
+.dkv-button:disabled { background: #334155; cursor: not-allowed; opacity: 0.5; transform: none; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
