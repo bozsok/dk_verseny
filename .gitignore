@@ -1,0 +1,50 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+.eslintcache
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+# Office / Windows Temp
+~$*
+*.tmp
+*.bak
+
+# Design tools (Krita, PSD)
+*.kra~
+.*.kra
+*.autosave
+*.psd#
+
+# Build and logs
+dist/
+build/
+out/
+logs/
+*.log
+
+#Egyéb
+Source
+-egyéb-
