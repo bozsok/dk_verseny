@@ -87,5 +87,6 @@
 
 ## Notes
 - **Styling:** Use Tailwind CSS or `design-system.css`.
+- **Fonts:** Ha új betűtípust vezetsz be egy Grade configban, ne felejtsd el importálni az `index.html`-ben!
 - **Validation:** Registration needs strict validation (Hungarian names, class ID format).
 - **State:** Use `StateManager` (Singleton) for data persistence.

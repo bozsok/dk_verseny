@@ -29,7 +29,7 @@ export const createConfig = () => {
         backgroundUrl: bgImage
     });
 
-    addSlide(SLIDE_TYPES.REGISTRATION, 'Iratkozz fel', 'A tükörvilág várja az adataidat', {
+    addSlide(SLIDE_TYPES.REGISTRATION, 'Regisztráció', '', {
         fields: ['name', 'nickname', 'classId'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
@@ -38,7 +38,7 @@ export const createConfig = () => {
         }
     });
 
-    addSlide(SLIDE_TYPES.CHARACTER, 'Válassz Hőst', 'Ki legyen a karaktered?', {
+    addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!', 'A karakterek kattintással nagyíthatók!', {
         options: ['boy', 'girl'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage

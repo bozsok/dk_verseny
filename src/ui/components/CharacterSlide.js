@@ -146,19 +146,19 @@ class CharacterSlide {
     container.style.justifyContent = 'center';
     container.style.gap = '0';
 
-    // 1. Címsor 
+    // 1. Címsor (MOST MÁR CONFIGBÓL!)
     const headerBlock = document.createElement('div');
     headerBlock.style.textAlign = 'center';
     headerBlock.style.marginBottom = '25px';
 
     const title = document.createElement('h2');
-    title.textContent = 'Következő feladatként válassz egy karaktert az alábbiak közül!';
+    title.textContent = this.slideData.title; // Configból
     title.style.fontSize = '1.4rem';
     title.style.marginBottom = '5px';
     title.style.color = 'white';
 
     const subtitle = document.createElement('p');
-    subtitle.textContent = 'A karakterek kattintással nagyíthatók!';
+    subtitle.textContent = this.slideData.description; // Configból
     subtitle.style.fontSize = '1.1rem';
     subtitle.style.color = '#cbd5e1';
 
@@ -185,7 +185,6 @@ class CharacterSlide {
     toggleInput.type = 'checkbox';
     toggleInput.checked = this.viewIsGirl;
     toggleInput.onchange = (e) => this._handleGenderToggle(e.target.checked);
-    // Billentyűzet támogatás csúszkához (Enter)
     toggleInput.onkeydown = (e) => {
       if (e.key === 'Enter') {
         toggleInput.click();
@@ -241,12 +240,12 @@ class CharacterSlide {
     return this.element;
   }
 
+  // ... A többi metódus változatlan marad ...
   _renderCards() {
     this.cardsContainer.innerHTML = '';
 
     for (let i = 0; i < 4; i++) {
       const card = document.createElement('div');
-      // A11y: Tab index + Keydown
       card.setAttribute('tabindex', '0');
       card.setAttribute('role', 'button');
       card.setAttribute('aria-label', `${this.viewIsGirl ? 'Lány' : 'Fiú'} karakter ${i + 1}`);
@@ -264,9 +263,7 @@ class CharacterSlide {
       placeholderText.textContent = `${this.viewIsGirl ? 'Lány' : 'Fiú'} ${i + 1}`;
       card.appendChild(placeholderText);
 
-      // Klikk -> Preview Modal
       card.onclick = () => this._openPreviewModal(i);
-      // Enter -> Preview Modal
       card.onkeydown = (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -290,7 +287,6 @@ class CharacterSlide {
     this.nextBtn.style.cursor = hasSelection ? 'pointer' : 'not-allowed';
   }
 
-  // === PREVIEW MODAL ===
   _createPreviewModal() {
     this.previewModal = document.createElement('div');
     this.previewModal.style.position = 'fixed';
@@ -303,7 +299,6 @@ class CharacterSlide {
     this.previewModal.style.alignItems = 'center';
     this.previewModal.style.justifyContent = 'center';
     this.previewModal.style.zIndex = '2000';
-    // Accessibility
     this.previewModal.setAttribute('role', 'dialog');
     this.previewModal.setAttribute('aria-modal', 'true');
 
@@ -311,7 +306,6 @@ class CharacterSlide {
       if (e.target === this.previewModal) this._closePreviewModal();
     };
 
-    // Focus Trap & ESC
     this.previewModal.addEventListener('keydown', (e) => this._handleTrapFocus(e, this.previewModal));
 
     const content = document.createElement('div');
@@ -337,15 +331,15 @@ class CharacterSlide {
     this.previewImage.style.color = '#555';
     this.previewImage.textContent = 'KÉP HELYE (770x700)';
 
-    this.closePreviewBtn = document.createElement('div'); // Referencia
+    this.closePreviewBtn = document.createElement('div');
     this.closePreviewBtn.className = 'dkv-preview-close';
     this.closePreviewBtn.textContent = '✕';
-    this.closePreviewBtn.setAttribute('tabindex', '0'); // Fókuszálható
+    this.closePreviewBtn.setAttribute('tabindex', '0');
     this.closePreviewBtn.setAttribute('role', 'button');
     this.closePreviewBtn.onclick = () => this._closePreviewModal();
     this.closePreviewBtn.onkeydown = (e) => { if (e.key === 'Enter') this._closePreviewModal(); };
 
-    this.selectPreviewBtn = document.createElement('button'); // Referencia
+    this.selectPreviewBtn = document.createElement('button');
     this.selectPreviewBtn.className = 'dkv-preview-select-btn';
     this.selectPreviewBtn.textContent = 'Kiválasztom';
     this.selectPreviewBtn.onclick = () => this._confirmSelection();
@@ -359,7 +353,7 @@ class CharacterSlide {
   }
 
   _openPreviewModal(index) {
-    this.lastFocusedElement = document.activeElement; // Fókusz megőrzése
+    this.lastFocusedElement = document.activeElement;
 
     this.previewSelection = {
       isGirl: this.viewIsGirl,
@@ -369,7 +363,6 @@ class CharacterSlide {
     this.previewImage.textContent = `${this.viewIsGirl ? 'Lány' : 'Fiú'} ${index + 1} - NAGYÍTVA`;
     this.previewModal.style.display = 'flex';
 
-    // Fókusz a Kiválasztom gombra (UX)
     setTimeout(() => {
       this.selectPreviewBtn.focus();
     }, 50);
@@ -379,14 +372,12 @@ class CharacterSlide {
     this.previewModal.style.display = 'none';
     this.previewSelection = null;
 
-    // Fókusz visszaállítása (ha nem lenne felülírva máshol)
     if (this.lastFocusedElement) {
       this.lastFocusedElement.focus();
       this.lastFocusedElement = null;
     }
   }
 
-  // === ERROR MODAL ===
   _createErrorModal() {
     this.errorModal = document.createElement('div');
     this.errorModal.style.position = 'absolute';
@@ -419,7 +410,7 @@ class CharacterSlide {
     this.errorMsg.style.whiteSpace = 'pre-line';
     this.errorMsg.style.lineHeight = '1.5';
 
-    this.errorOkBtn = document.createElement('button'); // Referencia
+    this.errorOkBtn = document.createElement('button');
     this.errorOkBtn.className = 'dkv-button';
     this.errorOkBtn.textContent = 'OK';
     this.errorOkBtn.onclick = () => this._closeErrorModal();
@@ -446,9 +437,7 @@ class CharacterSlide {
     }
   }
 
-  // === Általános Focus Trap ===
   _handleTrapFocus(e, modalElement) {
-    // ESC billentyűvel való bezárás (első prioritás!)
     if (e.key === 'Escape') {
       if (modalElement === this.previewModal) {
         this._closePreviewModal();
@@ -482,21 +471,16 @@ class CharacterSlide {
     }
   }
 
-  // ... (többi metódus unchanged) ...
-
   _confirmSelection() {
     if (this.previewSelection) {
       this.confirmedSelection = { ...this.previewSelection };
-      this._renderCards(); // UI Frissítés
-      this._updateNextButton(); // Gomb aktiválás
+      this._renderCards();
+      this._updateNextButton();
     }
 
-    // Modal bezárása
     this.previewModal.style.display = 'none';
     this.previewSelection = null;
 
-    // Fókusz áthelyezése a Tovább gombra (UX: haladjon tovább a folyamat)
-    // Töröljük a lastFocusedElement-et, hogy a _closeModal ne írja felül
     this.lastFocusedElement = null;
     setTimeout(() => {
       if (this.nextBtn) this.nextBtn.focus();

@@ -24,11 +24,44 @@ export const createConfig = () => {
     // === 0. REGISZTRÁCIÓ (Onboarding) ===
     const bgImage = 'assets/images/grade3/onboarding_bg.jpg';
 
-    addSlide(SLIDE_TYPES.WELCOME, 'Kód Királyság', 'Üdvözöllek a birodalomban!', {
+    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, bátor Kódmester!', 'Te lettél az egyik Kiválasztott, aki egy izgalmas és kalandokkal teli utazáson vesz részt.\nAz lesz a feladatod, hogy felfedezd a varázslatos Kód Királyságot és megállíts egy veszélyes, romboló vírust, amelyet egy egykori Kódbölcs készített. A megállításhoz és a királyság rendjének visszaállításához különböző digitális Varázskulcsokat kell megszerezned.\nA többi kiválasztottal együtt indulsz útnak, de remélhetőleg Te leszel az, aki sikerrel fejezi be a küldetését.', {
         buttonText: 'Tovább',
-        backgroundUrl: bgImage
+        backgroundUrl: bgImage,
+        // EGYEDI STÍLUSOK (Grade 3 Specifikus)
+        style: {
+            title: {
+                color: '#ffffff',
+                textTransform: 'uppercase',
+                fontFamily: 'Impact, sans-serif',
+                fontSize: '2.5rem',
+                textShadow: 'none',
+                marginBottom: '100px', // Te kérted
+                letterSpacing: '1px',
+                fontWeight: 'normal'
+            },
+            description: {
+                color: '#ffffff',
+                fontFamily: '"Source Code Pro", monospace',
+                fontSize: '1.4rem', // Nagyobb betű
+                lineHeight: '1.7',
+                fontWeight: '100', // Vékony
+                textAlign: 'left', // Most már működik!
+                gap: '25px',
+            },
+            button: {
+                background: '#00636e',
+                border: '2px solid #00eaff',
+                fontFamily: 'Impact, sans-serif',
+                color: '#ffffff',
+                fontSize: '1.5rem',
+                padding: '8px 28px',
+                letterSpacing: '1px',
+                fontWeight: 'normal'
+            }
+        }
     });
-    addSlide(SLIDE_TYPES.REGISTRATION, 'Iratkozz fel', 'A királyi gárda várja az adataidat', {
+
+    addSlide(SLIDE_TYPES.REGISTRATION, 'Regisztráció', '', {
         fields: ['name', 'nickname', 'classId'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
@@ -36,7 +69,8 @@ export const createConfig = () => {
             allowedClasses: ['3.a', '3.b', '3.c']
         }
     });
-    addSlide(SLIDE_TYPES.CHARACTER, 'Válassz Hőst', 'Ki induljon a küldetésre?', {
+
+    addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!', 'A karakterek kattintással nagyíthatók!', {
         options: ['boy', 'girl'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage
@@ -46,32 +80,13 @@ export const createConfig = () => {
     addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 1/4', 'A sötét felhők gyülekeznek...', { videoUrl: 'assets/videos/grade3/intro_1.mp4' });
     addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 2/4', 'A titkos üzenet', { videoUrl: 'assets/videos/grade3/intro_2.mp4' });
     addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 3/4', 'A Bölcsek Tanácsa', { videoUrl: 'assets/videos/grade3/intro_3.mp4' });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 4/4', 'Indulás', { videoUrl: 'assets/videos/grade3/intro_4.mp4' });
+    addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 4/4', 'Az utazás kezdete', { videoUrl: 'assets/videos/grade3/intro_4.mp4' });
 
-    // === 2. ÁLLOMÁSOK (1-5) ===
-    for (let i = 1; i <= 5; i++) {
-        addSlide(SLIDE_TYPES.VIDEO, `${i}. Állomás - Érkezés`, 'Új kihívás vár', { videoUrl: `assets/videos/grade3/station_${i}_1.mp4` });
-        addSlide(SLIDE_TYPES.VIDEO, `${i}. Állomás - A Feladat`, 'Figyelj és tanulj', { videoUrl: `assets/videos/grade3/station_${i}_2.mp4` });
-
-        // Feladat JSON betöltése (később)
-        addSlide(SLIDE_TYPES.TASK, `${i}. Próbatétel`, 'Mutasd meg mit tudsz!', {
-            taskId: `g3_task_${i}`,
-            taskType: 'logic',
-            points: 100
-        });
-
-        addSlide(SLIDE_TYPES.REWARD, `${i}. Állomás teljesítve`, 'Jutalom', { videoUrl: `assets/videos/grade3/station_${i}_reward.mp4` });
-    }
-
-    // === 3. VÉGJÁTÉK ===
-    addSlide(SLIDE_TYPES.VIDEO, 'A Végső Csata 1', 'Szemtől szemben a sötétséggel', { videoUrl: 'assets/videos/grade3/finale_1.mp4' });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Végső Csata 2', 'A fordulat', { videoUrl: 'assets/videos/grade3/finale_2.mp4' });
-    addSlide(SLIDE_TYPES.TASK, 'Záróvizsga', 'Mentsd meg a királyságot!', { taskId: 'g3_finale', points: 300 });
-    addSlide(SLIDE_TYPES.REWARD, 'Győzelem', 'A király hálája', { videoUrl: 'assets/videos/grade3/finale_reward.mp4' });
-
-    // === 4. LEVEZETÉS ===
-    addSlide(SLIDE_TYPES.VIDEO, 'Epilógus', 'Békeidők', { videoUrl: 'assets/videos/grade3/outro_1.mp4' });
-    addSlide(SLIDE_TYPES.INFO, 'Vége', 'Szép munka volt, Hős!', { showStats: true });
+    // === 2. FELADATOK (Tasks) ===
+    addSlide(SLIDE_TYPES.TASK, 'Az Ősi Kapu', 'Nyisd ki a kaput a megfelelő kóddal!', {
+        taskType: 'scramble',
+        difficulty: 'easy'
+    });
 
     return slides;
 };

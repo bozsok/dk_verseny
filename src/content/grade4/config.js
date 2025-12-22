@@ -22,7 +22,6 @@ export const createConfig = () => {
     };
 
     // === 0. REGISZTRÁCIÓ (Onboarding) ===
-    // Megj: Használjuk a grade-specifikus hátteret, ha létezik, vagy fallback
     const bgImage = 'assets/images/grade4/onboarding_bg.jpg';
 
     addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek!', 'A rejtett frissítés kódja', {
@@ -30,7 +29,7 @@ export const createConfig = () => {
         backgroundUrl: bgImage
     });
 
-    addSlide(SLIDE_TYPES.REGISTRATION, 'Iratkozz fel', 'A rendszer várja az adataidat', {
+    addSlide(SLIDE_TYPES.REGISTRATION, 'Regisztráció', '', {
         fields: ['name', 'nickname', 'classId'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
@@ -39,7 +38,7 @@ export const createConfig = () => {
         }
     });
 
-    addSlide(SLIDE_TYPES.CHARACTER, 'Válassz Hőst', 'Ki legyen a karaktered?', {
+    addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!', 'A karakterek kattintással nagyíthatók!', {
         options: ['boy', 'girl'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage
@@ -52,8 +51,6 @@ export const createConfig = () => {
     addSlide(SLIDE_TYPES.VIDEO, 'A Rendszer Titka 4/4', 'Indul a debuggolás!', { videoUrl: 'assets/videos/grade4/intro_4.mp4' });
 
     // === 2. FELADATOK (Tasks) ===
-    // Itt a Grade 4 specifikus feladatok jönnének...
-    // Demo feladatok a struktúra kedvéért:
     addSlide(SLIDE_TYPES.TASK, 'Logikai Kapuk', 'Ismerd meg az AND kaput', {
         taskType: 'logic_gate',
         difficulty: 'easy'
