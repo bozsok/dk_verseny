@@ -15,6 +15,9 @@ import MockApiService from './core/api/MockApiService.js';
 import SlideManager from './core/engine/SlideManager.js';
 import VideoSlide from './ui/components/VideoSlide.js';
 import TaskSlide from './ui/components/TaskSlide.js';
+import WelcomeSlide from './ui/components/WelcomeSlide.js';
+import RegistrationSlide from './ui/components/RegistrationSlide.js';
+import CharacterSlide from './ui/components/CharacterSlide.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import './ui/styles/design-system.css';
 
@@ -222,7 +225,7 @@ class DigitalKulturaVerseny {
   /**
    * Évfolyam választás kezelése
    */
-  handleGradeSelect(grade) {
+  async handleGradeSelect(grade) {
     if (this.logger) {
       this.logger.info('Grade selected', { grade });
     }
@@ -233,14 +236,14 @@ class DigitalKulturaVerseny {
       gamePhase: 'grade-select'
     });
 
-    // Verseny időzítő indítása (ha még nem fut)
-    if (this.timeManager) {
-      this.timeManager.startCompetition();
-    }
+    // Verseny időzítő indítása - KIVÉVE! A WelcomeSlide indítja majd.
+    // if (this.timeManager) {
+    //   this.timeManager.startCompetition();
+    // }
 
     // Story Engine indítása
     if (this.slideManager) {
-      const firstSlide = this.slideManager.initForGrade(grade);
+      const firstSlide = await this.slideManager.initForGrade(grade);
       if (this.logger) {
         this.logger.info('Story Engine started', { firstSlide });
       }
@@ -280,9 +283,17 @@ class DigitalKulturaVerseny {
     const app = document.getElementById('app');
     app.innerHTML = ''; // Tiszta lap
 
-    // Slide konténer
+    // Slide konténer (Wrapper)
     const slideWrapper = document.createElement('div');
     slideWrapper.className = 'dkv-slide-wrapper';
+
+    // Globális háttérkép kezelése
+    if (slide && slide.content && slide.content.backgroundUrl) {
+      slideWrapper.style.backgroundImage = `url('${slide.content.backgroundUrl}')`;
+      slideWrapper.style.backgroundSize = 'cover';
+      slideWrapper.style.backgroundPosition = 'center';
+    }
+
     app.appendChild(slideWrapper);
 
     let slideComponent;
@@ -304,6 +315,27 @@ class DigitalKulturaVerseny {
     };
 
     switch (slide.type) {
+      case SLIDE_TYPES.WELCOME:
+        slideComponent = new WelcomeSlide(slide, {
+          ...commonOptions,
+          timeManager: this.timeManager // Időmérés indításához
+        });
+        break;
+
+      case SLIDE_TYPES.REGISTRATION:
+        slideComponent = new RegistrationSlide(slide, {
+          ...commonOptions,
+          stateManager: this.stateManager // Adatmentéshez
+        });
+        break;
+
+      case SLIDE_TYPES.CHARACTER:
+        slideComponent = new CharacterSlide(slide, {
+          ...commonOptions,
+          stateManager: this.stateManager // Avatar mentéshez
+        });
+        break;
+
       case SLIDE_TYPES.VIDEO:
       case SLIDE_TYPES.REWARD: // Reward is also a video usually
         slideComponent = new VideoSlide(slide, commonOptions);

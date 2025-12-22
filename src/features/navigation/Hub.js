@@ -155,14 +155,14 @@ class Hub {
         title: '5. osztály',
         description: 'A töréspont rejtélye',
         icon: '<svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>', // Lightning
-        unlocked: false
+        unlocked: true
       },
       {
         grade: 6,
         title: '6. osztály',
         description: 'A fragmentumok tükre',
         icon: '<svg viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2zm0 3l7.53 12H4.47L12 5z"/></svg>', // Shard/Crystal-like
-        unlocked: false
+        unlocked: true
       }
     ];
 

@@ -1,4 +1,4 @@
-import { createSlidesConfig, SLIDE_TYPES } from './slides-config.js';
+import { SLIDE_TYPES } from './slides-config.js'; // Csak a típusok kellenek
 
 /**
  * SlideManager - A lineáris történet vezérlője
@@ -20,11 +20,20 @@ class SlideManager {
     }
 
     /**
-     * Inicializálás egy adott évfolyamhoz
+     * Inicializálás egy adott évfolyamhoz (Async!)
      */
-    initForGrade(grade) {
-        // 1. Konfiguráció betöltése
-        this.slides = createSlidesConfig(grade);
+    async initForGrade(grade) {
+        try {
+            // Dinamikus import a megfelelő mappából
+            const module = await import(`../../content/grade${grade}/config.js`);
+            this.slides = module.createConfig();
+
+            this.logger && this.logger.info(`Loaded config for grade ${grade}`, { slides: this.slides.length });
+        } catch (error) {
+            console.error(`Failed to load config for grade ${grade}:`, error);
+            alert(`Hiba: A ${grade}. osztály anyaga még nem elérhető!`);
+            throw error;
+        }
 
         // 2. Mentett állapot betöltése (ha van)
         const savedIndex = this.stateManager.getStateValue('currentSlideIndex');
@@ -41,8 +50,6 @@ class SlideManager {
 
         // 4. Első dia feloldása
         this.slides[this.currentIndex].isLocked = false;
-
-        this.logger && this.logger.info('SlideManager initialized', { totalSlides: this.slides.length });
 
         return this.getCurrentSlide();
     }

@@ -12,6 +12,9 @@
  */
 
 export const SLIDE_TYPES = {
+    WELCOME: 'welcome',
+    REGISTRATION: 'registration',
+    CHARACTER: 'character',
     VIDEO: 'video',
     TASK: 'task',
     REWARD: 'reward',
@@ -37,6 +40,11 @@ export const createSlidesConfig = (grade) => {
             completed: false
         });
     };
+
+    // === 0. REGISZTRÁCIÓ (Onboarding) - 3 dia ===
+    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek!', 'Kezdődjön a kaland', { buttonText: 'Kaland Indítása' });
+    addSlide(SLIDE_TYPES.REGISTRATION, 'Regisztráció', 'Add meg az adataidat', { fields: ['name', 'nickname', 'classId'] });
+    addSlide(SLIDE_TYPES.CHARACTER, 'Karakter', 'Válassz avatárt', { options: ['boy', 'girl'] });
 
     // === 1. BEVEZETÉS (Intro) - 4 dia ===
     addSlide(SLIDE_TYPES.VIDEO, 'Bevezetés 1/4', 'A történet kezdete', { videoUrl: 'assets/videos/intro_1.mp4' });
