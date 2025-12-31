@@ -288,9 +288,14 @@ class CharacterSlide {
   _renderCards() {
     this.cardsContainer.innerHTML = '';
     const gender = this.viewIsGirl ? 'girl' : 'boy';
+    // Load characters from config or fallback/empty
+    const characters = (this.slideData.content && this.slideData.content.characters && this.slideData.content.characters[gender]) || [];
 
-    // Feltételezzük, hogy 4 karakter van nemenként
-    for (let i = 0; i < 4; i++) {
+    // Ha nincs config, fallback a régi ciklusra (de a config már frissítve van)
+    const count = characters.length > 0 ? characters.length : 4;
+
+    for (let i = 0; i < count; i++) {
+      const charData = characters[i] || {};
       const card = document.createElement('div');
       card.className = 'dkv-char-card';
       card.setAttribute('role', 'button');
@@ -306,23 +311,26 @@ class CharacterSlide {
         card.classList.add('selected');
       }
 
-      // Kép generálása (Placeholder hibakezeléssel)
+      // Kép generálása
       const img = document.createElement('img');
-      // Próbáljuk a szabványos útvonalat
-      img.src = `assets/images/characters/${gender}_${i + 1}.png`;
+      // Config path vagy fallback
+      img.src = charData.card || `assets/images/characters/${gender}_${i + 1}.png`;
       img.alt = `Character ${i + 1}`;
 
       // Ha nincs kép, placeholder
       img.onerror = () => {
-        img.onerror = null; // Végtelen ciklus ellen
+        img.onerror = null;
         img.src = 'https://placehold.co/150x200?text=' + (this.viewIsGirl ? 'Girl' : 'Boy') + '+' + (i + 1);
       };
 
-      card.onclick = () => this._openPreviewModal(i);
+      // Zoom kép útvonala
+      const zoomSrc = charData.zoom || img.src; // Fallback a kártyaképre, ha nincs zoom
+
+      card.onclick = () => this._openPreviewModal(i, zoomSrc);
       card.onkeydown = (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          this._openPreviewModal(i);
+          this._openPreviewModal(i, zoomSrc);
         }
       };
 
@@ -336,9 +344,6 @@ class CharacterSlide {
       const hasSelection = !!this.confirmedSelection;
       this.nextBtn.disabled = !hasSelection;
       // Csak akkor állítunk opacity-t, ha már látható (nem 0)
-      // De az animáció során 0-ról indul, majd 1 lesz.
-      // Ha disabled, akkor 0.5 legyen, ha enabled, akkor 1.
-      // Ezt a CSS vagy az animáció kezeli, de itt ráerősítünk.
       if (this.nextBtn.style.opacity !== '0') {
         this.nextBtn.style.opacity = hasSelection ? '1' : '0.5';
       }
@@ -386,7 +391,7 @@ class CharacterSlide {
     document.body.appendChild(this.previewModal);
   }
 
-  _openPreviewModal(index) {
+  _openPreviewModal(index, zoomSrc) {
     this.lastFocusedElement = document.activeElement;
 
     this.previewSelection = {
@@ -394,7 +399,19 @@ class CharacterSlide {
       index: index
     };
 
-    this.previewImage.textContent = `${this.viewIsGirl ? 'Lány' : 'Fiú'} ${index + 1} - NAGYÍTVA`;
+    // Töltsük be a Zoom képet
+    // Ha szöveg volt (placeholder), cseréljük képre
+    this.previewImage.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = zoomSrc;
+    img.style.maxWidth = '100%';
+    img.style.maxHeight = '100%';
+    img.style.objectFit = 'contain';
+    img.onerror = () => {
+      this.previewImage.textContent = `${this.viewIsGirl ? 'Lány' : 'Fiú'} ${index + 1} - HIÁNYZÓ KÉP`;
+    };
+    this.previewImage.appendChild(img);
+
     this.previewModal.style.display = 'flex';
 
     setTimeout(() => {

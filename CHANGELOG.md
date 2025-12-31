@@ -5,6 +5,17 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.4.1] - 2025-12-31
+### Hozzáadva (Added)
+- **Character Asset Integration:** Teljeskörű támogatás a konfigurálható karakterképekhez (`grade3/config.js`). Mostantól külön definiálható a kártya (`card`) és a nagyított (`zoom`) kép útvonala minden karakterhez (fiú/lány 1-4).
+- **Visual Harmony:** A "Kiválasztom" gomb a Preview Modalban mostantól vizuálisan megegyezik a fő "Tovább" gombbal (Impact font, Neon effektek).
+
+### Javítva (Fixed)
+- **Missing Methods Recovery:** Helyreállítva a `CharacterSlide` véletlenül törölt metódusai (`_createPreviewModal`, `_updateNextButton`), amelyek blokkolták a működést.
+- **Image Fit:** A karakterválasztó kártyák képei mostantól `object-fit: cover` beállítást használnak, így teljesen kitöltik a keretet.
+- **Preview Styling:** A nagyított karakterképek (Zoom) 10px lekerekítést és finom keretet kaptak.
+- **Container Styling:** A Grade 3 fő konténer (`.dkv-slide-container`) lekerekített sarkokat (10px) és áttetsző hátteret kapott, a piros debug keret eltávolításra került.
+
 ## [0.4.0] - 2025-12-31
 ### Javítva (Fixed)
 - **Character Blank Screen:** Javítva a kritikus hiba, ami miatt a karakterválasztó üres maradt. Vissza lettek állítva a hiányzó renderelő metódusok (`_renderCards`) és javításra került egy template literal szintaxis hiba.
