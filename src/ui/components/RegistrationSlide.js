@@ -92,10 +92,10 @@ class RegistrationSlide {
         // Ha van gépelés, a formot elrejthetjük, amíg ki nem íródik? 
         // Vagy megjelenhet azonnal? A User nem kérte a form rejtését.
         // De az "onboarding" élmény miatt szebb, ha a szöveg után jön.
-        if (typingSpeed > 0) {
-            form.style.opacity = '0';
-            form.style.transition = 'opacity 1s ease';
-        }
+        // Ha van gépelés, a formot elrejthetjük, amíg ki nem íródik? 
+        // Vagy megjelenhet azonnal? A User nem kérte a form rejtését.
+        // De az "onboarding" élmény miatt szebb, ha a szöveg után jön.
+        /* Korábbi logika törölve, lentebb kezeljük az egyes elemeket */
 
         // Inputok létrehozása (validációs callbackkel)
         this.nameInput = this._createInput('Mi a teljes neved?', 'Kiss Pál', 'name');
@@ -107,10 +107,26 @@ class RegistrationSlide {
         this.nextBtn.className = 'dkv-button dkv-onboarding-next-btn';
         this.nextBtn.textContent = (this.slideData.content && this.slideData.content.buttonText) || 'Tovább';
 
+        /* Opacity logika áthelyezve lentebb */
+
+        // Ha van gépelés, az elemeket (Inputok + Gomb) egyesével jelenítjük meg
+        const elementsToAnimate = [];
         if (typingSpeed > 0) {
-            this.nextBtn.style.opacity = '0';
-            this.nextBtn.style.transition = 'opacity 1s ease';
+            // Form konténer látható, de a gyerekek (input groupok) rejtve
+            // this.nameInput.container stb.
+            elementsToAnimate.push(this.nameInput.container);
+            elementsToAnimate.push(this.nickInput.container);
+            elementsToAnimate.push(this.classIdInput.container);
+            elementsToAnimate.push(this.nextBtn);
+
+            elementsToAnimate.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.6s ease';
+            });
         }
+
+        // Tovább Gomb
+        // ... már létrehoztuk feljebb, de a style beállítást itt felülírjuk a fenti ciklussal ha kell
 
         // Gomb stílus alkalmazása (ITT A LÉNYEG!)
         // CSS kezeli (.dkv-button)
@@ -132,7 +148,7 @@ class RegistrationSlide {
 
         // Typewriter Sequence
         if (typingSpeed > 0) {
-            this._startTypewriterSequence(paragraphs, typingSpeed, [form, this.nextBtn]);
+            this._startTypewriterSequence(paragraphs, typingSpeed, elementsToAnimate);
         } else {
             // Ha nincs gépelés, auto-fókusz
             setTimeout(() => {
@@ -150,14 +166,16 @@ class RegistrationSlide {
 
         const typeNext = () => {
             if (currentIndex >= paragraphs.length) {
-                // KÉSZ -> Form és Gomb megjelenítése
-                elementsToShow.forEach(el => el.style.opacity = '1');
-                // Fókusz
-                setTimeout(() => {
-                    if (this.nameInput && this.nameInput.input) {
-                        this.nameInput.input.focus();
-                    }
-                }, 500);
+                // KÉSZ -> Elemek egyesével (staggered) megjelenítése
+                elementsToShow.forEach((el, index) => {
+                    setTimeout(() => {
+                        el.style.opacity = '1';
+                        // Ha ez az első elem (Név mező), fókuszáljunk rá
+                        if (index === 0 && this.nameInput && this.nameInput.input) {
+                            this.nameInput.input.focus();
+                        }
+                    }, index * 500); // 500ms késleltetés elemenként
+                });
                 return;
             }
 
@@ -174,7 +192,7 @@ class RegistrationSlide {
                 showCursor: true,
                 onComplete: () => {
                     currentIndex++;
-                    setTimeout(typeNext, 300); // Kis szünet a sorok között
+                    typeNext();
                 }
             });
         };
@@ -386,7 +404,7 @@ class RegistrationSlide {
         this.modalMsg.className = 'dkv-registration-modal-message';
 
         this.okBtn = document.createElement('button');
-        this.okBtn.className = 'dkv-button';
+        this.okBtn.className = 'dkv-grade-3-button';
         this.okBtn.textContent = 'OK';
 
         this.okBtn.onclick = () => {
@@ -399,7 +417,7 @@ class RegistrationSlide {
         content.appendChild(this.okBtn);
         this.modal.appendChild(content);
 
-        this.element.appendChild(this.modal);
+        document.body.appendChild(this.modal); // GLOBAL for full screen
         this.currentModalCallback = null;
     }
 

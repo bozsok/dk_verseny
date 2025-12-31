@@ -571,7 +571,7 @@ class CharacterSlide {
         showCursor: true,
         onComplete: () => {
           currentIndex++;
-          setTimeout(typeNext, 50);
+          typeNext();
         }
       });
     };

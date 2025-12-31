@@ -32,7 +32,7 @@ export const createConfig = () => {
 
     // === 0. ONBOARDING ===
     // Háttér: Eredeti Grade 3 háttérkép
-    const bgImage = 'assets/images/grade3/onboarding_bg.jpg';
+    const bgImage = 'assets/images/grade3/onboarding_bg.png';
 
     addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, bátor Kódmester!', 'Te lettél az egyik <b>Kiválasztott</b>, aki egy izgalmas és kalandokkal teli utazáson vesz részt.\nAz lesz a feladatod, hogy felfedezd a varázslatos <b>Kód Királyságot</b> és megállíts egy veszélyes, romboló vírust, amelyet egy egykori <b>Kódbölcs</b> készített. A megállításhoz és a királyság rendjének visszaállításához különböző digitális <b>Varázskulcsokat</b> kell megszerezned.\nA többi kiválasztottal együtt indulsz útnak, de remélhetőleg <b>Te</b> leszel az, aki sikerrel fejezi be a küldetését.', {
         buttonText: 'Tovább',

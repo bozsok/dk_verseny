@@ -154,7 +154,7 @@ class WelcomeSlide {
                 showCursor: true,
                 onComplete: () => {
                     currentParagraphIndex++;
-                    setTimeout(typeNextParagraph, 300);
+                    typeNextParagraph();
                 }
             });
         };

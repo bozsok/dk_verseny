@@ -5,6 +5,15 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.4.2] - 2025-12-31
+### Megváltoztatva (Changed)
+- **Visual Unification:** Teljeskörű szín- és stílus egységesítés a Grade 3 folyamatban. Minden szöveges tartalom (Címek, Leírások, Input címkék) mostantól a `main.css`-ből örökli a színét és árnyékát (`text-shadow`), garantálva a konzisztens arculatot.
+- **Improved Typewriter Flow:** Eltávolításra került minden mesterséges szünet (50ms/300ms) az írógép effektusból az Üdvözlő (`WelcomeSlide`), Regisztrációs (`RegistrationSlide`) és Karakterválasztó (`CharacterSlide`) felületeken, így a szövegmegjelenítés folyamatos és akadásmentes.
+- **Registration UX:**
+    - **Staggered Animation:** A regisztrációs űrlap elemei (Név -> Becenév -> Osztály -> Gomb) mostantól lépcsőzetesen, 500ms késleltetéssel követik egymást a cím kiírása után, javítva az áttekinthetőséget.
+    - **Input Placeholders:** A segédszövegek világosabb színt kaptak és lekerült róluk az árnyék a jobb olvashatóság érdekében.
+- **Button Harmony:** A "Tovább" és "OK" gombok, valamint a hozzájuk tartozó stílusok (`.dkv-grade-3-button`) egységesen 10px lekerekítést kaptak. A Regisztrációs Hibaablak "OK" gombja mostantól ezt a közös osztályt használja.
+
 ## [0.4.1] - 2025-12-31
 ### Hozzáadva (Added)
 - **Character Asset Integration:** Teljeskörű támogatás a konfigurálható karakterképekhez (`grade3/config.js`). Mostantól külön definiálható a kártya (`card`) és a nagyított (`zoom`) kép útvonala minden karakterhez (fiú/lány 1-4).

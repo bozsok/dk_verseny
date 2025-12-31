@@ -12,6 +12,16 @@
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Force text-shadow inheritance for all children */
+.dkv-welcome-slide *,
+.dkv-registration-slide *,
+.dkv-character-slide * {
+    text-shadow: inherit;
 }
 
 /* === 1. RESET & INITIALIZATION === */
@@ -33,7 +43,8 @@
     font-size: 1rem;
     font-weight: 200;
     line-height: 1.6;
-    color: #e2e8f0;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     /* Font rendering optimalizálás */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -66,8 +77,11 @@
     font-size: 1.5rem;
     font-weight: normal;
     letter-spacing: 1px;
+    letter-spacing: 1px;
     padding: 12px 40px;
     background: #00636e;
+    border-radius: 10px;
+    /* Lekerekítés */
     /* Sötét türkiz */
     border: 2px solid #00eaff;
     /* Neon cián keret */
@@ -75,6 +89,8 @@
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
+    text-shadow: none;
+    /* Gombokon ne legyen szöveg árnyék */
     /* text-transform: uppercase; -- Kikapcsolva User kérésre */
 }
 

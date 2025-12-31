@@ -32,7 +32,7 @@
 .dkv-character-slide .dkv-character-header h2.dkv-slide-title {
     font-size: 1.2rem;
     margin-bottom: 5px;
-    color: white;
+    color: inherit;
     margin: 0;
 }
 
@@ -40,7 +40,7 @@
 .dkv-character-slide .dkv-character-header p.dkv-slide-title {
     font-size: 1.2rem;
     font-weight: normal;
-    color: white;
+    color: inherit;
     margin: 0;
 }
 
@@ -49,7 +49,7 @@
     font-family: 'Source Code Pro', monospace;
     font-size: 1.2rem;
     font-weight: 200;
-    color: #cbd5e1;
+    color: inherit;
     text-align: left;
     /* BALRA */
     line-height: 1.6;
@@ -68,7 +68,7 @@
 
 .dkv-toggle-label {
     font-size: 1.2rem;
-    color: #e2e8f0;
+    color: inherit;
 }
 
 
@@ -175,7 +175,7 @@
     text-align: left;
     /* BALRA */
     font-size: 1rem;
-    color: #cbd5e1;
+    color: inherit;
     max-width: 800px;
     margin-top: 10px;
 }

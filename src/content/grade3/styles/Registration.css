@@ -36,7 +36,7 @@
     font-size: 1.2rem;
     line-height: 1.6;
     font-weight: 200;
-    color: #e2e8f0;
+    color: inherit;
     text-align: left;
     margin: 0;
     /* Reset */
@@ -58,7 +58,7 @@
     font-size: 1.2rem;
     font-weight: bold;
     font-variant: small-caps;
-    color: #ffffff;
+    color: inherit;
     margin-bottom: 8px;
     display: block;
     text-align: left;
@@ -71,12 +71,18 @@
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: rgba(0, 0, 0, 0.3);
-    color: #fff;
+    color: inherit;
     font-family: 'Source Code Pro', monospace;
     /* Inputban is */
     font-size: 1.1rem;
     outline: none;
     transition: border-color 0.3s ease;
+}
+
+.dkv-registration-slide .dkv-input-field::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    text-shadow: none;
+    font-style: italic;
 }
 
 .dkv-registration-slide .dkv-input-field:focus {
@@ -127,6 +133,7 @@
 .dkv-registration-modal-message {
     margin-bottom: 1.5rem;
     font-size: 1.1rem;
+    font-family: 'Source Code Pro', monospace;
     white-space: pre-line;
     line-height: 1.5;
 }
