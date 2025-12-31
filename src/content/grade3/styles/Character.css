@@ -1,0 +1,308 @@
+/* === GRADE 3 CHARACTER SLIDE STYLES === */
+
+/* Layout: Flex Center - Layout Critical for Character Selection */
+.dkv-character-slide .dkv-onboarding-container {
+    display: flex !important;
+    /* Force Flex Layout */
+    flex-direction: column;
+    justify-content: flex-start;
+    /* Fentről kezdődik, hogy ne ugráljon az animáció közben */
+    padding-top: 80px;
+    align-items: flex-start;
+    /* Vízszintesen BALRA */
+    width: 100%;
+    height: 100%;
+}
+
+/* Layout Header */
+.dkv-character-slide .dkv-character-header {
+    text-align: left;
+    /* BALRA */
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* BALRA */
+    gap: 8px;
+    flex: 0 0 auto;
+    width: 100%;
+}
+
+/* Title */
+.dkv-character-slide .dkv-character-header h2.dkv-slide-title {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: white;
+    margin: 0;
+}
+
+/* Additional Title Lines */
+.dkv-character-slide .dkv-character-header p.dkv-slide-title {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: white;
+    margin: 0;
+}
+
+/* Description (Subtitle) */
+.dkv-character-slide p {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.2rem;
+    font-weight: 200;
+    color: #cbd5e1;
+    text-align: left;
+    /* BALRA */
+    line-height: 1.6;
+}
+
+/* === Toggle Block === */
+.dkv-toggle-block {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* BALRA */
+    gap: 20px;
+    margin-bottom: 35px;
+    width: 100%;
+}
+
+.dkv-toggle-label {
+    font-size: 1.2rem;
+    color: #e2e8f0;
+}
+
+
+
+/* === Toggle Switch (Játékos mód váltó) === */
+.dkv-character-slide .dkv-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+    flex-shrink: 0;
+    /* Ne nyomódjon össze */
+}
+
+.dkv-character-slide .dkv-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.dkv-character-slide .dkv-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #374151;
+    transition: .4s;
+    border-radius: 24px;
+    z-index: 1;
+    /* Lokális réteg */
+}
+
+.dkv-character-slide .dkv-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.dkv-character-slide input:checked+.dkv-slider {
+    background-color: #6b7280;
+}
+
+.dkv-character-slide input:checked+.dkv-slider:before {
+    transform: translateX(24px);
+}
+
+/* === Cards Container === */
+.dkv-cards-container {
+    display: flex;
+    justify-content: flex-start;
+    /* BALRA */
+    gap: 30px;
+    margin-bottom: 35px;
+    width: 100%;
+}
+
+/* === Karakter Kártyák (Character Cards) === */
+.dkv-char-card {
+    width: 130px;
+    height: 290px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.dkv-char-card:hover {
+    transform: scale(1.08);
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dkv-char-card.selected {
+    border-color: #4ade80;
+    /* Zöld */
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.dkv-char-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+/* === Footer Text === */
+.dkv-footer-text {
+    text-align: left;
+    /* BALRA */
+    font-size: 1rem;
+    color: #cbd5e1;
+    max-width: 800px;
+    margin-top: 10px;
+}
+
+/* === Next Button === */
+.dkv-character-slide .dkv-onboarding-next-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+}
+
+/* === MODAL STYLES === */
+/* Preview Modal */
+.dkv-preview-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    display: none;
+    /* Alapból rejtve! JS nyitja meg */
+}
+
+/* Ha a JS stílus 'display: none'-t állít be, az felülírja a CSS-t. */
+
+.dkv-preview-modal-content {
+    position: relative;
+    width: 770px;
+    height: 700px;
+    max-width: 95vw;
+    max-height: 95vh;
+    background: #111;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dkv-preview-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+}
+
+.dkv-preview-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #e5e7eb;
+    line-height: 1;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.dkv-preview-close:hover {
+    transform: scale(1.2);
+    color: #fff;
+}
+
+.dkv-preview-select-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    padding: 12px 24px;
+    background: #4ade80;
+    color: #064e3b;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.dkv-preview-select-btn:hover {
+    transform: scale(1.05);
+}
+
+
+/* Error Modal */
+.dkv-error-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    display: none;
+    /* Alapból rejtve! */
+}
+
+.dkv-error-modal-content {
+    background: #1f2937;
+    border: 2px solid #ef4444;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: center;
+    color: white;
+}
+
+.dkv-error-message {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    white-space: pre-line;
+    line-height: 1.5;
+}
+
+/* === Focus Accessibility === */
+.dkv-char-card:focus,
+.dkv-preview-select-btn:focus,
+.dkv-preview-close:focus,
+.dkv-button:focus,
+.dkv-toggle-switch input:focus+.dkv-slider {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}

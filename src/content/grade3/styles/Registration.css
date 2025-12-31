@@ -1,0 +1,134 @@
+/* === GRADE 3 REGISTRATION STYLES === */
+
+/* Layout: Balra igazítás és Flexbox */
+.dkv-registration-slide .dkv-onboarding-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    align-items: flex-start;
+    /* Balra igazítás */
+    padding: 0 5%;
+    /* Kis padding a szélektől */
+}
+
+.dkv-registration-slide .dkv-form-container {
+    width: 100%;
+    max-width: 600px;
+    /* Visszaállítva */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Info Container (Cím + Leírás) */
+.dkv-registration-slide .dkv-slide-description-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+/* Title & Description */
+.dkv-registration-slide .dkv-slide-title,
+.dkv-registration-slide .dkv-slide-description {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    font-weight: 200;
+    color: #e2e8f0;
+    text-align: left;
+    margin: 0;
+    /* Reset */
+}
+
+/* Ha az első elem (cím), legyen nagyobb? Config szerint 2rem volt korábban. */
+.dkv-registration-slide .dkv-slide-title {
+    margin-bottom: 20px;
+}
+
+/* Input Group */
+.dkv-registration-slide .dkv-input-group {
+    margin-bottom: 20px;
+}
+
+/* Label */
+.dkv-registration-slide .dkv-input-label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-variant: small-caps;
+    color: #ffffff;
+    margin-bottom: 8px;
+    display: block;
+    text-align: left;
+}
+
+/* Input Field */
+.dkv-registration-slide .dkv-input-field {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-family: 'Source Code Pro', monospace;
+    /* Inputban is */
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.dkv-registration-slide .dkv-input-field:focus {
+    border-color: #00eaff;
+    /* Neon focus */
+    box-shadow: 0 0 10px rgba(0, 234, 255, 0.2);
+}
+
+.dkv-input-field.dkv-input-error {
+    border-color: #ef4444 !important;
+}
+
+.dkv-input-field.dkv-input-success {
+    border-color: #4ade80 !important;
+}
+
+/* === MODAL STYLES === */
+.dkv-registration-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    /* JS toggle */
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    flex-direction: column;
+    /* Explicit */
+}
+
+.dkv-registration-modal-content {
+    background: #1f2937;
+    border: 1px solid #ef4444;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    /* Responsive width */
+    height: auto;
+    /* Explicit auto height */
+    text-align: center;
+    color: white;
+}
+
+.dkv-registration-modal-message {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    white-space: pre-line;
+    line-height: 1.5;
+}
+
+/* Button styles in main.css */

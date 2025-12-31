@@ -1,67 +1,45 @@
-/**
- * Grade 3 Configuration
- * Kód Királyság titka
- */
+import { SLIDE_TYPES } from '../../core/engine/slides-config.js';
+import './styles/main.css'; // Központi stílusok (Gombok, Reset)
+import './styles/Registration.css';
+import './styles/Welcome.css';
+import './styles/Character.css';
 
-import { SLIDE_TYPES } from '../../core/engine/slides-config.js'; // Központi típusok importálása
+// Logikai konstansok (Stílusok a CSS-ben vannak!)
+const TYPING_SPEED = 2; // ms/karakter (User módosítása)
 
 export const createConfig = () => {
     const slides = [];
     let idCounter = 1;
 
+    // Helper függvény a typingSpeed átadására
     const addSlide = (type, title, description, content = {}) => {
+        // Alapértelmezett logikai beállítások (nem stílusok!)
+        const enrichedContent = {
+            ...content,
+            typingSpeed: TYPING_SPEED // Mindenkinek átadjuk a sebességet
+        };
+
         slides.push({
             id: idCounter++,
             type,
             title,
             description,
-            content,
+            content: enrichedContent,
             isLocked: true,
             completed: false
         });
     };
 
-    // === 0. REGISZTRÁCIÓ (Onboarding) ===
+    // === 0. ONBOARDING ===
+    // Háttér: Eredeti Grade 3 háttérkép
     const bgImage = 'assets/images/grade3/onboarding_bg.jpg';
 
-    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, bátor Kódmester!', 'Te lettél az egyik Kiválasztott, aki egy izgalmas és kalandokkal teli utazáson vesz részt.\nAz lesz a feladatod, hogy felfedezd a varázslatos Kód Királyságot és megállíts egy veszélyes, romboló vírust, amelyet egy egykori Kódbölcs készített. A megállításhoz és a királyság rendjének visszaállításához különböző digitális Varázskulcsokat kell megszerezned.\nA többi kiválasztottal együtt indulsz útnak, de remélhetőleg Te leszel az, aki sikerrel fejezi be a küldetését.', {
+    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, bátor Kódmester!', 'Te lettél az egyik <b>Kiválasztott</b>, aki egy izgalmas és kalandokkal teli utazáson vesz részt.\nAz lesz a feladatod, hogy felfedezd a varázslatos <b>Kód Királyságot</b> és megállíts egy veszélyes, romboló vírust, amelyet egy egykori <b>Kódbölcs</b> készített. A megállításhoz és a királyság rendjének visszaállításához különböző digitális <b>Varázskulcsokat</b> kell megszerezned.\nA többi kiválasztottal együtt indulsz útnak, de remélhetőleg <b>Te</b> leszel az, aki sikerrel fejezi be a küldetését.', {
         buttonText: 'Tovább',
-        backgroundUrl: bgImage,
-        // EGYEDI STÍLUSOK (Grade 3 Specifikus)
-        style: {
-            title: {
-                color: '#ffffff',
-                textTransform: 'uppercase',
-                fontFamily: 'Impact, sans-serif',
-                fontSize: '2.5rem',
-                textShadow: 'none',
-                marginBottom: '100px', // Te kérted
-                letterSpacing: '1px',
-                fontWeight: 'normal'
-            },
-            description: {
-                color: '#ffffff',
-                fontFamily: '"Source Code Pro", monospace',
-                fontSize: '1.4rem', // Nagyobb betű
-                lineHeight: '1.7',
-                fontWeight: '100', // Vékony
-                textAlign: 'left', // Most már működik!
-                gap: '25px',
-            },
-            button: {
-                background: '#00636e',
-                border: '2px solid #00eaff',
-                fontFamily: 'Impact, sans-serif',
-                color: '#ffffff',
-                fontSize: '1.5rem',
-                padding: '8px 28px',
-                letterSpacing: '1px',
-                fontWeight: 'normal'
-            }
-        }
+        backgroundUrl: bgImage
     });
 
-    addSlide(SLIDE_TYPES.REGISTRATION, 'Regisztráció', '', {
+    addSlide(SLIDE_TYPES.REGISTRATION, 'Első feladatként írd be a teljes nevedet az alábbi beviteli mezőbe! A teljes nevedre van szükség, ezért nem elég az, hogy Marci vagy Szofi.\nEzt követően add meg a becenevedet maximum 10 betűből, majd utána az osztályodat!', '', {
         fields: ['name', 'nickname', 'classId'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
@@ -70,7 +48,7 @@ export const createConfig = () => {
         }
     });
 
-    addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!', 'A karakterek kattintással nagyíthatók!', {
+    addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!\nA karakterek kattintással nagyíthatók!', '', {
         options: ['boy', 'girl'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage
@@ -86,6 +64,7 @@ export const createConfig = () => {
     addSlide(SLIDE_TYPES.TASK, 'Az Ősi Kapu', 'Nyisd ki a kaput a megfelelő kóddal!', {
         taskType: 'scramble',
         difficulty: 'easy'
+        // További konfiguráció majd itt...
     });
 
     return slides;

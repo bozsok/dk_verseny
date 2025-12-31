@@ -1,0 +1,88 @@
+/* === GRADE 3 MAIN STYLES === */
+
+/* === SLIDE CONTAINER (Fix 1100x740) === */
+.dkv-slide-container {
+    width: 1100px;
+    height: 740px;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid red;
+    /* User explicit kérése */
+}
+
+/* === 1. RESET & INITIALIZATION === */
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.dkv-welcome-slide,
+.dkv-registration-slide,
+.dkv-character-slide {
+    margin: 0;
+    padding: 0;
+    /* Alapértelmezett tipográfia Grade 3-hoz */
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1rem;
+    font-weight: 200;
+    line-height: 1.6;
+    color: #e2e8f0;
+    /* Font rendering optimalizálás */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Címsorok resetelése */
+.dkv-welcome-slide h1,
+.dkv-welcome-slide h2,
+.dkv-welcome-slide h3,
+.dkv-registration-slide h1,
+.dkv-registration-slide h2,
+.dkv-registration-slide h3,
+.dkv-character-slide h1,
+.dkv-character-slide h2,
+.dkv-character-slide h3 {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+/* === 2. KÖZÖS KOMPONENSEK === */
+
+/* === Gombok (Shared Button Style) === */
+/* Ez a stílus vonatkozik minden gombra a Grade 3 felületeken */
+.dkv-grade-3-button,
+.dkv-welcome-slide .dkv-button,
+.dkv-registration-slide .dkv-button,
+.dkv-character-slide .dkv-button {
+    font-family: 'Impact', sans-serif;
+    font-size: 1.5rem;
+    font-weight: normal;
+    letter-spacing: 1px;
+    padding: 12px 40px;
+    background: #00636e;
+    /* Sötét türkiz */
+    border: 2px solid #00eaff;
+    /* Neon cián keret */
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* text-transform: uppercase; -- Kikapcsolva User kérésre */
+}
+
+.dkv-grade-3-button:hover,
+.dkv-welcome-slide .dkv-button:hover,
+.dkv-registration-slide .dkv-button:hover,
+.dkv-character-slide .dkv-button:hover {
+    background: #007582;
+    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+    transform: none;
+    /* Letiltja a globális elmozdulást */
+}

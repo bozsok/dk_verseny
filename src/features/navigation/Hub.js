@@ -141,7 +141,17 @@ class Hub {
         title: '3. osztály',
         description: 'A Kód Királyság titka',
         icon: '<svg viewBox="0 0 24 24"><path d="M21 10h-8.35A5.99 5.99 0 0 0 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6a5.99 5.99 0 0 0 5.65-4H17v4h4v-4h2v-4zM7 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>', // Key icon
-        unlocked: true
+        unlocked: true,
+        // EGYEDI STÍLUS PRÓBA (Grade 3)
+        style: {
+          background: '#00636e',
+          border: '2px solid #00eaff',
+          boxShadow: '0 0 15px rgba(0, 234, 255, 0.3)',
+          titleFont: 'Impact, sans-serif',
+          descFont: '"Source Code Pro", monospace',
+          descFontSize: '1.1rem', // Nagyobb leírás
+          color: '#ffffff'
+        }
       },
       {
         grade: 4,
@@ -173,10 +183,23 @@ class Hub {
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', gradeConfig.unlocked ? '0' : '-1');
 
+      // EGYEDI STÍLUS ALKALMAZÁSA (Ha van)
+      if (gradeConfig.style) {
+        if (gradeConfig.style.background) card.style.background = gradeConfig.style.background;
+        if (gradeConfig.style.border) card.style.border = gradeConfig.style.border;
+        if (gradeConfig.style.boxShadow) card.style.boxShadow = gradeConfig.style.boxShadow;
+      }
+
       // Icon
       const iconDiv = document.createElement('div');
       iconDiv.className = 'dkv-card-icon';
       iconDiv.innerHTML = gradeConfig.icon;
+
+      // Ikon színének igazítása az egyedi stílushoz (opcionális)
+      if (gradeConfig.style && gradeConfig.style.color) {
+        // Az SVG fill-jét nehéz kívülről színezni, ha nincs 'currentColor', de a color öröklődhet
+        iconDiv.style.color = '#00eaff'; // Neon kék ikon a türkiz háttérhez
+      }
 
       // Content container
       const contentDiv = document.createElement('div');
@@ -187,10 +210,25 @@ class Hub {
       title.className = 'dkv-card-title';
       title.textContent = gradeConfig.title;
 
+      if (gradeConfig.style && gradeConfig.style.titleFont) {
+        title.style.fontFamily = gradeConfig.style.titleFont;
+        title.style.fontWeight = 'normal'; // Impacthoz nem kell bold
+        title.style.letterSpacing = '1px';
+        title.style.textTransform = 'uppercase';
+        if (gradeConfig.style.color) title.style.color = gradeConfig.style.color;
+      }
+
       // Description (Subtitle)
       const desc = document.createElement('div');
       desc.className = 'dkv-card-description';
       desc.textContent = gradeConfig.description;
+
+      if (gradeConfig.style && gradeConfig.style.descFont) {
+        desc.style.fontFamily = gradeConfig.style.descFont;
+        if (gradeConfig.style.color) desc.style.color = gradeConfig.style.color;
+        if (gradeConfig.style.descFontSize) desc.style.fontSize = gradeConfig.style.descFontSize; // Méret alkalmazása
+        desc.style.fontWeight = '200';
+      }
 
       contentDiv.appendChild(title);
       contentDiv.appendChild(desc);

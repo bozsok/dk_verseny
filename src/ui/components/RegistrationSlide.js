@@ -4,18 +4,22 @@
  * Funkciók:
  * - 3 Input: Név, Becenév, Osztály
  * - Real-time validáció és formázás (onBlur)
- * - Tovább gomb csak akkor aktív, ha minden helyes (de alapból kattintható a validációhoz)
+ * - Tovább gomb csak akkor aktív, ha minden helyes 
  * - Hibaüzenetek saját Modalban
  * - Modal Lock: Egyszerre csak egy hiba lehet aktív!
  * - Dinamikus Validáció: Configból tölti be az engedélyezett osztályokat!
  * - Focus Trap: Modal megjelenésekor fogja a billentyűzet-fókuszt (A11y)
  * - Auto-fókusz: Megnyitáskor a Név mezőre ugrik
+ * - Dinamikus Stílus (Configból)
  */
+import Typewriter from '../../utils/Typewriter.js';
+
 class RegistrationSlide {
     constructor(slideData, options = {}) {
         this.slideData = slideData;
         this.onNext = options.onNext || (() => { });
         this.stateManager = options.stateManager;
+        this.typewriter = new Typewriter(); // Ha kellene
 
         // Állapotkövetés
         this.isValid = {
@@ -31,39 +35,93 @@ class RegistrationSlide {
         this.lastFocusedElement = null; // Ide mentjük a fókuszt nyitáskor
     }
 
+
+
     createElement() {
         this.element = document.createElement('div');
         this.element.className = 'dkv-slide-container dkv-registration-slide';
+
+
 
         // Belső konténer
         const container = document.createElement('div');
         container.className = 'dkv-onboarding-container';
 
-        const title = document.createElement('h2');
-        title.className = 'dkv-slide-title';
-        title.textContent = this.slideData.title;
+        // Cím és Instrukciók Konténer
+        const infoContainer = document.createElement('div');
+        infoContainer.className = 'dkv-slide-description-container';
 
+        const rawTitle = this.slideData.title || '';
+        const titleLines = rawTitle.split('\n');
+
+        // Typing Config
+        const typingSpeed = (this.slideData.content && this.slideData.content.typingSpeed) || 0;
+        const paragraphs = [];
+
+        titleLines.forEach((line, index) => {
+            if (!line.trim()) return;
+
+            // Az első sor legyen h2, a többi p (vagy mind h2 style?)
+            // A User configjában egyetlen 'title' style van. Alkalmazzuk mindegyikre.
+            const el = document.createElement(index === 0 ? 'h2' : 'p');
+            el.className = index === 0 ? 'dkv-slide-title' : 'dkv-slide-description';
+
+            if (index === 0) {
+            }
+            // else ág törölve, CSS kezeli az algímet
+
+            // Typewriter INIT
+            if (typingSpeed > 0) {
+                this.typewriter.init(el, line);
+            } else {
+                el.innerHTML = line;
+            }
+
+            if (index > 0) {
+                // ...
+            }
+
+            infoContainer.appendChild(el);
+            paragraphs.push({ element: el, text: line });
+        });
+
+        // Form létrehozása
         const form = document.createElement('div');
         form.className = 'dkv-form-container';
-        form.style.width = '100%';
-        form.style.maxWidth = '600px';
+
+        // Ha van gépelés, a formot elrejthetjük, amíg ki nem íródik? 
+        // Vagy megjelenhet azonnal? A User nem kérte a form rejtését.
+        // De az "onboarding" élmény miatt szebb, ha a szöveg után jön.
+        if (typingSpeed > 0) {
+            form.style.opacity = '0';
+            form.style.transition = 'opacity 1s ease';
+        }
 
         // Inputok létrehozása (validációs callbackkel)
         this.nameInput = this._createInput('Mi a teljes neved?', 'Kiss Pál', 'name');
         this.nickInput = this._createInput('Hogyan szólíthatunk?', 'Zseni', 'nick');
         this.classIdInput = this._createInput('Melyik osztályba jársz?', '4.b', 'classId');
 
-        // Tovább Gomb (mindig aktív, de a klikk ellenőrzi a validitást)
+        // Tovább Gomb
         this.nextBtn = document.createElement('button');
         this.nextBtn.className = 'dkv-button dkv-onboarding-next-btn';
         this.nextBtn.textContent = (this.slideData.content && this.slideData.content.buttonText) || 'Tovább';
+
+        if (typingSpeed > 0) {
+            this.nextBtn.style.opacity = '0';
+            this.nextBtn.style.transition = 'opacity 1s ease';
+        }
+
+        // Gomb stílus alkalmazása (ITT A LÉNYEG!)
+        // CSS kezeli (.dkv-button)
+
         this.nextBtn.onclick = () => this.handleSubmit();
 
         form.appendChild(this.nameInput.container);
         form.appendChild(this.nickInput.container);
         form.appendChild(this.classIdInput.container);
 
-        container.appendChild(title);
+        container.appendChild(infoContainer);
         container.appendChild(form);
         container.appendChild(this.nextBtn);
 
@@ -72,47 +130,86 @@ class RegistrationSlide {
         // Modal előkészítése (rejtve)
         this._createModal();
 
-        // Auto-fókusz az első mezőre (kis késleltetéssel, hogy a DOM-ba kerülés után fusson)
-        setTimeout(() => {
-            if (this.nameInput && this.nameInput.input) {
-                this.nameInput.input.focus();
-            }
-        }, 100);
+        // Typewriter Sequence
+        if (typingSpeed > 0) {
+            this._startTypewriterSequence(paragraphs, typingSpeed, [form, this.nextBtn]);
+        } else {
+            // Ha nincs gépelés, auto-fókusz
+            setTimeout(() => {
+                if (this.nameInput && this.nameInput.input) {
+                    this.nameInput.input.focus();
+                }
+            }, 100);
+        }
 
         return this.element;
+    }
+
+    _startTypewriterSequence(paragraphs, speed, elementsToShow) {
+        let currentIndex = 0;
+
+        const typeNext = () => {
+            if (currentIndex >= paragraphs.length) {
+                // KÉSZ -> Form és Gomb megjelenítése
+                elementsToShow.forEach(el => el.style.opacity = '1');
+                // Fókusz
+                setTimeout(() => {
+                    if (this.nameInput && this.nameInput.input) {
+                        this.nameInput.input.focus();
+                    }
+                }, 500);
+                return;
+            }
+
+            // Előző kurzor levétele
+            if (currentIndex > 0) {
+                const prevEl = paragraphs[currentIndex - 1].element;
+                const activeSpan = prevEl.querySelector('.dkv-cursor-active');
+                if (activeSpan) activeSpan.classList.remove('dkv-cursor-active');
+            }
+
+            const pData = paragraphs[currentIndex];
+            this.typewriter.type(pData.element, null, {
+                speed: speed,
+                showCursor: true,
+                onComplete: () => {
+                    currentIndex++;
+                    setTimeout(typeNext, 300); // Kis szünet a sorok között
+                }
+            });
+        };
+
+        typeNext();
     }
 
     _createInput(label, placeholder, type) {
         const container = document.createElement('div');
         container.className = 'dkv-input-group';
-        container.style.marginBottom = '20px';
 
         const lbl = document.createElement('label');
         lbl.textContent = label;
         lbl.className = 'dkv-input-label';
-        lbl.style.display = 'block';
-        lbl.style.marginBottom = '8px';
+
+        // Config stílusok alkalmazása a labelre
+        // Config stílusok alkalmazása már nem szükséges (CSS kezeli)
 
         const inp = document.createElement('input');
         inp.type = 'text';
         inp.placeholder = placeholder;
         inp.className = 'dkv-input-field';
-        inp.style.width = '100%';
-        inp.style.padding = '12px';
-        inp.style.borderRadius = '8px';
-        inp.style.border = '1px solid rgba(255,255,255,0.2)';
-        inp.style.background = 'rgba(0,0,0,0.3)';
-        inp.style.color = '#fff';
 
         if (type === 'classId') {
             inp.maxLength = 3;
         } else if (type === 'nick') {
-            inp.maxLength = 15; // Max 15 karakter
+            inp.maxLength = 15;
         }
 
         // onBlur esemény - Validáció és Formázás
         inp.onblur = () => {
-            this._validateField(type, inp);
+            // Ha a mező üres, akkor 'csendes' (silent) validációt futtatunk (NINCS Modal).
+            // Ha van benne adat, de hibás, akkor 'hangos' (Modal).
+            const isEmpty = inp.value.trim().length === 0;
+            this._validateField(type, inp, isEmpty);
         };
 
         // onInput - Karakterek szűrése gépelés közben
@@ -170,10 +267,12 @@ class RegistrationSlide {
 
         if (isValid) {
             inputElement.value = formattedValue;
-            inputElement.style.borderColor = '#4ade80';
+            inputElement.classList.remove('dkv-input-error');
+            inputElement.classList.add('dkv-input-success');
             this.isValid[type] = true;
         } else {
-            inputElement.style.borderColor = '#ef4444';
+            inputElement.classList.remove('dkv-input-success');
+            inputElement.classList.add('dkv-input-error');
             this.isValid[type] = false;
             if (!silent && error) {
                 this.showErrorModal(error, () => {
@@ -261,7 +360,6 @@ class RegistrationSlide {
             return { valid: false, error: 'Az osztály formátuma helytelen!\nHelyes példa: 4.b (szám, pont, betű)' };
         }
 
-        // DINAMIKUS VALIDÁCIÓ CONFIGBÓL
         const allowed = (this.slideData.content &&
             this.slideData.content.validation &&
             this.slideData.content.validation.allowedClasses)
@@ -273,38 +371,19 @@ class RegistrationSlide {
         return { valid: true, formatted };
     }
 
-    // === Modal Logika ===
     _createModal() {
         this.modal = document.createElement('div');
-        this.modal.style.position = 'absolute';
-        this.modal.style.top = '0';
-        this.modal.style.left = '0';
-        this.modal.style.width = '100%';
-        this.modal.style.height = '100%';
-        this.modal.style.background = 'rgba(0,0,0,0.8)';
-        this.modal.style.display = 'none';
-        this.modal.style.alignItems = 'center';
-        this.modal.style.justifyContent = 'center';
-        this.modal.style.zIndex = '1000';
+        this.modal.className = 'dkv-registration-modal-overlay';
+        this.modal.style.display = 'none'; // Inicializálás
 
-        // Accessibility
         this.modal.setAttribute('role', 'dialog');
         this.modal.setAttribute('aria-modal', 'true');
 
         const content = document.createElement('div');
-        content.style.background = '#1f2937';
-        content.style.border = '2px solid #ef4444';
-        content.style.padding = '2rem';
-        content.style.borderRadius = '12px';
-        content.style.maxWidth = '400px';
-        content.style.textAlign = 'center';
-        content.style.color = 'white';
+        content.className = 'dkv-registration-modal-content';
 
         this.modalMsg = document.createElement('p');
-        this.modalMsg.style.marginBottom = '1.5rem';
-        this.modalMsg.style.fontSize = '1.1rem';
-        this.modalMsg.style.whiteSpace = 'pre-line';
-        this.modalMsg.style.lineHeight = '1.5';
+        this.modalMsg.className = 'dkv-registration-modal-message';
 
         this.okBtn = document.createElement('button');
         this.okBtn.className = 'dkv-button';
@@ -366,7 +445,7 @@ class RegistrationSlide {
         if (this.isModalActive) return;
 
         this.isModalActive = true;
-        this.lastFocusedElement = document.activeElement; // Fókusz mentése
+        this.lastFocusedElement = document.activeElement;
 
         this.modalMsg.textContent = msg;
         this.currentModalCallback = onClose;

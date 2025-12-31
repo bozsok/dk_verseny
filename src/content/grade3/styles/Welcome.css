@@ -1,0 +1,53 @@
+/* === GRADE 3 WELCOME SLIDE STYLES === */
+
+/* Layout */
+.dkv-welcome-slide .dkv-onboarding-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+}
+
+/* Title */
+.dkv-welcome-slide h1.dkv-slide-title {
+    font-family: 'Impact', sans-serif;
+    font-weight: normal;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    font-size: 2.5rem;
+    max-width: 940px;
+    margin: 0 auto 100px auto;
+    width: 100%;
+}
+
+/* Description Container */
+.dkv-welcome-slide .dkv-slide-description-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0 auto 2rem auto;
+    /* maxWidth configból jött volna, de ha fix, akkor: */
+    max-width: 940px;
+    /* Feltételezés a Title alapján */
+}
+
+/* Description Text */
+.dkv-welcome-slide p.dkv-slide-description {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    font-weight: 200;
+    color: #e2e8f0;
+    text-align: left;
+    margin: 0;
+    margin-bottom: 25px;
+}
+
+/* Button styles in main.css */
+/* Animációhoz (JS kezeli az opacity-t, de transition itt legyen) */
+.dkv-welcome-slide .dkv-start-button {
+    transition: opacity 1s ease, filter 0.3s ease, transform 0.3s ease;
+}
