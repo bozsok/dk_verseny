@@ -1,0 +1,167 @@
+/* Character Slide Styles - Grade 5 (Cyberpunk) */
+
+.dkv-grade-5 .dkv-character-slide .dkv-onboarding-container {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 60px;
+    align-items: flex-start;
+    width: 100%;
+    /* TEXT COLOR INHERITANCE FIX */
+    color: #0f0;
+    /* Neon Zöld */
+}
+
+.dkv-grade-5 .dkv-character-slide .dkv-character-header {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.dkv-grade-5 .dkv-character-slide .dkv-slide-title,
+.dkv-grade-5 .dkv-character-slide p {
+    color: #0f0;
+    font-family: 'Source Code Pro', monospace;
+    text-align: left;
+}
+
+/* === Toggle === */
+.dkv-grade-5 .dkv-toggle-block {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    margin-bottom: 35px;
+    width: 100%;
+}
+
+.dkv-grade-5 .dkv-character-slide .dkv-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.dkv-grade-5 .dkv-character-slide .dkv-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.dkv-grade-5 .dkv-character-slide .dkv-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000;
+    border: 1px solid #0f0;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.dkv-grade-5 .dkv-character-slide .dkv-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #0f0;
+    transition: .2s;
+}
+
+.dkv-grade-5 .dkv-character-slide input:checked+.dkv-slider:before {
+    transform: translateX(26px);
+    box-shadow: 0 0 10px #0f0;
+}
+
+/* === Cards === */
+.dkv-grade-5 .dkv-cards-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 30px;
+    margin-bottom: 35px;
+    width: 100%;
+}
+
+.dkv-grade-5 .dkv-char-card {
+    width: 130px;
+    height: 290px;
+    background: #000;
+    border: 1px solid #0f0;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dkv-grade-5 .dkv-char-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dkv-grade-5 .dkv-char-card:hover {
+    box-shadow: 0 0 20px #0f0;
+    transform: scale(1.05);
+}
+
+.dkv-grade-5 .dkv-char-card.selected {
+    box-shadow: 0 0 30px #0f0;
+    background: rgba(0, 255, 0, 0.1);
+}
+
+/* === Preview Modal === */
+.dkv-grade-5.dkv-preview-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 5, 0, 0.95);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dkv-grade-5 .dkv-preview-modal-content {
+    background: #000;
+    border: 1px solid #0f0;
+    box-shadow: 0 0 30px #0f0;
+    width: 700px;
+    height: 700px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dkv-grade-5 .dkv-preview-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #f00;
+    font-family: monospace;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.dkv-grade-5 .dkv-preview-select-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 10px 40px;
+    cursor: pointer;
+    font-family: 'Source Code Pro', monospace;
+    text-transform: uppercase;
+}

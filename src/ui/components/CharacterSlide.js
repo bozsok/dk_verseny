@@ -222,7 +222,7 @@ class CharacterSlide {
     const runToggleText = () => {
       if (sequenceFailed) return;
       this.typewriter.type(toggleLabelEl, toggleText, {
-        speed: speed || 20,
+        speed: (speed !== undefined && speed !== null) ? speed : 20,
         onComplete: () => {
           // Toggle szöveg végén levesszük a kurzort (VAGY megtartjuk, ha az a kérés, de most levesszük)
           const activeSpan = toggleLabelEl.querySelector('.dkv-cursor-active');
@@ -260,7 +260,7 @@ class CharacterSlide {
     const runFooter = () => {
       if (sequenceFailed) return;
       this.typewriter.type(footerEl, footerHTML, {
-        speed: footerSpeed || 20,
+        speed: (footerSpeed !== undefined && footerSpeed !== null) ? footerSpeed : 20,
         onComplete: showNextBtn
       });
     };
@@ -353,6 +353,15 @@ class CharacterSlide {
   _createPreviewModal() {
     this.previewModal = document.createElement('div');
     this.previewModal.className = 'dkv-preview-modal-overlay';
+
+    // Grade scope hozzáadása a PREVIEW MODAL-hoz is!
+    if (this.stateManager) {
+      const currentGrade = this.stateManager.getStateValue('currentGrade');
+      if (currentGrade) {
+        this.previewModal.classList.add(`dkv-grade-${currentGrade}`);
+      }
+    }
+
     this.previewModal.style.display = 'none'; // Inicializálás
     this.previewModal.setAttribute('role', 'dialog');
     this.previewModal.setAttribute('aria-modal', 'true');

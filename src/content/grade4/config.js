@@ -1,138 +1,93 @@
-/**
- * Grade 4 Configuration
- * A Titkos Kódvadászok
- */
 
 import { SLIDE_TYPES } from '../../core/engine/slides-config.js';
+import './styles/main.css';
+import './styles/Welcome.css';
+import './styles/Registration.css';
+import './styles/Character.css';
+
+// === GLOBÁLIS KONFIGURÁCIÓ (Grade 4) ===
+// Itt definiáljuk a 4. osztályos "Várkastély / Lovagi" (példa) arculat alapjait
+
+const GRADE_PATH = 'grade4';
+
+// Közös stílus definíciók (CSS változók vagy osztálynevek)
+const SHARED_BUTTON_STYLE = 'dkv-grade-4-button';
+// Ez a class a grade4/styles/main.css-ben lesz definiálva!
 
 export const createConfig = () => {
-    const slides = [];
-    let idCounter = 1;
+    // === 0. ONBOARDING ===
+    // Háttér: Placeholder
+    const bgImage = 'assets/images/grade4/onboarding_bg_placeholder.jpg';
 
-    // === KÖZÖS STÍLUSOK (SHARED STYLES) - GRADE 4 ALAP ===
-    // Jelenleg megegyezik a Grade 3-mal, de itt külön módosítható lesz!
-
-    // 1. Gombok
-    const SHARED_BUTTON_STYLE = {
-        background: '#00636e', // Grade 4 specifikus színre cserélhető
-        border: '2px solid #00eaff',
-        fontFamily: 'Impact, sans-serif',
-        color: '#ffffff',
-        fontSize: '1.5rem',
-        padding: '8px 28px',
-        letterSpacing: '1px',
-        fontWeight: 'normal',
-        textTransform: 'uppercase'
-    };
-
-    // 2. Főcímek (Pl. Welcome Screen)
-    const SHARED_TITLE_STYLE = {
-        color: '#ffffff',
-        fontFamily: 'Impact, sans-serif',
-        textShadow: 'none',
-        fontWeight: 'normal',
-        letterSpacing: '1px',
-        textAlign: 'left',
-        marginBottom: '100px'
-    };
-
-    // 3. Szövegtörzs / Instrukciók
-    const SHARED_TEXT_STYLE = {
-        color: '#ffffff',
-        fontFamily: '"Source Code Pro", monospace',
-        fontSize: '1.4rem',
-        lineHeight: '1.7',
-        fontWeight: '200',
-        textAlign: 'left'
-    };
-
-    const addSlide = (type, title, description, content = {}) => {
-        slides.push({
-            id: idCounter++,
-            type,
-            title,
-            description,
-            content,
-            isLocked: true,
-            completed: false
-        });
-    };
-
-    // === 0. REGISZTRÁCIÓ (Onboarding) ===
-    // Figyelem: A Grade 4 mappából töltjük a képet!
-    const bgImage = 'assets/images/grade4/onboarding_bg.jpg';
-
-    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, Kódvadász!', 'A küldetésed most veszi kezdetét.\nA <b>Hálózat</b> mélyén rejtőző titkokat kell feltárnod, hogy megvédd a digitális világot. Minden tudásodra szükség lesz, hogy feltörd a kódokat és elhárítsd a fenyegetést.\nKészülj fel, mert az <b>Idő</b> ketyeg, és a kihívások egyre nehezebbek lesznek.', {
-        buttonText: 'Indítás',
-        backgroundUrl: bgImage,
-        style: {
-            title: {
-                ...SHARED_TITLE_STYLE,
-                fontSize: '2.5rem',
-                maxWidth: '940px',
-                margin: '0 auto 100px auto'
-            },
-            description: {
-                ...SHARED_TEXT_STYLE,
-                gap: '25px'
-            },
-            button: SHARED_BUTTON_STYLE
-        }
-    });
-
-    addSlide(SLIDE_TYPES.REGISTRATION, 'Regisztráció', '', {
-        fields: ['name', 'nickname', 'classId'],
-        buttonText: 'Tovább',
-        backgroundUrl: bgImage,
-        validation: {
-            allowedClasses: ['4.a', '4.b', '4.c'] // GRADE 4 Osztályok
+    const slides = [
+        // 1. ÜDVÖZLŐ DIÁK (Welcome)
+        {
+            id: 'welcome_01',
+            type: SLIDE_TYPES.WELCOME,
+            isLocked: false,
+            completed: false,
+            title: 'Üdvözöllek, 4. osztályos Kódlovag!',
+            description: `Te már tapasztalt utazó vagy a <b>Kód Királyságban</b>.<br><br>
+            A feladatod most komolyabb: meg kell védened a várat a digitális ostromtól.<br>
+            A vírusok most erősebbek, de a tudásod is gyarapodott.`,
+            content: {
+                backgroundUrl: bgImage, // Vagy saját
+                typingSpeed: 0, // KIKAPCSOLVA (Azonnali megjelenés)
+                buttonText: 'Kalandra fel!',
+                // Stílusok -> CSS (Welcome.css)
+            }
         },
-        style: {
-            title: {
-                ...SHARED_TEXT_STYLE,
-                fontSize: '2rem',
-                marginBottom: '40px',
-                textAlign: 'center',
-                fontWeight: '400'
-            },
-            button: SHARED_BUTTON_STYLE
-        }
-    });
 
-    addSlide(SLIDE_TYPES.CHARACTER, 'Válassz karaktert!', 'Kattints a kártyára a nagyításhoz!', {
-        options: ['boy', 'girl'],
-        buttonText: 'Tovább',
-        backgroundUrl: bgImage,
-        style: {
-            title: {
-                ...SHARED_TEXT_STYLE,
-                fontSize: '1.5rem',
-                marginBottom: '15px',
-                textAlign: 'center',
-                fontWeight: '400'
-            },
-            description: {
-                ...SHARED_TEXT_STYLE,
-                color: '#cbd5e1',
-                fontSize: '1.1rem',
-                marginBottom: '30px',
-                textAlign: 'center'
-            },
-            button: SHARED_BUTTON_STYLE
-        }
-    });
+        // 2. REGISZTRÁCIÓ (Registration)
+        {
+            id: 'registration_01',
+            type: SLIDE_TYPES.REGISTRATION,
+            isLocked: true,
+            completed: false,
+            title: 'A Lovagi Tornához\nAdd meg az adataidat!',
+            description: '', // Regisztráció Slide CSS intézi
+            content: {
+                backgroundUrl: bgImage,
+                typingSpeed: 0, // KIKAPCSOLVA
+                buttonText: 'Tovább',
+                validation: {
+                    allowedClasses: ['4.a', '4.b', '4.c'] // Konfigurálható osztályok
+                }
+            }
+        },
 
-    // === 1. BEVEZETÉS (Intro) ===
-    addSlide(SLIDE_TYPES.VIDEO, 'A Vihar Közeleg 1/4', 'Bevezetés a Hálózatba...', { videoUrl: 'assets/videos/grade4/intro_1.mp4' });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Vihar Közeleg 2/4', 'A Glitch', { videoUrl: 'assets/videos/grade4/intro_2.mp4' });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Vihar Közeleg 3/4', 'A Védelmi Rendszer', { videoUrl: 'assets/videos/grade4/intro_3.mp4' });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Vihar Közeleg 4/4', 'Belépés', { videoUrl: 'assets/videos/grade4/intro_4.mp4' });
+        // 3. KARAKTERVÁLASZTÁS (Character)
+        {
+            id: 'character_select',
+            type: SLIDE_TYPES.CHARACTER,
+            isLocked: true,
+            completed: false,
+            title: 'Válaszd ki a hősödet!',
+            description: 'Ki vezesse a seregeet?', // CSS
+            content: {
+                backgroundUrl: bgImage,
+                typingSpeed: 0, // KIKAPCSOLVA
+                // Karakterek (Képek elérési útvonala)
+                // TODO: Grade 4 specifikus képek!
+                characters: {
+                    boy: [
+                        { id: 'b1', card: 'assets/images/grade3/characters/boy1_card.png', zoom: 'assets/images/grade3/characters/boy1_zoom.png' },
+                        { id: 'b2', card: 'assets/images/grade3/characters/boy2_card.png', zoom: 'assets/images/grade3/characters/boy2_zoom.png' },
+                        { id: 'b3', card: 'assets/images/grade3/characters/boy3_card.png', zoom: 'assets/images/grade3/characters/boy3_zoom.png' },
+                        { id: 'b4', card: 'assets/images/grade3/characters/boy4_card.png', zoom: 'assets/images/grade3/characters/boy4_zoom.png' }
+                    ],
+                    girl: [
+                        { id: 'g1', card: 'assets/images/grade3/characters/girl1_card.png', zoom: 'assets/images/grade3/characters/girl1_zoom.png' },
+                        { id: 'g2', card: 'assets/images/grade3/characters/girl2_card.png', zoom: 'assets/images/grade3/characters/girl2_zoom.png' },
+                        { id: 'g3', card: 'assets/images/grade3/characters/girl3_card.png', zoom: 'assets/images/grade3/characters/girl3_zoom.png' },
+                        { id: 'g4', card: 'assets/images/grade3/characters/girl4_card.png', zoom: 'assets/images/grade3/characters/girl4_zoom.png' }
+                    ]
+                }
+            }
+        },
 
-    // === 2. FELADATOK (Tasks) ===
-    addSlide(SLIDE_TYPES.TASK, 'Az Első Tűzfal', 'Törd fel a jelszót!', {
-        taskType: 'scramble',
-        difficulty: 'medium' // Grade 4 nehezebb
-    });
+        // ... TOVÁBBI TARTALOM (VIDEÓK, FELADATOK) KÉSŐBB ...
+    ];
 
     return slides;
 };

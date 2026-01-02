@@ -5,6 +5,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.4.3] - 2026-01-02
+### Javítva (Fixed)
+- **Typewriter Engine Upgrade:** A `Typewriter.js` utility frissítve lett, hogy korrektül kezelje a `speed: 0` beállítást. Az eddigi 30ms-os kényszerített minimum késleltetés helyett 0 esetén mostantól **azonnali, szinkron megjelenítést** végez (`bypass logic`), így a 4-5-6. osztályok statikus szövegei valóban azonnal jelennek meg.
+- **Modal Visibility:** Javítva a Regisztrációs és Karakterválasztó (Preview) modális ablakok láthatósági hibája a 4., 5. és 6. osztályoknál. A `document.body`-ba fűzött ablakok mostantól megkapják a megfelelő scope osztályt (`dkv-grade-X`), így öröklik a stílusokat.
+- **Character Slide Styles:**
+    - Pótolva a hiányzó Flexbox layout definíciók a Grade 4-6 CSS fájlokban, így a kártyák és a toggle kapcsoló helyesen jelennek meg.
+    - Javítva a szövegszín öröklődése: a `.dkv-character-slide` konténer mostantól közvetlenül definiálja a témaszínt, így minden belső elem (pl. `span`) helyesen jelenik meg.
+
+### Hozzáadva (Added)
+- **Multi-Grade Foundation:**
+    - Létrehozva a Grade 4 (Lovag), Grade 5 (Cyberpunk) és Grade 6 (Sci-Fi) teljes mappa- és fájlszerkezete (`config.js`, `styles/*.css`).
+    - **Scoped CSS Architecture:** Bevezetve a `.dkv-grade-X` alapú izoláció. A `main.js` automatikusan hozzáadja az évfolyam osztályát a fő konténerhez, a CSS fájlok pedig ez alá rendezik a szabályaikat, megakadályozva a stílusok keveredését.
+
 ## [0.4.2] - 2025-12-31
 ### Megváltoztatva (Changed)
 - **Visual Unification:** Teljeskörű szín- és stílus egységesítés a Grade 3 folyamatban. Minden szöveges tartalom (Címek, Leírások, Input címkék) mostantól a `main.css`-ből örökli a színét és árnyékát (`text-shadow`), garantálva a konzisztens arculatot.

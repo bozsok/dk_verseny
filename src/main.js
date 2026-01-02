@@ -287,6 +287,12 @@ class DigitalKulturaVerseny {
     const slideWrapper = document.createElement('div');
     slideWrapper.className = 'dkv-slide-wrapper';
 
+    // Grade-specific scope class hozzáadása (pl. dkv-grade-4)
+    const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
+    if (currentGrade) {
+      slideWrapper.classList.add(`dkv-grade-${currentGrade}`);
+    }
+
     // Globális háttérkép kezelése
     if (slide && slide.content && slide.content.backgroundUrl) {
       slideWrapper.style.backgroundImage = `url('${slide.content.backgroundUrl}')`;

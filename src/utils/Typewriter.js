@@ -67,12 +67,27 @@ class Typewriter {
             this.init(element, htmlContent);
         }
 
-        const speed = options.speed || 30;
+        const speed = (options.speed !== undefined && options.speed !== null) ? options.speed : 30;
         const showCursor = options.showCursor !== false;
         const onComplete = options.onComplete || (() => { });
 
         // Összes rejtett span összegyűjtése az elemen belül
         const charsToReveal = element.querySelectorAll('.dkv-tw-char');
+
+        // --- INSTANT DISPLAY CHECK ---
+        if (speed === 0) {
+            charsToReveal.forEach(span => {
+                span.style.opacity = '1';
+            });
+            // If cursor is requested, add to the last char
+            if (showCursor && charsToReveal.length > 0) {
+                charsToReveal[charsToReveal.length - 1].classList.add('dkv-cursor-active');
+                this._ensureCursorStyle(); // Ensure style is present for cursor
+            }
+            onComplete();
+            return;
+        }
+
         let index = 0;
         let lastSpan = null;
 

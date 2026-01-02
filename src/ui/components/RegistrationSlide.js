@@ -392,6 +392,15 @@ class RegistrationSlide {
     _createModal() {
         this.modal = document.createElement('div');
         this.modal.className = 'dkv-registration-modal-overlay';
+
+        // Grade scope hozzáadása a MODAL-hoz is, mert BODY-ba kerül!
+        if (this.stateManager) {
+            const currentGrade = this.stateManager.getStateValue('currentGrade');
+            if (currentGrade) {
+                this.modal.classList.add(`dkv-grade-${currentGrade}`);
+            }
+        }
+
         this.modal.style.display = 'none'; // Inicializálás
 
         this.modal.setAttribute('role', 'dialog');

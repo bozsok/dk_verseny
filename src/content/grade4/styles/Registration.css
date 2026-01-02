@@ -1,0 +1,86 @@
+/* Registration Slide Styles - Grade 4 */
+
+.dkv-grade-4 .dkv-registration-slide .dkv-input-field {
+    border: 2px solid #8b4513;
+    background: rgba(255, 248, 220, 0.9);
+    color: #4a0d0d;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 1.1rem;
+}
+
+/* Placeholder */
+.dkv-grade-4 .dkv-registration-slide .dkv-input-field::placeholder {
+    color: rgba(74, 13, 13, 0.5);
+    font-style: italic;
+}
+
+/* Validáció Státuszok */
+.dkv-grade-4 .dkv-input-success {
+    border-color: #2e8b57 !important;
+    /* SeaGreen */
+    background-color: #f0fff0 !important;
+    box-shadow: 0 0 10px rgba(46, 139, 87, 0.5);
+}
+
+.dkv-grade-4 .dkv-input-error {
+    border-color: #b22222 !important;
+    /* FireBrick */
+    background-color: #fff0f0 !important;
+    animation: dkv-g4-shake 0.3s ease-in-out;
+}
+
+@keyframes dkv-g4-shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* --- ERROR MODAL (Grade 4) --- */
+.dkv-grade-4.dkv-registration-modal-overlay {
+    /* Fontos: nincs szóköz, mert ugyanazon az elemen van! */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    /* Sötétebb overlay */
+    display: flex;
+    /* Flexbox a középhez */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.dkv-grade-4 .dkv-registration-modal-content {
+    background: #3d0e0e;
+    /* Mély bordó háttér */
+    padding: 30px 40px;
+    border: 4px solid #ffd700;
+    /* Arany keret */
+    border-radius: 8px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+}
+
+.dkv-grade-4 .dkv-registration-modal-message {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.5;
+}

@@ -1,0 +1,43 @@
+/* === GRADE 4 MAIN STYLES (Lovag/Várkastély) === */
+
+/* Gombok (Kőkemény reset a grade4 scope-on belül) */
+.dkv-grade-4 .dkv-button {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    padding: 12px 35px;
+    background: #5c1818;
+    /* Mélyvörös */
+    color: #ffd700;
+    /* Arany */
+    border: 3px solid #ffd700;
+    border-radius: 4px;
+    /* Szögletesebb */
+    box-shadow: 0 4px 0 #3d0e0e;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    text-shadow: 1px 1px 0 #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 1;
+    /* Reset */
+}
+
+.dkv-grade-4 .dkv-button:hover {
+    background: #7a2020;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #3d0e0e;
+}
+
+.dkv-grade-4 .dkv-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #3d0e0e;
+}
+
+/* Container */
+.dkv-grade-4 .dkv-slide-container {
+    border: 4px solid #4a3c31;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+}
