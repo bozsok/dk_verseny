@@ -28,6 +28,7 @@ class CharacterSlide {
     this.viewIsGirl = false;
     this.confirmedSelection = null;
     this.previewSelection = null;
+    this.selectionBonusShown = false;
 
     this.lastFocusedElement = null;
   }
@@ -517,6 +518,27 @@ class CharacterSlide {
   _confirmSelection() {
     if (this.previewSelection) {
       this.confirmedSelection = { ...this.previewSelection };
+
+      // Pontszám lekérése configból (vagy fallback 1)
+      const selectionPoints = (this.slideData.content && this.slideData.content.scoring && this.slideData.content.scoring.selection) || 1;
+
+      // Bónusz animáció (csak egyszer)
+      // Bónusz animáció (csak egyszer)
+      if (!this.selectionBonusShown) {
+        const cardIndex = this.confirmedSelection.index;
+
+        // Késleltetjük kicsit, hogy a modal eltűnése után látszódjon
+        setTimeout(() => {
+          // FONTOS: Újra kell keresni az elemet, mert a _renderCards időközben lefutott!
+          if (this.cardsContainer && this.cardsContainer.children[cardIndex]) {
+            const currentCardElement = this.cardsContainer.children[cardIndex];
+            this._showFloatingPoint(currentCardElement, selectionPoints);
+          }
+        }, 300);
+
+        this.selectionBonusShown = true;
+      }
+
       this._renderCards(); // Itt kell egy kis trükk, mert az alap renderCards nincs felkészítve a style megőrzésre
       // Frissítés után újra be kell állítani az opacity-t, különben eltűnnek
       Array.from(this.cardsContainer.children).forEach(card => {
@@ -543,12 +565,25 @@ class CharacterSlide {
     }
 
     const gender = this.confirmedSelection.isGirl ? 'girl' : 'boy';
-    const characterId = `${gender}_${this.confirmedSelection.index + 1} `;
+    const index = this.confirmedSelection.index;
+
+    // Keressük meg a configból a pontos URL-t
+    const characters = (this.slideData.content && this.slideData.content.characters && this.slideData.content.characters[gender]) || [];
+    const selectedCharData = characters[index] || {};
+    // Fallback URL, ha nincs a configban (ELŐNYBEN RÉSZESÍTVE AZ ICONT)
+    const avatarUrl = selectedCharData.icon || selectedCharData.card || `assets/images/characters/${gender}_${index + 1}.png`;
 
     if (this.stateManager) {
+      const currentScore = this.stateManager.getStateValue('score') || 0;
+
+      // Pontszám a configból (vagy fallback 1)
+      const selectionPoints = (this.slideData.content && this.slideData.content.scoring && this.slideData.content.scoring.selection) || 1;
+
       this.stateManager.updateState({
-        avatar: characterId
+        avatar: avatarUrl, // Ez most már a "small" képre mutat, ha van icon
+        score: currentScore + selectionPoints
       });
+      console.log(`Karakter választva. +${selectionPoints} Pont. Összpontszám:`, currentScore + selectionPoints);
     }
 
     this.onNext();
@@ -586,6 +621,26 @@ class CharacterSlide {
     };
 
     typeNext();
+  }
+  _showFloatingPoint(element, points) {
+    const rect = element.getBoundingClientRect();
+    const floatEl = document.createElement('div');
+    floatEl.className = 'dkv-floating-point';
+    floatEl.textContent = `+${points}`;
+
+    // Pozicionálás: az elem közepe-teteje
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const centerX = rect.left + scrollLeft + (rect.width / 2) - 10;
+
+    floatEl.style.left = `${centerX}px`;
+    floatEl.style.top = `${rect.top + scrollTop - 20}px`;
+
+    document.body.appendChild(floatEl);
+
+    setTimeout(() => {
+      if (floatEl.parentNode) floatEl.parentNode.removeChild(floatEl);
+    }, 1600);
   }
 }
 

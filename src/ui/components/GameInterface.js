@@ -18,6 +18,7 @@ class GameInterface {
         // State
         this.totalSlides = options.totalSlides || 28;
         this.currentSlideIndex = options.currentSlideIndex || 1;
+        this.currentDisplayedScore = 0;
 
         this.element = null;
         this.timelineBar = null;
@@ -36,6 +37,8 @@ class GameInterface {
         // Bal: Avatar + Név + PONT
         const leftGroup = document.createElement('div');
         leftGroup.className = 'dkv-hud-left-group';
+
+        // Kezdeti placeholder - updateHUD fogja frissíteni
         leftGroup.innerHTML = `
             <div class="dkv-avatar-circle"></div>
             <div class="dkv-user-info">
@@ -43,6 +46,17 @@ class GameInterface {
                 <span class="dkv-points">0 Pont</span>
             </div>
         `;
+
+        // Referenciák a frissítéshez
+        this.avatarEl = leftGroup.querySelector('.dkv-avatar-circle');
+        this.usernameEl = leftGroup.querySelector('.dkv-username');
+        this.pointsEl = leftGroup.querySelector('.dkv-points');
+
+        // Ha van már adat a State-ben, töltsük be (opcionális inicializálás)
+        if (this.options.stateManager) {
+            const state = this.options.stateManager.getState();
+            // Kicsit késleltetve vagy manuálisan hívjuk, de itt még lehet üres.
+        }
 
         // Közép: Idővonal (Timeline)
         const timeline = document.createElement('div');
@@ -174,6 +188,59 @@ class GameInterface {
         if (this.timelineText) {
             this.timelineText.textContent = `${pct}%`;
         }
+    }
+
+    /**
+     * HUD Adatok (Avatar, Név, Pont) frissítése
+     * @param {Object} state - A teljes Application State vagy { userProfile, score, avatar }
+     */
+    updateHUD(state = {}) {
+        if (!state) return;
+
+        // Avatar
+        if (this.avatarEl && state.avatar) {
+            this.avatarEl.style.backgroundImage = `url('${state.avatar}')`;
+            this.avatarEl.style.backgroundSize = 'cover';
+            this.avatarEl.style.backgroundPosition = 'center';
+        }
+
+        // Név (Becenév preferált)
+        if (this.usernameEl) {
+            const nick = (state.userProfile && state.userProfile.nickname) || state.nickname || 'Játékos';
+            this.usernameEl.textContent = nick;
+        }
+
+        // Pontszám Animált frissítése
+        if (this.pointsEl) {
+            const targetScore = (state.score !== undefined) ? state.score : 0;
+
+            if (targetScore !== this.currentDisplayedScore || this.pointsEl.textContent === '') {
+                this._animateScore(this.currentDisplayedScore, targetScore);
+                this.currentDisplayedScore = targetScore;
+            }
+        }
+    }
+
+    _animateScore(start, end) {
+        const duration = 1500;
+        const startTime = performance.now();
+        const element = this.pointsEl;
+
+        const step = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = progress * (2 - progress);
+
+            const current = Math.floor(start + (end - start) * ease);
+            element.textContent = `${current} Pont`;
+
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                element.textContent = `${end} Pont`;
+            }
+        };
+        requestAnimationFrame(step);
     }
 }
 

@@ -12,6 +12,7 @@ class TaskSlide {
         this.slideData = slideData;
         this.onComplete = options.onComplete || (() => { });
         this.apiService = options.apiService;
+        this.stateManager = options.stateManager; // State elmentése
 
         this.gameInterface = null;
         this.currentMockIndex = 1;
@@ -27,10 +28,16 @@ class TaskSlide {
             onPrev: () => this.handlePrev(),
             onOpenJournal: () => this.toggleJournal(),
             onOpenNarrator: () => this.toggleNarrator(),
-            onOpenSettings: () => this.openSettings()
+            onOpenSettings: () => this.openSettings(),
+            stateManager: this.stateManager // Opcionálisan átadjuk lefelé is
         });
 
         const interfaceElement = this.gameInterface.createElement();
+
+        // HUD frissítése a State-ből (Avatar, Név, Pontszám)
+        if (this.stateManager) {
+            this.gameInterface.updateHUD(this.stateManager.getState());
+        }
 
         // Első tartalom betöltése
         this.updateContent();
@@ -59,21 +66,27 @@ class TaskSlide {
 
     // Külön metódusok a különböző felületek kezelésére
     toggleJournal() {
-        let journalPanel = document.querySelector('.dkv-journal-panel');
+        let journalPanel = this.gameInterface.element.querySelector('.dkv-journal-panel');
 
         // Ha nem létezik, létrehozzuk és a gameInterface-hez adjuk
         if (!journalPanel) {
             journalPanel = document.createElement('div');
             journalPanel.className = 'dkv-journal-panel';
             journalPanel.innerHTML = `
-                <h2 style="color: #fff; border-bottom: 1px solid #444; padding-bottom: 10px;">📓 Küldetésnapló</h2>
-                <textarea style="width: 100%; height: 300px; background: #222; color: #eee; border: 1px solid #555; padding: 10px; resize: none;" placeholder="Írd ide a jegyzeteidet..."></textarea>
-                <button class="dkv-button" style="margin-top: 20px;">Bezárás</button>
+                <div class="dkv-panel-header">
+                    <h2>Küldetésnapló</h2>
+                </div>
+                <div class="dkv-panel-body">
+                    <textarea placeholder="Írd ide a jegyzeteidet..."></textarea>
+                </div>
+                <div class="dkv-panel-footer">
+                    <button class="dkv-button">Bezárás</button>
+                </div>
             `;
             // Bezárás gomb
             journalPanel.querySelector('button').onclick = () => journalPanel.classList.remove('open');
 
-            document.body.appendChild(journalPanel);
+            this.gameInterface.element.appendChild(journalPanel);
 
             // Bezárás ha mellé kattintunk
             document.addEventListener('mousedown', (e) => {
@@ -94,73 +107,98 @@ class TaskSlide {
     }
 
     toggleNarrator() {
-        let narratorBox = document.querySelector('.dkv-narrator-box');
+        // 1. Megpróbáljuk megkeresni a MEGLÉVŐ dobozt a container-ben
+        let narratorBox = this.gameInterface.element.querySelector('.dkv-narrator-box');
+
+        // Biztonsági ellenőrzés: Ha véletlenül a body-ban maradt volna egy árva példány (korábbi hibából), töröljük
+        const orphanBox = document.body.querySelector(':scope > .dkv-narrator-box');
+        if (orphanBox) orphanBox.remove();
 
         if (!narratorBox) {
+            // LÉTREHOZÁS
             narratorBox = document.createElement('div');
             narratorBox.className = 'dkv-narrator-box';
-            // Placeholder tartalom
+
+            // Tartalom (X ikonnal, footer gomb nélkül)
             narratorBox.innerHTML = `
-                <h3 style="text-align: center; border-bottom: 2px solid #5d4037; padding-bottom: 10px; margin-bottom: 15px;">Történet</h3>
-                <p><i>"A digitális szél süvített a szervertermek között, ahogy közeledtél a központi egységhez..."</i></p>
-                <p>Ezen a lapon mindig visszaolvashatod az aktuális helyzethez tartozó leírást.</p>
-                <div style="text-align: center; margin-top: 20px;">
-                    <button class="dkv-button" style="font-size: 0.8rem; padding: 5px 15px; background: #8d6e63;">Lap bezárása</button>
+                <div class="dkv-panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Történet</h2>
+                    <div class="dkv-close-icon" style="cursor: pointer; font-size: 24px; line-height: 1;">✕</div>
+                </div>
+                <div class="dkv-panel-body">
+                    <p><i>"A digitális szél süvített a szervertermek között, ahogy közeledtél a központi egységhez..."</i></p>
+                    <p>Ezen a lapon mindig visszaolvashatod az aktuális helyzethez tartozó leírást.</p>
                 </div>
             `;
 
-            narratorBox.querySelector('button').onclick = () => narratorBox.classList.remove('open');
-
-            // Hozzáadjuk a game interface-hez
+            // GameInterface-hez adjuk (Fontos a Scope miatt!)
             this.gameInterface.element.appendChild(narratorBox);
+
+            // X ikon Eseménykezelő (Csak létrehozáskor kell bekötni, mert az innerHTML nem változik később)
+            const closeIcon = narratorBox.querySelector('.dkv-close-icon');
+            if (closeIcon) {
+                // Fontos: Arrow function, hogy a "narratorBox" variable-t zárja magába (closure)
+                closeIcon.onclick = (e) => {
+                    e.stopPropagation(); // Ne buborékoljon fel (bár itt mindegy)
+                    narratorBox.classList.remove('open');
+                };
+            }
         }
+
+        // TOGGLE MŰKÖDÉS (Megnyitás/Bezárás)
+        // Kicsit trükkös: Ha épp most hoztuk létre, akkor nincs 'open' class-a, tehát a toggle hozzáadja -> Megnyílik. Helyes.
+        // Ha már ott volt és nyitva van -> Bezáródik. Helyes.
+        // Ha már ott volt és csukva van -> Megnyílik. Helyes.
+
+        // Kényszerítsünk egy reflow-t a biztonság kedvéért animáció előtt
+        void narratorBox.offsetWidth;
 
         narratorBox.classList.toggle('open');
     }
 
     openSettings() {
-        // Ez marad modal, de áthelyezzük (CSS intézi a középre igazítást, de a gomb már fent van)
-        // A kérés szerint "jobb felső sarokba" kerüljön a modal tartalom? 
-        // A kérés pontosan: "legyen eltartással a globális időzítőtől".
-        // Mivel a .dkv-modal-overlay center-t használ, ezt felülírjuk inline style-al ennél a hívásnál vagy módosítjuk a CSS-t.
-        // Egyszerűbb, ha a modal content-et igazítjuk.
+        let settingsPanel = this.gameInterface.element.querySelector('.dkv-settings-panel');
 
-        this.modalContainer.style.display = 'flex';
-        this.modalContainer.style.justifyContent = 'flex-end'; // Jobbra igazítás
-        this.modalContainer.style.alignItems = 'flex-start'; // Fentre igazítás
-        this.modalContainer.style.padding = '100px 50px'; // Eltartás a HUD-tól és a szélektől
+        if (!settingsPanel) {
+            settingsPanel = document.createElement('div');
+            settingsPanel.className = 'dkv-settings-panel'; // Új osztály
 
-        this.modalContainer.innerHTML = ''; // Reset
+            // Fix pozíció jobb felül (inline style VAGY CSS class, de itt most megadjuk a struktúrát)
+            // A CSS fogja a helyére tenni (.dkv-settings-panel { position: fixed; top: ... right: ... })
 
-        const content = document.createElement('div');
-        content.className = 'dkv-modal-content dkv-settings-content';
-        content.style.width = '300px'; // Keskenyebb
+            settingsPanel.innerHTML = `
+                <div class="dkv-panel-header">
+                    <h2>Beállítások</h2>
+                </div>
+                <div class="dkv-panel-body" style="padding-bottom: 30px;">
+                    <div class="dkv-setting-row" style="margin-bottom: 20px;">
+                        <label style="display:block; margin-bottom:5px;">Zene hangerő</label>
+                        <input type="range" min="0" max="100" value="50" style="width:100%;">
+                    </div>
+                    
+                    <div class="dkv-setting-row">
+                        <label style="display:block; margin-bottom:5px;">Narrátor hangerő</label>
+                        <input type="range" min="0" max="100" value="80" style="width:100%;">
+                    </div>
+                </div>
+            `;
 
-        content.innerHTML = `
-            <h2>⚙️ Beállítások</h2>
-            
-            <div class="dkv-setting-row">
-                <label>Zene Hangerő</label>
-                <input type="range" min="0" max="100" value="50">
-            </div>
-            
-            <div class="dkv-setting-row">
-                <label>Narrátor Hangerő</label>
-                <input type="range" min="0" max="100" value="80">
-            </div>
+            // Body-hoz adjuk, hogy a HUD felett lehessen (vagy gameInterface-be)
+            this.gameInterface.element.appendChild(settingsPanel);
 
-            <button class="dkv-button">Bezárás</button>
-        `;
+            // Click-outside
+            document.addEventListener('mousedown', (e) => {
+                if (settingsPanel.classList.contains('open') &&
+                    !settingsPanel.contains(e.target) &&
+                    !e.target.closest('button[title="Beállítások"]')) {
+                    settingsPanel.classList.remove('open');
+                }
+            });
 
-        content.querySelector('button').onclick = () => {
-            this.modalContainer.style.display = 'none';
-            // Visszaállítjuk az alap stílust, ha más modal használná
-            this.modalContainer.style.justifyContent = '';
-            this.modalContainer.style.alignItems = '';
-            this.modalContainer.style.padding = '';
-        };
+            void settingsPanel.offsetWidth;
+        }
 
-        this.modalContainer.appendChild(content);
+        settingsPanel.classList.toggle('open');
     }
 
     updateContent() {

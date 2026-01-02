@@ -5,6 +5,26 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.4.5] - 2026-01-02
+### Hozzáadva (Added)
+- **Dynamic HUD System:**
+    - **Live HUD:** Dinamikus Heads-Up Display a játékfelületen, amely valós időben mutatja a játékos nevét, profilképét és pontszámát.
+    - **Score Animation:** A pontszámváltozás látványosan animálva (felpörögve) jelenik meg.
+    - **Gamification:**
+        - **Floating Points:** "Lebegő +1" animáció sikeres adatmegadáskor és karakterválasztáskor.
+        - **Delayed Transition:** Késleltetett (1s) továbbhaladás a regisztrációnál a vizuális visszajelzés érdekében.
+        - **Narrator Transition:** A Narráció panel mostantól finom áttűnéssel (opacity fade-in) jelenik meg.
+        - **Visual Consistency:** A Regisztrációs "Tovább" gomb inaktív állapota vizuálisan egységesítve a Karakterválasztó gombjával.
+- **Configurable Scoring:**
+    - A pontozás (`scoring`) mostantól a `config.js`-ben állítható.
+- **State Management:**
+    - Kibővített `GameStateManager` (userProfile, avatar, score) és automatikus Session Reset.
+
+### Javítva (Fixed)
+- **Character Selection Bug:** Javítva a "+1" animáció hiánya a DOM frissítés után.
+- **HUD Data Sync:** Helyes adatátadás (`stateManager`) a `TaskSlide`-nak.
+- **Score Logic:** Javított pontlevonás (silent validáció nem büntet).
+
 ## [0.4.4] - 2026-01-02
 ### Hozzáadva (Added)
 - **Unified Game Interface:**

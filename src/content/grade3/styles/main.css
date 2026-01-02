@@ -103,3 +103,204 @@
     transform: none;
     /* Letiltja a globális elmozdulást */
 }
+
+/* === 3. GAME INTERFACE (Unified) - Grade 3 Override === */
+
+/* -- Typography -- */
+.dkv-grade-3 .dkv-game-interface {
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 200;
+}
+
+.dkv-grade-3 .dkv-game-interface h1,
+.dkv-grade-3 .dkv-game-interface h2,
+.dkv-grade-3 .dkv-game-interface h3,
+.dkv-grade-3 .dkv-username {
+    font-family: 'Impact', sans-serif !important;
+    letter-spacing: 1px;
+    font-weight: normal;
+}
+
+/* -- Buttons (Function & Nav) -- */
+.dkv-grade-3 .dkv-func-btn,
+.dkv-grade-3 .dkv-nav-arrow {
+    background: #00636e !important;
+    /* Grade 3 Dark Turquoise */
+    border: 2px solid #00eaff !important;
+    /* Neon Cyan Border */
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    /* Consistent with Intro buttons */
+    transition: all 0.3s ease !important;
+    backdrop-filter: none !important;
+    /* Override glassmorphism */
+}
+
+.dkv-grade-3 .dkv-func-btn:hover,
+.dkv-grade-3 .dkv-nav-arrow:hover {
+    background: #007582 !important;
+    background: #007582;
+    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+    transform: scale(1.05);
+}
+
+/* -- Panels Structure & Layout (Flexbox) -- */
+.dkv-grade-3 .dkv-journal-panel,
+/* .dkv-grade-3 .dkv-narrator-box, REMOVED from here to fix toggle issue */
+.dkv-grade-3 .dkv-modal-content,
+.dkv-grade-3 .dkv-settings-panel {
+    /* Added Settings Panel */
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-family: 'Source Code Pro', monospace;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Narrator Box: Specific handling for toggle visibility */
+.dkv-grade-3 .dkv-narrator-box {
+    display: none;
+    /* Hidden by default */
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-family: 'Source Code Pro', monospace;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dkv-grade-3 .dkv-narrator-box.open {
+    display: flex;
+    /* Visible explicitly when open */
+}
+
+/* -- Buttons inside Panel Footer -- */
+.dkv-grade-3 .dkv-panel-footer .dkv-button {
+    background: #00636e;
+    border: 2px solid #00eaff;
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+    color: white;
+    font-family: 'Impact', sans-serif;
+    font-size: 1.2rem;
+    font-weight: normal;
+    /* Slightly smaller for panels */
+    border-radius: 10px;
+    padding: 8px 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: 1px;
+}
+
+.dkv-grade-3 .dkv-panel-footer .dkv-button:hover {
+    background: #007582 !important;
+    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6) !important;
+    transform: scale(1.05);
+}
+
+/* -- Inner Layout -- */
+.dkv-grade-3 .dkv-panel-header {
+    padding: 1.5rem 2rem 1rem 2rem;
+    flex-shrink: 0;
+}
+
+.dkv-grade-3 .dkv-panel-body {
+    flex: 1;
+    /* Fills remaining space */
+    padding: 0 2rem;
+    overflow-y: auto;
+    /* Scrollable content */
+    display: flex;
+    flex-direction: column;
+}
+
+.dkv-grade-3 .dkv-panel-footer {
+    padding: 1.5rem 2rem;
+    flex-shrink: 0;
+    margin-top: auto;
+    /* Push to bottom if body doesn't fill */
+}
+
+/* -- Narrator Specifics -- */
+.dkv-grade-3 .dkv-narrator-box {
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    /* Dimensions handled globally or by inline style, but usually it's fixed size in center */
+}
+
+/* -- Headings -- */
+.dkv-grade-3 .dkv-panel-header h2,
+.dkv-grade-3 .dkv-panel-header h3 {
+    color: #fff !important;
+    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+    margin: 0;
+}
+
+/* -- Content Elements -- */
+.dkv-grade-3 .dkv-panel-body textarea {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid #00eaff !important;
+    color: #fff !important;
+    font-family: 'Source Code Pro', monospace !important;
+    border-radius: 10px;
+    resize: none;
+    padding: 10px;
+}
+
+.dkv-grade-3 .dkv-modal-content input[type="range"] {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid #00eaff !important;
+    border-radius: 5px;
+}
+/* Floating Point Animation */
+.dkv-floating-point {
+    position: absolute;
+    color: #ffd700;
+    font-size: 1.5rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 100;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    animation: floatUp 1.5s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(1);
+    }
+}
+
+/* Narrator Transition Override */
+.dkv-grade-3 .dkv-narrator-box {
+    display: flex !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.dkv-grade-3 .dkv-narrator-box.open {
+    opacity: 1;
+    pointer-events: auto;
+}

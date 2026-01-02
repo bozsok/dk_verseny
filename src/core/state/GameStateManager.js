@@ -26,9 +26,15 @@ class GameStateManager {
       currentGrade: null,        // Kiválasztott évfolyam (3, 4, 5, 6)
       gamePhase: 'hub',          // hub, grade-select, game, completed
       currentLevel: 1,           // Jelenlegi szint
+
+      // Felhasználói adatok (ÚJ)
+      userProfile: null,         // { name, nickname, classId }
+      avatar: null,              // Választott karakter URL vagy ID
+      score: 0,                  // Aktuális pontszám (Rövid távú / Session)
+
       progress: {
         completedLevels: [],     // Befejezett szintek listája
-        totalScore: 0,           // Teljes pontszám
+        totalScore: 0,           // Teljes pontszám (Hosszú távú)
         timeSpent: 0,            // Eltöltött idő (másodpercben)
         achievements: []         // Elért eredmények
       },
@@ -222,6 +228,21 @@ class GameStateManager {
       if (phases.includes(updates.gamePhase)) {
         validated.gamePhase = updates.gamePhase;
       }
+    }
+
+    // User Profile
+    if (updates.userProfile !== undefined) {
+      validated.userProfile = updates.userProfile;
+    }
+
+    // Avatar
+    if (updates.avatar !== undefined) {
+      validated.avatar = updates.avatar;
+    }
+
+    // Score
+    if (updates.score !== undefined) {
+      validated.score = updates.score;
     }
 
     // progress validáció

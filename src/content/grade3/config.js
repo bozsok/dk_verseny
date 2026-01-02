@@ -45,26 +45,34 @@ export const createConfig = () => {
         backgroundUrl: bgImage,
         validation: {
             allowedClasses: ['3.a', '3.b', '3.c']
+        },
+        scoring: {
+            name: 1,
+            nick: 1,
+            classId: 1
         }
     });
 
     addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!\nA karakterek kattintással nagyíthatók!', '', {
         characters: {
             boy: [
-                { id: 'b1', card: 'assets/images/grade3/karakter/boy_1.jpg', zoom: 'assets/images/grade3/karakter/large/boy_1_n.jpg' },
-                { id: 'b2', card: 'assets/images/grade3/karakter/boy_2.jpg', zoom: 'assets/images/grade3/karakter/large/boy_2_n.jpg' },
-                { id: 'b3', card: 'assets/images/grade3/karakter/boy_3.jpg', zoom: 'assets/images/grade3/karakter/large/boy_3_n.jpg' },
-                { id: 'b4', card: 'assets/images/grade3/karakter/boy_4.jpg', zoom: 'assets/images/grade3/karakter/large/boy_4_n.jpg' }
+                { id: 'b1', card: 'assets/images/grade3/karakter/boy_1.jpg', zoom: 'assets/images/grade3/karakter/large/boy_1_n.jpg', icon: 'assets/images/grade3/karakter/small/boy_1_k.jpg' },
+                { id: 'b2', card: 'assets/images/grade3/karakter/boy_2.jpg', zoom: 'assets/images/grade3/karakter/large/boy_2_n.jpg', icon: 'assets/images/grade3/karakter/small/boy_2_k.jpg' },
+                { id: 'b3', card: 'assets/images/grade3/karakter/boy_3.jpg', zoom: 'assets/images/grade3/karakter/large/boy_3_n.jpg', icon: 'assets/images/grade3/karakter/small/boy_3_k.jpg' },
+                { id: 'b4', card: 'assets/images/grade3/karakter/boy_4.jpg', zoom: 'assets/images/grade3/karakter/large/boy_4_n.jpg', icon: 'assets/images/grade3/karakter/small/boy_4_k.jpg' }
             ],
             girl: [
-                { id: 'g1', card: 'assets/images/grade3/karakter/girl_1.jpg', zoom: 'assets/images/grade3/karakter/large/girl_1_n.jpg' },
-                { id: 'g2', card: 'assets/images/grade3/karakter/girl_2.jpg', zoom: 'assets/images/grade3/karakter/large/girl_2_n.jpg' },
-                { id: 'g3', card: 'assets/images/grade3/karakter/girl_3.jpg', zoom: 'assets/images/grade3/karakter/large/girl_3_n.jpg' },
-                { id: 'g4', card: 'assets/images/grade3/karakter/girl_4.jpg', zoom: 'assets/images/grade3/karakter/large/girl_4_n.jpg' }
+                { id: 'g1', card: 'assets/images/grade3/karakter/girl_1.jpg', zoom: 'assets/images/grade3/karakter/large/girl_1_n.jpg', icon: 'assets/images/grade3/karakter/small/girl_1_k.jpg' },
+                { id: 'g2', card: 'assets/images/grade3/karakter/girl_2.jpg', zoom: 'assets/images/grade3/karakter/large/girl_2_n.jpg', icon: 'assets/images/grade3/karakter/small/girl_2_k.jpg' },
+                { id: 'g3', card: 'assets/images/grade3/karakter/girl_3.jpg', zoom: 'assets/images/grade3/karakter/large/girl_3_n.jpg', icon: 'assets/images/grade3/karakter/small/girl_3_k.jpg' },
+                { id: 'g4', card: 'assets/images/grade3/karakter/girl_4.jpg', zoom: 'assets/images/grade3/karakter/large/girl_4_n.jpg', icon: 'assets/images/grade3/karakter/small/girl_4_k.jpg' }
             ]
         },
         buttonText: 'Tovább',
-        backgroundUrl: bgImage
+        backgroundUrl: bgImage,
+        scoring: {
+            selection: 1
+        }
     });
 
     // 4. JÁTÉKFELÜLET DEMO (Task Slide)

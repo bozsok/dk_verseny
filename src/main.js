@@ -230,10 +230,13 @@ class DigitalKulturaVerseny {
       this.logger.info('Grade selected', { grade });
     }
 
-    // State frissítése
+    // State frissítése (Reseteljük a session adatokat)
     this.stateManager.updateState({
       currentGrade: grade,
-      gamePhase: 'grade-select'
+      gamePhase: 'grade-select',
+      score: 0,
+      userProfile: null,
+      avatar: null
     });
 
     // Verseny időzítő indítása - KIVÉVE! A WelcomeSlide indítja majd.
@@ -317,7 +320,8 @@ class DigitalKulturaVerseny {
           // TODO: Outro képernyő
         }
       },
-      apiService: this.apiService
+      apiService: this.apiService,
+      stateManager: this.stateManager // Hozzáadva minden slide számára
     };
 
     switch (slide.type) {

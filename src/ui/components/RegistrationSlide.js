@@ -28,6 +28,22 @@ class RegistrationSlide {
             classId: false
         };
 
+        // Pontozás: Configból vagy alapértelmezett
+        const scoringConfig = (this.slideData.content && this.slideData.content.scoring) || { name: 1, nick: 1, classId: 1 };
+        this.earnedPoints = { ...scoringConfig };
+        // Flag, hogy csak az első hiba számítson (vagy úgy általában ha már hibázott)
+        this.fieldErrorOccurred = {
+            name: false,
+            nick: false,
+            classId: false
+        };
+        // Csak egyszer mutassuk az animációt
+        this.pointsShown = {
+            name: false,
+            nick: false,
+            classId: false
+        };
+
         this.isModalActive = false; // Kizárólagosság kezelése
         this.element = null;
         this.nextBtn = null;
@@ -35,13 +51,9 @@ class RegistrationSlide {
         this.lastFocusedElement = null; // Ide mentjük a fókuszt nyitáskor
     }
 
-
-
     createElement() {
         this.element = document.createElement('div');
         this.element.className = 'dkv-slide-container dkv-registration-slide';
-
-
 
         // Belső konténer
         const container = document.createElement('div');
@@ -61,24 +73,14 @@ class RegistrationSlide {
         titleLines.forEach((line, index) => {
             if (!line.trim()) return;
 
-            // Az első sor legyen h2, a többi p (vagy mind h2 style?)
-            // A User configjában egyetlen 'title' style van. Alkalmazzuk mindegyikre.
             const el = document.createElement(index === 0 ? 'h2' : 'p');
             el.className = index === 0 ? 'dkv-slide-title' : 'dkv-slide-description';
-
-            if (index === 0) {
-            }
-            // else ág törölve, CSS kezeli az algímet
 
             // Typewriter INIT
             if (typingSpeed > 0) {
                 this.typewriter.init(el, line);
             } else {
                 el.innerHTML = line;
-            }
-
-            if (index > 0) {
-                // ...
             }
 
             infoContainer.appendChild(el);
@@ -88,14 +90,6 @@ class RegistrationSlide {
         // Form létrehozása
         const form = document.createElement('div');
         form.className = 'dkv-form-container';
-
-        // Ha van gépelés, a formot elrejthetjük, amíg ki nem íródik? 
-        // Vagy megjelenhet azonnal? A User nem kérte a form rejtését.
-        // De az "onboarding" élmény miatt szebb, ha a szöveg után jön.
-        // Ha van gépelés, a formot elrejthetjük, amíg ki nem íródik? 
-        // Vagy megjelenhet azonnal? A User nem kérte a form rejtését.
-        // De az "onboarding" élmény miatt szebb, ha a szöveg után jön.
-        /* Korábbi logika törölve, lentebb kezeljük az egyes elemeket */
 
         // Inputok létrehozása (validációs callbackkel)
         this.nameInput = this._createInput('Mi a teljes neved?', 'Kiss Pál', 'name');
@@ -107,13 +101,9 @@ class RegistrationSlide {
         this.nextBtn.className = 'dkv-button dkv-onboarding-next-btn';
         this.nextBtn.textContent = (this.slideData.content && this.slideData.content.buttonText) || 'Tovább';
 
-        /* Opacity logika áthelyezve lentebb */
-
         // Ha van gépelés, az elemeket (Inputok + Gomb) egyesével jelenítjük meg
         const elementsToAnimate = [];
         if (typingSpeed > 0) {
-            // Form konténer látható, de a gyerekek (input groupok) rejtve
-            // this.nameInput.container stb.
             elementsToAnimate.push(this.nameInput.container);
             elementsToAnimate.push(this.nickInput.container);
             elementsToAnimate.push(this.classIdInput.container);
@@ -124,12 +114,6 @@ class RegistrationSlide {
                 el.style.transition = 'opacity 0.6s ease';
             });
         }
-
-        // Tovább Gomb
-        // ... már létrehoztuk feljebb, de a style beállítást itt felülírjuk a fenti ciklussal ha kell
-
-        // Gomb stílus alkalmazása (ITT A LÉNYEG!)
-        // CSS kezeli (.dkv-button)
 
         this.nextBtn.onclick = () => this.handleSubmit();
 
@@ -208,9 +192,6 @@ class RegistrationSlide {
         lbl.textContent = label;
         lbl.className = 'dkv-input-label';
 
-        // Config stílusok alkalmazása a labelre
-        // Config stílusok alkalmazása már nem szükséges (CSS kezeli)
-
         const inp = document.createElement('input');
         inp.type = 'text';
         inp.placeholder = placeholder;
@@ -224,8 +205,6 @@ class RegistrationSlide {
 
         // onBlur esemény - Validáció és Formázás
         inp.onblur = () => {
-            // Ha a mező üres, akkor 'csendes' (silent) validációt futtatunk (NINCS Modal).
-            // Ha van benne adat, de hibás, akkor 'hangos' (Modal).
             const isEmpty = inp.value.trim().length === 0;
             this._validateField(type, inp, isEmpty);
         };
@@ -288,10 +267,25 @@ class RegistrationSlide {
             inputElement.classList.remove('dkv-input-error');
             inputElement.classList.add('dkv-input-success');
             this.isValid[type] = true;
+
+            // JUTALOM ANIMÁCIÓ
+            if (!this.pointsShown[type] && this.earnedPoints[type] > 0) {
+                this.pointsShown[type] = true;
+                this._showFloatingPoint(inputElement, this.earnedPoints[type]);
+            }
         } else {
+            // HIBA TÖRTÉNT! Pont levonás.
+            // CSAK akkor vonunk pontot, ha NEM csendes validáció (azaz a user beírt valamit, ami rossz, vagy rányomott a Tovább gombra)
+            if (!silent && !this.fieldErrorOccurred[type]) {
+                this.fieldErrorOccurred[type] = true;
+                this.earnedPoints[type] = 0; // Pont levonás
+                console.log(`Pont elveszítve a(z) ${type} mezőnél hibás kitöltés miatt.`);
+            }
+
             inputElement.classList.remove('dkv-input-success');
             inputElement.classList.add('dkv-input-error');
             this.isValid[type] = false;
+
             if (!silent && error) {
                 this.showErrorModal(error, () => {
                     inputElement.focus();
@@ -513,6 +507,9 @@ class RegistrationSlide {
             return;
         }
 
+        // Összesítés
+        const currentScore = (this.earnedPoints.name + this.earnedPoints.nick + this.earnedPoints.classId);
+
         const userProfile = {
             name: this.nameInput.input.value,
             nickname: this.nickInput.input.value,
@@ -521,10 +518,44 @@ class RegistrationSlide {
 
         if (this.stateManager) {
             this.stateManager.updateState({ userProfile });
-            console.log('Sending user data to server...', userProfile);
+
+            // Pontszám hozzáadása (meglévőhöz, vagy 0-hoz)
+            const oldScore = this.stateManager.getStateValue('score') || 0;
+            this.stateManager.updateState({ score: oldScore + currentScore });
+
+            console.log('Sikeres regisztráció. Szerzett pontok:', currentScore, 'Összpontszám:', oldScore + currentScore);
         }
 
-        this.onNext();
+        // Késleltetett továbbítás, hogy az animáció látható legyen
+        if (this.nextBtn) {
+            this.nextBtn.disabled = true;
+            this.nextBtn.style.opacity = '0.5';
+        }
+
+        setTimeout(() => {
+            this.onNext();
+        }, 1000);
+    }
+    _showFloatingPoint(element, points) {
+        const rect = element.getBoundingClientRect();
+        const floatEl = document.createElement('div');
+        floatEl.className = 'dkv-floating-point';
+        floatEl.textContent = `+${points}`;
+
+        // Pozicionálás: az elem jobb oldalához igazítva, kicsit feljebb
+        // Mivel absolute, a page koordinátákat kell használni (scroll esetén is működjön)
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        floatEl.style.left = `${rect.right + scrollLeft - 40}px`; // Jobb szélétől kicsit beljebb
+        floatEl.style.top = `${rect.top + scrollTop - 20}px`;
+
+        document.body.appendChild(floatEl);
+
+        // Takarítás
+        setTimeout(() => {
+            if (floatEl.parentNode) floatEl.parentNode.removeChild(floatEl);
+        }, 1600);
     }
 }
 
