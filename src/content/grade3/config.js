@@ -67,7 +67,12 @@ export const createConfig = () => {
         backgroundUrl: bgImage
     });
 
-    // === 1. BEVEZETÉS (Intro) ===
+    // 4. JÁTÉKFELÜLET DEMO (Task Slide)
+    addSlide(SLIDE_TYPES.TASK, 'Játékfelület Prototípus (Varázserdő)', 'Grade 3 Interface Test', {
+        taskId: 'demo_03',
+        taskType: 'puzzle',
+        points: 100
+    });
     addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 1/4', 'A sötét felhők gyülekeznek...', { videoUrl: 'assets/videos/grade3/intro_1.mp4' });
     addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 2/4', 'A titkos üzenet', { videoUrl: 'assets/videos/grade3/intro_2.mp4' });
     addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 3/4', 'A Bölcsek Tanácsa', { videoUrl: 'assets/videos/grade3/intro_3.mp4' });

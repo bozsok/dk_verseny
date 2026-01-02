@@ -68,6 +68,19 @@ export const createConfig = () => {
                     ]
                 }
             }
+        },
+        {
+            id: 'game_interface_demo',
+            type: SLIDE_TYPES.TASK,
+            isLocked: true,
+            completed: false,
+            title: 'Játékfelület Prototípus (Mátrix)',
+            description: 'Grade 5 Interface Test',
+            content: {
+                taskId: 'demo_05',
+                taskType: 'puzzle',
+                points: 100
+            }
         }
     ];
     return slides;

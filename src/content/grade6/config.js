@@ -69,6 +69,19 @@ export const createConfig = () => {
                     ]
                 }
             }
+        },
+        {
+            id: 'game_interface_demo',
+            type: SLIDE_TYPES.TASK,
+            isLocked: true,
+            completed: false,
+            title: 'Játékfelület Prototípus (Sci-Fi)',
+            description: 'Grade 6 Interface Test',
+            content: {
+                taskId: 'demo_06',
+                taskType: 'puzzle',
+                points: 100
+            }
         }
     ];
     return slides;

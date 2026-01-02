@@ -86,7 +86,20 @@ export const createConfig = () => {
             }
         },
 
-        // ... TOVÁBBI TARTALOM (VIDEÓK, FELADATOK) KÉSŐBB ...
+        // 4. JÁTÉKFELÜLET DEMO (Task Slide)
+        {
+            id: 'game_interface_demo',
+            type: SLIDE_TYPES.TASK, // Ez most a Demo módot indítja
+            isLocked: true,
+            completed: false,
+            title: 'Játékfelület Prototípus',
+            description: 'Ez a felület mutatja be az új egységes keretrendszert.',
+            content: {
+                taskId: 'demo_01',
+                taskType: 'puzzle',
+                points: 100
+            }
+        }
     ];
 
     return slides;

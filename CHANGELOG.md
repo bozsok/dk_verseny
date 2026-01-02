@@ -5,6 +5,20 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.4.4] - 2026-01-02
+### Hozzáadva (Added)
+- **Unified Game Interface:**
+    - Implementálva a közös játékfelület (`GameInterface.js`) a 3-6. évfolyamok számára.
+    - **Core UI Structure:** Top HUD (Avatar, Név, Pontszám, Idővonal), Jobb Oldalsáv (Leltár), Alsó Sáv (Navigáció, Funkció gombok).
+    - **Interactive Features:** 
+        - Balról beúszó **Küldetésnapló** panel (CSS Transition).
+        - Stilizált **Narráció** doboz (Könyv dizájn) a képernyőn.
+        - **Beállítások** panel pozícionálása a jobb felső sarokban, a Globális Időzítő mellett.
+    - **Navigation Logic:** Perzisztens Balra/Jobbra nyilak (SVG ikonok) a korábbi "Tovább" gomb helyett, amelyek mindig középre igazítva jelennek meg.
+    - **Quality of Life:**
+        - **Click-Outside-To-Close:** A panelek (Napló, Beállítások) mostantól bezáródnak, ha a felhasználó melléjük kattint.
+        - **Global Hero Timer:** A regisztrációnál indult időzítő (`dkv-timer-display`) sikeresen integrálva a játékfelület jobb felső sarkába (Z-index és layout korrekciók).
+
 ## [0.4.3] - 2026-01-02
 ### Javítva (Fixed)
 - **Typewriter Engine Upgrade:** A `Typewriter.js` utility frissítve lett, hogy korrektül kezelje a `speed: 0` beállítást. Az eddigi 30ms-os kényszerített minimum késleltetés helyett 0 esetén mostantól **azonnali, szinkron megjelenítést** végez (`bypass logic`), így a 4-5-6. osztályok statikus szövegei valóban azonnal jelennek meg.

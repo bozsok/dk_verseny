@@ -157,201 +157,7 @@ h3 {
   padding: 2px;
   background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.dkv-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  background: var(--dkv-bg-card-hover);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(59, 130, 246, 0.2);
-  /* Kék glow */
-  border-color: rgba(96, 165, 250, 0.4);
-}
-
-.dkv-card:hover::before {
-  opacity: 1;
-}
-
-/* Card Content Styling */
-.dkv-card-icon {
-  width: 48px;
-  height: 48px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--dkv-text-highlight);
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.dkv-card-icon svg {
-  width: 28px;
-  height: 28px;
-  fill: currentColor;
-}
-
-.dkv-card-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.dkv-card-title {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.dkv-card-description {
-  color: var(--dkv-text-highlight);
-  font-size: 0.95rem;
-  margin: 0;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  opacity: 0.9;
-}
-
-/* Locked State */
-.dkv-card-locked {
-  filter: grayscale(1);
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.dkv-card-locked:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-/* ============================================
-   CONTAINER & LAYOUT
-   ============================================ */
-
-.dkv-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
-
-.dkv-hub-header {
-  padding-top: 1rem;
-  text-align: center;
-}
-
-body {
-  font-family: var(--dkv-font-sans);
-  background-color: var(--dkv-bg-dark);
-  color: var(--dkv-text-main);
-  line-height: 1.6;
-
-  /* Background Image Setup */
-  background-image: url('/assets/hub-bg.png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-}
-
-/* Sötét Overlay a háttérre, hogy olvasható legyen a szöveg */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%);
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* ============================================
-   TYPOGRAPHY
-   ============================================ */
-
-h1,
-h2,
-h3 {
-  color: var(--dkv-text-main);
-  font-weight: 800;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-.dkv-hub-title {
-  font-size: clamp(2rem, 5vw, 4rem);
-  text-align: center;
-  color: var(--dkv-text-highlight);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 1rem;
-  font-weight: 900;
-  /* Neon Glow Effect */
-  text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-}
-
-.dkv-hub-subtitle {
-  text-align: center;
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  color: var(--dkv-text-muted);
-  margin-bottom: 3rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* ============================================
-   CARD SYSTEM (Glassmorphism)
-   ============================================ */
-
-.dkv-grades-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.dkv-card {
-  position: relative;
-  background: var(--dkv-bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-
-  /* Flex layout for horizontal card */
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.dkv-card::before {
-  /* Glow border effect on hover */
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 16px;
-  padding: 2px;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   opacity: 0;
@@ -460,6 +266,38 @@ h3 {
   text-transform: none;
   /* Nem csupa nagybetű */
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* -- HUD RIGHT GROUP (Settings Button + Space for Timer) -- */
+.dkv-hud-right-group {
+  display: flex !important;
+  /* Ensure flex behavior */
+  align-items: center;
+  gap: 1rem;
+  padding-right: 160px;
+  /* Helyet hagyunk a Fixed Timernek (kb 140px széles) */
+  height: 100%;
+}
+
+.dkv-nav-arrow {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  /* PURE FLEXBOX CENTERING */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  transition: all 0.2s;
+  padding: 0;
+  /* No hacks */
+  line-height: normal;
+  /* Reset */
 }
 
 /* === TIMER DISPLAY === */
@@ -630,4 +468,321 @@ h3 {
   position: absolute;
   bottom: 30px;
   right: 30px;
+}
+
+/* ============================================
+   GAME INTERFACE (Global Structure)
+   ============================================ */
+
+.dkv-game-interface {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  /* Fallback */
+  color: white;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+/* -- 1. HUD (Top Bar) -- */
+.dkv-game-hud {
+  height: 100px;
+  /* Increased height */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 2rem 0 2rem;
+  /* Top padding to push content down inline with Timer */
+  background: rgba(0, 0, 0, 0.5);
+  /* Base bg */
+  z-index: 1100;
+  flex-shrink: 0;
+}
+
+.dkv-hud-left-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 250px;
+}
+
+.dkv-avatar-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #444;
+  border: 2px solid #fff;
+}
+
+.dkv-user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dkv-username {
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.dkv-points {
+  font-size: 0.9rem;
+  color: var(--dkv-text-highlight);
+  font-family: monospace;
+}
+
+.dkv-hud-timeline {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 600px;
+}
+
+.dkv-timeline-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #222;
+  border: 2px solid #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.dkv-timeline-track {
+  width: 400px;
+  height: 10px;
+  background: #333;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.dkv-timeline-progress {
+  height: 100%;
+  background: #3b82f6;
+  /* Base color */
+  transition: width 0.3s ease;
+}
+
+.dkv-hud-stats {
+  width: 250px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 2rem;
+  font-family: monospace;
+  font-size: 1.2rem;
+}
+
+/* -- 2. RIGHT SIDEBAR (Inventory) -- */
+.dkv-game-sidebar {
+  position: absolute;
+  top: 50%;
+  /* Vertical center */
+  transform: translateY(-50%);
+  right: 20px;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 1100;
+}
+
+.dkv-inventory-slot {
+  width: 64px;
+  height: 64px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+/* -- 3. CONTENT AREA -- */
+.dkv-game-content-area {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  z-index: 100;
+}
+
+/* -- 4. BOTTOM BAR (Controls) -- */
+.dkv-game-bottom-bar {
+  height: 100px;
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  /* Fontos: Grid-szerű elosztás */
+  position: relative;
+  z-index: 1100;
+}
+
+.dkv-func-buttons {
+  position: absolute;
+  left: 2rem;
+  bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.dkv-func-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: #333;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.dkv-func-btn:hover {
+  transform: scale(1.1);
+  background: #555;
+}
+
+.dkv-nav-controls {
+  margin: 0 auto;
+  /* Középre igazítás */
+  display: flex;
+  gap: 400px;
+  /* "Elegendő eltartás" */
+}
+
+.dkv-nav-arrow:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.dkv-nav-arrow:active {
+  transform: scale(0.95);
+}
+
+/* === TIMER DISPLAY (Global) - Ensure it's on top === */
+.dkv-timer-display {
+  z-index: 2000 !important;
+  /* Force on top of game interface */
+}
+
+/* ============================================
+   GAME INTERFACE MODALS & PANELS
+   ============================================ */
+
+/* -- 1. SLIDE-IN JOURNAL (Napló) -- */
+.dkv-journal-panel {
+  position: fixed;
+  top: 0;
+  left: -400px;
+  /* Start hidden */
+  width: 400px;
+  height: 100vh;
+  background: #1a1a1a;
+  border-right: 2px solid #444;
+  z-index: 1500;
+  transition: left 0.3s ease-in-out;
+  padding: 80px 2rem 2rem 2rem;
+  /* Top padding for HUD */
+  display: flex;
+  flex-direction: column;
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.dkv-journal-panel.open {
+  left: 0;
+}
+
+/* -- 2. NARRATOR BOX (Könyv lapja) -- */
+.dkv-narrator-box {
+  position: absolute;
+  left: 100px;
+  /* Position relative to screen */
+  bottom: 120px;
+  /* Above the buttons */
+  width: 300px;
+  height: 500px;
+  background: #fdf6e3;
+  /* Paper color */
+  color: #2c1a0b;
+  /* Ink color */
+  padding: 2rem;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  font-family: 'Georgia', serif;
+  /* Book-like font */
+  z-index: 1400;
+  display: none;
+  /* Toggled by JS */
+  overflow-y: auto;
+  border: 10px solid #5d4037;
+  /* Leather binding look */
+}
+
+.dkv-narrator-box.open {
+  display: block;
+}
+
+/* -- 3. SETTINGS MODAL (Center structured) -- */
+.dkv-settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.dkv-setting-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+}
+
+/* -- ADJUSTMENTS -- */
+
+/* Lift navigation arrows up to match buttons */
+.dkv-nav-controls {
+  margin: 0 auto;
+  display: flex;
+  gap: 400px;
+  transform: translateY(-20px);
+  /* Lift up */
+}
+
+/* Modal Overlay base */
+.dkv-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  /* controlled by JS */
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.dkv-modal-content {
+  background: var(--dkv-bg-card);
+  backdrop-filter: blur(20px);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--dkv-primary-500);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  max-width: 500px;
+  width: 90%;
+  color: white;
+  text-align: center;
 }
