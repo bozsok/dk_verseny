@@ -20,6 +20,7 @@ class WelcomeSlide {
         this.element = null;
         this.typewriter = new Typewriter();
         this.isAudioLocked = false;
+        this.handleStart = this.handleStart.bind(this);
     }
 
 
@@ -195,6 +196,15 @@ class WelcomeSlide {
             }
             btn.style.cursor = enabled ? 'pointer' : 'default';
         }
+    }
+    destroy() {
+        if (this.typewriter) {
+            this.typewriter.stop();
+        }
+        if (this.element) {
+            this.element.remove();
+        }
+        this.element = null;
     }
 }
 

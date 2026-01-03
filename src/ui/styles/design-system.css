@@ -474,6 +474,15 @@ h3 {
    GAME INTERFACE (Global Structure)
    ============================================ */
 
+/* App Shell Layers */
+#dkv-layer-content>* {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .dkv-game-interface {
   position: fixed;
   top: 0;
@@ -481,12 +490,14 @@ h3 {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: #000;
-  /* Fallback */
+  background: transparent;
+  /* Removed #000 to allow Content Layer visibility */
   color: white;
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  pointer-events: none;
+  /* Allow clicks to pass through to Content Layer */
 }
 
 /* -- 1. HUD (Top Bar) -- */
@@ -503,6 +514,8 @@ h3 {
   /* Base bg */
   z-index: 1100;
   flex-shrink: 0;
+  pointer-events: auto;
+  /* Re-enable clicks */
 }
 
 .dkv-hud-left-group {
@@ -595,7 +608,10 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  gap: 1rem;
   z-index: 1100;
+  pointer-events: auto;
+  /* Re-enable clicks */
 }
 
 .dkv-inventory-slot {
@@ -612,6 +628,8 @@ h3 {
   width: 100%;
   position: relative;
   z-index: 100;
+  pointer-events: none;
+  /* Allow clicks to pass through to actual Content Layer */
 }
 
 /* -- 4. BOTTOM BAR (Controls) -- */
@@ -624,6 +642,8 @@ h3 {
   /* Fontos: Grid-szerű elosztás */
   position: relative;
   z-index: 1100;
+  pointer-events: auto;
+  /* Re-enable clicks */
 }
 
 .dkv-func-buttons {
@@ -693,8 +713,9 @@ h3 {
   padding: 80px 2rem 2rem 2rem;
   /* Top padding for HUD */
   display: flex;
-  flex-direction: column;
   box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+  /* Enable interaction */
 }
 
 .dkv-journal-panel.open {
@@ -720,6 +741,8 @@ h3 {
   font-family: 'Georgia', serif;
   /* Book-like font */
   z-index: 1400;
+  pointer-events: auto;
+  /* Enable interaction */
   display: none;
   /* Toggled by JS */
   overflow-y: auto;
@@ -798,6 +821,8 @@ h3 {
   width: 320px;
   height: auto;
   min-height: 200px;
+  pointer-events: auto;
+  /* Enable interaction */
   max-height: 80vh;
   z-index: 2000;
   transition: right 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);

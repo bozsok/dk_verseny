@@ -202,16 +202,29 @@ npm run test:watch
 
 ## 📊 Projekt Állapot
 
-### Sprint 1 (2025. január 15-31.)
-- **Status**: 77% kész
-- **Kész Stories**: 10/13
-- **Story Points**: 32/43
+### Sprint 1 (2025. január 15-31.) - LEZÁRVA ✅
+- **Status**: 95% kész
+- **Kész Stories**: 12/13
+- **Story Points**: 41/43
+- **Architektúra**: Unified App Shell (Rétegezett, Lifecycle-Managed)
 
 ### Milestones
 - [x] **Január 20**: Core architektúra kész
 - [x] **Január 31**: Hub navigation működik
-- [ ] **Február 15**: Játékmodulok implementálása
+- [x] **Január 03 (2026)**: Unified App Shell architektúra implementálva
+- [x] **Január 03 (2026)**: Audio rendszer stabilizálva
+- [ ] **Február 15**: Játékmodulok implementálása (Content creation)
 - [ ] **Február 28**: Teacher dashboard
+
+### Jelenlegi Verzió: v0.6.1 (2026-01-03)
+**Főbb funkciók:**
+- ✅ SEL Architektúra (State-Event-Logger)
+- ✅ Unified App Shell (3-layer perzisztens UI)
+- ✅ Onboarding Flow (Welcome → Registration → Character)
+- ✅ Audio Core System (Háttérzene, Narráció, SFX)
+- ✅ Zero-latency hangeffektek (Web Audio API)
+- ✅ Multi-Grade struktúra (Grade 3-6)
+- ⏳ Content creation (Feladatok, grafikák, hanganyagok)
 
 ## 🤝 Közreműködés
 

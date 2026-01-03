@@ -5,6 +5,35 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.6.1] - 2026-01-03 (Hotfix)
+### Javítva (Fixed)
+- **CRITICAL: CharacterSlide Lifecycle Bug:** Javítva a kritikus hiba, ami miatt a regisztráció után nem lehetett továbblépni a karakterválasztásra (`CRITICAL RENDER ERROR` a konzolon). A `CharacterSlide` komponensből hiányzott a `destroy()` metódus, ami kötelező a Unified App Shell architektúrában.
+- **CharacterSlide Memory Leak:** Implementálva a hiányzó `_registerTimeout()` helper metódus, amely biztosítja, hogy minden `setTimeout` hívás nyomon követhető és törölhető legyen a komponens megszűnésekor.
+- **Untracked Timeout:** A `_showFloatingPoint()` metódusban a `setTimeout` lecserélve `_registerTimeout`-ra, megelőzve a zombie timeout-okat.
+- **Duplikált click hang:** Eltávolítva a szintetikus "blup" hang (playSystemSound oszcillátor), amely átfedésben volt a preloaded click.mp3 fájllal.
+- **Hover hang hiánya:** Javítva a hover.mp3 hangereje (rögzített 0.2 volume) a jobb hallhatóság érdekében.
+- **Timeline százalék (Off-by-One Bug):** Javítva az idővonal számítás - az utolsó dián most helyesen 100%-ot mutat (korábban 96% volt). A probléma: 0-based index helyett 1-based slide number szükséges a GameInterface-nek.
+
+### Hozzáadva (Added)
+- **CharacterSlide.destroy():** Teljes lifecycle cleanup implementáció, amely törli:
+  - Minden regisztrált timeout-ot
+  - Preview modal-t a `document.body`-ból
+  - Error modal-t
+  - Floating point animációs elemeket
+  - A komponens saját DOM elemét
+- **Dokumentáció:** Részletes post-mortem elemzés és alternatív megközelítések dokumentálása az `upgrade_audio.md` fájlban (Szakasz 6-11).
+- **SFX Volume Control:** Új "Egérkattintás hangerő" slider a Beállítások panelen, amely szabályozza a click hangok hangerősségét (0-100%, default 20%).
+- **Bővített Audio Szelektorok:** Click és hover hangok most már működnek minden interaktív elemen:
+  - Onboarding gombok (`.dkv-button`)
+  - Hub évfolyam kártyák (`.dkv-card`)
+  - Karakter választó kártyák (`.dkv-char-card`) - hover hang hozzáadva
+
+### Tanulságok
+- Az **explicit lifecycle management** nem opcionális a Unified App Shell architektúrában
+- Minden komponensnek KELL `destroy()` metódus
+- Minden `setTimeout` KÖTELEZŐ `_registerTimeout`-tal hívni (tracking)
+- Modal elemek cleanup-ja kritikus (body pollution megelőzése)
+
 ## [0.6.0] - 2026-01-03
 ### Hozzáadva
 - **Zero-Latency SFX Engine:** Teljes átállás a **Web Audio API**-ra a hangeffektek (hover, click) kezelésénél. Ez megszünteti a böngésző alapú késleltetést, azonnali visszajelzést biztosítva.

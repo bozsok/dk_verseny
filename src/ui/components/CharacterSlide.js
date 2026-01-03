@@ -32,6 +32,7 @@ class CharacterSlide {
 
     this.lastFocusedElement = null;
     this.isAudioLocked = false;
+    this.timeouts = [];
   }
 
   createElement() {
@@ -172,7 +173,8 @@ class CharacterSlide {
     this._createErrorModal();
 
     // Animáció indítása miután minden elem a helyén van
-    setTimeout(() => {
+    // Animáció indítása miután minden elem a helyén van
+    this._registerTimeout(() => {
       this._playAnimationSequence(titleParagraphs, titleTypingSpeed, toggleLabel, 'Ha lány karaktert szeretnél választani, kattints a csúszkára!', toggleLabelWrapper, footerText, 'Ha választottál egy neked tetsző karaktert, akkor nyomd meg a <strong>Tovább</strong> gombot a játékfelület megismeréséhez!', descTypingSpeed);
     }, 100);
 
@@ -185,7 +187,7 @@ class CharacterSlide {
     let sequenceFailed = false;
 
     // Biztonsági Timeout: Ha 4 másodperc alatt nem jelenik meg a Toggle, akkor kényszerítjük
-    const failSafeTimeout = setTimeout(() => {
+    const failSafeTimeout = this._registerTimeout(() => {
       if (toggleSwitchEl.style.opacity !== '1') {
         sequenceFailed = true;
         console.warn('Animation sequence timeout - Encouraging visibility');
@@ -239,7 +241,7 @@ class CharacterSlide {
       if (sequenceFailed) return;
       clearTimeout(failSafeTimeout); // Sikerült eljutni idáig!
       toggleSwitchEl.style.opacity = '1';
-      setTimeout(runCards, 500);
+      this._registerTimeout(runCards, 500);
     };
 
     // 4. Kártyák megjelenése (Staggered)
@@ -247,7 +249,7 @@ class CharacterSlide {
       if (sequenceFailed) return;
       const cards = Array.from(this.cardsContainer.children);
       cards.forEach((card, index) => {
-        setTimeout(() => {
+        this._registerTimeout(() => {
           card.style.opacity = '1';
           card.style.transform = 'scale(1)';
         }, index * 150); // Gyorsabb kártyamegjelenés
@@ -255,7 +257,7 @@ class CharacterSlide {
 
       // Mikor van kész az utolsó?
       const totalTime = cards.length * 150 + 300;
-      setTimeout(runFooter, totalTime);
+      this._registerTimeout(runFooter, totalTime);
     };
 
     // 5. Footer Text ("Ha választottál...")
@@ -436,7 +438,7 @@ class CharacterSlide {
 
     this.previewModal.style.display = 'flex';
 
-    setTimeout(() => {
+    this._registerTimeout(() => {
       this.selectPreviewBtn.focus();
     }, 50);
   }
@@ -482,7 +484,7 @@ class CharacterSlide {
     this.lastFocusedElement = document.activeElement;
     this.errorMsg.textContent = msg;
     this.errorModal.style.display = 'flex';
-    setTimeout(() => { this.errorOkBtn.focus(); }, 50);
+    this._registerTimeout(() => { this.errorOkBtn.focus(); }, 50);
   }
 
   _closeErrorModal() {
@@ -540,7 +542,7 @@ class CharacterSlide {
         const cardIndex = this.confirmedSelection.index;
 
         // Késleltetjük kicsit, hogy a modal eltűnése után látszódjon
-        setTimeout(() => {
+        this._registerTimeout(() => {
           // FONTOS: Újra kell keresni az elemet, mert a _renderCards időközben lefutott!
           if (this.cardsContainer && this.cardsContainer.children[cardIndex]) {
             const currentCardElement = this.cardsContainer.children[cardIndex];
@@ -565,7 +567,7 @@ class CharacterSlide {
     this.previewSelection = null;
 
     this.lastFocusedElement = null;
-    setTimeout(() => {
+    this._registerTimeout(() => {
       if (this.nextBtn) this.nextBtn.focus();
     }, 50);
   }
@@ -650,7 +652,7 @@ class CharacterSlide {
 
     document.body.appendChild(floatEl);
 
-    setTimeout(() => {
+    this._registerTimeout(() => {
       if (floatEl.parentNode) floatEl.parentNode.removeChild(floatEl);
     }, 1600);
   }
@@ -661,6 +663,49 @@ class CharacterSlide {
   setNextButtonState(enabled) {
     this.isAudioLocked = !enabled;
     this._updateNextButton();
+  }
+
+  /**
+   * Helper to track timeouts for cleanup
+   */
+  _registerTimeout(fn, delay) {
+    const id = setTimeout(() => {
+      fn();
+      this.timeouts = this.timeouts.filter(t => t !== id);
+    }, delay);
+    this.timeouts.push(id);
+    return id;
+  }
+
+  /**
+   * Lifecycle cleanup - CRITICAL for Unified App Shell!
+   */
+  destroy() {
+    // 1. Clear all registered timeouts
+    this.timeouts.forEach(clearTimeout);
+    this.timeouts = [];
+
+    // 2. Remove preview modal from body
+    if (this.previewModal && this.previewModal.parentNode) {
+      this.previewModal.parentNode.removeChild(this.previewModal);
+      this.previewModal = null;
+    }
+
+    // 3. Remove error modal 
+    if (this.errorModal && this.errorModal.parentNode) {
+      this.errorModal.parentNode.removeChild(this.errorModal);
+      this.errorModal = null;
+    }
+
+    // 4. Remove any floating points (in case they're still animating)
+    const floatingPoints = document.querySelectorAll('.dkv-floating-point');
+    floatingPoints.forEach(el => el.remove());
+
+    // 5. Clean up own element
+    if (this.element) {
+      this.element.remove();
+    }
+    this.element = null;
   }
 }
 

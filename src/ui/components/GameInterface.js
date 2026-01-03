@@ -17,12 +17,14 @@ class GameInterface {
         this.onOpenSettings = options.onOpenSettings || (() => { });
         this.onMusicVolumeChange = options.onMusicVolumeChange || (() => { });
         this.onNarrationVolumeChange = options.onNarrationVolumeChange || (() => { });
+        this.onSfxVolumeChange = options.onSfxVolumeChange || (() => { });
 
         // State
         // UI uses 0-100 range,Logic uses 0.0-1.0. We store UI value here (default 50/100)
         // If options come in as 0.0-1.0, convert to 0-100.
         this.currentMusicVolume = options.musicVolume !== undefined ? Math.round(options.musicVolume * 100) : 50;
         this.currentNarrationVolume = options.narrationVolume !== undefined ? Math.round(options.narrationVolume * 100) : 100;
+        this.currentSfxVolume = options.sfxVolume !== undefined ? Math.round(options.sfxVolume * 100) : 40;
         this.totalSlides = options.totalSlides || 28;
         this.currentSlideIndex = options.currentSlideIndex || 1;
         this.currentDisplayedScore = 0;
@@ -375,23 +377,30 @@ class GameInterface {
                         <input type="range" min="0" max="100" value="50" style="width:100%;">
                     </div>
                     
-                    <div class="dkv-setting-row">
+                    <div class="dkv-setting-row" style="margin-bottom: 20px;">
                         <label style="display:block; margin-bottom:5px;">Narrátor hangerő</label>
                         <input type="range" min="0" max="100" value="80" style="width:100%;">
+                    </div>
+                    
+                    <div class="dkv-setting-row">
+                        <label style="display:block; margin-bottom:5px;">Egérkattintás hangerő</label>
+                        <input type="range" min="0" max="100" value="40" style="width:100%;">
                     </div>
                 </div>
             `;
 
             this.element.appendChild(settingsPanel);
 
-            // --- Event Listeners bekötése a meglévő sliderekhez ---
+            // --- Event Listeners bekötése a sliderekhez ---
             const inputs = settingsPanel.querySelectorAll('input[type="range"]');
             const musicInput = inputs[0]; // Első slider: Zene
             const narratorInput = inputs[1]; // Második slider: Narrátor
+            const sfxInput = inputs[2]; // Harmadik slider: SFX (Click)
 
             // Kezdőértékek beállítása
             if (musicInput) musicInput.value = this.currentMusicVolume;
             if (narratorInput) narratorInput.value = this.currentNarrationVolume;
+            if (sfxInput) sfxInput.value = this.currentSfxVolume;
 
             if (musicInput) {
                 musicInput.addEventListener('input', (e) => {
@@ -406,6 +415,14 @@ class GameInterface {
                     const val = parseInt(e.target.value, 10);
                     this.currentNarrationVolume = val;
                     this.onNarrationVolumeChange(val / 100); // 0.0 - 1.0
+                });
+            }
+
+            if (sfxInput) {
+                sfxInput.addEventListener('input', (e) => {
+                    const val = parseInt(e.target.value, 10);
+                    this.currentSfxVolume = val;
+                    this.onSfxVolumeChange(val / 100); // 0.0 - 1.0
                 });
             }
             // -----------------------------------------------------

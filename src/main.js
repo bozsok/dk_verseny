@@ -41,6 +41,14 @@ class DigitalKulturaVerseny {
     this.backgroundMusic = null; // Track background music
     this.musicVolume = 0.5;
     this.narrationVolume = 1.0;
+    this.sfxVolume = 0.2; // Default SFX (click) volume
+
+    // App Shell Layers
+    this.layerBackground = null;
+    this.layerContent = null;
+    this.layerUI = null;
+    this.activeGameInterface = null;
+    this.currentSlideComponent = null;
   }
 
   /**
@@ -50,6 +58,9 @@ class DigitalKulturaVerseny {
     try {
       // Loading screen megjelenítése
       this.showLoadingScreen();
+
+      // App Shell felépítése (Perzisztens rétegek)
+      this.setupAppShell();
 
       // Core komponensek inicializálása
       await this.initCoreComponents();
@@ -149,6 +160,46 @@ class DigitalKulturaVerseny {
   }
 
   /**
+   * App Shell (Rétegek) inicializálása
+   */
+  setupAppShell() {
+    const app = document.getElementById('app');
+    if (!app) return;
+
+    app.innerHTML = ''; // Tiszta alap
+
+    // CLEANUP: Mivel a DOM törlődött, a JS referenciákat is el kell dobni!
+    this.activeGameInterface = null;
+    this.currentSlideComponent = null;
+
+    // 1. Background Layer (z-index: 0)
+    this.layerBackground = document.createElement('div');
+    this.layerBackground.id = 'dkv-layer-background';
+    Object.assign(this.layerBackground.style, {
+      position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '0'
+    });
+
+    // 2. Content Layer (z-index: 100)
+    this.layerContent = document.createElement('div');
+    this.layerContent.id = 'dkv-layer-content';
+    Object.assign(this.layerContent.style, {
+      position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '100', pointerEvents: 'auto'
+    });
+
+    // 3. UI Layer (z-index: 1000)
+    this.layerUI = document.createElement('div');
+    this.layerUI.id = 'dkv-layer-ui';
+    // Stílust a belekerülő GameInterface adja majd, de alapból áteresztő
+    Object.assign(this.layerUI.style, {
+      position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '1000', pointerEvents: 'none'
+    });
+
+    app.appendChild(this.layerBackground);
+    app.appendChild(this.layerContent);
+    app.appendChild(this.layerUI);
+  }
+
+  /**
    * UI komponensek inicializálása
    */
   async initUIComponents() {
@@ -180,6 +231,8 @@ class DigitalKulturaVerseny {
    * Eseménykezelők beállítása
    */
   setupEventListeners() {
+    // NOTE: Click/Hover SFX is handled by initSFX() - Web Audio preloaded sounds below
+
     // State change események
     this.stateManager.addListener('state:updated', (data) => {
       if (this.logger) {
@@ -267,11 +320,11 @@ class DigitalKulturaVerseny {
 
       // Global Hover Listener
       document.body.addEventListener('mouseover', (e) => {
-        const target = e.target.closest('button, a, .dkv-nav-arrow, .clickable, input[type="range"]');
+        const target = e.target.closest('button, a, .dkv-nav-arrow, .dkv-button, .dkv-btn, .dkv-card, .dkv-char-card, .clickable, input[type="range"]');
         if (target && target !== lastHovered) {
           lastHovered = target;
           if (!target.disabled && !target.classList.contains('disabled')) {
-            playSound('hover', 0.2);
+            playSound('hover', 0.2); // Fixed volume - hover should stay subtle
           }
         } else if (!target) {
           lastHovered = null;
@@ -280,9 +333,9 @@ class DigitalKulturaVerseny {
 
       // Global Click Listener
       document.body.addEventListener('click', (e) => {
-        const target = e.target.closest('button, a, .dkv-nav-arrow, .clickable, input[type="range"]');
+        const target = e.target.closest('button, a, .dkv-nav-arrow, .dkv-button, .dkv-btn, .dkv-card, .clickable, input[type="range"]');
         if (target && !target.disabled && !target.classList.contains('disabled')) {
-          playSound('click', 0.4);
+          playSound('click', this.sfxVolume);
         }
       });
 
@@ -376,228 +429,223 @@ class DigitalKulturaVerseny {
   /**
    * Slide megjelenítése
    */
+  /**
+   * Slide megjelenítése (App Shell Architecture)
+   */
   renderSlide(slide) {
     if (!slide) return;
 
-    // Stop any currently playing audio immediately (prevents audio bleed)
+    // --- Audio Cleanup ---
     if (this.currentAudio) {
       this.currentAudio.pause();
       this.currentAudio.currentTime = 0;
       this.currentAudio = null;
     }
 
+    // --- App Shell Check ---
+    // Javítás: Ellenőrizzük, hogy a rétegek a DOM-ban vannak-e (.isConnected).
+    // A Hub megjelenítése (showHub) törölheti őket az app.innerHTML = '' hívással.
+    if (!this.layerContent || !this.layerUI || !this.layerContent.isConnected || !this.layerUI.isConnected) {
+      console.warn('App Shell detached or missing, rebuilding...');
+      this.setupAppShell();
+    }
 
-    const app = document.getElementById('app');
-    if (!app) return;
-
-    // Grade scope osztály (Fontos a CSS miatt!)
+    // --- Grade Scope ---
     const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
     const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
 
-    // Globális grade osztály beállítása a BODY-ra a komponens-független stílusokhoz (pl. Timer)
     if (gradeClass) {
-      document.body.classList.forEach(cls => {
-        if (cls.startsWith('dkv-grade-')) document.body.classList.remove(cls);
-      });
+      document.body.className = '';
       document.body.classList.add(gradeClass);
     }
 
-    // Típus ellenőrzése
+    // --- Slide Type Logic ---
     const isFullscreen = [
       SLIDE_TYPES.WELCOME,
       SLIDE_TYPES.REGISTRATION,
       SLIDE_TYPES.CHARACTER
     ].includes(slide.type);
 
-    // --- Background Music Control ---
+    // --- Background Music Logic ---
     const totalSlides = this.slideManager.slides.length;
     const currentIndex = this.slideManager.currentIndex;
 
-    // 1. Start Music: If in Game Phase (not fullscreen) AND music not playing
     if (!isFullscreen && !this.backgroundMusic) {
-      // Ensure we are not on the last slide (edge case)
       if (currentIndex < totalSlides - 1 && currentGrade) {
         this.playBackgroundMusic(currentGrade);
       }
-    }
-
-    // 2. Stop Music (Immediate): If back to Onboarding
-    if (isFullscreen && this.backgroundMusic) {
+    } else if (isFullscreen && this.backgroundMusic) {
       this.backgroundMusic.pause();
       this.backgroundMusic = null;
-    }
-
-    // 3. Stop Music (Fade): If Last Slide
-    if (currentIndex === totalSlides - 1 && this.backgroundMusic) {
+    } else if (currentIndex === totalSlides - 1 && this.backgroundMusic) {
       this.stopBackgroundMusicWithFade();
     }
-    // -------------------------------
 
-    // 1. GameInterface kezelése
-    if (!isFullscreen) {
-      // In-Game mód: Szükség van a GameInterface-re
-      if (!this.gameInterface) {
-        app.innerHTML = ''; // Előző tartalom törlése
+    // --- Component Creation & Rendering (Protected) ---
+    try {
+      let newComponent = null;
+      const commonOptions = {
+        stateManager: this.stateManager,
+        timeManager: this.timeManager,
+        apiService: this.apiService,
+        onNext: () => this.handleNext(),
+        onPrev: () => this.handlePrev(),
+        onComplete: () => this.slideManager.completeCurrentSlide()
+      };
 
-        this.gameInterface = new GameInterface({
-          onNext: () => {
-            const next = this.slideManager.nextSlide();
-            if (next) this.renderSlide(next);
-          },
-          onPrev: () => {
-            const prev = this.slideManager.prevSlide();
-            if (prev) this.renderSlide(prev);
-          },
-          onOpenSettings: () => this.gameInterface.toggleSettings(),
-          onOpenJournal: () => this.gameInterface.toggleJournal(),
-          onOpenNarrator: () => this.gameInterface.toggleNarrator(),
-          onMusicVolumeChange: (v) => this.setMusicVolume(v),
-          onNarrationVolumeChange: (v) => this.setNarrationVolume(v),
-          musicVolume: this.musicVolume,
-          narrationVolume: this.narrationVolume,
-          stateManager: this.stateManager,
-          totalSlides: this.slideManager.slides.length - 1 // Welcome dia nem számít a progressben
-        });
-
-        const giElement = this.gameInterface.createElement();
-        if (gradeClass) giElement.classList.add(gradeClass);
-
-        app.appendChild(giElement);
-
-        // Kezdeti HUD frissítés
-        this.gameInterface.updateHUD(this.stateManager.getState());
-      }
-    } else {
-      // Fullscreen mód: Ha van GameInterface, töröljük
-      if (this.gameInterface) {
-        this.gameInterface.element.remove();
-        this.gameInterface = null;
-      }
-    }
-
-    // 2. Slide Komponens létrehozása
-    let slideComponent;
-    const commonOptions = {
-      onComplete: () => {
-        this.slideManager.completeCurrentSlide();
-      },
-      onNext: () => {
-        const next = this.slideManager.nextSlide();
-        if (next) this.renderSlide(next);
-      },
-      apiService: this.apiService,
-      stateManager: this.stateManager
-    };
-
-    switch (slide.type) {
-      case SLIDE_TYPES.WELCOME:
-        slideComponent = new WelcomeSlide(slide, { ...commonOptions, timeManager: this.timeManager });
-        break;
-      case SLIDE_TYPES.REGISTRATION:
-        slideComponent = new RegistrationSlide(slide, { ...commonOptions, stateManager: this.stateManager });
-        break;
-      case SLIDE_TYPES.CHARACTER:
-        slideComponent = new CharacterSlide(slide, { ...commonOptions, stateManager: this.stateManager });
-        break;
-      case SLIDE_TYPES.STORY:
-        slideComponent = new StorySlide(slide, commonOptions);
-        break;
-      case SLIDE_TYPES.VIDEO:
-      case SLIDE_TYPES.REWARD:
-        slideComponent = new VideoSlide(slide, commonOptions);
-        break;
-      case SLIDE_TYPES.TASK:
-        slideComponent = new TaskSlide(slide, commonOptions);
-        break;
-      default:
-        console.warn('Unknown slide type:', slide.type);
-        slideComponent = new VideoSlide(slide, commonOptions);
-    }
-
-    // 3. Renderelés
-    const element = slideComponent.createElement();
-
-    if (isFullscreen) {
-      // Fullscreen Wrapper
-      const slideWrapper = document.createElement('div');
-      slideWrapper.className = 'dkv-slide-wrapper';
-      if (gradeClass) slideWrapper.classList.add(gradeClass);
-
-      if (slide.content && slide.content.backgroundUrl) {
-        slideWrapper.style.backgroundImage = `url('${slide.content.backgroundUrl}')`;
-        slideWrapper.style.backgroundSize = 'cover';
-        slideWrapper.style.backgroundPosition = 'center';
+      switch (slide.type) {
+        case SLIDE_TYPES.WELCOME:
+          newComponent = new WelcomeSlide(slide, commonOptions);
+          break;
+        case SLIDE_TYPES.REGISTRATION:
+          newComponent = new RegistrationSlide(slide, commonOptions);
+          break;
+        case SLIDE_TYPES.CHARACTER:
+          newComponent = new CharacterSlide(slide, commonOptions);
+          break;
+        case SLIDE_TYPES.STORY:
+          newComponent = new StorySlide(slide, commonOptions);
+          break;
+        case SLIDE_TYPES.VIDEO:
+        case SLIDE_TYPES.REWARD:
+          newComponent = new VideoSlide(slide, commonOptions);
+          break;
+        case SLIDE_TYPES.TASK:
+          newComponent = new TaskSlide(slide, commonOptions);
+          break;
+        default:
+          console.warn('Unknown slide type:', slide.type);
+          newComponent = new VideoSlide(slide, commonOptions);
       }
 
-      slideWrapper.appendChild(element);
-      app.innerHTML = '';
-      app.appendChild(slideWrapper);
-    } else {
-      // GameInterface Content Area
-      this.gameInterface.setContent(element);
-      this.gameInterface.updateTimeline(this.slideManager.currentIndex + 1);
-      this.gameInterface.updateHUD(this.stateManager.getState());
+      // --- RENDER STRATEGY (Non-Destructive) ---
 
-      // Narráció frissítése
-      const narrationText = (slide.content && slide.content.narration) || slide.description || "Nincs elérhető történet ehhez a diához.";
-      this.gameInterface.setNarration(narrationText);
+      // 1. Cleanup Old Content (Content Layer Only)
+      if (this.currentSlideComponent) {
+        if (typeof this.currentSlideComponent.destroy === 'function') {
+          this.currentSlideComponent.destroy();
+        }
+        this.currentSlideComponent = null;
+      }
+      this.layerContent.innerHTML = '';
+
+      // 2. Render New Content
+      if (newComponent) {
+        const el = newComponent.createElement();
+
+        if (isFullscreen && slide.content && slide.content.backgroundUrl) {
+          // Fullscreen Wrapper for Backgrounds
+          const wrapper = document.createElement('div');
+          wrapper.className = 'dkv-slide-wrapper';
+          if (gradeClass) wrapper.classList.add(gradeClass);
+          wrapper.style.backgroundImage = `url('${slide.content.backgroundUrl}')`;
+          wrapper.style.backgroundSize = 'cover';
+          wrapper.style.backgroundPosition = 'center';
+          wrapper.appendChild(el);
+          this.layerContent.appendChild(wrapper);
+        } else {
+          // Standard Rendering
+          this.layerContent.appendChild(el);
+        }
+        this.currentSlideComponent = newComponent;
+      }
+
+      // 3. UI Layer Management (Persistent GameInterface)
+      if (!isFullscreen) {
+        // JÁTÉK FÁZIS: Mutasd a HUD-ot
+        if (!this.activeGameInterface) {
+          // Ha nincs, hozd létre (Perzisztens)
+          this.activeGameInterface = new GameInterface({
+            onNext: () => this.handleNext(),
+            onPrev: () => this.handlePrev(),
+            onOpenSettings: () => this.activeGameInterface.toggleSettings(),
+            onOpenJournal: () => this.activeGameInterface.toggleJournal(),
+            onOpenNarrator: () => this.activeGameInterface.toggleNarrator(),
+            onMusicVolumeChange: (v) => this.setMusicVolume(v),
+            onNarrationVolumeChange: (v) => this.setNarrationVolume(v),
+            onSfxVolumeChange: (v) => this.setSfxVolume(v),
+            musicVolume: this.musicVolume,
+            narrationVolume: this.narrationVolume,
+            sfxVolume: this.sfxVolume,
+            stateManager: this.stateManager,
+            totalSlides: totalSlides - 1  // Exclude Welcome slide - GameInterface adds +1 offset, need base of 29 for 100%
+          });
+          const uiEl = this.activeGameInterface.createElement();
+          if (gradeClass) uiEl.classList.add(gradeClass);
+          this.layerUI.appendChild(uiEl);
+        }
+
+        this.layerUI.style.display = 'block';
+
+        // Frissítések
+        this.activeGameInterface.updateHUD(this.stateManager.getState());
+        this.activeGameInterface.updateTimeline(currentIndex + 1); // Convert 0-based to 1-based
+
+        const narrationText = (slide.content && slide.content.narration) || slide.description || "Nincs elérhető történet ehhez a diához.";
+        this.activeGameInterface.setNarration(narrationText);
+
+      } else {
+        // FULLSCREEN FÁZIS: Rejtsd el a HUD-ot
+        this.layerUI.style.display = 'none';
+      }
+    } catch (renderError) {
+      console.error("CRITICAL RENDER ERROR:", renderError);
+      // Fallback: Ha a UI létezik, próbáljuk megmutatni a hibaüzenetet benne, vagy alert
+      alert("Hiba történt a megjelenítéskor: " + renderError.message + ". Próbáld frissíteni az oldalt.");
     }
 
-    // 4. Hang lejátszása és Navigáció blokkolása
+    // 4. Audio & Buttons
     const audioSrc = slide.content ? slide.content.audioSrc : null;
     const isLastSlide = (currentIndex >= totalSlides - 1);
 
+    // Helper to set button state in whichever interface is active
+    const setBtnState = (enabled) => {
+      if (!isFullscreen && this.activeGameInterface) {
+        this.activeGameInterface.setNextButtonState(enabled);
+      } else if (isFullscreen && this.currentSlideComponent && this.currentSlideComponent.setNextButtonState) {
+        this.currentSlideComponent.setNextButtonState(enabled);
+      }
+    };
+
     if (audioSrc) {
-      // Logic: Always play audio. 
-      // Button State: 
-      // - If Last Slide: ALWAYS BLOCKED (false).
-      // - If Not Last: Block only if NOT already played.
       const alreadyPlayed = this.playedAudioSlides && this.playedAudioSlides.has(slide.id);
       const enableButton = !isLastSlide && alreadyPlayed;
-
-      // Set initial button state
-      if (!isFullscreen && this.gameInterface) {
-        this.gameInterface.setNextButtonState(enableButton);
-      } else if (isFullscreen && slideComponent.setNextButtonState) {
-        slideComponent.setNextButtonState(enableButton);
-      }
+      setBtnState(enableButton);
 
       this.playAudio(audioSrc, () => {
-        // Unlock on completion?
-        // Only if NOT last slide!
         if (isLastSlide) {
-          // Keep disabled, mark as played
-          if (this.playedAudioSlides && slide.id) {
-            this.playedAudioSlides.add(slide.id);
-          }
+          if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
           return;
         }
-
-        if (!isFullscreen && this.gameInterface) {
-          this.gameInterface.setNextButtonState(true);
-        } else if (isFullscreen && slideComponent.setNextButtonState) {
-          slideComponent.setNextButtonState(true);
-        }
-
-        // Mark as played
-        if (this.playedAudioSlides && slide.id) {
-          this.playedAudioSlides.add(slide.id);
-        }
+        setBtnState(true);
+        if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
       });
     } else {
-      // Ha nincs hang
-      // Ha utolsó dia -> Blokkoljuk
-      // Ha nem utolsó -> Engedélyezzük
-
       const shouldEnable = !isLastSlide;
-
-      if (!isFullscreen && this.gameInterface) {
-        this.gameInterface.setNextButtonState(shouldEnable);
-      }
+      setBtnState(shouldEnable);
     }
 
-    // 5. Előre-töltés (Asset Preloading)
+    // 5. Preloading
     this.preloadNextSlide(currentIndex);
+  }
+
+  // --- SAFE NAVIGATION HANDLERS ---
+
+  async handleNext() {
+    await this.ensureAudioFeedback();
+    const next = this.slideManager.nextSlide();
+    if (next) this.renderSlide(next);
+  }
+
+  async handlePrev() {
+    await this.ensureAudioFeedback();
+    const prev = this.slideManager.prevSlide();
+    if (prev) this.renderSlide(prev);
+  }
+
+  async ensureAudioFeedback() {
+    // Növelt biztonsági késleltetés (100ms), hogy a hang biztosan elinduljon
+    return new Promise(resolve => setTimeout(resolve, 100));
   }
 
   /**
@@ -881,6 +929,44 @@ class DigitalKulturaVerseny {
     }
   }
 
+  setSfxVolume(vol) {
+    this.sfxVolume = vol;
+    // SFX volume affects future playSound calls, no need to update existing sounds
+  }
+
+  /**
+ * Rendszerhangok (pl. kattintás) azonnali generálása Web Audio API-val
+ */
+  playSystemSound(type) {
+    try {
+      if (!this.audioContext) {
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume().catch(() => { });
+      }
+
+      const osc = this.audioContext.createOscillator();
+      const gain = this.audioContext.createGain();
+
+      osc.connect(gain);
+      gain.connect(this.audioContext.destination);
+
+      if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, this.audioContext.currentTime + 0.1);
+
+        gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.1);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.1);
+      }
+    } catch (e) {
+      console.warn('System sound error', e);
+    }
+  }
 }
 
 /**

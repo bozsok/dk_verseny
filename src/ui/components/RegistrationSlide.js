@@ -50,6 +50,11 @@ class RegistrationSlide {
         this.modal = null;
         this.lastFocusedElement = null; // Ide mentjük a fókuszt nyitáskor
         this.isAudioLocked = false;
+        this.timeouts = [];
+
+        // Context Binding (Fixing 'this' reference in event handlers)
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this._validateField = this._validateField.bind(this);
     }
 
     createElement() {
@@ -136,7 +141,7 @@ class RegistrationSlide {
             this._startTypewriterSequence(paragraphs, typingSpeed, elementsToAnimate);
         } else {
             // Ha nincs gépelés, auto-fókusz
-            setTimeout(() => {
+            this._registerTimeout(() => {
                 if (this.nameInput && this.nameInput.input) {
                     this.nameInput.input.focus();
                 }
@@ -153,7 +158,7 @@ class RegistrationSlide {
             if (currentIndex >= paragraphs.length) {
                 // KÉSZ -> Elemek egyesével (staggered) megjelenítése
                 elementsToShow.forEach((el, index) => {
-                    setTimeout(() => {
+                    this._registerTimeout(() => {
                         // Ha ez a gomb, és blokkolva van a hang miatt, akkor csak 0.5
                         if (el === this.nextBtn && this.isAudioLocked) {
                             el.style.opacity = '0.5';
@@ -437,7 +442,7 @@ class RegistrationSlide {
         this.isModalActive = false;
 
         if (this.currentModalCallback) {
-            setTimeout(() => {
+            this._registerTimeout(() => {
                 this.currentModalCallback();
                 this.currentModalCallback = null;
             }, 50);
@@ -480,7 +485,7 @@ class RegistrationSlide {
         this.currentModalCallback = onClose;
         this.modal.style.display = 'flex';
 
-        setTimeout(() => {
+        this._registerTimeout(() => {
             this.okBtn.focus();
         }, 50);
     }
@@ -540,7 +545,7 @@ class RegistrationSlide {
             this.nextBtn.style.opacity = '0.5';
         }
 
-        setTimeout(() => {
+        this._registerTimeout(() => {
             this.onNext();
         }, 1000);
     }
@@ -561,7 +566,7 @@ class RegistrationSlide {
         document.body.appendChild(floatEl);
 
         // Takarítás
-        setTimeout(() => {
+        this._registerTimeout(() => {
             if (floatEl.parentNode) floatEl.parentNode.removeChild(floatEl);
         }, 1600);
     }
@@ -576,6 +581,38 @@ class RegistrationSlide {
             this.nextBtn.style.opacity = enabled ? '1' : '0.5';
             this.nextBtn.style.cursor = enabled ? 'pointer' : 'default';
         }
+    }
+    /* Lifecycle Management */
+
+    _registerTimeout(fn, delay) {
+        const id = setTimeout(() => {
+            fn();
+            this.timeouts = this.timeouts.filter(t => t !== id);
+        }, delay);
+        this.timeouts.push(id);
+        return id;
+    }
+
+    destroy() {
+        // Timers takarítása
+        this.timeouts.forEach(clearTimeout);
+        this.timeouts = [];
+
+        // Modals takarítása (Body-ból)
+        if (this.modal && this.modal.parentNode) {
+            this.modal.parentNode.removeChild(this.modal);
+            this.modal = null;
+        }
+
+        // Floating points takarítása
+        const floatingPoints = document.querySelectorAll('.dkv-floating-point');
+        floatingPoints.forEach(el => el.remove());
+
+        // Saját elem takarítása
+        if (this.element) {
+            this.element.remove();
+        }
+        this.element = null;
     }
 }
 

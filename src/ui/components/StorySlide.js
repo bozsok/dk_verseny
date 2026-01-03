@@ -90,10 +90,11 @@ class StorySlide {
                     // Elindítjuk a videót
                     this.videoElement.play().then(() => {
                         // SIKER: Ha elindult és már renderel, eltűntetjük a fedő képet
-                        // Kis késleltetés a 'playing' után, hogy biztosan ne villanjon feketét
-                        setTimeout(() => {
-                            if (this.imageLayer) this.imageLayer.style.opacity = '0';
-                        }, 100);
+                        if (this.imageLayer) {
+                            this.imageLayer.style.opacity = '0'; // Kép eltűnik (CSS transition: 1.5s)
+                            // Amikor a transition véget ér (1.5s), a kép DOM-ból való eltávolítása opcionális,
+                            // de maradhat is 0 opacity-vel, nem zavar.
+                        }
                     }).catch(e => {
                         console.warn('Video autoplay blocked or failed', e);
                         // Hiba esetén marad a kép (fallback), nem csinálunk semmit
@@ -139,6 +140,10 @@ class StorySlide {
      * Takarítás
      */
     destroy() {
+        if (this.transitionTimer) {
+            clearTimeout(this.transitionTimer);
+            this.transitionTimer = null;
+        }
         if (this.videoElement) {
             this.videoElement.pause();
             this.videoElement.src = ""; // Load unload
