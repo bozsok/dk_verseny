@@ -124,22 +124,21 @@
 /* -- Buttons (Function & Nav) -- */
 .dkv-grade-3 .dkv-func-btn,
 .dkv-grade-3 .dkv-nav-arrow {
-    background: #00636e !important;
+    background: #00636e;
     /* Grade 3 Dark Turquoise */
-    border: 2px solid #00eaff !important;
+    border: 2px solid #00eaff;
     /* Neon Cyan Border */
-    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3) !important;
-    color: white !important;
-    border-radius: 10px !important;
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+    color: white;
+    border-radius: 10px;
     /* Consistent with Intro buttons */
-    transition: all 0.3s ease !important;
-    backdrop-filter: none !important;
+    transition: all 0.3s ease;
+    backdrop-filter: none;
     /* Override glassmorphism */
 }
 
 .dkv-grade-3 .dkv-func-btn:hover,
 .dkv-grade-3 .dkv-nav-arrow:hover {
-    background: #007582 !important;
     background: #007582;
     box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
     transform: scale(1.05);
@@ -156,7 +155,7 @@
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid #00d2d3;
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     color: #ffffff;
@@ -173,7 +172,7 @@
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid #00d2d3;
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     color: #ffffff;
@@ -206,8 +205,8 @@
 }
 
 .dkv-grade-3 .dkv-panel-footer .dkv-button:hover {
-    background: #007582 !important;
-    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6) !important;
+    background: #007582;
+    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
     transform: scale(1.05);
 }
 
@@ -236,14 +235,14 @@
 
 /* -- Narrator Specifics -- */
 .dkv-grade-3 .dkv-narrator-box {
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border: 2px solid #00d2d3;
     /* Dimensions handled globally or by inline style, but usually it's fixed size in center */
 }
 
 /* -- Headings -- */
 .dkv-grade-3 .dkv-panel-header h2,
 .dkv-grade-3 .dkv-panel-header h3 {
-    color: #fff !important;
+    color: #fff;
     text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
     margin: 0;
 }
@@ -252,29 +251,30 @@
 .dkv-grade-3 .dkv-panel-body textarea {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3) !important;
-    border: 1px solid #00eaff !important;
-    color: #fff !important;
-    font-family: 'Source Code Pro', monospace !important;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-family: 'Source Code Pro', monospace;
     border-radius: 10px;
     resize: none;
     padding: 10px;
 }
 
 .dkv-grade-3 .dkv-modal-content input[type="range"] {
-    background: rgba(0, 0, 0, 0.3) !important;
-    border: 1px solid #00eaff !important;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #00eaff;
     border-radius: 5px;
 }
+
 /* Floating Point Animation */
 .dkv-floating-point {
     position: absolute;
     color: #ffd700;
-    font-size: 1.5rem;
+    font-family: 'Impact', sans-serif;
+    font-size: 3.5rem;
     font-weight: bold;
     pointer-events: none;
     z-index: 100;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     animation: floatUp 1.5s ease-out forwards;
 }
 
@@ -283,10 +283,12 @@
         opacity: 0;
         transform: translateY(0) scale(0.5);
     }
+
     10% {
         opacity: 1;
         transform: translateY(-10px) scale(1.2);
     }
+
     100% {
         opacity: 0;
         transform: translateY(-50px) scale(1);
@@ -295,12 +297,235 @@
 
 /* Narrator Transition Override */
 .dkv-grade-3 .dkv-narrator-box {
-    display: flex !important;
+    display: flex;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
 }
+
 .dkv-grade-3 .dkv-narrator-box.open {
     opacity: 1;
     pointer-events: auto;
+}
+
+/* Custom Range Input (Slider) Styling for Settings Panel */
+.dkv-grade-3 input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    /* Standard property */
+    width: 100%;
+    background: transparent;
+    margin: 10px 0;
+}
+
+.dkv-grade-3 input[type=range]:focus {
+    outline: none;
+}
+
+/* Webkit (Chrome, Edge, Safari) */
+.dkv-grade-3 input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: rgba(0, 210, 211, 0.2);
+    border-radius: 3px;
+    border: 1px solid rgba(0, 210, 211, 0.3);
+}
+
+.dkv-grade-3 input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #00d2d3;
+    cursor: pointer;
+    margin-top: -7px;
+    /* Adjust to center on track */
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.8);
+    transition: transform 0.1s ease;
+}
+
+.dkv-grade-3 input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: #5ffbfd;
+}
+
+/* Firefox */
+.dkv-grade-3 input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: rgba(0, 210, 211, 0.2);
+    border-radius: 3px;
+    border: 1px solid rgba(0, 210, 211, 0.3);
+}
+
+.dkv-grade-3 input[type=range]::-moz-range-thumb {
+    height: 18px;
+    width: 18px;
+    border: none;
+    border-radius: 50%;
+    background: #00d2d3;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.8);
+    transition: transform 0.1s ease;
+}
+
+.dkv-grade-3 input[type=range]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    background: #5ffbfd;
+}
+
+/* === HUD Timeline Styling (Grade 3 Neon Theme) === */
+
+/* Konténer igazítása */
+.dkv-grade-3 .dkv-hud-timeline {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    /* Kitölti a helyet a két szél között */
+    margin: 0 40px;
+    /* Nagyobb térköz a szélső elemektől */
+    gap: 8px;
+    /* Hézag beállítása úgy, hogy a sáv eleje a gyűrű fala alá essen (rejtve legyen), de ne lógjon be a résbe */
+    font-family: 'Source Code Pro', monospace;
+}
+
+/* Százalékos kör */
+.dkv-grade-3 .dkv-timeline-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* border és background törölve, JS kezeli a conic-gradientet */
+    background: radial-gradient(closest-side, rgba(0, 21, 30, 0.8) 88%, transparent 89%),
+        conic-gradient(#00d2d3 0%, rgba(0, 210, 211, 0.2) 0%);
+    /* Fallback 0% */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    /* Referencia a külső körnek */
+
+    /* margin törölve, hogy összeérjen a sliderrel */
+    flex-shrink: 0;
+    z-index: 2;
+    /* Hogy a szöveg és a háttér a külső gyűrű fölött legyen */
+}
+
+/* Külső vastag gyűrű (Slider vastagság) */
+.dkv-grade-3 .dkv-timeline-circle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 86px;
+    /* Nagyobb átmérő */
+    height: 86px;
+    border-radius: 50%;
+    border: 13px solid #00d2d3;
+    border-color: rgba(0, 210, 211, 1);
+    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+    /* Ragyogás effekt */
+    z-index: -1;
+    /* Mögötte */
+}
+
+.dkv-grade-3 .dkv-timeline-circle span {
+    color: #5ffbfd;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Sáv háttere (Track) */
+.dkv-grade-3 .dkv-timeline-track {
+    flex-grow: 1;
+    height: 14px;
+    background: rgba(0, 15, 20, 0.6);
+    border: 1px solid rgba(0, 210, 211, 0.3);
+    border-radius: 10px;
+    position: relative;
+    backdrop-filter: blur(2px);
+    /* Ragyogás effekt (Tovább gomb stílus) */
+    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+}
+
+/* Haladási csík (Progress Bar) */
+.dkv-grade-3 .dkv-timeline-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #00d2d3 0%, #00eaef 100%);
+    width: 0%;
+    /* JS állítja */
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Finom rugalmas mozgás */
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.8);
+    border-radius: 10px;
+    /* Hogy a széle is kerek legyen ha tele van */
+}
+
+/* Pontszám színének javítása (Grade 3 Türkiz) */
+.dkv-grade-3 .dkv-points {
+    color: #00d2d3;
+    text-shadow: 0 0 8px rgba(0, 210, 211, 0.6);
+    font-weight: bold;
+}
+
+.dkv-grade-3 .dkv-avatar-circle {
+    border: 2px solid #00d2d3;
+}
+
+.dkv-grade-3 .dkv-username {
+    line-height: 1.2;
+}
+
+/* JAVÍTÁS: Ikonok megjelenítése ::after réteggel (No !important violation) */
+.dkv-grade-3 button[title="Hangbeállítások"],
+.dkv-grade-3 button[title="Napló"],
+.dkv-grade-3 button[title="Narráció"] {
+    position: relative;
+    /* Emoji elrejtéséhez nem használunk !important-ot, hanem az overlay elfedi */
+}
+
+/* Overlay létrehozása */
+.dkv-grade-3 button[title="Hangbeállítások"]::after,
+.dkv-grade-3 button[title="Napló"]::after,
+.dkv-grade-3 button[title="Narráció"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* Gomb eredeti háttérszíne + Ikon */
+    background-color: #00636e;
+    /* Grade 3 Dark Turquoise */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 24px;
+    border-radius: 8px;
+    /* Hogy a sarkoknál ne lógjon ki */
+    pointer-events: none;
+    /* Kattintás átengedése */
+}
+
+/* 1. Hangbeállítások (Fehér Hangszóró) */
+.dkv-grade-3 button[title="Hangbeállítások"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='24' height='24'%3E%3Cpath d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z'/%3E%3C/svg%3E");
+}
+
+/* 2. Napló (Fehér Tekercs/Lista) */
+.dkv-grade-3 button[title="Napló"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='24' height='24'%3E%3Cpath d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'/%3E%3C/svg%3E");
+}
+
+/* 3. Történet/Narráció (Fehér Könyv) */
+.dkv-grade-3 button[title="Narráció"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='24' height='24'%3E%3Cpath d='M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z'/%3E%3C/svg%3E");
+}
+
+.dkv-grade-3 .dkv-inventory-slot {
+    width: 80px;
+    height: 80px;
 }

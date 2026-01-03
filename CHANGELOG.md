@@ -5,6 +5,22 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.4.6] - 2026-01-03
+### Hozzáadva (Added)
+- **Multi-Grade Extension (Grade 4-5-6):**
+    - **Universal Gamification:** Kiterjesztve a 3. évfolyamon bevezetett "Lebegő Pont" animáció és pontozási logika (`scoring` config) a 4. (Lovag), 5. (Cyberpunk) és 6. (Sci-Fi) évfolyamokra is.
+    - **Themed Feedback:** A lebegő pontszámok (`.dkv-floating-point`) és az inaktív gombok stílusa minden évfolyam témájához igazodik (pl. Times New Roman a lovagoknál, Neon Zöld Cyberpunk betűtípus az 5. osztálynál, Roboto kék a 6.-nál).
+    - **Narrator Upgrade:** A Narráció panel finom áttűnése (`opacity transition`) implementálva minden évfolyam CSS-ében.
+    - **Config Sync:** A 4-6. osztályos `config.js` fájlok megkapták a hiányzó `scoring` és `icon` definíciókat.
+- **Visual Polish (Grade 3):**
+    - **Settings Upgrade:** Hangszóró ikon (SVG) a fogaskerék helyett, "Hangbeállítások" cím, egyedi türkiz csúszkák, és javított bezárási logika.
+    - **Timeline Redesign:** Új "Dupla Kör" dizájn (statikus külső gyűrű, töltődő belső sáv) **Ragyogás (Glow)** effekttel kiegészítve. Egységesített `Source Code Pro` tipográfia.
+    - **HUD Refinement:** Avatar mérete **70px**-re növelve, a karakternév és pontszám betűmérete arányosan skálázva. A pontszám színe korrigálva a téma türkiz árnyalatára.
+    - **Iconography:** Az alapértelmezett színes emojik (Hang, Napló, Narráció) lecserélve letisztult, fehér **SVG ikonokra** (Hangszóró, Tekercs, Könyv) CSS overlay technikával.
+    - **Panel Consistency:** A Napló, Beállítások és Narráció panelek kerete egységesen türkiz (**#00d2d3**, 2px) stílust kapott.
+    - **CSS Clean-up:** A Grade 3 stíluslap (`main.css`) refaktorálása: az indokolatlan `!important` deklarációk eltávolítása és felváltása helyes CSS specificitással.
+    - **Floating Point FX:** A "+1" pontszerzés vizuális visszajelzése (Grade 3) drámaian felnagyítva (**3.5rem**, Impact font) a jobb játékélmény érdekében.
+
 ## [0.4.5] - 2026-01-02
 ### Hozzáadva (Added)
 - **Dynamic HUD System:**

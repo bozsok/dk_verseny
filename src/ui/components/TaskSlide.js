@@ -168,7 +168,7 @@ class TaskSlide {
 
             settingsPanel.innerHTML = `
                 <div class="dkv-panel-header">
-                    <h2>Beállítások</h2>
+                    <h2>Hangbeállítások</h2>
                 </div>
                 <div class="dkv-panel-body" style="padding-bottom: 30px;">
                     <div class="dkv-setting-row" style="margin-bottom: 20px;">
@@ -190,7 +190,7 @@ class TaskSlide {
             document.addEventListener('mousedown', (e) => {
                 if (settingsPanel.classList.contains('open') &&
                     !settingsPanel.contains(e.target) &&
-                    !e.target.closest('button[title="Beállítások"]')) {
+                    !e.target.closest('button[title="Hangbeállítások"]')) {
                     settingsPanel.classList.remove('open');
                 }
             });

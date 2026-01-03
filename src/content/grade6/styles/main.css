@@ -26,3 +26,57 @@
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
+
+/* Narrator Transition Override */
+.dkv-grade-6 .dkv-narrator-box {
+    display: flex !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.dkv-grade-6 .dkv-narrator-box.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Floating Point Animation - Sci-Fi Style */
+.dkv-floating-point {
+    position: absolute;
+    color: #4facfe;
+    /* Világoskék */
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 100;
+    text-shadow: 0 0 10px rgba(79, 172, 254, 0.8);
+    animation: floatUp 1.5s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(1);
+    }
+}
+
+/* Disabled Button Style */
+.dkv-grade-6 .dkv-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+    background: #333;
+    /* Sci-Fi disabled look */
+    box-shadow: none;
+    transform: none !important;
+}

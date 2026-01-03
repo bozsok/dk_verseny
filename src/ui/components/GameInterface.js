@@ -75,8 +75,8 @@ class GameInterface {
         // Beállítások gomb átmozgatása fentre
         const topSettingsBtn = document.createElement('button');
         topSettingsBtn.className = 'dkv-func-btn';
-        topSettingsBtn.title = 'Beállítások';
-        topSettingsBtn.innerHTML = '⚙️';
+        topSettingsBtn.title = 'Hangbeállítások';
+        topSettingsBtn.innerHTML = '🔊';
         // zIndex maradhat, hogy kattintható legyen, de position nem kell
         topSettingsBtn.style.zIndex = '2001';
         topSettingsBtn.onclick = () => this.onOpenSettings();
@@ -161,6 +161,7 @@ class GameInterface {
         // Cache referenciák
         this.timelineBar = this.element.querySelector('#dkv-timeline-bar');
         this.timelineText = this.element.querySelector('#dkv-timeline-pct');
+        this.timelineCircle = this.element.querySelector('.dkv-timeline-circle');
 
         return this.element;
     }
@@ -187,6 +188,12 @@ class GameInterface {
         }
         if (this.timelineText) {
             this.timelineText.textContent = `${pct}%`;
+        }
+        if (this.timelineCircle) {
+            // Dinamikus körkörös progresszió (Radial Mask + Conic Gradient)
+            // 88% belső mag ~ 3px vastag gyűrű (50px esetén)
+            this.timelineCircle.style.background = `radial-gradient(closest-side, rgba(0, 21, 30, 0.9) 88%, transparent 89%),
+                conic-gradient(#00d2d3 ${pct}%, rgba(0, 210, 211, 0.2) 0%)`;
         }
     }
 

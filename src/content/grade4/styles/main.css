@@ -41,3 +41,57 @@
     border-radius: 8px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
 }
+
+/* Container */
+.dkv-grade-4 .dkv-slide-container {
+    border: 4px solid #4a3c31;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+/* Narrator Transition Override */
+.dkv-grade-4 .dkv-narrator-box {
+    display: flex !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.dkv-grade-4 .dkv-narrator-box.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Floating Point Animation */
+.dkv-floating-point {
+    position: absolute;
+    color: #ffd700;
+    font-family: 'Times New Roman', serif; /* Lovagosabb betűtípus */
+    font-size: 1.8rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 100;
+    text-shadow: 2px 2px 0 #000;
+    animation: floatUp 1.5s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(1);
+    }
+}
+
+/* Disabled Button Style */
+.dkv-grade-4 .dkv-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
