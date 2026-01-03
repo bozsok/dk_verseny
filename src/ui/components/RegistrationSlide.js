@@ -49,6 +49,7 @@ class RegistrationSlide {
         this.nextBtn = null;
         this.modal = null;
         this.lastFocusedElement = null; // Ide mentjük a fókuszt nyitáskor
+        this.isAudioLocked = false;
     }
 
     createElement() {
@@ -153,7 +154,13 @@ class RegistrationSlide {
                 // KÉSZ -> Elemek egyesével (staggered) megjelenítése
                 elementsToShow.forEach((el, index) => {
                     setTimeout(() => {
-                        el.style.opacity = '1';
+                        // Ha ez a gomb, és blokkolva van a hang miatt, akkor csak 0.5
+                        if (el === this.nextBtn && this.isAudioLocked) {
+                            el.style.opacity = '0.5';
+                        } else {
+                            el.style.opacity = '1';
+                        }
+
                         // Ha ez az első elem (Név mező), fókuszáljunk rá
                         if (index === 0 && this.nameInput && this.nameInput.input) {
                             this.nameInput.input.focus();
@@ -200,7 +207,7 @@ class RegistrationSlide {
         if (type === 'classId') {
             inp.maxLength = 3;
         } else if (type === 'nick') {
-            inp.maxLength = 15;
+            inp.maxLength = 10;
         }
 
         // onBlur esemény - Validáció és Formázás
@@ -557,6 +564,18 @@ class RegistrationSlide {
         setTimeout(() => {
             if (floatEl.parentNode) floatEl.parentNode.removeChild(floatEl);
         }, 1600);
+    }
+
+    /**
+     * Tovább gomb vezérlése (Audio)
+     */
+    setNextButtonState(enabled) {
+        this.isAudioLocked = !enabled;
+        if (this.nextBtn) {
+            this.nextBtn.disabled = !enabled;
+            this.nextBtn.style.opacity = enabled ? '1' : '0.5';
+            this.nextBtn.style.cursor = enabled ? 'pointer' : 'default';
+        }
     }
 }
 

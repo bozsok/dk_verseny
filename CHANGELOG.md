@@ -5,6 +5,21 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.5.0] - 2026-01-03
+### Hozzáadva (Added)
+- **Audio Core System:**
+    - **Global Background Music:** Implementálva a háttérzene (`default_bg.mp3`) rendszere, amely a játék kezdetekor (Slide 1) indul, végig kíséri a kalandot, és az utolsó diánál (Finálé) 3 másodperces 'fade-out' effekttel halkul el. Loop-olt lejátszás támogatott.
+    - **Audio Settings Panel:** Új "Hangbeállítások" panel a `GameInterface`-ben, két csúszkával (Slider), amellyel a felhasználó valós időben, külön-külön szabályozhatja a Zene és a Narráció hangerejét (Session szintű beállítás).
+    - **Smart Replay Logic:** Intelligens hanganyag-kezelés. Új diára lépéskor a hang automatikusan elindul, és blokkolja a "Tovább" gombot. Ha azonban a felhasználó már egyszer meghallgatta a diát (pl. visszalép), a hang ugyan elindul ("Mandatory Play"), de a navigáció NEM blokkolódik ("Optional Wait").
+    - **Safety Buffer:** Beépítve a `canplay` esemény figyelése a narrációs hangoknál, megakadályozva, hogy a lejátszás kezdete "leharapódjon" a rendszerterhelés miatt.
+    - **Immediate Stop:** Csúszásmentes hangváltás. Diát váltáskor (akár előre, akár hátra) az előző dia hangja azonnal és teljesen leáll, megelőzve az áthallást (`audio bleed`).
+
+### Megváltoztatva (Changed)
+- **Navigation UX:**
+    - **Final Slide Lock:** Az utolsó dián (Összefoglaló/28. dia) a "Tovább" gomb véglegesen inaktívvá válik, jelezve a kaland végét.
+    - **Visual Feedback:** A "Tovább" nyilak (Onboarding és GameInterface) inaktív állapotában az egérkurzor mostantól `default`, az átlátszóság pedig expliciten `0.5`, vizuálisan is egyértelművé téve a tiltást.
+    - **Audio Sync:** A "Tovább" gombok vizuális állapota (opacity) mostantól szinkronban van a hang alapú tiltással (`isAudioLocked`), felülírva az esetleges animációs (Typewriter/Reveal) opacity változásokat.
+    
 ## [0.4.8] - 2026-01-03
 ### Hozzáadva (Added)
 - **Narrációs Rendszer (Storytelling):**

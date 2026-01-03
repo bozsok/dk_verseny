@@ -31,6 +31,7 @@ class CharacterSlide {
     this.selectionBonusShown = false;
 
     this.lastFocusedElement = null;
+    this.isAudioLocked = false;
   }
 
   createElement() {
@@ -342,12 +343,23 @@ class CharacterSlide {
 
   _updateNextButton() {
     if (this.nextBtn) {
+      // Audio Lock ellenőrzés
+      if (this.isAudioLocked) {
+        this.nextBtn.disabled = true;
+        if (this.nextBtn.style.opacity !== '0') {
+          this.nextBtn.style.opacity = '0.5';
+        }
+        this.nextBtn.style.cursor = 'default';
+        return;
+      }
+
       const hasSelection = !!this.confirmedSelection;
       this.nextBtn.disabled = !hasSelection;
       // Csak akkor állítunk opacity-t, ha már látható (nem 0)
       if (this.nextBtn.style.opacity !== '0') {
         this.nextBtn.style.opacity = hasSelection ? '1' : '0.5';
       }
+      this.nextBtn.style.cursor = hasSelection ? 'pointer' : 'default';
     }
   }
 
@@ -641,6 +653,14 @@ class CharacterSlide {
     setTimeout(() => {
       if (floatEl.parentNode) floatEl.parentNode.removeChild(floatEl);
     }, 1600);
+  }
+
+  /**
+   * Tovább gomb vezérlése (Audio miatt)
+   */
+  setNextButtonState(enabled) {
+    this.isAudioLocked = !enabled;
+    this._updateNextButton();
   }
 }
 

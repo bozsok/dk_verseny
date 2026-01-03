@@ -19,6 +19,7 @@ class WelcomeSlide {
 
         this.element = null;
         this.typewriter = new Typewriter();
+        this.isAudioLocked = false;
     }
 
 
@@ -134,7 +135,8 @@ class WelcomeSlide {
         const typeNextParagraph = () => {
             if (currentParagraphIndex >= paragraphs.length) {
                 // VÉGE: Kurzor maradjon az utolsón (User kérése) -> NEM VESSZÜK LE.
-                btn.style.opacity = '1';
+                // Ha blokkolva van a hang miatt, akkor csak 0.5 opacity
+                btn.style.opacity = this.isAudioLocked ? '0.5' : '1';
                 return;
             }
 
@@ -176,6 +178,23 @@ class WelcomeSlide {
             console.warn('TimeManager hiányzik, az idő nem indult el!');
         }
         this.onNext();
+    }
+    /**
+     * Tovább gomb vezérlése kívülről (pl. audio miatt).
+     * @param {boolean} enabled 
+     */
+    setNextButtonState(enabled) {
+        this.isAudioLocked = !enabled;
+        const btn = this.element ? this.element.querySelector('.dkv-start-button') : null;
+        if (btn) {
+            btn.disabled = !enabled;
+            // Ha a Typewriter miatt még 0 az opacity, ne írjuk felül 0.5-tel!
+
+            if (btn.style.opacity !== '0') {
+                btn.style.opacity = enabled ? '1' : '0.5';
+            }
+            btn.style.cursor = enabled ? 'pointer' : 'default';
+        }
     }
 }
 

@@ -13,9 +13,17 @@ class GameInterface {
         this.onPrev = options.onPrev || (() => { });
         this.onOpenJournal = options.onOpenJournal || (() => { });
         this.onOpenNarrator = options.onOpenNarrator || (() => { });
+        this.onOpenNarrator = options.onOpenNarrator || (() => { });
         this.onOpenSettings = options.onOpenSettings || (() => { });
+        this.onMusicVolumeChange = options.onMusicVolumeChange || (() => { });
+        this.onNarrationVolumeChange = options.onNarrationVolumeChange || (() => { });
 
         // State
+        // UI uses 0-100 range,Logic uses 0.0-1.0. We store UI value here (default 50/100)
+        // If options come in as 0.0-1.0, convert to 0-100.
+        this.currentMusicVolume = options.musicVolume !== undefined ? Math.round(options.musicVolume * 100) : 50;
+        this.currentNarrationVolume = options.narrationVolume !== undefined ? Math.round(options.narrationVolume * 100) : 100;
+
         this.totalSlides = options.totalSlides || 28;
         this.currentSlideIndex = options.currentSlideIndex || 1;
         this.currentDisplayedScore = 0;
@@ -377,6 +385,32 @@ class GameInterface {
 
             this.element.appendChild(settingsPanel);
 
+            // --- Event Listeners bekötése a meglévő sliderekhez ---
+            const inputs = settingsPanel.querySelectorAll('input[type="range"]');
+            const musicInput = inputs[0]; // Első slider: Zene
+            const narratorInput = inputs[1]; // Második slider: Narrátor
+
+            // Kezdőértékek beállítása
+            if (musicInput) musicInput.value = this.currentMusicVolume;
+            if (narratorInput) narratorInput.value = this.currentNarrationVolume;
+
+            if (musicInput) {
+                musicInput.addEventListener('input', (e) => {
+                    const val = parseInt(e.target.value, 10);
+                    this.currentMusicVolume = val;
+                    this.onMusicVolumeChange(val / 100); // 0.0 - 1.0
+                });
+            }
+
+            if (narratorInput) {
+                narratorInput.addEventListener('input', (e) => {
+                    const val = parseInt(e.target.value, 10);
+                    this.currentNarrationVolume = val;
+                    this.onNarrationVolumeChange(val / 100); // 0.0 - 1.0
+                });
+            }
+            // -----------------------------------------------------
+
             document.addEventListener('mousedown', (e) => {
                 if (settingsPanel.classList.contains('open') &&
                     !settingsPanel.contains(e.target) &&
@@ -388,6 +422,20 @@ class GameInterface {
             void settingsPanel.offsetWidth;
         }
         settingsPanel.classList.toggle('open');
+    }
+
+    /**
+     * Tovább gomb engedélyezése/tiltása
+     * @param {boolean} enabled 
+     */
+    setNextButtonState(enabled) {
+        const btn = this.element.querySelector('.dkv-btn-next');
+        if (btn) {
+            btn.disabled = !enabled;
+            // Explicitly handling opacity and cursor as per user request
+            btn.style.opacity = enabled ? '1' : '0.5';
+            btn.style.cursor = enabled ? 'pointer' : 'default';
+        }
     }
 }
 

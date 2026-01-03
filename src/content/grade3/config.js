@@ -44,7 +44,8 @@ export const createConfig = () => {
 
     addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, bátor Kódmester!', 'Te lettél az egyik <b>Kiválasztott</b>, aki egy izgalmas és kalandokkal teli utazáson vesz részt.\nAz lesz a feladatod, hogy felfedezd a varázslatos <b>Kód Királyságot</b> és megállíts egy veszélyes, romboló vírust, amelyet egy egykori <b>Kódbölcs</b> készített. A megállításhoz és a királyság rendjének visszaállításához különböző digitális <b>Varázskulcsokat</b> kell megszerezned.\nA többi kiválasztottal együtt indulsz útnak, de remélhetőleg <b>Te</b> leszel az, aki sikerrel fejezi be a küldetését.', {
         buttonText: 'Tovább',
-        backgroundUrl: bgImage
+        backgroundUrl: bgImage,
+        audioSrc: 'assets/audio/grade3/welcome.mp3'
     });
 
     addSlide(SLIDE_TYPES.REGISTRATION, 'Első feladatként írd be a teljes nevedet az alábbi beviteli mezőbe! A teljes nevedre van szükség, ezért nem elég az, hogy Marci vagy Szofi.\nEzt követően add meg a becenevedet maximum 10 betűből, majd utána az osztályodat!', '', {
@@ -58,7 +59,8 @@ export const createConfig = () => {
             name: 1,
             nick: 1,
             classId: 1
-        }
+        },
+        audioSrc: 'assets/audio/grade3/registration.mp3'
     });
 
     addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!\nA karakterek kattintással nagyíthatók!', '', {
@@ -80,7 +82,8 @@ export const createConfig = () => {
         backgroundUrl: bgImage,
         scoring: {
             selection: 1
-        }
+        },
+        audioSrc: 'assets/audio/grade3/character.mp3'
     });
 
     // === 1. BEVEZETÉS (FIX 1-4) ===
@@ -103,7 +106,8 @@ export const createConfig = () => {
 
         addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', {
             imageUrl: `assets/images/grade3/slides/slide_${slideNum}.jpg`,
-            narration: narrationText
+            narration: narrationText,
+            audioSrc: `assets/audio/grade3/slide_${slideNum}.mp3`
         });
     }
 
@@ -171,7 +175,8 @@ export const createConfig = () => {
 
             addSlide(SLIDE_TYPES.STORY, title, 'Teljesítsétek a kihívást...', {
                 imageUrl: `assets/images/grade3/slides/slide_${fileNumStr}.jpg`,
-                narration: narrationText
+                narration: narrationText,
+                audioSrc: `assets/audio/grade3/slide_${fileNumStr}.mp3`
             });
         }
     }
@@ -189,7 +194,8 @@ export const createConfig = () => {
 
         addSlide(SLIDE_TYPES.STORY, title, 'A végső megmérettetés...', {
             imageUrl: `assets/images/grade3/slides/slide_${slideNum}.jpg`,
-            narration: narrationText
+            narration: narrationText,
+            audioSrc: `assets/audio/grade3/slide_${slideNum}.mp3`
         });
     }
 

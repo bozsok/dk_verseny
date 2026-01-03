@@ -1,37 +1,31 @@
-
 import { SLIDE_TYPES } from '../../core/engine/slides-config.js';
 import './styles/main.css';
-import './styles/Welcome.css';
 import './styles/Registration.css';
+import './styles/Welcome.css';
 import './styles/Character.css';
 
-// === GLOBÁLIS KONFIGURÁCIÓ (Grade 6) ===
-// Téma: "Világűr / Sci-fi"
-
-const GRADE_PATH = 'grade6';
-const SHARED_BUTTON_STYLE = 'dkv-grade-6-button';
+const TYPING_SPEED = 2; // Gyors gépelés (Sci-Fi)
 
 export const createConfig = () => {
     const slides = [];
     let idCounter = 1;
 
-    // Helper függvény
     const addSlide = (type, title, description, content = {}) => {
+        const enrichedContent = {
+            ...content,
+            typingSpeed: TYPING_SPEED
+        };
         slides.push({
-            id: `g6_slide_${idCounter++}`,
+            id: idCounter++,
             type,
             title,
             description,
-            content: {
-                ...content,
-                typingSpeed: 0
-            },
+            content: enrichedContent,
             isLocked: true,
             completed: false
         });
     };
 
-    // Shuffle helper (Fisher-Yates)
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -39,60 +33,68 @@ export const createConfig = () => {
         }
     };
 
-    // === ONBOARDING ===
-    const bgImage = 'assets/images/grade6/onboarding_bg_placeholder.jpg'; // Feltételezett placeholder
+    const bgImage = 'assets/images/grade6/onboarding_bg.png';
 
-    // 1. Welcome
-    addSlide(SLIDE_TYPES.WELCOME, 'Parancsnoki Híd - Grade 6', 'Az űrállomás energiaellátása kritikus. <br>A javítórobotok vezérlőkódja megsérült.<br>Parancsnok, várjuk az utasításait!', {
-        buttonText: 'Kilövés Engedélyezése',
-        backgroundUrl: bgImage
+    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek a Fedélzeten!', 'Te lettél az egyik <b>Űrhajós</b>, aki részt vesz a galaxis legnagyobb felfedező küldetésén.\nCélunk a titokzatos <b>Kristály Bolygó</b> elérése és az ott rejtőző energiaforrások felkutatása. A hajód navigálásához különböző <b>Csillagtérképeket</b> kell megszerezned.\nIndítsd be a hajtóműveket, és készülj a felszállásra!', {
+        buttonText: 'Indítás',
+        backgroundUrl: bgImage,
+        audioSrc: 'assets/audio/grade6/welcome.mp3'
     });
 
-    // 2. Registration
-    addSlide(SLIDE_TYPES.REGISTRATION, 'Parancsnoki Profil', '', {
+    addSlide(SLIDE_TYPES.REGISTRATION, 'Azonosítás: Kérlek, add meg a nevedet a hajónaplóhoz!\nEzt követően add meg a hívójeledet (becenév) és a rajt (osztály)!', '', {
         fields: ['name', 'nickname', 'classId'],
-        buttonText: 'Profil Mentése',
+        buttonText: 'Rögzítés',
         backgroundUrl: bgImage,
-        validation: { allowedClasses: ['6.a', '6.b', '6.c'] },
-        scoring: { name: 1, nick: 1, classId: 1 }
+        validation: {
+            allowedClasses: ['6.a', '6.b', '6.c']
+        },
+        scoring: {
+            name: 1,
+            nick: 1,
+            classId: 1
+        },
+        audioSrc: 'assets/audio/grade6/registration.mp3'
     });
 
-    // 3. Character
-    addSlide(SLIDE_TYPES.CHARACTER, 'Válassz Tiszti Egyenruhát', 'Hogyan jelenjen meg a hologramod?', {
-        backgroundUrl: bgImage,
-        scoring: { selection: 1 },
+    addSlide(SLIDE_TYPES.CHARACTER, 'Válassz karaktert a küldetéshez!\nA profilképek kattintással nagyíthatók.', '', {
         characters: {
             boy: [
-                { id: 'b1', icon: 'assets/images/grade3/karakter/small/boy_1_k.jpg', card: 'assets/images/grade3/characters/boy1_card.png', zoom: 'assets/images/grade3/characters/boy1_zoom.png' },
-                { id: 'b2', icon: 'assets/images/grade3/karakter/small/boy_2_k.jpg', card: 'assets/images/grade3/characters/boy2_card.png', zoom: 'assets/images/grade3/characters/boy2_zoom.png' },
-                { id: 'b3', icon: 'assets/images/grade3/karakter/small/boy_3_k.jpg', card: 'assets/images/grade3/characters/boy3_card.png', zoom: 'assets/images/grade3/characters/boy3_zoom.png' },
-                { id: 'b4', icon: 'assets/images/grade3/karakter/small/boy_4_k.jpg', card: 'assets/images/grade3/characters/boy4_card.png', zoom: 'assets/images/grade3/characters/boy4_zoom.png' }
+                { id: 'b1', card: 'assets/images/grade6/karakter/boy_1.jpg', zoom: 'assets/images/grade6/karakter/large/boy_1_n.jpg', icon: 'assets/images/grade6/karakter/small/boy_1_k.jpg' },
+                { id: 'b2', card: 'assets/images/grade6/karakter/boy_2.jpg', zoom: 'assets/images/grade6/karakter/large/boy_2_n.jpg', icon: 'assets/images/grade6/karakter/small/boy_2_k.jpg' },
+                { id: 'b3', card: 'assets/images/grade6/karakter/boy_3.jpg', zoom: 'assets/images/grade6/karakter/large/boy_3_n.jpg', icon: 'assets/images/grade6/karakter/small/boy_3_k.jpg' },
+                { id: 'b4', card: 'assets/images/grade6/karakter/boy_4.jpg', zoom: 'assets/images/grade6/karakter/large/boy_4_n.jpg', icon: 'assets/images/grade6/karakter/small/boy_4_k.jpg' }
             ],
             girl: [
-                { id: 'g1', icon: 'assets/images/grade3/karakter/small/girl_1_k.jpg', card: 'assets/images/grade3/characters/girl1_card.png', zoom: 'assets/images/grade3/characters/girl1_zoom.png' },
-                { id: 'g2', icon: 'assets/images/grade3/karakter/small/girl_2_k.jpg', card: 'assets/images/grade3/characters/girl2_card.png', zoom: 'assets/images/grade3/characters/girl2_zoom.png' },
-                { id: 'g3', icon: 'assets/images/grade3/karakter/small/girl_3_k.jpg', card: 'assets/images/grade3/characters/girl3_card.png', zoom: 'assets/images/grade3/characters/girl3_zoom.png' },
-                { id: 'g4', icon: 'assets/images/grade3/karakter/small/girl_4_k.jpg', card: 'assets/images/grade3/characters/girl4_card.png', zoom: 'assets/images/grade3/characters/girl4_zoom.png' }
+                { id: 'g1', card: 'assets/images/grade6/karakter/girl_1.jpg', zoom: 'assets/images/grade6/karakter/large/girl_1_n.jpg', icon: 'assets/images/grade6/karakter/small/girl_1_k.jpg' },
+                { id: 'g2', card: 'assets/images/grade6/karakter/girl_2.jpg', zoom: 'assets/images/grade6/karakter/large/girl_2_n.jpg', icon: 'assets/images/grade6/karakter/small/girl_2_k.jpg' },
+                { id: 'g3', card: 'assets/images/grade6/karakter/girl_3.jpg', zoom: 'assets/images/grade6/karakter/large/girl_3_n.jpg', icon: 'assets/images/grade6/karakter/small/girl_3_k.jpg' },
+                { id: 'g4', card: 'assets/images/grade6/karakter/girl_4.jpg', zoom: 'assets/images/grade6/karakter/large/girl_4_n.jpg', icon: 'assets/images/grade6/karakter/small/girl_4_k.jpg' }
             ]
-        }
+        },
+        buttonText: 'Kiválasztás',
+        backgroundUrl: bgImage,
+        scoring: {
+            selection: 1
+        },
+        audioSrc: 'assets/audio/grade6/character.mp3'
     });
 
     // === 1. BEVEZETÉS (FIX 1-4) ===
     for (let i = 1; i <= 4; i++) {
         const slideNum = String(i).padStart(2, '0');
-        const title = `Bevezetés ${i}. (Kontextus)`;
-        let narrationText = `<b>${title}</b><br><br>Parancsnok, figyelem! Ez a bevezető szakasz.<br>(Helyőrző szöveg a ${i}. diánál)`;
+        const title = `Bevezetés ${i}. (Világűr)`;
+        const narrationText = `<b>${title}</b><br><br>Helyőrző történet a Grade 6 (${i}.) diánál.<br>Űrutazás kezdete...`;
 
-        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek a protokollt...', {
+        addSlide(SLIDE_TYPES.STORY, title, 'Navigációs rendszerek élesítve...', {
             imageUrl: `assets/images/grade6/slides/slide_${slideNum}.jpg`,
-            narration: narrationText
+            narration: narrationText,
+            audioSrc: `assets/audio/grade6/slide_${slideNum}.mp3`
         });
     }
 
     // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===
     const stationIndices = [0, 1, 2, 3, 4];
     shuffleArray(stationIndices);
-    console.log("[DKV Grade 6] Station Order:", stationIndices);
 
     for (let slot = 0; slot < 5; slot++) {
         const originalStationIdx = stationIndices[slot];
@@ -103,49 +105,18 @@ export const createConfig = () => {
             const fileNumStr = String(originalNum).padStart(2, '0');
 
             const displayedStationNum = slot + 1;
-            let title = `${displayedStationNum}. Állomás: `;
-            if (step === 0 || step === 1) title += "Kontextus";
-            else if (step === 2) title += "Feladat";
-            else title += "Siker, Öröm";
+            let title = `${displayedStationNum}. Bolygó: `;
+            if (step === 0 || step === 1) title += "Megközelítés";
+            else if (step === 2) title += "Landolás";
+            else title += "Siker";
 
-            let storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti ${originalNum}. diához.`;
+            let storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti Grade 6 #${originalNum}. diához.`;
+            let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1})</span>`;
 
-            // === 1. ÁLLOMÁS: KRISTÁLY BOLYGÓ (5-8) ===
-            if (originalNum === 5) { storyContent = `[Kristály Bolygó - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 6) { storyContent = `[Kristály Bolygó - Dia 2] ...`; }
-            else if (originalNum === 7) { storyContent = `[Kristály Bolygó - Dia 3] (Feladat)...`; }
-            else if (originalNum === 8) { storyContent = `[Kristály Bolygó - Dia 4] (Siker)...`; }
-
-            // === 2. ÁLLOMÁS: ASZTEROIDA MEZŐ (9-12) ===
-            else if (originalNum === 9) { storyContent = `[Aszteroida Mező - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 10) { storyContent = `[Aszteroida Mező - Dia 2] ...`; }
-            else if (originalNum === 11) { storyContent = `[Aszteroida Mező - Dia 3] (Feladat)...`; }
-            else if (originalNum === 12) { storyContent = `[Aszteroida Mező - Dia 4] (Siker)...`; }
-
-            // === 3. ÁLLOMÁS: ELHAGYOTT ŰRÁLLOMÁS (13-16) ===
-            else if (originalNum === 13) { storyContent = `[Elhagyott Űrállomás - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 14) { storyContent = `[Elhagyott Űrállomás - Dia 2] ...`; }
-            else if (originalNum === 15) { storyContent = `[Elhagyott Űrállomás - Dia 3] (Feladat)...`; }
-            else if (originalNum === 16) { storyContent = `[Elhagyott Űrállomás - Dia 4] (Siker)...`; }
-
-            // === 4. ÁLLOMÁS: FEKETE LYUK ESEMÉNYHORIZONT (17-20) ===
-            else if (originalNum === 17) { storyContent = `[Fekete Lyuk Eseményhorizont - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 18) { storyContent = `[Fekete Lyuk Eseményhorizont - Dia 2] ...`; }
-            else if (originalNum === 19) { storyContent = `[Fekete Lyuk Eseményhorizont - Dia 3] (Feladat)...`; }
-            else if (originalNum === 20) { storyContent = `[Fekete Lyuk Eseményhorizont - Dia 4] (Siker)...`; }
-
-            // === 5. ÁLLOMÁS: IDEGEN ANYAHAJÓ (21-24) ===
-            else if (originalNum === 21) { storyContent = `[Idegen Anyahajó - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 22) { storyContent = `[Idegen Anyahajó - Dia 2] ...`; }
-            else if (originalNum === 23) { storyContent = `[Idegen Anyahajó - Dia 3] (Feladat)...`; }
-            else if (originalNum === 24) { storyContent = `[Idegen Anyahajó - Dia 4] (Siker)...`; }
-
-
-            let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1} | Order: ${stationIndices.map(n => n + 1).join('-')})</span>`;
-
-            addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek a protokollt...', {
+            addSlide(SLIDE_TYPES.STORY, title, 'Szenzorok adatgyűjtése...', {
                 imageUrl: `assets/images/grade6/slides/slide_${fileNumStr}.jpg`,
-                narration: narrationText
+                narration: narrationText,
+                audioSrc: `assets/audio/grade6/slide_${fileNumStr}.mp3`
             });
         }
     }
@@ -153,17 +124,13 @@ export const createConfig = () => {
     // === 3. FINÁLÉ (FIX 25-28) ===
     for (let i = 25; i <= 28; i++) {
         const slideNum = String(i).padStart(2, '0');
-        let title = "Finálé: ";
-        if (i === 25) title += "Kontextus";
-        else if (i === 26) title += "Feladat";
-        else if (i === 27) title += "Siker, Öröm";
-        else title += "Összefoglaló";
+        const title = "Küldetés Teljesítve";
+        const narrationText = `<b>${title}</b><br><br>Helyőrző szöveg az Grade 6 fináléjához (${i}. dia).`;
 
-        let narrationText = `<b>${title}</b><br><br>Parancsnok, a küldetés teljesítve.<br>(Dia #${i})`;
-
-        addSlide(SLIDE_TYPES.STORY, title, 'Végső visszaszámlálás...', {
+        addSlide(SLIDE_TYPES.STORY, title, 'Hazatérés...', {
             imageUrl: `assets/images/grade6/slides/slide_${slideNum}.jpg`,
-            narration: narrationText
+            narration: narrationText,
+            audioSrc: `assets/audio/grade6/slide_${slideNum}.mp3`
         });
     }
 

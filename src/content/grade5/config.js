@@ -1,37 +1,31 @@
-
 import { SLIDE_TYPES } from '../../core/engine/slides-config.js';
 import './styles/main.css';
-import './styles/Welcome.css';
 import './styles/Registration.css';
+import './styles/Welcome.css';
 import './styles/Character.css';
 
-// === GLOBÁLIS KONFIGURÁCIÓ (Grade 5) ===
-// Téma: "Cyberpunk / Jövő"
-
-const GRADE_PATH = 'grade5';
-const SHARED_BUTTON_STYLE = 'dkv-grade-5-button';
+const TYPING_SPEED = 2; // Gyors gépelés (Cyberpunk)
 
 export const createConfig = () => {
     const slides = [];
     let idCounter = 1;
 
-    // Helper függvény
     const addSlide = (type, title, description, content = {}) => {
+        const enrichedContent = {
+            ...content,
+            typingSpeed: TYPING_SPEED
+        };
         slides.push({
-            id: `g5_slide_${idCounter++}`,
+            id: idCounter++,
             type,
             title,
             description,
-            content: {
-                ...content,
-                typingSpeed: 0
-            },
+            content: enrichedContent,
             isLocked: true,
             completed: false
         });
     };
 
-    // Shuffle helper (Fisher-Yates)
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -39,60 +33,68 @@ export const createConfig = () => {
         }
     };
 
-    // === ONBOARDING ===
-    const bgImage = 'assets/images/grade5/onboarding_bg_placeholder.jpg'; // Feltételezett placeholder
+    const bgImage = 'assets/images/grade5/onboarding_bg.png';
 
-    // 1. Welcome
-    addSlide(SLIDE_TYPES.WELCOME, 'Rendszer Indítása... Grade 5', 'A hálózat veszélyben van. A Kódvírusok 5. szintű titkosítást használnak.<br>Csak te tudod feltörni a védelmüket.', {
-        buttonText: 'Csatlakozás',
-        backgroundUrl: bgImage
+    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, Ügynök!', 'Te lettél az egyik <b>Kiválasztott</b>, aki beléphet a szigorúan védett <b>Mátrix</b> rendszerbe.\nFeladatod a rendszer integritásának helyreállítása és a <b>Vírus</b> semlegesítése. A művelethez különböző digitális <b>Kódokat</b> kell megszerezned.\nCsatlakozz a csapathoz, és hajtsd végre a küldetést!', {
+        buttonText: 'Belépés',
+        backgroundUrl: bgImage,
+        audioSrc: 'assets/audio/grade5/welcome.mp3'
     });
 
-    // 2. Registration
-    addSlide(SLIDE_TYPES.REGISTRATION, 'Ügynök Regisztráció', '', {
+    addSlide(SLIDE_TYPES.REGISTRATION, 'Identifikáció szükséges! Írd be a teljes nevedet!\nEzt követően add meg a fedőnevedet (becenév) és az egységedet (osztály)!', '', {
         fields: ['name', 'nickname', 'classId'],
-        buttonText: 'Adatok Küldése',
+        buttonText: 'Identifikáció',
         backgroundUrl: bgImage,
-        validation: { allowedClasses: ['5.a', '5.b', '5.c'] },
-        scoring: { name: 1, nick: 1, classId: 1 }
+        validation: {
+            allowedClasses: ['5.a', '5.b', '5.c']
+        },
+        scoring: {
+            name: 1,
+            nick: 1,
+            classId: 1
+        },
+        audioSrc: 'assets/audio/grade5/registration.mp3'
     });
 
-    // 3. Character
-    addSlide(SLIDE_TYPES.CHARACTER, 'Válassz Avatárt', 'Melyik digitális lenyomatot használod?', {
-        backgroundUrl: bgImage,
-        scoring: { selection: 1 },
+    addSlide(SLIDE_TYPES.CHARACTER, 'Válassz avatárt a digitális megjelenésedhez!\nA képre kattintva nagyítható a nézet.', '', {
         characters: {
             boy: [
-                { id: 'b1', icon: 'assets/images/grade3/karakter/small/boy_1_k.jpg', card: 'assets/images/grade3/characters/boy1_card.png', zoom: 'assets/images/grade3/characters/boy1_zoom.png' },
-                { id: 'b2', icon: 'assets/images/grade3/karakter/small/boy_2_k.jpg', card: 'assets/images/grade3/characters/boy2_card.png', zoom: 'assets/images/grade3/characters/boy2_zoom.png' },
-                { id: 'b3', icon: 'assets/images/grade3/karakter/small/boy_3_k.jpg', card: 'assets/images/grade3/characters/boy3_card.png', zoom: 'assets/images/grade3/characters/boy3_zoom.png' },
-                { id: 'b4', icon: 'assets/images/grade3/karakter/small/boy_4_k.jpg', card: 'assets/images/grade3/characters/boy4_card.png', zoom: 'assets/images/grade3/characters/boy4_zoom.png' }
+                { id: 'b1', card: 'assets/images/grade5/karakter/boy_1.jpg', zoom: 'assets/images/grade5/karakter/large/boy_1_n.jpg', icon: 'assets/images/grade5/karakter/small/boy_1_k.jpg' },
+                { id: 'b2', card: 'assets/images/grade5/karakter/boy_2.jpg', zoom: 'assets/images/grade5/karakter/large/boy_2_n.jpg', icon: 'assets/images/grade5/karakter/small/boy_2_k.jpg' },
+                { id: 'b3', card: 'assets/images/grade5/karakter/boy_3.jpg', zoom: 'assets/images/grade5/karakter/large/boy_3_n.jpg', icon: 'assets/images/grade5/karakter/small/boy_3_k.jpg' },
+                { id: 'b4', card: 'assets/images/grade5/karakter/boy_4.jpg', zoom: 'assets/images/grade5/karakter/large/boy_4_n.jpg', icon: 'assets/images/grade5/karakter/small/boy_4_k.jpg' }
             ],
             girl: [
-                { id: 'g1', icon: 'assets/images/grade3/karakter/small/girl_1_k.jpg', card: 'assets/images/grade3/characters/girl1_card.png', zoom: 'assets/images/grade3/characters/girl1_zoom.png' },
-                { id: 'g2', icon: 'assets/images/grade3/karakter/small/girl_2_k.jpg', card: 'assets/images/grade3/characters/girl2_card.png', zoom: 'assets/images/grade3/characters/girl2_zoom.png' },
-                { id: 'g3', icon: 'assets/images/grade3/karakter/small/girl_3_k.jpg', card: 'assets/images/grade3/characters/girl3_card.png', zoom: 'assets/images/grade3/characters/girl3_zoom.png' },
-                { id: 'g4', icon: 'assets/images/grade3/karakter/small/girl_4_k.jpg', card: 'assets/images/grade3/characters/girl4_card.png', zoom: 'assets/images/grade3/characters/girl4_zoom.png' }
+                { id: 'g1', card: 'assets/images/grade5/karakter/girl_1.jpg', zoom: 'assets/images/grade5/karakter/large/girl_1_n.jpg', icon: 'assets/images/grade5/karakter/small/girl_1_k.jpg' },
+                { id: 'g2', card: 'assets/images/grade5/karakter/girl_2.jpg', zoom: 'assets/images/grade5/karakter/large/girl_2_n.jpg', icon: 'assets/images/grade5/karakter/small/girl_2_k.jpg' },
+                { id: 'g3', card: 'assets/images/grade5/karakter/girl_3.jpg', zoom: 'assets/images/grade5/karakter/large/girl_3_n.jpg', icon: 'assets/images/grade5/karakter/small/girl_3_k.jpg' },
+                { id: 'g4', card: 'assets/images/grade5/karakter/girl_4.jpg', zoom: 'assets/images/grade5/karakter/large/girl_4_n.jpg', icon: 'assets/images/grade5/karakter/small/girl_4_k.jpg' }
             ]
-        }
+        },
+        buttonText: 'Kiválasztás',
+        backgroundUrl: bgImage,
+        scoring: {
+            selection: 1
+        },
+        audioSrc: 'assets/audio/grade5/character.mp3'
     });
 
     // === 1. BEVEZETÉS (FIX 1-4) ===
     for (let i = 1; i <= 4; i++) {
         const slideNum = String(i).padStart(2, '0');
-        const title = `Bevezetés ${i}. (Kontextus)`;
-        let narrationText = `<b>${title}</b><br><br>Ügynök, figyelem! Ez a bevezető szakasz.<br>(Helyőrző szöveg a ${i}. diánál)`;
+        const title = `Bevezetés ${i}. (Mátrix)`;
+        const narrationText = `<b>${title}</b><br><br>Helyőrző történet a Grade 5 (${i}.) diánál.<br>Az ügynökök eligazítása...`;
 
-        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek a protokollt...', {
+        addSlide(SLIDE_TYPES.STORY, title, 'Figyelem, adatátvitel...', {
             imageUrl: `assets/images/grade5/slides/slide_${slideNum}.jpg`,
-            narration: narrationText
+            narration: narrationText,
+            audioSrc: `assets/audio/grade5/slide_${slideNum}.mp3`
         });
     }
 
     // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===
     const stationIndices = [0, 1, 2, 3, 4];
     shuffleArray(stationIndices);
-    console.log("[DKV Grade 5] Station Order:", stationIndices);
 
     for (let slot = 0; slot < 5; slot++) {
         const originalStationIdx = stationIndices[slot];
@@ -103,48 +105,18 @@ export const createConfig = () => {
             const fileNumStr = String(originalNum).padStart(2, '0');
 
             const displayedStationNum = slot + 1;
-            let title = `${displayedStationNum}. Állomás: `;
-            if (step === 0 || step === 1) title += "Kontextus";
-            else if (step === 2) title += "Feladat";
-            else title += "Siker, Öröm";
+            let title = `${displayedStationNum}. Szektor: `;
+            if (step === 0 || step === 1) title += "Elemzés";
+            else if (step === 2) title += "Behatolás";
+            else title += "Siker";
 
-            let storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti ${originalNum}. diához.`;
+            let storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti Grade 5 #${originalNum}. diához.`;
+            let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1})</span>`;
 
-            // === 1. ÁLLOMÁS: NEON NEGYED (5-8) ===
-            if (originalNum === 5) { storyContent = `[Neon Negyed - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 6) { storyContent = `[Neon Negyed - Dia 2] ...`; }
-            else if (originalNum === 7) { storyContent = `[Neon Negyed - Dia 3] (Feladat)...`; }
-            else if (originalNum === 8) { storyContent = `[Neon Negyed - Dia 4] (Siker)...`; }
-
-            // === 2. ÁLLOMÁS: SZERVER FELHŐKARCOLÓ (9-12) ===
-            else if (originalNum === 9) { storyContent = `[Szerver Felhőkarcoló - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 10) { storyContent = `[Szerver Felhőkarcoló - Dia 2] ...`; }
-            else if (originalNum === 11) { storyContent = `[Szerver Felhőkarcoló - Dia 3] (Feladat)...`; }
-            else if (originalNum === 12) { storyContent = `[Szerver Felhőkarcoló - Dia 4] (Siker)...`; }
-
-            // === 3. ÁLLOMÁS: ADAT-AUTÓPÁLYA (13-16) ===
-            else if (originalNum === 13) { storyContent = `[Adat-Autópálya - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 14) { storyContent = `[Adat-Autópálya - Dia 2] ...`; }
-            else if (originalNum === 15) { storyContent = `[Adat-Autópálya - Dia 3] (Feladat)...`; }
-            else if (originalNum === 16) { storyContent = `[Adat-Autópálya - Dia 4] (Siker)...`; }
-
-            // === 4. ÁLLOMÁS: HACKER MENEDÉK (17-20) ===
-            else if (originalNum === 17) { storyContent = `[Hacker Menedék - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 18) { storyContent = `[Hacker Menedék - Dia 2] ...`; }
-            else if (originalNum === 19) { storyContent = `[Hacker Menedék - Dia 3] (Feladat)...`; }
-            else if (originalNum === 20) { storyContent = `[Hacker Menedék - Dia 4] (Siker)...`; }
-
-            // === 5. ÁLLOMÁS: KVANTUM LABOR (21-24) ===
-            else if (originalNum === 21) { storyContent = `[Kvantum Labor - Dia 1] Ide írd a bevezetőt...`; }
-            else if (originalNum === 22) { storyContent = `[Kvantum Labor - Dia 2] ...`; }
-            else if (originalNum === 23) { storyContent = `[Kvantum Labor - Dia 3] (Feladat)...`; }
-            else if (originalNum === 24) { storyContent = `[Kvantum Labor - Dia 4] (Siker)...`; }
-
-            let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1} | Order: ${stationIndices.map(n => n + 1).join('-')})</span>`;
-
-            addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek a protokollt...', {
+            addSlide(SLIDE_TYPES.STORY, title, 'Hackelés folyamatban...', {
                 imageUrl: `assets/images/grade5/slides/slide_${fileNumStr}.jpg`,
-                narration: narrationText
+                narration: narrationText,
+                audioSrc: `assets/audio/grade5/slide_${fileNumStr}.mp3`
             });
         }
     }
@@ -152,17 +124,13 @@ export const createConfig = () => {
     // === 3. FINÁLÉ (FIX 25-28) ===
     for (let i = 25; i <= 28; i++) {
         const slideNum = String(i).padStart(2, '0');
-        let title = "Finálé: ";
-        if (i === 25) title += "Kontextus";
-        else if (i === 26) title += "Feladat";
-        else if (i === 27) title += "Siker, Öröm";
-        else title += "Összefoglaló";
+        const title = "Rendszer Visszaállítva";
+        const narrationText = `<b>${title}</b><br><br>Helyőrző szöveg az Grade 5 fináléjához (${i}. dia).`;
 
-        let narrationText = `<b>${title}</b><br><br>Ügynök, a rendszer feltörve.<br>(Dia #${i})`;
-
-        addSlide(SLIDE_TYPES.STORY, title, 'Végső kódfejtés...', {
+        addSlide(SLIDE_TYPES.STORY, title, 'Küldetés vége...', {
             imageUrl: `assets/images/grade5/slides/slide_${slideNum}.jpg`,
-            narration: narrationText
+            narration: narrationText,
+            audioSrc: `assets/audio/grade5/slide_${slideNum}.mp3`
         });
     }
 

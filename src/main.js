@@ -36,6 +36,11 @@ class DigitalKulturaVerseny {
     this.timerDisplay = null;
     this.hub = null;
     this.isInitialized = false;
+    this.currentAudio = null; // Track current audio playback
+    this.playedAudioSlides = new Set();
+    this.backgroundMusic = null; // Track background music
+    this.musicVolume = 0.5;
+    this.narrationVolume = 1.0;
   }
 
   /**
@@ -242,6 +247,15 @@ class DigitalKulturaVerseny {
       avatar: null
     });
 
+    // Reset played audios
+    if (this.playedAudioSlides) this.playedAudioSlides.clear();
+
+    // Stop background music if playing (New Game)
+    if (this.backgroundMusic) {
+      this.backgroundMusic.pause();
+      this.backgroundMusic = null;
+    }
+
     // Verseny időzítő indítása - KIVÉVE! A WelcomeSlide indítja majd.
     // if (this.timeManager) {
     //   this.timeManager.startCompetition();
@@ -286,6 +300,13 @@ class DigitalKulturaVerseny {
   renderSlide(slide) {
     if (!slide) return;
 
+    // Stop any currently playing audio immediately (prevents audio bleed)
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+      this.currentAudio = null;
+    }
+
 
     const app = document.getElementById('app');
     if (!app) return;
@@ -309,6 +330,30 @@ class DigitalKulturaVerseny {
       SLIDE_TYPES.CHARACTER
     ].includes(slide.type);
 
+    // --- Background Music Control ---
+    const totalSlides = this.slideManager.slides.length;
+    const currentIndex = this.slideManager.currentIndex;
+
+    // 1. Start Music: If in Game Phase (not fullscreen) AND music not playing
+    if (!isFullscreen && !this.backgroundMusic) {
+      // Ensure we are not on the last slide (edge case)
+      if (currentIndex < totalSlides - 1 && currentGrade) {
+        this.playBackgroundMusic(currentGrade);
+      }
+    }
+
+    // 2. Stop Music (Immediate): If back to Onboarding
+    if (isFullscreen && this.backgroundMusic) {
+      this.backgroundMusic.pause();
+      this.backgroundMusic = null;
+    }
+
+    // 3. Stop Music (Fade): If Last Slide
+    if (currentIndex === totalSlides - 1 && this.backgroundMusic) {
+      this.stopBackgroundMusicWithFade();
+    }
+    // -------------------------------
+
     // 1. GameInterface kezelése
     if (!isFullscreen) {
       // In-Game mód: Szükség van a GameInterface-re
@@ -327,6 +372,10 @@ class DigitalKulturaVerseny {
           onOpenSettings: () => this.gameInterface.toggleSettings(),
           onOpenJournal: () => this.gameInterface.toggleJournal(),
           onOpenNarrator: () => this.gameInterface.toggleNarrator(),
+          onMusicVolumeChange: (v) => this.setMusicVolume(v),
+          onNarrationVolumeChange: (v) => this.setNarrationVolume(v),
+          musicVolume: this.musicVolume,
+          narrationVolume: this.narrationVolume,
           stateManager: this.stateManager,
           totalSlides: this.slideManager.slides.length - 1 // Welcome dia nem számít a progressben
         });
@@ -413,6 +462,59 @@ class DigitalKulturaVerseny {
       // Narráció frissítése
       const narrationText = (slide.content && slide.content.narration) || slide.description || "Nincs elérhető történet ehhez a diához.";
       this.gameInterface.setNarration(narrationText);
+    }
+
+    // 4. Hang lejátszása és Navigáció blokkolása
+    const audioSrc = slide.content ? slide.content.audioSrc : null;
+    const isLastSlide = (currentIndex >= totalSlides - 1);
+
+    if (audioSrc) {
+      // Logic: Always play audio. 
+      // Button State: 
+      // - If Last Slide: ALWAYS BLOCKED (false).
+      // - If Not Last: Block only if NOT already played.
+      const alreadyPlayed = this.playedAudioSlides && this.playedAudioSlides.has(slide.id);
+      const enableButton = !isLastSlide && alreadyPlayed;
+
+      // Set initial button state
+      if (!isFullscreen && this.gameInterface) {
+        this.gameInterface.setNextButtonState(enableButton);
+      } else if (isFullscreen && slideComponent.setNextButtonState) {
+        slideComponent.setNextButtonState(enableButton);
+      }
+
+      this.playAudio(audioSrc, () => {
+        // Unlock on completion?
+        // Only if NOT last slide!
+        if (isLastSlide) {
+          // Keep disabled, mark as played
+          if (this.playedAudioSlides && slide.id) {
+            this.playedAudioSlides.add(slide.id);
+          }
+          return;
+        }
+
+        if (!isFullscreen && this.gameInterface) {
+          this.gameInterface.setNextButtonState(true);
+        } else if (isFullscreen && slideComponent.setNextButtonState) {
+          slideComponent.setNextButtonState(true);
+        }
+
+        // Mark as played
+        if (this.playedAudioSlides && slide.id) {
+          this.playedAudioSlides.add(slide.id);
+        }
+      });
+    } else {
+      // Ha nincs hang
+      // Ha utolsó dia -> Blokkoljuk
+      // Ha nem utolsó -> Engedélyezzük
+
+      const shouldEnable = !isLastSlide;
+
+      if (!isFullscreen && this.gameInterface) {
+        this.gameInterface.setNextButtonState(shouldEnable);
+      }
     }
   }
 
@@ -549,6 +651,108 @@ class DigitalKulturaVerseny {
       eventBusStats: this.eventBus ? this.eventBus.getStats() : null,
       loggerStats: this.logger ? this.logger.getStats() : null
     };
+  }
+
+  /**
+   * Hang lejátszása
+   * @param {string} src - Audio fájl elérési útja
+   * @param {Function} onComplete - Callback a végén (vagy hiba esetén)
+   */
+  playAudio(src, onComplete) {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+    }
+
+    // Elérési út javítása (public folder)
+    // Ha relatív path, akkor feltételezzük, hogy a gyökérből indul
+    const audio = new Audio(src);
+    audio.volume = this.narrationVolume;
+    this.currentAudio = audio;
+
+    const handleEnd = () => {
+      this.currentAudio = null;
+      if (onComplete) onComplete();
+    };
+
+    audio.addEventListener('ended', handleEnd);
+
+    // Hiba esetén is feloldunk (Fallback), hogy ne ragadjon be a játék
+    audio.addEventListener('error', (e) => {
+      console.warn(`Audio playback failed for: ${src}`, e);
+      handleEnd();
+    });
+
+    // Autoplay Policy kezelése: Ha tiltva van, feloldunk
+    // Módosítás: Megvárjuk a 'canplay' eseményt a 'play()' előtt a "leharapott" elejének javítására.
+    audio.addEventListener('canplay', () => {
+      if (this.currentAudio === audio) {
+        audio.play().catch(err => {
+          console.warn('Audio autoplay blocked or failed', err);
+          handleEnd();
+        });
+      }
+    }, { once: true });
+  }
+
+  /**
+   * Háttérzene indítása
+   * @param {string} grade - '3', '4', stb.
+   */
+  playBackgroundMusic(grade) {
+    if (this.backgroundMusic) return;
+    try {
+      const src = `assets/audio/grade${grade}/default_bg.mp3`;
+      this.backgroundMusic = new Audio(src);
+      this.backgroundMusic.loop = true;
+      this.backgroundMusic.volume = this.musicVolume;
+      this.backgroundMusic.play().catch(e => {
+        console.warn("Background music autoplay blocked", e);
+        this.backgroundMusic = null;
+      });
+    } catch (err) {
+      console.warn("Error starting background music", err);
+    }
+  }
+
+  /**
+   * Háttérzene leállítása fade-out effekttel (3mp)
+   */
+  stopBackgroundMusicWithFade() {
+    if (!this.backgroundMusic) return;
+
+    const audio = this.backgroundMusic;
+    this.backgroundMusic = null; // Referencia törlése azonnal
+
+    const duration = 3000; // 3 sec
+    const steps = 30;
+    const intervalTime = duration / steps;
+    const volStep = audio.volume / steps;
+
+    const fadeInterval = setInterval(() => {
+      if (audio.volume > volStep) {
+        audio.volume -= volStep;
+      } else {
+        audio.volume = 0;
+        audio.pause();
+        clearInterval(fadeInterval);
+        audio.currentTime = 0;
+      }
+    }, intervalTime);
+  }
+
+  setMusicVolume(vol) {
+    this.musicVolume = vol;
+    if (this.backgroundMusic) {
+      this.backgroundMusic.volume = vol;
+    }
+  }
+
+  setNarrationVolume(vol) {
+    this.narrationVolume = vol;
+    if (this.currentAudio) {
+      this.currentAudio.volume = vol;
+    }
   }
 }
 
