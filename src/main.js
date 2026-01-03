@@ -18,6 +18,8 @@ import TaskSlide from './ui/components/TaskSlide.js';
 import WelcomeSlide from './ui/components/WelcomeSlide.js';
 import RegistrationSlide from './ui/components/RegistrationSlide.js';
 import CharacterSlide from './ui/components/CharacterSlide.js';
+import StorySlide from './ui/components/StorySlide.js';
+import GameInterface from './ui/components/GameInterface.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import './ui/styles/design-system.css';
 
@@ -147,7 +149,8 @@ class DigitalKulturaVerseny {
   async initUIComponents() {
     this.timerDisplay = new TimerDisplay({
       timeManager: this.timeManager,
-      eventBus: this.eventBus
+      eventBus: this.eventBus,
+      parentElement: this.app
     });
   }
 
@@ -283,28 +286,68 @@ class DigitalKulturaVerseny {
   renderSlide(slide) {
     if (!slide) return;
 
+
     const app = document.getElementById('app');
-    app.innerHTML = ''; // Tiszta lap
+    if (!app) return;
 
-    // Slide konténer (Wrapper)
-    const slideWrapper = document.createElement('div');
-    slideWrapper.className = 'dkv-slide-wrapper';
-
-    // Grade-specific scope class hozzáadása (pl. dkv-grade-4)
+    // Grade scope osztály (Fontos a CSS miatt!)
     const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-    if (currentGrade) {
-      slideWrapper.classList.add(`dkv-grade-${currentGrade}`);
+    const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
+
+    // Globális grade osztály beállítása a BODY-ra a komponens-független stílusokhoz (pl. Timer)
+    if (gradeClass) {
+      document.body.classList.forEach(cls => {
+        if (cls.startsWith('dkv-grade-')) document.body.classList.remove(cls);
+      });
+      document.body.classList.add(gradeClass);
     }
 
-    // Globális háttérkép kezelése
-    if (slide && slide.content && slide.content.backgroundUrl) {
-      slideWrapper.style.backgroundImage = `url('${slide.content.backgroundUrl}')`;
-      slideWrapper.style.backgroundSize = 'cover';
-      slideWrapper.style.backgroundPosition = 'center';
+    // Típus ellenőrzése
+    const isFullscreen = [
+      SLIDE_TYPES.WELCOME,
+      SLIDE_TYPES.REGISTRATION,
+      SLIDE_TYPES.CHARACTER
+    ].includes(slide.type);
+
+    // 1. GameInterface kezelése
+    if (!isFullscreen) {
+      // In-Game mód: Szükség van a GameInterface-re
+      if (!this.gameInterface) {
+        app.innerHTML = ''; // Előző tartalom törlése
+
+        this.gameInterface = new GameInterface({
+          onNext: () => {
+            const next = this.slideManager.nextSlide();
+            if (next) this.renderSlide(next);
+          },
+          onPrev: () => {
+            const prev = this.slideManager.prevSlide();
+            if (prev) this.renderSlide(prev);
+          },
+          onOpenSettings: () => this.gameInterface.toggleSettings(),
+          onOpenJournal: () => this.gameInterface.toggleJournal(),
+          onOpenNarrator: () => this.gameInterface.toggleNarrator(),
+          stateManager: this.stateManager,
+          totalSlides: this.slideManager.slides.length - 1 // Welcome dia nem számít a progressben
+        });
+
+        const giElement = this.gameInterface.createElement();
+        if (gradeClass) giElement.classList.add(gradeClass);
+
+        app.appendChild(giElement);
+
+        // Kezdeti HUD frissítés
+        this.gameInterface.updateHUD(this.stateManager.getState());
+      }
+    } else {
+      // Fullscreen mód: Ha van GameInterface, töröljük
+      if (this.gameInterface) {
+        this.gameInterface.element.remove();
+        this.gameInterface = null;
+      }
     }
 
-    app.appendChild(slideWrapper);
-
+    // 2. Slide Komponens létrehozása
     let slideComponent;
     const commonOptions = {
       onComplete: () => {
@@ -312,57 +355,60 @@ class DigitalKulturaVerseny {
       },
       onNext: () => {
         const next = this.slideManager.nextSlide();
-        if (next) {
-          this.renderSlide(next);
-        } else {
-          // Verseny vége
-          alert('Gratulálunk! A verseny véget ért.');
-          // TODO: Outro képernyő
-        }
+        if (next) this.renderSlide(next);
       },
       apiService: this.apiService,
-      stateManager: this.stateManager // Hozzáadva minden slide számára
+      stateManager: this.stateManager
     };
 
     switch (slide.type) {
       case SLIDE_TYPES.WELCOME:
-        slideComponent = new WelcomeSlide(slide, {
-          ...commonOptions,
-          timeManager: this.timeManager // Időmérés indításához
-        });
+        slideComponent = new WelcomeSlide(slide, { ...commonOptions, timeManager: this.timeManager });
         break;
-
       case SLIDE_TYPES.REGISTRATION:
-        slideComponent = new RegistrationSlide(slide, {
-          ...commonOptions,
-          stateManager: this.stateManager // Adatmentéshez
-        });
+        slideComponent = new RegistrationSlide(slide, { ...commonOptions, stateManager: this.stateManager });
         break;
-
       case SLIDE_TYPES.CHARACTER:
-        slideComponent = new CharacterSlide(slide, {
-          ...commonOptions,
-          stateManager: this.stateManager // Avatar mentéshez
-        });
+        slideComponent = new CharacterSlide(slide, { ...commonOptions, stateManager: this.stateManager });
         break;
-
+      case SLIDE_TYPES.STORY:
+        slideComponent = new StorySlide(slide, commonOptions);
+        break;
       case SLIDE_TYPES.VIDEO:
-      case SLIDE_TYPES.REWARD: // Reward is also a video usually
+      case SLIDE_TYPES.REWARD:
         slideComponent = new VideoSlide(slide, commonOptions);
         break;
-
       case SLIDE_TYPES.TASK:
         slideComponent = new TaskSlide(slide, commonOptions);
         break;
-
       default:
         console.warn('Unknown slide type:', slide.type);
-        slideComponent = new VideoSlide(slide, commonOptions); // Fallback
+        slideComponent = new VideoSlide(slide, commonOptions);
     }
 
-    if (slideComponent) {
-      slideWrapper.appendChild(slideComponent.createElement());
-      // Szükség esetén elmenthetjük a referenciát takarításhoz
+    // 3. Renderelés
+    const element = slideComponent.createElement();
+
+    if (isFullscreen) {
+      // Fullscreen Wrapper
+      const slideWrapper = document.createElement('div');
+      slideWrapper.className = 'dkv-slide-wrapper';
+      if (gradeClass) slideWrapper.classList.add(gradeClass);
+
+      if (slide.content && slide.content.backgroundUrl) {
+        slideWrapper.style.backgroundImage = `url('${slide.content.backgroundUrl}')`;
+        slideWrapper.style.backgroundSize = 'cover';
+        slideWrapper.style.backgroundPosition = 'center';
+      }
+
+      slideWrapper.appendChild(element);
+      app.innerHTML = '';
+      app.appendChild(slideWrapper);
+    } else {
+      // GameInterface Content Area
+      this.gameInterface.setContent(element);
+      this.gameInterface.updateTimeline(this.slideManager.currentIndex + 1);
+      this.gameInterface.updateHUD(this.stateManager.getState());
     }
   }
 

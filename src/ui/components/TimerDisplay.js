@@ -9,6 +9,7 @@ class TimerDisplay {
         this.element = null;
         this.timeManager = options.timeManager;
         this.eventBus = options.eventBus;
+        this.parentElement = options.parentElement || document.body;
 
         // Alapértelmezett állapot
         this.isVisible = false;
@@ -35,7 +36,7 @@ class TimerDisplay {
       <span class="dkv-timer-value">00:00</span>
     `;
 
-        document.body.appendChild(this.element);
+        this.parentElement.appendChild(this.element);
     }
 
     setupListeners() {

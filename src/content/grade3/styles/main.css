@@ -169,7 +169,7 @@
     display: none;
     /* Hidden by default */
     flex-direction: column;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 2px solid #00d2d3;
@@ -184,6 +184,10 @@
 .dkv-grade-3 .dkv-narrator-box.open {
     display: flex;
     /* Visible explicitly when open */
+}
+
+.dkv-grade-3 .dkv-settings-panel {
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 /* -- Buttons inside Panel Footer -- */
@@ -257,6 +261,10 @@
     border-radius: 10px;
     resize: none;
     padding: 10px;
+}
+
+.dkv-grade-3 .dkv-panel-body textarea:focus {
+    outline: none;
 }
 
 .dkv-grade-3 .dkv-modal-content input[type="range"] {
@@ -426,7 +434,7 @@
     border-radius: 50%;
     border: 13px solid #00d2d3;
     border-color: rgba(0, 210, 211, 1);
-    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+    box-shadow: 0 0 50px rgba(0, 234, 255, 1);
     /* Ragyogás effekt */
     z-index: -1;
     /* Mögötte */
@@ -449,7 +457,7 @@
     position: relative;
     backdrop-filter: blur(2px);
     /* Ragyogás effekt (Tovább gomb stílus) */
-    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+    box-shadow: 0 0 50px rgba(0, 234, 255, 1);
 }
 
 /* Haladási csík (Progress Bar) */
@@ -460,7 +468,7 @@
     /* JS állítja */
     transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     /* Finom rugalmas mozgás */
-    box-shadow: 0 0 10px rgba(0, 210, 211, 0.8);
+    box-shadow: 0 0 50px rgba(0, 210, 211, 1);
     border-radius: 10px;
     /* Hogy a széle is kerek legyen ha tele van */
 }
@@ -500,6 +508,8 @@
     left: 0;
     /* Gomb eredeti háttérszíne + Ikon */
     background-color: #00636e;
+    background-color: var(--dkv-bg-card);
+    backdrop-filter: blur(12px);
     /* Grade 3 Dark Turquoise */
     background-repeat: no-repeat;
     background-position: center;
@@ -528,4 +538,33 @@
 .dkv-grade-3 .dkv-inventory-slot {
     width: 80px;
     height: 80px;
+}
+
+.dkv-grade-3 .dkv-game-hud {
+    background: none;
+}
+
+.dkv-grade-3 .dkv-btn-journal {
+    background-color: var(--dkv-bg-card);
+    /* border: 1px solid rgba(255, 255, 255, 0.1);  */
+}
+
+/* === Global Timer Styling (Grade 3) === */
+.dkv-grade-3 #dkv-timer-display,
+.dkv-grade-3~#dkv-timer-display {
+    top: 1.8rem;
+    font-family: 'Source Code Pro', monospace;
+    letter-spacing: 1px;
+    color: #ffffff;
+    /* background: rgba(0, 0, 0, 0.3); */
+    border: 2px solid #00eaff;
+    border-radius: 10px;
+    padding: 8px 15px;
+    box-shadow: 0 0 20px rgba(0, 234, 255, 0.7);
+    /* text-shadow: 0 0 10px rgba(0, 234, 255, 0.8); */
+    backdrop-filter: blur(5px);
+
+    .dkv-timer-icon {
+     color: #00eaff;   
+    }
 }

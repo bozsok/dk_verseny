@@ -5,6 +5,20 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.4.7] - 2026-01-03
+### Javítva (Fixed)
+- **Regisztráció:** A név megadásakor a többszörös szóközök (pl. "Kiss  Anna") mostantól automatikusan egyetlen szóközzé olvadnak össze.
+- **Idővonal (Timeline):** A százalékos haladás számítása mostantól dinamikusan követi a configban lévő diák számát, kiküszöbölve a korai 100%-os elérést.
+- **Felület (Interface):**
+    - A gombok (Beállítások, Napló, Narráció, Nyilak) megkapták saját egyedi CSS osztályaikat (`dkv-btn-...`), így egymástól függetlenül stílusozhatók.
+    - Eltávolítva a zavaró böngésző-alapú fókusz-keret (outline) a Napló szövegmezőjéről.
+    - Javítva az Időzítő (Timer) neon stílusa: a globális `dkv-grade-3` osztályt mostantól a `body` kapja, így a stílus minden komponensre (beleértve a Timert is) helyesen érvényesül.
+
+### Hozzáadva (Added)
+- **Fejlesztői segédek (Dev Tools):**
+    - **Intelligens Helyőrző (Placeholder):** A `StorySlide` komponens mostantól automatikusan detektálja a hiányzó képfájlokat. Ha egy dia képe nincs a mappában (pl. Git tárhelykímélés miatt törölve), a rendszer automatikusan egy stílusos helyőrző képernyőt generál a dia címével és fájlnevével, biztosítva a folyamatos tesztelhetőséget.
+- **Multi-Grade Config Sync:** A 4., 5. és 6. osztály konfigurációs fájljai (`config.js`) frissítve lettek a 3. osztálynál bevezetett 28 diás struktúrára (Bevezetés, Állomások, Finálé). Mostantól ezek az évfolyamok is támogatják az automatikus Helyőrző megjelenítést a hiányzó grafikák helyén.
+
 ## [0.4.6] - 2026-01-03
 ### Hozzáadva (Added)
 - **Multi-Grade Extension (Grade 4-5-6):**

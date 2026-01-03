@@ -297,7 +297,8 @@ class RegistrationSlide {
     }
 
     _validateName(raw) {
-        let formatted = raw.trim().toLowerCase().replace(/(?:^|\s|-)\S/g, function (a) { return a.toUpperCase(); });
+        // Több szóköz összevonása egyre, majd formázás
+        let formatted = raw.trim().replace(/\s+/g, ' ').toLowerCase().replace(/(?:^|\s|-)\S/g, function (a) { return a.toUpperCase(); });
 
         if (formatted.length === 0) return { valid: false, error: 'Kérlek add meg a teljes nevedet!' };
 

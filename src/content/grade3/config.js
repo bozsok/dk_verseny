@@ -75,23 +75,43 @@ export const createConfig = () => {
         }
     });
 
-    // 4. JÁTÉKFELÜLET DEMO (Task Slide)
-    addSlide(SLIDE_TYPES.TASK, 'Játékfelület Prototípus (Varázserdő)', 'Grade 3 Interface Test', {
-        taskId: 'demo_03',
-        taskType: 'puzzle',
-        points: 100
-    });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 1/4', 'A sötét felhők gyülekeznek...', { videoUrl: 'assets/videos/grade3/intro_1.mp4' });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 2/4', 'A titkos üzenet', { videoUrl: 'assets/videos/grade3/intro_2.mp4' });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 3/4', 'A Bölcsek Tanácsa', { videoUrl: 'assets/videos/grade3/intro_3.mp4' });
-    addSlide(SLIDE_TYPES.VIDEO, 'A Királyság Veszélyben 4/4', 'Az utazás kezdete', { videoUrl: 'assets/videos/grade3/intro_4.mp4' });
+    // === 1. TÖRTÉNET (Képes Diák) ===
+    // Teljes Story folyamat (1-28)
+    // Struktúra: Bevezetés (4) + 5 Állomás (4x5=20) + Finálé (4) = 28 dia
 
-    // === 2. FELADATOK (Tasks) ===
-    addSlide(SLIDE_TYPES.TASK, 'Az Ősi Kapu', 'Nyisd ki a kaput a megfelelő kóddal!', {
-        taskType: 'scramble',
-        difficulty: 'easy'
-        // További konfiguráció majd itt...
-    });
+    for (let i = 1; i <= 28; i++) {
+        const slideNum = String(i).padStart(2, '0');
+        let title = `Kaland ${i}. rész`;
+
+        if (i <= 4) {
+            title = `Bevezetés ${i}. (Kontextus)`;
+        } else if (i <= 24) {
+            // 5-24: Állomások (5 db, 4 dia/állomás)
+            // i=5 -> rel=0 -> Station 1, step 0
+            const relative = i - 5;
+            const stationNum = Math.floor(relative / 4) + 1;
+            const stepInStation = relative % 4; // 0,1,2,3
+
+            title = `${stationNum}. Állomás: `;
+            // 0,1: Kontextus | 2: Feladat | 3: Siker
+            if (stepInStation === 0 || stepInStation === 1) title += "Kontextus";
+            else if (stepInStation === 2) title += "Feladat";
+            else title += "Siker, Öröm";
+        } else {
+            // Finálé (25-28)
+            title = "Finálé: ";
+            if (i === 25) title += "Kontextus";
+            else if (i === 26) title += "Feladat";
+            else if (i === 27) title += "Siker, Öröm";
+            else title += "Összefoglaló";
+        }
+
+        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', {
+            imageUrl: `assets/images/grade3/slides/slide_${slideNum}.jpg`
+        });
+    }
+
+    // === 2. FELADATOK (Később) ===
 
     return slides;
 };

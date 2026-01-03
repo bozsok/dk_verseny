@@ -62,6 +62,44 @@ class SlideManager {
     }
 
     /**
+     * Visszalépés az előző diára
+     */
+    prevSlide() {
+        if (this.currentIndex > 0) {
+            const prevIndex = this.currentIndex - 1;
+            const prevSlide = this.slides[prevIndex];
+
+            // Visszalépés tiltása Onboarding diákra (Welcome, Registration, Character)
+            // ha már túlhaladtunk rajtuk (pl. Story módban vagyunk)
+            const onboardingTypes = [SLIDE_TYPES.WELCOME, SLIDE_TYPES.REGISTRATION, SLIDE_TYPES.CHARACTER];
+            const currentIsOnboarding = onboardingTypes.includes(this.currentSlide.type);
+            const prevIsOnboarding = onboardingTypes.includes(prevSlide.type);
+
+            if (!currentIsOnboarding && prevIsOnboarding) {
+                return null; // Nem engedjük a visszalépést
+            }
+
+            this.currentIndex--;
+            this.updateCurrentSlide();
+
+            // Állapot mentése
+            this.stateManager.updateState({
+                currentSlideIndex: this.currentIndex
+            });
+
+            // Event küldése
+            this.eventBus && this.eventBus.emit('slide:changed', {
+                slide: this.currentSlide,
+                index: this.currentIndex,
+                total: this.slides.length
+            });
+
+            return this.currentSlide;
+        }
+        return null;
+    }
+
+    /**
      * Tovább lépés a következő diára
      * Csak akkor sikeres, ha a jelenlegi dia 'completed' vagy nem blokkoló
      */
