@@ -5,6 +5,17 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.6.0] - 2026-01-03
+### Hozzáadva
+- **Zero-Latency SFX Engine:** Teljes átállás a **Web Audio API**-ra a hangeffektek (hover, click) kezelésénél. Ez megszünteti a böngésző alapú késleltetést, azonnali visszajelzést biztosítva.
+- **Seamless Video Backgrounds:** A `StorySlide` komponens mostantól támogatja a videó háttereket (`videoUrl`). Intelligens átmenetet képez a poszter kép (`imageUrl`) és a videó között, megakadályozva a betöltéskori villanást.
+- **Intelligent Asset Preloading:** A rendszer a háttérben előre betölti a következő dia képeit, videóit és hangjait (`preloadNextSlide`), így a lapozás zökkenőmentesebbé vált.
+- **Grade 3 Content:** Az első történet dia (`slide_01`) mostantól videó háttérrel rendelkezik.
+
+### Módosítva
+- **GameInterface UI:** A Beállítások panel refaktorálása. A hangbeállítások (Zene/Narráció) külön, dedikált panelen érhetők el.
+- **Performance:** Optimalizált erőforrás-kezelés a médiafájlok betöltésénél.
+
 ## [0.5.0] - 2026-01-03
 ### Hozzáadva (Added)
 - **Audio Core System:**

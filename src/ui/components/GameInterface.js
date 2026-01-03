@@ -23,7 +23,6 @@ class GameInterface {
         // If options come in as 0.0-1.0, convert to 0-100.
         this.currentMusicVolume = options.musicVolume !== undefined ? Math.round(options.musicVolume * 100) : 50;
         this.currentNarrationVolume = options.narrationVolume !== undefined ? Math.round(options.narrationVolume * 100) : 100;
-
         this.totalSlides = options.totalSlides || 28;
         this.currentSlideIndex = options.currentSlideIndex || 1;
         this.currentDisplayedScore = 0;

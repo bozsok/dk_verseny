@@ -104,11 +104,18 @@ export const createConfig = () => {
             narrationText = `Ahogy a káosz elhatalmasodott a királyságban, Hexadecimus királynak egyetlen lehetősége maradt, megbízta a fiatal  <b>Kiválasztottak</b>, hogy járják be az egyre pusztuló királyságot és gyűjtsék össze az öt <b>Varázskulcsot</b>. Ezek a kulcsok jelentik az egyetlen megoldást a vírus megfékezésére és a királyságban lévő rend helyreállítására. Hexadecimus egy mágikus kaput idézett meg előtted, amelyen keresztül elindulsz, hogy teljesítsd a megbízásodat.`;
         }
 
-        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', {
+        const slideConfig = {
             imageUrl: `assets/images/grade3/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade3/slide_${slideNum}.mp3`
-        });
+        };
+
+        // Videó háttér hozzáadása az 1. diához
+        if (i === 1) {
+            slideConfig.videoUrl = `assets/video/grade3/slide_${slideNum}.mp4`;
+        }
+
+        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', slideConfig);
     }
 
     // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===

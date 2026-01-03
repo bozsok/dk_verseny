@@ -207,8 +207,87 @@ class DigitalKulturaVerseny {
       this.handleUnhandledRejection(event);
     });
 
+    // SFX rendszer inicializálása
+    this.initSFX();
+
     if (this.logger) {
       this.logger.info('Event listeners setup completed');
+    }
+  }
+
+  /**
+   * Hangeffektek (Hover/Click) inicializálása
+   */
+  /**
+   * Hangeffektek (Hover/Click) inicializálása Web Audio API-val (Zero Latency)
+   */
+  async initSFX() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.audioCtx = new AudioContext();
+
+      this.sfxBuffers = {};
+
+      const loadSound = async (key, url) => {
+        try {
+          const response = await fetch(url);
+          const arrayBuffer = await response.arrayBuffer();
+          const audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
+          this.sfxBuffers[key] = audioBuffer;
+        } catch (e) {
+          console.warn(`Failed to load SFX: ${url}`, e);
+        }
+      };
+
+      // Bufferek betöltése
+      await Promise.all([
+        loadSound('hover', 'assets/audio/sfx/hover.mp3'),
+        loadSound('click', 'assets/audio/sfx/click.mp3')
+      ]);
+
+      // Helper a lejátszáshoz
+      const playSound = (key, volume = 1.0) => {
+        if (!this.audioCtx) return;
+        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+
+        const buffer = this.sfxBuffers[key];
+        if (!buffer) return;
+
+        const source = this.audioCtx.createBufferSource();
+        source.buffer = buffer;
+        const gainNode = this.audioCtx.createGain();
+        gainNode.gain.value = volume;
+
+        source.connect(gainNode);
+        gainNode.connect(this.audioCtx.destination);
+        source.start(0);
+      };
+
+      let lastHovered = null;
+
+      // Global Hover Listener
+      document.body.addEventListener('mouseover', (e) => {
+        const target = e.target.closest('button, a, .dkv-nav-arrow, .clickable, input[type="range"]');
+        if (target && target !== lastHovered) {
+          lastHovered = target;
+          if (!target.disabled && !target.classList.contains('disabled')) {
+            playSound('hover', 0.2);
+          }
+        } else if (!target) {
+          lastHovered = null;
+        }
+      });
+
+      // Global Click Listener
+      document.body.addEventListener('click', (e) => {
+        const target = e.target.closest('button, a, .dkv-nav-arrow, .clickable, input[type="range"]');
+        if (target && !target.disabled && !target.classList.contains('disabled')) {
+          playSound('click', 0.4);
+        }
+      });
+
+    } catch (err) {
+      console.warn('Web Audio API not supported or failed', err);
     }
   }
 
@@ -516,6 +595,9 @@ class DigitalKulturaVerseny {
         this.gameInterface.setNextButtonState(shouldEnable);
       }
     }
+
+    // 5. Előre-töltés (Asset Preloading)
+    this.preloadNextSlide(currentIndex);
   }
 
   /**
@@ -638,6 +720,50 @@ class DigitalKulturaVerseny {
   }
 
   /**
+   * Intelligens előre-töltés a következő diához
+   * @param {number} currentIndex 
+   */
+  preloadNextSlide(currentIndex) {
+    if (!this.slideManager || !this.slideManager.slides) return;
+    const nextSlide = this.slideManager.slides[currentIndex + 1];
+    if (!nextSlide) return;
+
+    // 1. Kép preload
+    const content = nextSlide.content || {};
+    const imgUrl = content.imageUrl || content.backgroundUrl;
+    if (imgUrl) {
+      const img = new Image();
+      img.src = imgUrl;
+    }
+
+    // 2. Hang preload
+    const audioSrc = content.audioSrc;
+    if (audioSrc) {
+      const audio = new Audio();
+      audio.src = audioSrc;
+      audio.preload = 'auto';
+    }
+
+    // 3. Videó preload
+    const videoUrl = content.videoUrl;
+    if (videoUrl) {
+      const video = document.createElement('video');
+      video.src = videoUrl;
+      video.preload = 'auto';
+    }
+
+    // 4. Karakter képek (ha van)
+    if (content.characters) {
+      Object.values(content.characters).forEach(group => {
+        group.forEach(char => {
+          if (char.card) new Image().src = char.card;
+          if (char.zoom) new Image().src = char.zoom;
+        });
+      });
+    }
+  }
+
+  /**
    * Debug információk lekérése
    */
   getDebugInfo() {
@@ -754,6 +880,7 @@ class DigitalKulturaVerseny {
       this.currentAudio.volume = vol;
     }
   }
+
 }
 
 /**
