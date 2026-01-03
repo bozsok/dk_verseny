@@ -409,6 +409,10 @@ class DigitalKulturaVerseny {
       this.gameInterface.setContent(element);
       this.gameInterface.updateTimeline(this.slideManager.currentIndex + 1);
       this.gameInterface.updateHUD(this.stateManager.getState());
+
+      // Narráció frissítése
+      const narrationText = (slide.content && slide.content.narration) || slide.description || "Nincs elérhető történet ehhez a diához.";
+      this.gameInterface.setNarration(narrationText);
     }
   }
 

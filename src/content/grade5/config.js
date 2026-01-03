@@ -6,7 +6,7 @@ import './styles/Registration.css';
 import './styles/Character.css';
 
 // === GLOBÁLIS KONFIGURÁCIÓ (Grade 5) ===
-// Téma: "Cyberpunk / Jövő" (Példa)
+// Téma: "Cyberpunk / Jövő"
 
 const GRADE_PATH = 'grade5';
 const SHARED_BUTTON_STYLE = 'dkv-grade-5-button';
@@ -29,6 +29,14 @@ export const createConfig = () => {
             isLocked: true,
             completed: false
         });
+    };
+
+    // Shuffle helper (Fisher-Yates)
+    const shuffleArray = (array) => {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     };
 
     // === ONBOARDING ===
@@ -69,31 +77,92 @@ export const createConfig = () => {
         }
     });
 
-    // === STORY SLIDES (Unified 1-28 Loop) ===
-    for (let i = 1; i <= 28; i++) {
+    // === 1. BEVEZETÉS (FIX 1-4) ===
+    for (let i = 1; i <= 4; i++) {
         const slideNum = String(i).padStart(2, '0');
-        let title = `Küldetés ${i}. fázis`;
-
-        if (i <= 4) {
-            title = `Bevezetés ${i}. (Kontextus)`;
-        } else if (i <= 24) {
-            const relative = i - 5;
-            const stationNum = Math.floor(relative / 4) + 1;
-            const stepInStation = relative % 4; // 0,1,2,3
-            title = `${stationNum}. Állomás: `;
-            if (stepInStation === 0 || stepInStation === 1) title += "Kontextus";
-            else if (stepInStation === 2) title += "Feladat";
-            else title += "Siker, Öröm";
-        } else {
-            title = "Finálé: ";
-            if (i === 25) title += "Kontextus";
-            else if (i === 26) title += "Feladat";
-            else if (i === 27) title += "Siker, Öröm";
-            else title += "Összefoglaló";
-        }
+        const title = `Bevezetés ${i}. (Kontextus)`;
+        let narrationText = `<b>${title}</b><br><br>Ügynök, figyelem! Ez a bevezető szakasz.<br>(Helyőrző szöveg a ${i}. diánál)`;
 
         addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek a protokollt...', {
-            imageUrl: `assets/images/grade5/slides/slide_${slideNum}.jpg`
+            imageUrl: `assets/images/grade5/slides/slide_${slideNum}.jpg`,
+            narration: narrationText
+        });
+    }
+
+    // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===
+    const stationIndices = [0, 1, 2, 3, 4];
+    shuffleArray(stationIndices);
+    console.log("[DKV Grade 5] Station Order:", stationIndices);
+
+    for (let slot = 0; slot < 5; slot++) {
+        const originalStationIdx = stationIndices[slot];
+        const startSlideNum = 5 + (originalStationIdx * 4);
+
+        for (let step = 0; step < 4; step++) {
+            const originalNum = startSlideNum + step;
+            const fileNumStr = String(originalNum).padStart(2, '0');
+
+            const displayedStationNum = slot + 1;
+            let title = `${displayedStationNum}. Állomás: `;
+            if (step === 0 || step === 1) title += "Kontextus";
+            else if (step === 2) title += "Feladat";
+            else title += "Siker, Öröm";
+
+            let storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti ${originalNum}. diához.`;
+
+            // === 1. ÁLLOMÁS: NEON NEGYED (5-8) ===
+            if (originalNum === 5) { storyContent = `[Neon Negyed - Dia 1] Ide írd a bevezetőt...`; }
+            else if (originalNum === 6) { storyContent = `[Neon Negyed - Dia 2] ...`; }
+            else if (originalNum === 7) { storyContent = `[Neon Negyed - Dia 3] (Feladat)...`; }
+            else if (originalNum === 8) { storyContent = `[Neon Negyed - Dia 4] (Siker)...`; }
+
+            // === 2. ÁLLOMÁS: SZERVER FELHŐKARCOLÓ (9-12) ===
+            else if (originalNum === 9) { storyContent = `[Szerver Felhőkarcoló - Dia 1] Ide írd a bevezetőt...`; }
+            else if (originalNum === 10) { storyContent = `[Szerver Felhőkarcoló - Dia 2] ...`; }
+            else if (originalNum === 11) { storyContent = `[Szerver Felhőkarcoló - Dia 3] (Feladat)...`; }
+            else if (originalNum === 12) { storyContent = `[Szerver Felhőkarcoló - Dia 4] (Siker)...`; }
+
+            // === 3. ÁLLOMÁS: ADAT-AUTÓPÁLYA (13-16) ===
+            else if (originalNum === 13) { storyContent = `[Adat-Autópálya - Dia 1] Ide írd a bevezetőt...`; }
+            else if (originalNum === 14) { storyContent = `[Adat-Autópálya - Dia 2] ...`; }
+            else if (originalNum === 15) { storyContent = `[Adat-Autópálya - Dia 3] (Feladat)...`; }
+            else if (originalNum === 16) { storyContent = `[Adat-Autópálya - Dia 4] (Siker)...`; }
+
+            // === 4. ÁLLOMÁS: HACKER MENEDÉK (17-20) ===
+            else if (originalNum === 17) { storyContent = `[Hacker Menedék - Dia 1] Ide írd a bevezetőt...`; }
+            else if (originalNum === 18) { storyContent = `[Hacker Menedék - Dia 2] ...`; }
+            else if (originalNum === 19) { storyContent = `[Hacker Menedék - Dia 3] (Feladat)...`; }
+            else if (originalNum === 20) { storyContent = `[Hacker Menedék - Dia 4] (Siker)...`; }
+
+            // === 5. ÁLLOMÁS: KVANTUM LABOR (21-24) ===
+            else if (originalNum === 21) { storyContent = `[Kvantum Labor - Dia 1] Ide írd a bevezetőt...`; }
+            else if (originalNum === 22) { storyContent = `[Kvantum Labor - Dia 2] ...`; }
+            else if (originalNum === 23) { storyContent = `[Kvantum Labor - Dia 3] (Feladat)...`; }
+            else if (originalNum === 24) { storyContent = `[Kvantum Labor - Dia 4] (Siker)...`; }
+
+            let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1} | Order: ${stationIndices.map(n => n + 1).join('-')})</span>`;
+
+            addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek a protokollt...', {
+                imageUrl: `assets/images/grade5/slides/slide_${fileNumStr}.jpg`,
+                narration: narrationText
+            });
+        }
+    }
+
+    // === 3. FINÁLÉ (FIX 25-28) ===
+    for (let i = 25; i <= 28; i++) {
+        const slideNum = String(i).padStart(2, '0');
+        let title = "Finálé: ";
+        if (i === 25) title += "Kontextus";
+        else if (i === 26) title += "Feladat";
+        else if (i === 27) title += "Siker, Öröm";
+        else title += "Összefoglaló";
+
+        let narrationText = `<b>${title}</b><br><br>Ügynök, a rendszer feltörve.<br>(Dia #${i})`;
+
+        addSlide(SLIDE_TYPES.STORY, title, 'Végső kódfejtés...', {
+            imageUrl: `assets/images/grade5/slides/slide_${slideNum}.jpg`,
+            narration: narrationText
         });
     }
 

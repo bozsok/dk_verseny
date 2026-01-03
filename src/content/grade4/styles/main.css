@@ -1,60 +1,196 @@
 /* === GRADE 4 MAIN STYLES (Lovag/Várkastély) === */
+/* Arculat: Mélyvörös, Arany, Pergamen, Serif Fontok */
 
-/* Gombok (Kőkemény reset a grade4 scope-on belül) */
-.dkv-grade-4 .dkv-button {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 1.3rem;
-    padding: 12px 35px;
-    background: #5c1818;
-    /* Mélyvörös */
+/* === SLIDE CONTAINER === */
+.dkv-slide-container {
+    width: 1100px;
+    height: 740px;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #4a3c31;
+    /* Sötétbarna fa/vas keret */
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+}
+
+/* Force text-shadow inheritance */
+.dkv-welcome-slide *,
+.dkv-registration-slide *,
+.dkv-character-slide * {
+    text-shadow: inherit;
+}
+
+/* === 1. RESET & INITIALIZATION === */
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.dkv-welcome-slide,
+.dkv-registration-slide,
+.dkv-character-slide {
+    margin: 0;
+    padding: 0;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 1.1rem;
+    font-weight: normal;
+    line-height: 1.6;
+    color: #ffebcd;
+    /* Csontszín / Pergamen */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+    -webkit-font-smoothing: antialiased;
+}
+
+.dkv-welcome-slide h1,
+.dkv-welcome-slide h2,
+.dkv-welcome-slide h3,
+.dkv-registration-slide h1,
+.dkv-registration-slide h2,
+.dkv-registration-slide h3,
+.dkv-character-slide h1,
+.dkv-character-slide h2,
+.dkv-character-slide h3 {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
     color: #ffd700;
     /* Arany */
-    border: 3px solid #ffd700;
+    text-shadow: 3px 3px 0 #3d0e0e;
+    /* Mély árnyék */
+}
+
+/* === 2. KÖZÖS KOMPONENSEK === */
+
+/* === Gombok (Unified Button System - Grade 4) === */
+.dkv-grade-4-button,
+.dkv-welcome-slide .dkv-button,
+.dkv-registration-slide .dkv-button,
+.dkv-character-slide .dkv-button,
+.dkv-grade-4 .dkv-func-btn,
+.dkv-grade-4 .dkv-nav-arrow,
+.dkv-grade-4 .dkv-panel-footer .dkv-button {
+    background: #5c1818;
+    /* Mélyvörös */
+    border: 2px solid #ffd700;
+    /* Arany keret */
     border-radius: 4px;
     /* Szögletesebb */
     box-shadow: 0 4px 0 #3d0e0e;
+    /* 3D hatás */
+    color: #ffd700;
     cursor: pointer;
     transition: all 0.1s ease;
-    text-shadow: 1px 1px 0 #000;
+    font-family: 'Georgia', serif;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: 1;
-    /* Reset */
+    font-weight: bold;
 }
 
-.dkv-grade-4 .dkv-button:hover {
+/* Közös Hover */
+.dkv-grade-4-button:hover,
+.dkv-welcome-slide .dkv-button:hover,
+.dkv-registration-slide .dkv-button:hover,
+.dkv-character-slide .dkv-button:hover,
+.dkv-grade-4 .dkv-func-btn:hover,
+.dkv-grade-4 .dkv-nav-arrow:hover,
+.dkv-grade-4 .dkv-panel-footer .dkv-button:hover {
     background: #7a2020;
     transform: translateY(-2px);
     box-shadow: 0 6px 0 #3d0e0e;
+    color: #fff;
 }
 
-.dkv-grade-4 .dkv-button:active {
+/* Közös Active */
+.dkv-grade-4-button:active,
+.dkv-welcome-slide .dkv-button:active,
+.dkv-registration-slide .dkv-button:active,
+.dkv-character-slide .dkv-button:active,
+.dkv-grade-4 .dkv-func-btn:active,
+.dkv-grade-4 .dkv-nav-arrow:active,
+.dkv-grade-4 .dkv-panel-footer .dkv-button:active {
     transform: translateY(2px);
     box-shadow: 0 2px 0 #3d0e0e;
 }
 
-/* Container */
-.dkv-grade-4 .dkv-slide-container {
-    border: 4px solid #4a3c31;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 8px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+/* --- Variáció 1: Nagy Gombok --- */
+.dkv-grade-4-button,
+.dkv-welcome-slide .dkv-button,
+.dkv-registration-slide .dkv-button,
+.dkv-character-slide .dkv-button {
+    font-size: 1.4rem;
+    padding: 12px 40px;
+    letter-spacing: 2px;
 }
 
-/* Container */
-.dkv-grade-4 .dkv-slide-container {
-    border: 4px solid #4a3c31;
-    border-radius: 8px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+/* --- Variáció 2: Panel Gombok --- */
+.dkv-grade-4 .dkv-panel-footer .dkv-button {
+    font-size: 1.1rem;
+    padding: 8px 25px;
+    letter-spacing: 1px;
 }
 
-/* Narrator Transition Override */
+/* --- Variáció 3: Nav Gombok --- */
+.dkv-grade-4 .dkv-func-btn,
+.dkv-grade-4 .dkv-nav-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* === 3. GAME INTERFACE (Unified) - Grade 4 Override === */
+.dkv-grade-4 .dkv-game-interface {
+    font-family: 'Georgia', serif;
+    font-weight: normal;
+}
+
+.dkv-grade-4 .dkv-game-interface h1,
+.dkv-grade-4 .dkv-game-interface h2,
+.dkv-grade-4 .dkv-game-interface h3,
+.dkv-grade-4 .dkv-username {
+    font-family: 'Times New Roman', serif;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* -- Buttons (Function & Nav) specific overrides already handled in Unified System -- */
+
+/* === Panelek / Ablakok (Unified Panel Base) === */
+.dkv-grade-4 .dkv-journal-panel,
+.dkv-grade-4 .dkv-modal-content,
+.dkv-grade-4 .dkv-settings-panel,
 .dkv-grade-4 .dkv-narrator-box {
-    display: flex !important;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(30, 5, 5, 0.9);
+    /* Nagyon sötét vörös/barna */
+    border: 3px solid #ffd700;
+    /* Arany keret */
+    border-radius: 8px;
+    /* Enyhén kerekített */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9), inset 0 0 50px rgba(0, 0, 0, 0.5);
+    color: #ffebcd;
+    font-family: 'Georgia', serif;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Narrator Box Specifics */
+.dkv-grade-4 .dkv-narrator-box {
+    width: 600px;
+    height: 400px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
+    /* Pergamen textúra imitáció */
+    background: radial-gradient(circle, rgba(60, 20, 10, 0.95), rgba(30, 5, 5, 0.98));
 }
 
 .dkv-grade-4 .dkv-narrator-box.open {
@@ -62,12 +198,191 @@
     pointer-events: auto;
 }
 
-/* Floating Point Animation */
+/* Panel Header/Footer/Body */
+.dkv-grade-4 .dkv-panel-header {
+    padding: 1.5rem 2rem 1rem 2rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.dkv-grade-4 .dkv-panel-body {
+    flex: 1;
+    padding: 0 2rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.dkv-grade-4 .dkv-panel-footer {
+    padding: 1.5rem 2rem;
+    flex-shrink: 0;
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* === Content Elements (Forms) === */
+.dkv-grade-4 .dkv-panel-body textarea {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    color: #ffebcd;
+    font-family: 'Georgia', serif;
+    border: 1px solid #ffd700;
+    border-radius: 4px;
+    resize: none;
+    padding: 10px;
+}
+
+.dkv-grade-4 .dkv-panel-body textarea:focus {
+    outline: none;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Sliders */
+.dkv-grade-4 input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    margin: 10px 0;
+}
+
+.dkv-grade-4 input[type=range]:focus {
+    outline: none;
+}
+
+/* Slider Track (Vörös) */
+.dkv-grade-4 input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: #3d0e0e;
+    border: 1px solid #ffd700;
+    border-radius: 4px;
+}
+
+/* Slider Thumb (Arany Pajzs) */
+.dkv-grade-4 input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    background: #ffd700;
+    border: 2px solid #5c1818;
+    border-radius: 2px;
+    /* Rombusz szerű? Vagy kocka */
+    cursor: pointer;
+    margin-top: -7px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transform: rotate(45deg);
+    /* Rombusz alak */
+}
+
+/* === HUD Timeline Styling (Grade 4 Medieval Theme) === */
+.dkv-grade-4 .dkv-hud-timeline {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin: 0 40px;
+    gap: 8px;
+    font-family: 'Georgia', serif;
+}
+
+/* Kör (Pajzs) */
+.dkv-grade-4 .dkv-timeline-circle {
+    width: 50px;
+    height: 50px;
+    background: #3d0e0e;
+    border: 3px solid #ffd700;
+    border-radius: 50%;
+    /* Maradjunk a körnél */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+    z-index: 2;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.dkv-grade-4 .dkv-timeline-circle span {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* Sáv */
+.dkv-grade-4 .dkv-timeline-track {
+    flex-grow: 1;
+    height: 16px;
+    background: #2a0a0a;
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.dkv-grade-4 .dkv-timeline-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #b22222 0%, #ff4500 100%);
+    width: 0%;
+    transition: width 0.6s ease;
+}
+
+/* HUD Egyéb */
+.dkv-grade-4 .dkv-points {
+    color: #ffd700;
+    text-shadow: 1px 1px 0 #000;
+    font-weight: bold;
+}
+
+.dkv-grade-4 .dkv-avatar-circle {
+    border: 3px solid #ffd700;
+}
+
+/* === Ikonok (Javított Pozicionálás) === */
+.dkv-grade-4 button[title="Hangbeállítások"],
+.dkv-grade-4 button[title="Napló"],
+.dkv-grade-4 button[title="Narráció"] {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Arany overlay a gombokikonjaira */
+.dkv-grade-4 button[title="Hangbeállítások"]::after,
+.dkv-grade-4 button[title="Napló"]::after,
+.dkv-grade-4 button[title="Narráció"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* Háttérszín már jön a gombból (#5c1818) */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 24px;
+    pointer-events: none;
+}
+
+/* SVG-k (Fehérek, de a vörösön jól látszik) */
+.dkv-grade-4 button[title="Hangbeállítások"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700' width='24' height='24'%3E%3Cpath d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z'/%3E%3C/svg%3E");
+}
+
+.dkv-grade-4 button[title="Napló"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700' width='24' height='24'%3E%3Cpath d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'/%3E%3C/svg%3E");
+}
+
+.dkv-grade-4 button[title="Narráció"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700' width='24' height='24'%3E%3Cpath d='M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z'/%3E%3C/svg%3E");
+}
+
+/* Floating Point */
 .dkv-floating-point {
     position: absolute;
     color: #ffd700;
-    font-family: 'Times New Roman', serif; /* Lovagosabb betűtípus */
-    font-size: 1.8rem;
+    font-family: 'Times New Roman', serif;
+    font-size: 2rem;
     font-weight: bold;
     pointer-events: none;
     z-index: 100;
@@ -80,18 +395,31 @@
         opacity: 0;
         transform: translateY(0) scale(0.5);
     }
+
     10% {
         opacity: 1;
         transform: translateY(-10px) scale(1.2);
     }
+
     100% {
         opacity: 0;
         transform: translateY(-50px) scale(1);
     }
 }
 
-/* Disabled Button Style */
-.dkv-grade-4 .dkv-button:disabled {
-    opacity: 0.5;
-    cursor: default;
+/* Timer */
+.dkv-grade-4 #dkv-timer-display,
+.dkv-grade-4~#dkv-timer-display {
+    top: 1.8rem;
+    font-family: 'Times New Roman', monospace;
+    letter-spacing: 1px;
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    border-radius: 6px;
+    padding: 8px 15px;
+    background: rgba(60, 20, 10, 0.8);
+
+    .dkv-timer-icon {
+        color: #ffd700;
+    }
 }

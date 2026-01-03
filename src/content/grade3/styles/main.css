@@ -67,8 +67,39 @@
 
 /* === 2. KÖZÖS KOMPONENSEK === */
 
-/* === Gombok (Shared Button Style) === */
-/* Ez a stílus vonatkozik minden gombra a Grade 3 felületeken */
+/* === Gombok (Unified Button System) === */
+/* Közös alapok: Szín, Keret, Árnyék, Tranzíció */
+.dkv-grade-3-button,
+.dkv-welcome-slide .dkv-button,
+.dkv-registration-slide .dkv-button,
+.dkv-character-slide .dkv-button,
+.dkv-grade-3 .dkv-func-btn,
+.dkv-grade-3 .dkv-nav-arrow,
+.dkv-grade-3 .dkv-panel-footer .dkv-button {
+    background: #00636e;
+    /* Sötét türkiz */
+    border: 2px solid #00eaff;
+    /* Neon cián keret */
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Közös Hover Állapot */
+.dkv-grade-3-button:hover,
+.dkv-welcome-slide .dkv-button:hover,
+.dkv-registration-slide .dkv-button:hover,
+.dkv-character-slide .dkv-button:hover,
+.dkv-grade-3 .dkv-func-btn:hover,
+.dkv-grade-3 .dkv-nav-arrow:hover,
+.dkv-grade-3 .dkv-panel-footer .dkv-button:hover {
+    background: #007582;
+    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+}
+
+/* --- Variáció 1: Nagy Fő Gombok (Onboarding) --- */
 .dkv-grade-3-button,
 .dkv-welcome-slide .dkv-button,
 .dkv-registration-slide .dkv-button,
@@ -77,29 +108,14 @@
     font-size: 1.5rem;
     font-weight: normal;
     letter-spacing: 1px;
-    letter-spacing: 1px;
     padding: 12px 40px;
-    background: #00636e;
-    border-radius: 10px;
-    /* Lekerekítés */
-    /* Sötét türkiz */
-    border: 2px solid #00eaff;
-    /* Neon cián keret */
-    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
     text-shadow: none;
-    /* Gombokon ne legyen szöveg árnyék */
-    /* text-transform: uppercase; -- Kikapcsolva User kérésre */
 }
 
 .dkv-grade-3-button:hover,
 .dkv-welcome-slide .dkv-button:hover,
 .dkv-registration-slide .dkv-button:hover,
 .dkv-character-slide .dkv-button:hover {
-    background: #007582;
-    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
     transform: none;
     /* Letiltja a globális elmozdulást */
 }
@@ -121,96 +137,89 @@
     font-weight: normal;
 }
 
-/* -- Buttons (Function & Nav) -- */
+/* -- Buttons (Function & Nav) - Specifics -- */
 .dkv-grade-3 .dkv-func-btn,
 .dkv-grade-3 .dkv-nav-arrow {
-    background: #00636e;
-    /* Grade 3 Dark Turquoise */
-    border: 2px solid #00eaff;
-    /* Neon Cyan Border */
-    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
-    color: white;
-    border-radius: 10px;
-    /* Consistent with Intro buttons */
-    transition: all 0.3s ease;
     backdrop-filter: none;
     /* Override glassmorphism */
 }
 
 .dkv-grade-3 .dkv-func-btn:hover,
 .dkv-grade-3 .dkv-nav-arrow:hover {
-    background: #007582;
-    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
     transform: scale(1.05);
+    /* Zoom effect */
 }
 
-/* -- Panels Structure & Layout (Flexbox) -- */
+/* -- Panels Structure & Layout (Unified) -- */
+/* 1. Base Panel Styles (Shared Geometry & Effects) */
 .dkv-grade-3 .dkv-journal-panel,
-/* .dkv-grade-3 .dkv-narrator-box, REMOVED from here to fix toggle issue */
 .dkv-grade-3 .dkv-modal-content,
-.dkv-grade-3 .dkv-settings-panel {
-    /* Added Settings Panel */
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 2px solid #00d2d3;
-    border-radius: 10px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    color: #ffffff;
-    font-family: 'Source Code Pro', monospace;
-    padding: 0;
-    overflow: hidden;
-}
-
-/* Narrator Box: Specific handling for toggle visibility */
+.dkv-grade-3 .dkv-settings-panel,
 .dkv-grade-3 .dkv-narrator-box {
-    display: none;
-    /* Hidden by default */
+    display: flex;
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.3);
+    /* Glass Effect Base */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    /* Borders & Shadows */
     border: 2px solid #00d2d3;
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    /* Typography & Layout */
     color: #ffffff;
     font-family: 'Source Code Pro', monospace;
     padding: 0;
     overflow: hidden;
 }
 
-.dkv-grade-3 .dkv-narrator-box.open {
-    display: flex;
-    /* Visible explicitly when open */
+/* 2. Panel Backgrounds (Specific) */
+.dkv-grade-3 .dkv-journal-panel,
+.dkv-grade-3 .dkv-modal-content {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Light Glass */
 }
 
 .dkv-grade-3 .dkv-settings-panel {
     background-color: rgba(0, 0, 0, 0.4);
+    /* Darker Glass */
 }
 
-/* -- Buttons inside Panel Footer -- */
+/* 3. Narrator Box Specifics (Layout & Animation) */
+.dkv-grade-3 .dkv-narrator-box {
+    /* Fixed Dimensions */
+    width: 600px;
+    height: 400px;
+
+    /* Specific Appearance */
+    background-color: rgba(0, 0, 0, 0.3);
+    /* Dark Glass */
+
+    /* Animation State */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.dkv-grade-3 .dkv-narrator-box.open {
+    /* Visible State */
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+/* -- Buttons inside Panel Footer - Specifics -- */
 .dkv-grade-3 .dkv-panel-footer .dkv-button {
-    background: #00636e;
-    border: 2px solid #00eaff;
-    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
-    color: white;
     font-family: 'Impact', sans-serif;
     font-size: 1.2rem;
     font-weight: normal;
     /* Slightly smaller for panels */
-    border-radius: 10px;
     padding: 8px 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
     text-transform: none;
     letter-spacing: 1px;
 }
 
 .dkv-grade-3 .dkv-panel-footer .dkv-button:hover {
-    background: #007582;
-    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
     transform: scale(1.05);
 }
 
@@ -237,11 +246,7 @@
     /* Push to bottom if body doesn't fill */
 }
 
-/* -- Narrator Specifics -- */
-.dkv-grade-3 .dkv-narrator-box {
-    border: 2px solid #00d2d3;
-    /* Dimensions handled globally or by inline style, but usually it's fixed size in center */
-}
+
 
 /* -- Headings -- */
 .dkv-grade-3 .dkv-panel-header h2,
@@ -251,7 +256,7 @@
     margin: 0;
 }
 
-/* -- Content Elements -- */
+/* -- Content Elements (Forms) -- */
 .dkv-grade-3 .dkv-panel-body textarea {
     width: 100%;
     height: 100%;
@@ -267,6 +272,73 @@
     outline: none;
 }
 
+/* Custom Range Input (Slider) Styling */
+.dkv-grade-3 input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    margin: 10px 0;
+}
+
+.dkv-grade-3 input[type=range]:focus {
+    outline: none;
+}
+
+/* Webkit (Chrome, Edge, Safari) */
+.dkv-grade-3 input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: rgba(0, 210, 211, 0.2);
+    border-radius: 3px;
+    border: 1px solid rgba(0, 210, 211, 0.3);
+}
+
+.dkv-grade-3 input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #00d2d3;
+    cursor: pointer;
+    margin-top: -7px;
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.8);
+    transition: transform 0.1s ease;
+}
+
+.dkv-grade-3 input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: #5ffbfd;
+}
+
+/* Firefox */
+.dkv-grade-3 input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: rgba(0, 210, 211, 0.2);
+    border-radius: 3px;
+    border: 1px solid rgba(0, 210, 211, 0.3);
+}
+
+.dkv-grade-3 input[type=range]::-moz-range-thumb {
+    height: 18px;
+    width: 18px;
+    border: none;
+    border-radius: 50%;
+    background: #00d2d3;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.8);
+    transition: transform 0.1s ease;
+}
+
+.dkv-grade-3 input[type=range]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    background: #5ffbfd;
+}
+
+/* Modal Override (Specific Box Style - Preserved) */
 .dkv-grade-3 .dkv-modal-content input[type="range"] {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid #00eaff;
@@ -303,86 +375,9 @@
     }
 }
 
-/* Narrator Transition Override */
-.dkv-grade-3 .dkv-narrator-box {
-    display: flex;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
 
-.dkv-grade-3 .dkv-narrator-box.open {
-    opacity: 1;
-    pointer-events: auto;
-}
 
-/* Custom Range Input (Slider) Styling for Settings Panel */
-.dkv-grade-3 input[type=range] {
-    -webkit-appearance: none;
-    appearance: none;
-    /* Standard property */
-    width: 100%;
-    background: transparent;
-    margin: 10px 0;
-}
 
-.dkv-grade-3 input[type=range]:focus {
-    outline: none;
-}
-
-/* Webkit (Chrome, Edge, Safari) */
-.dkv-grade-3 input[type=range]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 6px;
-    cursor: pointer;
-    background: rgba(0, 210, 211, 0.2);
-    border-radius: 3px;
-    border: 1px solid rgba(0, 210, 211, 0.3);
-}
-
-.dkv-grade-3 input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 18px;
-    width: 18px;
-    border-radius: 50%;
-    background: #00d2d3;
-    cursor: pointer;
-    margin-top: -7px;
-    /* Adjust to center on track */
-    box-shadow: 0 0 10px rgba(0, 210, 211, 0.8);
-    transition: transform 0.1s ease;
-}
-
-.dkv-grade-3 input[type=range]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    background: #5ffbfd;
-}
-
-/* Firefox */
-.dkv-grade-3 input[type=range]::-moz-range-track {
-    width: 100%;
-    height: 6px;
-    cursor: pointer;
-    background: rgba(0, 210, 211, 0.2);
-    border-radius: 3px;
-    border: 1px solid rgba(0, 210, 211, 0.3);
-}
-
-.dkv-grade-3 input[type=range]::-moz-range-thumb {
-    height: 18px;
-    width: 18px;
-    border: none;
-    border-radius: 50%;
-    background: #00d2d3;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 210, 211, 0.8);
-    transition: transform 0.1s ease;
-}
-
-.dkv-grade-3 input[type=range]::-moz-range-thumb:hover {
-    transform: scale(1.2);
-    background: #5ffbfd;
-}
 
 /* === HUD Timeline Styling (Grade 3 Neon Theme) === */
 
@@ -544,11 +539,6 @@
     background: none;
 }
 
-.dkv-grade-3 .dkv-btn-journal {
-    background-color: var(--dkv-bg-card);
-    /* border: 1px solid rgba(255, 255, 255, 0.1);  */
-}
-
 /* === Global Timer Styling (Grade 3) === */
 .dkv-grade-3 #dkv-timer-display,
 .dkv-grade-3~#dkv-timer-display {
@@ -565,6 +555,6 @@
     backdrop-filter: blur(5px);
 
     .dkv-timer-icon {
-     color: #00eaff;   
+        color: #00eaff;
     }
 }

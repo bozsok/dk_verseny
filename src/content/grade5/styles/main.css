@@ -1,38 +1,184 @@
-/* === GRADE 5 MAIN STYLES (Cyberpunk) === */
+/* === GRADE 5 MAIN STYLES (Cyberpunk/Ügynök) === */
+/* Arculat: Neon Zöld, Fekete, Matrix/Terminal stílus */
 
-.dkv-grade-5 .dkv-button {
-    font-family: 'Source Code Pro', monospace;
-    font-size: 1.2rem;
-    padding: 10px 40px;
+/* === SLIDE CONTAINER === */
+.dkv-slide-container {
+    width: 1100px;
+    height: 740px;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #39ff14;
+    border-radius: 4px;
+    /* Enyhén lekerekített sarki a digitális hatásért */
+    background-color: rgba(0, 10, 0, 0.8);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 40px rgba(57, 255, 20, 0.2);
+}
+
+/* Force text-shadow inheritance */
+.dkv-welcome-slide *,
+.dkv-registration-slide *,
+.dkv-character-slide * {
+    text-shadow: inherit;
+}
+
+/* === 1. RESET & INITIALIZATION === */
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.dkv-welcome-slide,
+.dkv-registration-slide,
+.dkv-character-slide {
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.6;
+    color: #39ff14;
+    /* Neon Zöld */
+    text-shadow: 0 0 5px rgba(57, 255, 20, 0.7);
+    -webkit-font-smoothing: antialiased;
+}
+
+.dkv-welcome-slide h1,
+.dkv-welcome-slide h2,
+.dkv-welcome-slide h3,
+.dkv-registration-slide h1,
+.dkv-registration-slide h2,
+.dkv-registration-slide h3,
+.dkv-character-slide h1,
+.dkv-character-slide h2,
+.dkv-character-slide h3 {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 10px #39ff14;
+}
+
+/* === 2. KÖZÖS KOMPONENSEK === */
+
+/* === Gombok (Unified Button System - Grade 5) === */
+.dkv-grade-5-button,
+.dkv-welcome-slide .dkv-button,
+.dkv-registration-slide .dkv-button,
+.dkv-character-slide .dkv-button,
+.dkv-grade-5 .dkv-func-btn,
+.dkv-grade-5 .dkv-nav-arrow,
+.dkv-grade-5 .dkv-panel-footer .dkv-button {
     background: #000;
-    color: #0f0;
-    border: 2px solid #0f0;
-    box-shadow: 0 0 10px #0f0;
+    border: 2px solid #39ff14;
+    border-radius: 0;
+    /* Szögletes Terminal Gomb */
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+    color: #39ff14;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s steps(4);
+    /* Glitch effect imitáció */
+    font-family: 'Courier New', monospace;
     text-transform: uppercase;
-    border-radius: 0;
+    font-weight: bold;
+    letter-spacing: 2px;
+    position: relative;
+    /* Fontos az ikon overlayhez */
+    overflow: hidden;
 }
 
-.dkv-grade-5 .dkv-button:hover {
-    background: #0f0;
+/* Hover */
+.dkv-grade-5-button:hover,
+.dkv-welcome-slide .dkv-button:hover,
+.dkv-registration-slide .dkv-button:hover,
+.dkv-character-slide .dkv-button:hover,
+.dkv-grade-5 .dkv-func-btn:hover,
+.dkv-grade-5 .dkv-nav-arrow:hover,
+.dkv-grade-5 .dkv-panel-footer .dkv-button:hover {
+    background: #39ff14;
     color: #000;
-    box-shadow: 0 0 20px #0f0;
+    box-shadow: 0 0 30px #39ff14;
 }
 
-.dkv-grade-5 .dkv-slide-container {
-    border: 1px solid #0f0;
-    background: rgba(0, 20, 0, 0.95);
-    box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.1);
-    border-radius: 0;
+/* Active */
+/* Active */
+.dkv-grade-5-button:active,
+.dkv-welcome-slide .dkv-button:active,
+.dkv-registration-slide .dkv-button:active,
+.dkv-character-slide .dkv-button:active,
+.dkv-grade-5 .dkv-func-btn:active,
+.dkv-grade-5 .dkv-nav-arrow:active,
+.dkv-grade-5 .dkv-panel-footer .dkv-button:active {
+    transform: scale(0.98);
 }
 
-/* Narrator Transition Override */
+/* --- Variáció 1: Nagy Gombok --- */
+.dkv-grade-5-button,
+.dkv-welcome-slide .dkv-button,
+.dkv-registration-slide .dkv-button,
+.dkv-character-slide .dkv-button {
+    font-size: 1.5rem;
+    padding: 12px 40px;
+}
+
+/* --- Variáció 2: Panel Gombok --- */
+.dkv-grade-5 .dkv-panel-footer .dkv-button {
+    font-size: 1.1rem;
+    padding: 8px 25px;
+}
+
+/* === 3. GAME INTERFACE (Unified) - Grade 5 Override === */
+.dkv-grade-5 .dkv-game-interface {
+    font-family: 'Courier New', monospace;
+    color: #39ff14;
+}
+
+.dkv-grade-5 .dkv-game-interface h1,
+.dkv-grade-5 .dkv-game-interface h2,
+.dkv-grade-5 .dkv-game-interface h3,
+.dkv-grade-5 .dkv-username {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 5px #39ff14;
+}
+
+/* === Panelek / Ablakok (Unified Panel Base) === */
+.dkv-grade-5 .dkv-journal-panel,
+.dkv-grade-5 .dkv-modal-content,
+.dkv-grade-5 .dkv-settings-panel,
 .dkv-grade-5 .dkv-narrator-box {
-    display: flex !important;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 15, 0, 0.95);
+    /* Majdnem fekete */
+    border: 1px solid #39ff14;
+    border-radius: 0;
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+    color: #39ff14;
+    font-family: 'Courier New', monospace;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Narrator Box Specifics */
+.dkv-grade-5 .dkv-narrator-box {
+    width: 600px;
+    height: 400px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s steps(3);
+    /* Scanline effect */
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    background-color: rgba(0, 10, 0, 0.9);
 }
 
 .dkv-grade-5 .dkv-narrator-box.open {
@@ -40,40 +186,236 @@
     pointer-events: auto;
 }
 
-/* Floating Point Animation - Cyberpunk Style */
+/* Panel Header/Footer/Body */
+.dkv-grade-5 .dkv-panel-header {
+    padding: 1.5rem 2rem 1rem 2rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid #39ff14;
+}
+
+.dkv-grade-5 .dkv-panel-body {
+    flex: 1;
+    padding: 0 2rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.dkv-grade-5 .dkv-panel-footer {
+    padding: 1.5rem 2rem;
+    flex-shrink: 0;
+    margin-top: auto;
+    border-top: 1px solid #39ff14;
+}
+
+/* === Content Elements (Forms) === */
+.dkv-grade-5 .dkv-panel-body textarea {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    color: #39ff14;
+    font-family: 'Courier New', monospace;
+    border: 1px dashed #39ff14;
+    border-radius: 0;
+    resize: none;
+    padding: 10px;
+}
+
+.dkv-grade-5 .dkv-panel-body textarea:focus {
+    outline: none;
+    border-style: solid;
+}
+
+/* Sliders */
+.dkv-grade-5 input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    margin: 10px 0;
+}
+
+.dkv-grade-5 input[type=range]:focus {
+    outline: none;
+}
+
+/* Slider Track (Fekete) */
+.dkv-grade-5 input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: #002200;
+    border: 1px solid #39ff14;
+    border-radius: 0;
+}
+
+/* Slider Thumb (Zöld Négyzet) */
+.dkv-grade-5 input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    background: #39ff14;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 0 10px #39ff14;
+}
+
+/* === HUD Timeline Styling (Grade 5 Agent Theme) === */
+.dkv-grade-5 .dkv-hud-timeline {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin: 0 40px;
+    gap: 8px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Kör (Radar) */
+.dkv-grade-5 .dkv-timeline-circle {
+    width: 50px;
+    height: 50px;
+    background: #000;
+    border: 2px dashed #39ff14;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.dkv-grade-5 .dkv-timeline-circle span {
+    color: #39ff14;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Sáv */
+.dkv-grade-5 .dkv-timeline-track {
+    flex-grow: 1;
+    height: 12px;
+    background: #001100;
+    border: 1px solid #39ff14;
+    border-radius: 0;
+    position: relative;
+}
+
+.dkv-grade-5 .dkv-timeline-progress {
+    height: 100%;
+    background: repeating-linear-gradient(45deg,
+            #39ff14,
+            #39ff14 10px,
+            #00a000 10px,
+            #00a000 20px);
+    width: 0%;
+    transition: width 0.3s steps(10);
+    /* Robotikus mozgás */
+}
+
+/* HUD Egyéb */
+.dkv-grade-5 .dkv-points {
+    color: #fff;
+    text-shadow: 0 0 5px #39ff14;
+    font-weight: bold;
+}
+
+.dkv-grade-5 .dkv-avatar-circle {
+    border: 2px solid #39ff14;
+}
+
+/* === Ikonok (Zöldek - Javított Pozíció) === */
+.dkv-grade-5 button[title="Hangbeállítások"],
+.dkv-grade-5 button[title="Napló"],
+.dkv-grade-5 button[title="Narráció"] {
+    position: relative;
+    overflow: hidden;
+}
+
+.dkv-grade-5 button[title="Hangbeállítások"]::after,
+.dkv-grade-5 button[title="Napló"]::after,
+.dkv-grade-5 button[title="Narráció"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 24px;
+    pointer-events: none;
+}
+
+/* SVG-k (Zöld #39ff14) */
+.dkv-grade-5 button[title="Hangbeállítások"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2339ff14' width='24' height='24'%3E%3Cpath d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z'/%3E%3C/svg%3E");
+}
+
+.dkv-grade-5 button[title="Napló"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2339ff14' width='24' height='24'%3E%3Cpath d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'/%3E%3C/svg%3E");
+}
+
+.dkv-grade-5 button[title="Narráció"]::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2339ff14' width='24' height='24'%3E%3Cpath d='M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z'/%3E%3C/svg%3E");
+}
+
+/* Inventory & HUD Fix */
+.dkv-grade-5 .dkv-inventory-slot {
+    width: 80px;
+    height: 80px;
+    border: 1px dashed #39ff14;
+}
+
+.dkv-grade-5 .dkv-game-hud {
+    background: none;
+}
+
+/* Floating Point */
 .dkv-floating-point {
     position: absolute;
-    color: #0f0;
-    /* Neon Green */
-    font-family: 'Source Code Pro', monospace;
-    font-size: 1.5rem;
+    color: #39ff14;
+    font-family: 'Courier New', monospace;
+    font-size: 2rem;
     font-weight: bold;
     pointer-events: none;
     z-index: 100;
-    text-shadow: 0 0 5px #0f0;
-    animation: floatUp 1.5s ease-out forwards;
+    text-shadow: 0 0 5px #000;
+    animation: floatUp 1s steps(10) forwards;
+    /* Darabos float */
 }
 
 @keyframes floatUp {
     0% {
         opacity: 0;
-        transform: translateY(0) scale(0.5);
+        transform: translateY(0);
     }
 
     10% {
         opacity: 1;
-        transform: translateY(-10px) scale(1.2);
+        transform: translateY(-10px);
     }
 
     100% {
         opacity: 0;
-        transform: translateY(-50px) scale(1);
+        transform: translateY(-50px);
     }
 }
 
-/* Disabled Button Style */
-.dkv-grade-5 .dkv-button:disabled {
-    opacity: 0.5;
-    cursor: default;
-    box-shadow: none;
+/* Timer */
+.dkv-grade-5 #dkv-timer-display,
+.dkv-grade-5~#dkv-timer-display {
+    top: 1.8rem;
+    font-family: 'Courier New', monospace;
+    color: #39ff14;
+    border: 2px solid #39ff14;
+    border-radius: 0;
+    padding: 8px 15px;
+    background: #000;
+
+    .dkv-timer-icon {
+        color: #39ff14;
+    }
 }

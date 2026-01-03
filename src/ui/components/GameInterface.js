@@ -24,6 +24,9 @@ class GameInterface {
         this.timelineBar = null;
         this.timelineText = null;
         this.contentContainer = null;
+
+        // Narráció szövege
+        this.currentNarration = "Üdvözöllek a játékban! Kattints a tovább gombra a történet folytatásához.";
     }
 
     createElement() {
@@ -76,7 +79,7 @@ class GameInterface {
         const topSettingsBtn = document.createElement('button');
         topSettingsBtn.className = 'dkv-func-btn dkv-btn-settings';
         topSettingsBtn.title = 'Hangbeállítások';
-        topSettingsBtn.innerHTML = '🔊';
+        topSettingsBtn.innerHTML = '';
         // zIndex maradhat, hogy kattintható legyen, de position nem kell
         topSettingsBtn.style.zIndex = '2001';
         topSettingsBtn.onclick = () => this.onOpenSettings();
@@ -120,13 +123,13 @@ class GameInterface {
         const journalBtn = document.createElement('button');
         journalBtn.className = 'dkv-func-btn dkv-btn-journal';
         journalBtn.title = 'Napló';
-        journalBtn.innerHTML = '📓';
+        journalBtn.innerHTML = '';
         journalBtn.onclick = () => this.onOpenJournal();
 
         const narratorBtn = document.createElement('button');
         narratorBtn.className = 'dkv-func-btn dkv-btn-narrator';
         narratorBtn.title = 'Narráció';
-        narratorBtn.innerHTML = '📜';
+        narratorBtn.innerHTML = '';
         narratorBtn.onclick = () => this.onOpenNarrator();
 
         // Settings gomb innen eltávolítva
@@ -257,6 +260,23 @@ class GameInterface {
 
     // --- PANELEK KEZELÉSE (Átemelve TaskSlide.js-ből) ---
 
+    /**
+     * Narráció szövegének beállítása (Slide váltáskor)
+     * @param {string} text 
+     */
+    setNarration(text) {
+        this.currentNarration = text || "Nincs elérhető történet ehhez a diához.";
+
+        const narratorBox = this.element ? this.element.querySelector('.dkv-narrator-box') : null;
+        if (narratorBox) {
+            const body = narratorBox.querySelector('.dkv-panel-body');
+            if (body) {
+                // Wrapper div a flexbox probléma (új sorba tördelés) elkerülésére
+                body.innerHTML = `<div>${this.currentNarration.replace(/\n/g, '<br>')}</div>`;
+            }
+        }
+    }
+
     toggleJournal() {
         let journalPanel = this.element.querySelector('.dkv-journal-panel');
 
@@ -293,7 +313,7 @@ class GameInterface {
         journalPanel.classList.toggle('open');
     }
 
-    toggleNarrator(text = null) {
+    toggleNarrator() {
         let narratorBox = this.element.querySelector('.dkv-narrator-box');
 
         // Árva elemek tisztítása
@@ -309,8 +329,7 @@ class GameInterface {
                     <div class="dkv-close-icon" style="cursor: pointer; font-size: 24px; line-height: 1;">✕</div>
                 </div>
                 <div class="dkv-panel-body">
-                    <p><i>"A digitális szél süvített a szervertermek között, ahogy közeledtél a központi egységhez..."</i></p>
-                    <p>Ezen a lapon mindig visszaolvashatod az aktuális helyzethez tartozó leírást.</p>
+                    <div>${this.currentNarration.replace(/\n/g, '<br>')}</div>
                 </div>
             `;
             this.element.appendChild(narratorBox);
@@ -322,16 +341,14 @@ class GameInterface {
                     narratorBox.classList.remove('open');
                 };
             }
+        } else {
+            // Ha már létezik, frissítjük a tartalmát (biztos, ami biztos)
+            const body = narratorBox.querySelector('.dkv-panel-body');
+            if (body) body.innerHTML = `<div>${this.currentNarration.replace(/\n/g, '<br>')}</div>`;
         }
 
-        if (text) {
-            const body = narratorBox.querySelector('.dkv-panel-body');
-            if (body) body.innerHTML = `<p>${text}</p>`;
-            narratorBox.classList.add('open');
-        } else {
-            void narratorBox.offsetWidth;
-            narratorBox.classList.toggle('open');
-        }
+        void narratorBox.offsetWidth;
+        narratorBox.classList.toggle('open');
     }
 
     toggleSettings() {
