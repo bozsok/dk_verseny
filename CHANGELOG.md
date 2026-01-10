@@ -5,6 +5,29 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.7.0] - 2026-01-10
+
+### Added
+- **Fejlett Debug Panel Rendszer** 🛠️
+  - Új fejlesztői eszköz (`Ctrl+Shift+D`), amely csak DEV módban érhető el.
+  - **Szekció Skip:** Onboarding, Intro, Állomások és Finálé átlépése egy kattintással.
+  - **Részletes Slide Skip:** Egyedi diák kihagyása vagy engedélyezése.
+  - **Visual Indicator:** "🐛 DEBUG MODE" badge a képernyő sarkában.
+  - **Auto Dummy Data:** Az 'Onboarding' szekció átlépésekor automatikusan tesztadatokat (Avatar, Név, Osztály) tölt be és beállítja a versenyidőt (38mp offset).
+  - **Mute Background Music:** Dedikált opció a háttérzene némítására tesztelés közben.
+- **Slide Metadata Kiterjesztés:** Az összes évfolyam (Grade 3, 4, 5, 6) `config.js` fájlja frissítve lett `metadata` (section, step) paraméterekkel a pontos debug navigáció érdekében.
+- **Bidirectional Skip Logic:** A `renderSlide` metódus mostantól támogatja az irányfüggő (előre/hátra) skip logikát, így a 'Vissza' gombbal is helyesen működik a navigáció skip-elt szakaszoknál.
+
+### Changed
+- **TimeManager:** Javítva a `globalTimer` property elérése a helyes időmérő offset beállításához.
+- **Debug Styles:** Modern, sötét témájú ("Dark Mode") stílusrendszer (`debug.css`) neon effektekkel és reszponzív elrendezéssel.
+- **Main.js Integráció:** A debug rendszer condicionális betöltése (`__DEV__` check) és integrációja a fő alkalmazás életciklusába (`init`, `renderSlide`, `handleGradeSelect`).
+
+### Fixed
+- "Fallthrough Protection": Javítva egy hiba, ahol a skip lánc végén a rendszer megjeleníthetett egy skip-re jelölt diát.
+- "Index Timing Issue": Javítva a `shouldSkipSlide` indexelési logikája, hogy mindig a helyes dia ID alapján döntsön.
+
+---
 ## [0.6.1] - 2026-01-03 (Hotfix)
 ### Javítva (Fixed)
 - **CRITICAL: CharacterSlide Lifecycle Bug:** Javítva a kritikus hiba, ami miatt a regisztráció után nem lehetett továbblépni a karakterválasztásra (`CRITICAL RENDER ERROR` a konzolon). A `CharacterSlide` komponensből hiányzott a `destroy()` metódus, ami kötelező a Unified App Shell architektúrában.

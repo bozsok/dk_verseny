@@ -1,0 +1,401 @@
+/**
+ * Debug Panel Styles
+ * 
+ * Grade-agnostic, univerzális stílusok a debug panelhez
+ * Monospace betűtípus, dark theme, piros akcentussal
+ */
+
+/* ===== OVERLAY ===== */
+.dkv-debug-panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: dkv-debug-fade-in 0.2s ease;
+}
+
+@keyframes dkv-debug-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== PANEL CONTAINER ===== */
+.dkv-debug-panel {
+  background: #1e1e1e;
+  border: 3px solid #ff0000;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1200px;
+  height: 85%;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 14px;
+  box-shadow: 0 20px 60px rgba(255, 0, 0, 0.6),
+    0 0 100px rgba(255, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.dkv-debug-header {
+  padding: 20px 25px;
+  border-bottom: 2px solid #ff0000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, #2a2a2a, #1e1e1e);
+  flex-shrink: 0;
+}
+
+.dkv-debug-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #ff0000;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  letter-spacing: 2px;
+}
+
+.dkv-debug-stats {
+  font-size: 0.85rem;
+  color: #aaa;
+  font-weight: 400;
+}
+
+/* ===== CONTENT (2 Columns) ===== */
+.dkv-debug-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ===== LEFT PANEL (Section Skip) ===== */
+.dkv-debug-left-panel {
+  border-right: 2px solid #333;
+  padding: 20px;
+  overflow-y: auto;
+  background: #1a1a1a;
+}
+
+.dkv-debug-left-panel h3 {
+  margin: 0 0 15px 0;
+  color: #00d2d3;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #00d2d3;
+  padding-bottom: 8px;
+}
+
+.dkv-debug-section-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+
+.dkv-debug-section-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-left-color: #00d2d3;
+}
+
+.dkv-debug-section-item.selected {
+  background: rgba(0, 210, 211, 0.15);
+  border-left-color: #00d2d3;
+  box-shadow: 0 0 15px rgba(0, 210, 211, 0.2);
+}
+
+.dkv-debug-section-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #ff0000;
+  flex-shrink: 0;
+}
+
+.dkv-debug-section-item span {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+/* ===== SEPARATOR ===== */
+.dkv-debug-separator {
+  margin: 20px 0;
+  border-top: 1px solid #444;
+  opacity: 0.5;
+}
+
+/* ===== MUTE MUSIC ===== */
+.dkv-debug-mute-music {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #999;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.dkv-debug-mute-music:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ccc;
+}
+
+.dkv-debug-mute-music input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #888;
+}
+
+/* ===== RIGHT PANEL (Detailed Slide Skip) ===== */
+.dkv-debug-right-panel {
+  overflow-y: auto;
+  padding: 20px 25px;
+  background: #1e1e1e;
+}
+
+.dkv-debug-right-panel h3 {
+  margin: 0 0 15px 0;
+  color: #00d2d3;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #00d2d3;
+  padding-bottom: 8px;
+}
+
+.dkv-debug-placeholder {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 1rem;
+}
+
+.dkv-debug-warning {
+  background: rgba(255, 235, 59, 0.1);
+  border-left: 4px solid #ffeb3b;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  color: #ffeb3b;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dkv-debug-slide-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-left: 2px solid transparent;
+}
+
+.dkv-debug-slide-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-left-color: #555;
+}
+
+.dkv-debug-slide-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #ff0000;
+  flex-shrink: 0;
+}
+
+.dkv-debug-slide-item input[type="checkbox"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dkv-debug-slide-item span {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+.dkv-debug-slide-item input[type="checkbox"]:disabled+span {
+  color: #666;
+  text-decoration: line-through;
+}
+
+/* ===== FOOTER ===== */
+.dkv-debug-footer {
+  padding: 20px 25px;
+  border-top: 2px solid #ff0000;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  background: linear-gradient(to top, #2a2a2a, #1e1e1e);
+  flex-shrink: 0;
+}
+
+.dkv-debug-btn {
+  padding: 12px 24px;
+  border: 2px solid #444;
+  border-radius: 6px;
+  background: #333;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dkv-debug-btn:hover {
+  background: #444;
+  border-color: #666;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dkv-debug-btn:active {
+  transform: translateY(0);
+}
+
+.dkv-debug-btn-primary {
+  background: linear-gradient(135deg, #00d2d3, #00a8a9);
+  border-color: #00d2d3;
+  color: #000;
+  font-weight: 700;
+}
+
+.dkv-debug-btn-primary:hover {
+  background: linear-gradient(135deg, #00a8a9, #008c8d);
+  box-shadow: 0 4px 20px rgba(0, 210, 211, 0.5);
+}
+
+.dkv-debug-btn-secondary {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  border-color: #ff9800;
+  color: #000;
+  font-weight: 700;
+}
+
+.dkv-debug-btn-secondary:hover {
+  background: linear-gradient(135deg, #f57c00, #e65100);
+  box-shadow: 0 4px 20px rgba(255, 152, 0, 0.5);
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+.dkv-debug-left-panel::-webkit-scrollbar,
+.dkv-debug-right-panel::-webkit-scrollbar {
+  width: 10px;
+}
+
+.dkv-debug-left-panel::-webkit-scrollbar-track,
+.dkv-debug-right-panel::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 10px;
+}
+
+.dkv-debug-left-panel::-webkit-scrollbar-thumb,
+.dkv-debug-right-panel::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+  border: 2px solid #2a2a2a;
+}
+
+.dkv-debug-left-panel::-webkit-scrollbar-thumb:hover,
+.dkv-debug-right-panel::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* ===== DEBUG BADGE (Visual Indicator) ===== */
+.dkv-debug-badge {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #ff0000, #cc0000);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.6),
+    0 0 30px rgba(255, 0, 0, 0.3);
+  letter-spacing: 1px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.dkv-debug-badge.active {
+  display: block;
+  animation: dkv-debug-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dkv-debug-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* ===== RESPONSIVE (Optional) ===== */
+@media (max-width: 900px) {
+  .dkv-debug-panel {
+    width: 95%;
+    height: 90%;
+  }
+
+  .dkv-debug-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .dkv-debug-left-panel {
+    border-right: none;
+    border-bottom: 2px solid #333;
+    max-height: 200px;
+  }
+}

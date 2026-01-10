@@ -10,7 +10,7 @@ export const createConfig = () => {
     const slides = [];
     let idCounter = 1;
 
-    const addSlide = (type, title, description, content = {}) => {
+    const addSlide = (type, title, description, content = {}, metadata = {}) => {
         const enrichedContent = {
             ...content,
             typingSpeed: TYPING_SPEED
@@ -21,6 +21,7 @@ export const createConfig = () => {
             title,
             description,
             content: enrichedContent,
+            metadata, // Metadata debug célokra
             isLocked: true,
             completed: false
         });
@@ -39,7 +40,7 @@ export const createConfig = () => {
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
         audioSrc: 'assets/audio/grade4/welcome.mp3'
-    });
+    }, { section: 'onboarding', step: 0 });
 
     addSlide(SLIDE_TYPES.REGISTRATION, 'Első feladatként írd be a teljes nevedet az alábbi beviteli mezőbe! A teljes nevedre van szükség.\nEzt követően add meg a becenevedet maximum 10 betűből, majd utána az osztályodat!', '', {
         fields: ['name', 'nickname', 'classId'],
@@ -54,7 +55,7 @@ export const createConfig = () => {
             classId: 1
         },
         audioSrc: 'assets/audio/grade4/registration.mp3'
-    });
+    }, { section: 'onboarding', step: 1 });
 
     addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!\nA karakterek kattintással nagyíthatók!', '', {
         characters: {
@@ -77,7 +78,7 @@ export const createConfig = () => {
             selection: 1
         },
         audioSrc: 'assets/audio/grade4/character.mp3'
-    });
+    }, { section: 'onboarding', step: 2 });
 
     // === 1. BEVEZETÉS (FIX 1-4) ===
     for (let i = 1; i <= 4; i++) {
@@ -91,7 +92,7 @@ export const createConfig = () => {
             imageUrl: `assets/images/grade4/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade4/slide_${slideNum}.mp3`
-        });
+        }, { section: 'intro', step: i - 1 });
     }
 
     // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===
@@ -119,7 +120,7 @@ export const createConfig = () => {
                 imageUrl: `assets/images/grade4/slides/slide_${fileNumStr}.jpg`,
                 narration: narrationText,
                 audioSrc: `assets/audio/grade4/slide_${fileNumStr}.mp3`
-            });
+            }, { section: `station_${originalStationIdx + 1}`, step });
         }
     }
 
@@ -133,7 +134,7 @@ export const createConfig = () => {
             imageUrl: `assets/images/grade4/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade4/slide_${slideNum}.mp3`
-        });
+        }, { section: 'final', step: i - 25 });
     }
 
     return slides;

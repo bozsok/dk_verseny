@@ -23,6 +23,15 @@ import GameInterface from './ui/components/GameInterface.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import './ui/styles/design-system.css';
 
+// Debug System (csak DEV módban töltődik be)
+let DebugManager = null;
+let DebugPanel = null;
+if (__DEV__) {
+  DebugManager = (await import('./core/debug/DebugManager.js')).default;
+  DebugPanel = (await import('./core/debug/DebugPanel.js')).default;
+  await import('./ui/styles/debug.css');
+}
+
 /**
  * Alkalmazás osztály
  */
@@ -49,6 +58,11 @@ class DigitalKulturaVerseny {
     this.layerUI = null;
     this.activeGameInterface = null;
     this.currentSlideComponent = null;
+
+    // Debug System
+    this.debugManager = null;
+    this.debugPanel = null;
+    this.debugBadge = null;
   }
 
   /**
@@ -153,6 +167,19 @@ class DigitalKulturaVerseny {
       }
       return eventData;
     });
+
+    // Debug Manager inicializálása (csak DEV módban)
+    if (__DEV__ && DebugManager) {
+      this.debugManager = new DebugManager({
+        slideManager: this.slideManager,
+        stateManager: this.stateManager,
+        timeManager: this.timeManager,
+        logger: this.logger
+      });
+      if (this.logger) {
+        this.logger.info('[DEBUG] DebugManager initialized');
+      }
+    }
 
     if (this.logger) {
       this.logger.info('Core components initialized');
@@ -262,6 +289,19 @@ class DigitalKulturaVerseny {
 
     // SFX rendszer inicializálása
     this.initSFX();
+
+    // Debug Panel aktiválás (Ctrl+Shift+D, csak DEV)
+    if (__DEV__ && this.debugManager && DebugPanel) {
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+          e.preventDefault();
+          this.openDebugPanel();
+        }
+      });
+      if (this.logger) {
+        this.logger.info('[DEBUG] Debug Panel hotkey registered (Ctrl+Shift+D)');
+      }
+    }
 
     if (this.logger) {
       this.logger.info('Event listeners setup completed');
@@ -400,6 +440,13 @@ class DigitalKulturaVerseny {
         this.logger.info('Story Engine started', { firstSlide });
       }
 
+      // Debug Manager inicializálás grade-hez (csak DEV)
+      if (__DEV__ && this.debugManager) {
+        this.debugManager.initForGrade(grade, this.slideManager.slides);
+        this.createDebugBadge(); // Visual indicator
+        this.updateDebugBadge();
+      }
+
       // Hub eltüntetése
       if (this.hub) {
         this.hub.destroy();
@@ -431,11 +478,55 @@ class DigitalKulturaVerseny {
    */
   /**
    * Slide megjelenítése (App Shell Architecture)
+   * 
+   * @param {Object} slide - Slide objektum
+   * @param {number} skipDepth - Recursion depth tracking (infinite loop protection)
+   * @param {string} direction - Skip direction: 'forward' or 'backward' (default: 'forward')
    */
-  renderSlide(slide) {
+  renderSlide(slide, skipDepth = 0, direction = 'forward') {
     if (!slide) return;
 
-    // --- Audio Cleanup ---
+    const MAX_SKIP_DEPTH = 50; // Safety limit
+
+    // === DEBUG SKIP CHECK (PHASE 4.2 - BIDIRECTIONAL) ===
+    // FONTOS: Ne a currentIndex-et használjuk, mert az már módosult a prev/nextSlide() hívással!
+    // Helyette a slide objektumból keressük meg az indexet.
+    const slideIndex = this.slideManager.slides.findIndex(s => s.id === slide.id);
+
+    if (this.debugManager && slideIndex !== -1 && this.debugManager.shouldSkipSlide(slideIndex)) {
+      console.log(`[DEBUG] Skipping slide ${slide.id} (index=${slideIndex}, depth=${skipDepth}, direction=${direction}, title="${slide.title}")`);
+
+      // Depth limit check (infinite loop protection)
+      if (skipDepth > MAX_SKIP_DEPTH) {
+        console.error('[DEBUG] Max skip depth reached! Disabling debug mode for safety.');
+        this.debugManager.disable();
+        // Continue with normal render (fallback)
+      } else {
+        // Onboarding skip → Apply dummy data (csak forward irányban)
+        if (direction === 'forward' && slide.metadata?.section === 'onboarding' && !this.stateManager.getStateValue('userProfile')) {
+          this.debugManager.applyDummyData();
+          console.log('[DEBUG] Onboarding skipped, dummy data applied');
+        }
+
+        // Skip to next/prev slide (bidirectional)
+        const targetSlide = direction === 'forward'
+          ? this.slideManager.nextSlide()
+          : this.slideManager.prevSlide();
+
+        if (targetSlide) {
+          this.renderSlide(targetSlide, skipDepth + 1, direction); // +1 depth, preserve direction
+          return; // EARLY EXIT - nem folytatjuk a renderelést
+        } else {
+          // Nincs több slide ebben az irányban
+          // NE rendereljük az aktuálisat, ha az is skip-elve van!
+          // Csak logoljuk és visszatérünk (skip chain vége)
+          console.warn(`[DEBUG] No more slides to skip to (${direction}), ending skip chain at index=${slideIndex}`);
+          return; // EARLY EXIT - ne rendereljük a skip-elt slide-ot
+        }
+      }
+    }
+
+    // --- Audio Cleanup (Silent skip - no audio leak) ---
     if (this.currentAudio) {
       this.currentAudio.pause();
       this.currentAudio.currentTime = 0;
@@ -634,13 +725,13 @@ class DigitalKulturaVerseny {
   async handleNext() {
     await this.ensureAudioFeedback();
     const next = this.slideManager.nextSlide();
-    if (next) this.renderSlide(next);
+    if (next) this.renderSlide(next, 0, 'forward'); // Direction: forward (explicit)
   }
 
   async handlePrev() {
     await this.ensureAudioFeedback();
     const prev = this.slideManager.prevSlide();
-    if (prev) this.renderSlide(prev);
+    if (prev) this.renderSlide(prev, 0, 'backward'); // Direction: backward
   }
 
   async ensureAudioFeedback() {
@@ -768,6 +859,84 @@ class DigitalKulturaVerseny {
   }
 
   /**
+   * Debug Panel megnyitása
+   * (Ctrl+Shift+D hotkey)
+   */
+  openDebugPanel() {
+    if (!this.debugManager || !DebugPanel) {
+      console.warn('[DEBUG] Debug system not available');
+      return;
+    }
+
+    if (!this.debugPanel) {
+      this.debugPanel = new DebugPanel({
+        debugManager: this.debugManager,
+        onClose: () => {
+          this.debugPanel = null;
+          this.updateDebugBadge(); // Refresh badge
+          this.updateDebugMusicState(); // Refresh music state
+        }
+      });
+    }
+
+    this.debugPanel.show();
+  }
+
+  /**
+   * Debug Badge létrehozása (visual indicator)
+   */
+  createDebugBadge() {
+    if (this.debugBadge) return; // Már létezik
+
+    this.debugBadge = document.createElement('div');
+    this.debugBadge.className = 'dkv-debug-badge';
+    this.debugBadge.textContent = '🐛 DEBUG MODE';
+    document.body.appendChild(this.debugBadge);
+
+    if (this.logger) {
+      this.logger.info('[DEBUG] Debug badge created');
+    }
+  }
+
+  /**
+   * Debug Badge frissítése (enabled/disabled)
+   */
+  updateDebugBadge() {
+    if (!this.debugBadge || !this.debugManager) return;
+
+    const isActive = this.debugManager.skipConfig.enabled;
+    this.debugBadge.classList.toggle('active', isActive);
+
+    if (this.logger) {
+      this.logger.debug('[DEBUG] Badge updated', { active: isActive });
+    }
+  }
+
+  /**
+   * Zene állapot frissítése Debug Config alapján
+   * (Panel bezárásakor hívódik)
+   */
+  updateDebugMusicState() {
+    if (!this.debugManager) return;
+
+    if (this.debugManager.shouldMuteMusic()) {
+      if (this.backgroundMusic) {
+        console.log('[DEBUG] Stopping background music (Muted)');
+        this.stopBackgroundMusicWithFade();
+      }
+    } else {
+      if (!this.backgroundMusic && this.stateManager) {
+        // Ha nincs zene, de kéne, indítsuk el (ha van aktív grade)
+        const currentGrade = this.stateManager.getStateValue('currentGrade');
+        if (currentGrade) {
+          console.log('[DEBUG] Restarting background music (Unmuted)');
+          this.playBackgroundMusic(currentGrade);
+        }
+      }
+    }
+  }
+
+  /**
    * Intelligens előre-töltés a következő diához
    * @param {number} currentIndex 
    */
@@ -874,6 +1043,12 @@ class DigitalKulturaVerseny {
    * @param {string} grade - '3', '4', stb.
    */
   playBackgroundMusic(grade) {
+    // Debug Mute Check
+    if (this.debugManager && this.debugManager.shouldMuteMusic()) {
+      console.log('[DEBUG] Background music muted by config');
+      return;
+    }
+
     if (this.backgroundMusic) return;
     try {
       const src = `assets/audio/grade${grade}/default_bg.mp3`;

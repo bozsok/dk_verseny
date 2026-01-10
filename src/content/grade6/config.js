@@ -10,7 +10,7 @@ export const createConfig = () => {
     const slides = [];
     let idCounter = 1;
 
-    const addSlide = (type, title, description, content = {}) => {
+    const addSlide = (type, title, description, content = {}, metadata = {}) => {
         const enrichedContent = {
             ...content,
             typingSpeed: TYPING_SPEED
@@ -21,6 +21,7 @@ export const createConfig = () => {
             title,
             description,
             content: enrichedContent,
+            metadata,
             isLocked: true,
             completed: false
         });
@@ -39,7 +40,7 @@ export const createConfig = () => {
         buttonText: 'Indítás',
         backgroundUrl: bgImage,
         audioSrc: 'assets/audio/grade6/welcome.mp3'
-    });
+    }, { section: 'onboarding', step: 0 });
 
     addSlide(SLIDE_TYPES.REGISTRATION, 'Azonosítás: Kérlek, add meg a nevedet a hajónaplóhoz!\nEzt követően add meg a hívójeledet (becenév) és a rajt (osztály)!', '', {
         fields: ['name', 'nickname', 'classId'],
@@ -54,7 +55,7 @@ export const createConfig = () => {
             classId: 1
         },
         audioSrc: 'assets/audio/grade6/registration.mp3'
-    });
+    }, { section: 'onboarding', step: 1 });
 
     addSlide(SLIDE_TYPES.CHARACTER, 'Válassz karaktert a küldetéshez!\nA profilképek kattintással nagyíthatók.', '', {
         characters: {
@@ -77,7 +78,7 @@ export const createConfig = () => {
             selection: 1
         },
         audioSrc: 'assets/audio/grade6/character.mp3'
-    });
+    }, { section: 'onboarding', step: 2 });
 
     // === 1. BEVEZETÉS (FIX 1-4) ===
     for (let i = 1; i <= 4; i++) {
@@ -89,7 +90,7 @@ export const createConfig = () => {
             imageUrl: `assets/images/grade6/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade6/slide_${slideNum}.mp3`
-        });
+        }, { section: 'intro', step: i - 1 });
     }
 
     // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===
@@ -117,7 +118,7 @@ export const createConfig = () => {
                 imageUrl: `assets/images/grade6/slides/slide_${fileNumStr}.jpg`,
                 narration: narrationText,
                 audioSrc: `assets/audio/grade6/slide_${fileNumStr}.mp3`
-            });
+            }, { section: `station_${originalStationIdx + 1}`, step });
         }
     }
 
@@ -131,7 +132,7 @@ export const createConfig = () => {
             imageUrl: `assets/images/grade6/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade6/slide_${slideNum}.mp3`
-        });
+        }, { section: 'final', step: i - 25 });
     }
 
     return slides;
