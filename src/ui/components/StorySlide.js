@@ -32,13 +32,26 @@ class StorySlide {
         const imgUrl = content.imageUrl;
         const videoUrl = content.videoUrl;
 
+        // Video config from content (configurable via Debug Panel)
+        const videoDelay = content.videoDelay ?? 1000; // Default: 1s (backwards compatible)
+        const videoLoop = content.videoLoop ?? true;   // Default: true (backwards compatible)
+
         // 1. VIDEÓ RÉTEG (Alul)
         if (videoUrl) {
             const video = document.createElement('video');
             video.src = videoUrl;
             video.muted = true; // Ambient háttérvideó
-            video.loop = true;
+            video.loop = videoLoop;
             video.playsInline = true;
+            video.preload = 'auto';
+
+            // Ha nem loop, akkor az utolsó képkockánál megállunk
+            if (!videoLoop) {
+                video.addEventListener('ended', () => {
+                    // Pause at last frame (no seeking needed, video stays at end)
+                    video.pause();
+                });
+            }
 
             Object.assign(video.style, {
                 position: 'absolute', top: '0', left: '0',
@@ -58,7 +71,7 @@ class StorySlide {
                 width: '100%', height: '100%',
                 backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat',
                 zIndex: '2', // Videó felett
-                transition: 'opacity 1.5s ease-in-out', // Meghosszabbított, finom átmenet
+                transition: 'opacity 0.1s ease-out', // Gyors átmenet - szellemkép elkerülése
                 backgroundColor: 'transparent'
             });
 
@@ -82,28 +95,46 @@ class StorySlide {
             this.element.textContent = this.slideData.title || 'DIA (Üres)';
         }
 
-        // 3. LOGIKA (Seamless Transition)
+        // 3. LOGIKA (Seamless Transition with canplaythrough)
         if (videoUrl && imgUrl) {
-            // Késleltetett indítás
-            setTimeout(() => {
+            // Késleltetett indítás - megvárjuk a canplaythrough-t is!
+            this.transitionTimer = setTimeout(() => {
                 if (this.videoElement) {
-                    // Elindítjuk a videót
-                    this.videoElement.play().then(() => {
-                        // SIKER: Ha elindult és már renderel, eltűntetjük a fedő képet
-                        if (this.imageLayer) {
-                            this.imageLayer.style.opacity = '0'; // Kép eltűnik (CSS transition: 1.5s)
-                            // Amikor a transition véget ér (1.5s), a kép DOM-ból való eltávolítása opcionális,
-                            // de maradhat is 0 opacity-vel, nem zavar.
-                        }
-                    }).catch(e => {
-                        console.warn('Video autoplay blocked or failed', e);
-                        // Hiba esetén marad a kép (fallback), nem csinálunk semmit
-                    });
+                    // Megvárjuk, hogy a videó tényleg lejátszásra kész legyen
+                    const startPlayback = () => {
+                        this.videoElement.play().then(() => {
+                            // SIKER: Ha elindult és már renderel, eltűntetjük a fedő képet
+                            if (this.imageLayer) {
+                                this.imageLayer.style.opacity = '0'; // Kép eltűnik (CSS transition: 1.5s)
+                            }
+                        }).catch(e => {
+                            console.warn('Video autoplay blocked or failed', e);
+                            // Hiba esetén marad a kép (fallback)
+                        });
+                    };
+
+                    // Ha már betöltődött (canplaythrough), azonnal indítunk
+                    if (this.videoElement.readyState >= 4) {
+                        startPlayback();
+                    } else {
+                        // Különben megvárjuk
+                        this.videoElement.addEventListener('canplaythrough', startPlayback, { once: true });
+                    }
                 }
-            }, 1000); // 1 másodperc várakozás
+            }, videoDelay); // Configurable delay (default: 1000ms)
         } else if (videoUrl && !imgUrl) {
-            // Csak videó: Azonnali indítás
-            if (this.videoElement) this.videoElement.play().catch(console.warn);
+            // Csak videó: Delay utáni indítás
+            this.transitionTimer = setTimeout(() => {
+                if (this.videoElement) {
+                    if (this.videoElement.readyState >= 4) {
+                        this.videoElement.play().catch(console.warn);
+                    } else {
+                        this.videoElement.addEventListener('canplaythrough', () => {
+                            this.videoElement.play().catch(console.warn);
+                        }, { once: true });
+                    }
+                }
+            }, videoDelay);
         }
 
         return this.element;

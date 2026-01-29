@@ -442,15 +442,59 @@ class GameInterface {
 
     /**
      * Tovább gomb engedélyezése/tiltása
+     * Animált aktiválás + 8mp után attention grab
      * @param {boolean} enabled 
      */
     setNextButtonState(enabled) {
         const btn = this.element.querySelector('.dkv-btn-next');
-        if (btn) {
-            btn.disabled = !enabled;
-            // Explicitly handling opacity and cursor as per user request
-            btn.style.opacity = enabled ? '1' : '0.5';
-            btn.style.cursor = enabled ? 'pointer' : 'default';
+        if (!btn) return;
+
+        btn.disabled = !enabled;
+        btn.style.opacity = enabled ? '1' : '0.5';
+        btn.style.cursor = enabled ? 'pointer' : 'default';
+
+        // Clear previous timers
+        if (this._breathingTimer) clearTimeout(this._breathingTimer);
+        if (this._attentionTimer) clearTimeout(this._attentionTimer);
+
+        // Remove all animation classes
+        btn.classList.remove('dkv-btn-active', 'dkv-btn-breathing', 'dkv-btn-attention');
+
+        if (enabled) {
+            // 1. Aktiválódás animáció indítása
+            btn.classList.add('dkv-btn-active');
+
+            // 2. 400ms után (activation vége) → breathing mode (active eltávolítása)
+            this._breathingTimer = setTimeout(() => {
+                btn.classList.remove('dkv-btn-active');
+                btn.classList.add('dkv-btn-breathing');
+            }, 400);
+
+            // 3. 8 mp után → színátmenet (1.2s), majd attention grab
+            this._attentionTimer = setTimeout(() => {
+                btn.classList.remove('dkv-btn-active', 'dkv-btn-breathing');
+                btn.classList.add('dkv-btn-to-orange');
+
+                // 1.2mp után → átváltás attention légzésre
+                this._colorTransitionTimer = setTimeout(() => {
+                    btn.classList.remove('dkv-btn-to-orange');
+                    btn.classList.add('dkv-btn-attention');
+                }, 1200);
+            }, 8000);
+
+            // 4. Kattintásra töröljük az animációkat és azonnal passzívra váltunk
+            const clearAnimations = () => {
+                if (this._breathingTimer) clearTimeout(this._breathingTimer);
+                if (this._attentionTimer) clearTimeout(this._attentionTimer);
+                if (this._colorTransitionTimer) clearTimeout(this._colorTransitionTimer);
+                btn.classList.remove('dkv-btn-active', 'dkv-btn-breathing', 'dkv-btn-attention', 'dkv-btn-to-orange');
+                // Azonnal passzív kinézet (nem kell megvárni a setNextButtonState-et)
+                btn.style.opacity = '0.5';
+                btn.style.transform = 'scale(1)';
+                btn.style.boxShadow = '';
+                btn.removeEventListener('click', clearAnimations);
+            };
+            btn.addEventListener('click', clearAnimations, { once: true });
         }
     }
 }

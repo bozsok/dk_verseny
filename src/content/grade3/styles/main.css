@@ -558,3 +558,105 @@
         color: #00eaff;
     }
 }
+
+/* === FORWARD BUTTON ACTIVATION ANIMATION === */
+
+/* Aktiválódás: Scale up (kezdeti bounce) */
+@keyframes dkv-btn-activate {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.35);
+    }
+
+    100% {
+        transform: scale(1.25);
+    }
+}
+
+/* Légzés - CSAK SCALE (folyamatos, színtől független) */
+@keyframes dkv-btn-breathe-scale {
+
+    0%,
+    100% {
+        transform: scale(1.25);
+    }
+
+    50% {
+        transform: scale(1.28);
+    }
+}
+
+/* Türkiz glow pulzálás */
+@keyframes dkv-btn-glow-cyan {
+
+    0%,
+    100% {
+        box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+    }
+
+    50% {
+        box-shadow: 0 0 35px rgba(0, 234, 255, 0.8);
+    }
+}
+
+/* Narancs glow pulzálás */
+@keyframes dkv-btn-glow-orange {
+
+    0%,
+    100% {
+        box-shadow: 0 0 25px rgba(255, 165, 0, 0.6);
+    }
+
+    50% {
+        box-shadow: 0 0 35px rgba(255, 165, 0, 0.8);
+    }
+}
+
+/* Színátmenet türkiz → narancs (1.2mp) - szín + glow együtt */
+@keyframes dkv-btn-color-transition {
+    0% {
+        border-color: #00eaff;
+        background: #00636e;
+        box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+    }
+
+    100% {
+        border-color: #ffa500;
+        background: #cc7000;
+        box-shadow: 0 0 25px rgba(255, 165, 0, 0.6);
+    }
+}
+
+/* === BUTTON STATES === */
+
+/* Aktív gomb (kezdeti bounce) */
+.dkv-grade-3 .dkv-nav-next.dkv-btn-active {
+    animation: dkv-btn-activate 0.4s ease-out forwards;
+    box-shadow: 0 0 30px rgba(0, 234, 255, 0.7);
+}
+
+/* Légzés - türkiz (scale + cyan glow szinkronban) */
+.dkv-grade-3 .dkv-nav-next.dkv-btn-breathing {
+    animation:
+        dkv-btn-breathe-scale 2s ease-in-out infinite,
+        dkv-btn-glow-cyan 2s ease-in-out infinite;
+}
+
+/* Színátmenet (légzés folytatódik + szín+glow vált) */
+.dkv-grade-3 .dkv-nav-next.dkv-btn-to-orange {
+    animation:
+        dkv-btn-breathe-scale 2s ease-in-out infinite,
+        dkv-btn-color-transition 1.2s ease-in-out forwards;
+}
+
+/* Narancs légzés (scale + orange glow szinkronban) */
+.dkv-grade-3 .dkv-nav-next.dkv-btn-attention {
+    animation:
+        dkv-btn-breathe-scale 2s ease-in-out infinite,
+        dkv-btn-glow-orange 2s ease-in-out infinite;
+    border-color: #ffa500;
+    background: #cc7000;
+}

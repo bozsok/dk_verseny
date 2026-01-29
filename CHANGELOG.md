@@ -5,6 +5,34 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.7.5] - 2026-01-29
+
+### Added
+- **Debug Panel Video Tab** 🎬
+  - Új "Video" fül a Debug Panelen (`Ctrl+Shift+D`), amely lehetővé teszi a videó lejátszási beállítások per-slide konfigurálását.
+  - **Per-Slide Video Settings:** Egyedi `videoDelay` (késleltetés) és `videoLoop` (ismétlés) beállítások minden diához.
+  - **Auto-Save API:** Vite plugin implementáció (`video-config-api`), amely automatikusan menti a beállításokat JSON fájlokba (`video-config.json`) évfolyamonként.
+  - **Visual Status Indicator:** A Video tab jelzi, ha az adott dia rendelkezik videóval (📹) vagy konfigurált beállításokkal (⚙️).
+- **Video Config Files:** Létrehozva a `src/content/gradeX/video-config.json` fájlok minden évfolyamhoz (3-6).
+- **Improved Video Preloading:** A `StorySlide` komponens mostantól megvárja a `canplaythrough` eseményt a videó indítása előtt, biztosítva a zökkenőmentes átmenetet.
+- **Forward Button Animation** ✨
+  - **Aktiválódás Animáció:** A "Tovább" gomb 1.35x-ös méretűre nő és erősebb glow effektet kap, amikor aktívvá válik.
+  - **Folyamatos Légzés:** A gomb légzés animációja (1.25x ↔ 1.28x) színtől függetlenül folyamatosan fut, soha nem áll meg.
+  - **Attention Grab:** 8 mp tétlenség után 1.2 mp-es átmenettel narancssárga színűre vált (háttér + keret + glow együtt), a légzés folytatódik.
+  - **Szétválasztott Animációk:** A scale (légzés) és color (szín) külön animációként fut, így a légzés nem szakad meg színváltáskor.
+  - **Azonnali Passzív Váltás:** Kattintáskor a gomb azonnal passzív kinézetre vált (nincs átmeneti "aktív" állapot).
+
+### Changed
+- **StorySlide Video Logic:** A videó háttér mostantól tiszteletben tartja a `videoDelay` és `videoLoop` beállításokat a `content` objektumból.
+- **Tab-Based Debug Panel:** A Debug Panel mostantól két fülre oszlik: "Selection" (eredeti skip funkciók) és "Video" (új videó beállítások).
+- **Grade Config Files:** Minden évfolyam `config.js` fájlja frissítve az `applyVideoConfig()` helper funkcióval.
+
+### Fixed
+- **Video Status Detection:** Javítva a videó detektálás a Video tab-on, mostantól index-alapú keresést használ a megbízhatóbb működésért.
+- **Video Transition Ghost Effect:** A kép→videó átmenet ideje 1.5s-ről 0.1s-re csökkentve, megszüntetve a "szellemképes" hatást zoom-in animációknál.
+
+---
+
 ## [0.7.0] - 2026-01-10
 
 ### Added

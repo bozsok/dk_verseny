@@ -1,0 +1,8 @@
+{
+  "slides": {
+    "slide_01": {
+      "videoDelay": 10000,
+      "videoLoop": false
+    }
+  }
+}

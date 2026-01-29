@@ -3,9 +3,27 @@ import './styles/main.css'; // Központi stílusok (Gombok, Reset)
 import './styles/Registration.css';
 import './styles/Welcome.css';
 import './styles/Character.css';
+import videoConfig from './video-config.json';
 
 // Logikai konstansok (Stílusok a CSS-ben vannak!)
 const TYPING_SPEED = 2; // ms/karakter (User módosítása)
+
+/**
+ * Video config merge helper
+ * @param {Object} slideConfig - Slide content object
+ * @param {string} slideKey - Slide key (e.g., 'slide_01')
+ */
+const applyVideoConfig = (slideConfig, slideKey) => {
+    const videoSettings = videoConfig.slides?.[slideKey];
+    if (videoSettings) {
+        if (videoSettings.videoDelay !== undefined) {
+            slideConfig.videoDelay = videoSettings.videoDelay;
+        }
+        if (videoSettings.videoLoop !== undefined) {
+            slideConfig.videoLoop = videoSettings.videoLoop;
+        }
+    }
+};
 
 export const createConfig = () => {
     const slides = [];
@@ -115,6 +133,9 @@ export const createConfig = () => {
         if (i === 1) {
             slideConfig.videoUrl = `assets/video/grade3/slide_${slideNum}.mp4`;
         }
+
+        // Apply video config from JSON (Debug Panel settings)
+        applyVideoConfig(slideConfig, `slide_${slideNum}`);
 
         addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', slideConfig, { section: 'intro', step: i - 1 });
     }

@@ -105,6 +105,56 @@ export default defineConfig({
           __PROD__: process.env.NODE_ENV === 'production'
         };
       }
+    },
+    // Video Config API (Development only)
+    {
+      name: 'video-config-api',
+      configureServer(server) {
+        const fs = require('fs');
+        const path = require('path');
+
+        // GET /\_\_api/video-config/:grade
+        server.middlewares.use((req, res, next) => {
+          const match = req.url.match(/^\/__api\/video-config\/(\d+)$/);
+          if (!match) return next();
+
+          const grade = match[1];
+          const configPath = path.resolve(__dirname, `src/content/grade${grade}/video-config.json`);
+
+          if (req.method === 'GET') {
+            try {
+              if (fs.existsSync(configPath)) {
+                const data = fs.readFileSync(configPath, 'utf-8');
+                res.setHeader('Content-Type', 'application/json');
+                res.end(data);
+              } else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ slides: {} }));
+              }
+            } catch (err) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: err.message }));
+            }
+          } else if (req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk; });
+            req.on('end', () => {
+              try {
+                const data = JSON.parse(body);
+                fs.writeFileSync(configPath, JSON.stringify(data, null, 2), 'utf-8');
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true }));
+                console.log(`[Video Config API] Saved config for grade ${grade}`);
+              } catch (err) {
+                res.statusCode = 500;
+                res.end(JSON.stringify({ error: err.message }));
+              }
+            });
+          } else {
+            next();
+          }
+        });
+      }
     }
   ],
 

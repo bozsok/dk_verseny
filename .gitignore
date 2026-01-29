@@ -44,6 +44,7 @@ build/
 out/
 logs/
 *.log
+public/
 
 #Egyéb
 Source
@@ -67,3 +68,6 @@ _bmad
 .kilocodemodes
 .trae
 .windsurf
+
+# Large assets (videos, audio, images in public folder)
+public/assets/

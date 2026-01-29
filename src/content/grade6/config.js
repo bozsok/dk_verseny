@@ -3,8 +3,26 @@ import './styles/main.css';
 import './styles/Registration.css';
 import './styles/Welcome.css';
 import './styles/Character.css';
+import videoConfig from './video-config.json';
 
 const TYPING_SPEED = 2; // Gyors gépelés (Sci-Fi)
+
+/**
+ * Video config merge helper
+ * @param {Object} slideConfig - Slide content object
+ * @param {string} slideKey - Slide key (e.g., 'slide_01')
+ */
+const applyVideoConfig = (slideConfig, slideKey) => {
+    const videoSettings = videoConfig.slides?.[slideKey];
+    if (videoSettings) {
+        if (videoSettings.videoDelay !== undefined) {
+            slideConfig.videoDelay = videoSettings.videoDelay;
+        }
+        if (videoSettings.videoLoop !== undefined) {
+            slideConfig.videoLoop = videoSettings.videoLoop;
+        }
+    }
+};
 
 export const createConfig = () => {
     const slides = [];
