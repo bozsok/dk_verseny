@@ -5,6 +5,12 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.8.7] - 2026-02-22
+
+### Javítva
+- **Üres modal az Intróban/Fináléban:** Pontosítva lett a feladat dia felismertetése a `main.js`-ben (`section?.startsWith('station_')`), ami megakadályozza, hogy a bevezető, illetve lezáró képsorok feladatnak érzékeljék magukat és nem várt, tartalom nélküli modál ablakot dobjanak fel.
+- **Hiányzó OK gomb a jövőbeli feladatoknál:** A nem implementált állomások (pl. Pixel Palota) visszajelző - helyőrző - ablakain most már újra ott a továbblépéshez szükséges OK gomb, miután a `showTaskModal` hívásakor törlésre kerül a gomb inline `display: none` rejtése, amit a korábbi, saját navigációt használó feladatok hagytak hátra.
+
 ## [0.8.6] - 2026-02-22
 
 ### Hozzáadva
@@ -17,7 +23,7 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 
 ### Módosítva
 - **Eredmények Modál (`main.js`)**
-  - A korábbi "Labirintus" specifikus összesítő ablak most már minden állomásnál dinamikusan testreszabott címeket jelenít meg (pl. "TUDÁS TORONY SIKERES!").
+  - A korábbi "Labirintus" specifikus összesítő ablak most már minden állomásnál dinamikusan testreszabott címeket jelenít meg (pl. "Megválaszoltad a kérdéseket!").
   - A "Lépések száma" statisztikai elem elrejtésre kerül, amennyiben a feladat nem labirintus (nincs `stepCount` paraméter).
   - A kiértékelés az eddigi "fix pont" helyett rögzíti, és ki is írja a maximálisan szerezhető pontot, az elért eredményhez viszonyítva.
 

@@ -508,6 +508,7 @@ class GameInterface {
         }
 
         // OK gomb bekötése
+        this.taskOkBtn.style.display = ''; // Reseteljuk a korabbai feladatok altal esetlegesen berakott 'display: none'-t
         this.taskOkBtn.onclick = () => {
             if (onOk) onOk();
             this.hideTaskModal();

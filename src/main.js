@@ -963,7 +963,7 @@ class DigitalKulturaVerseny {
         if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
       });
     } else {
-      const isTaskSlide = slide.metadata && slide.metadata.step === 2;
+      const isTaskSlide = slide.metadata && slide.metadata.step === 2 && slide.metadata.section?.startsWith('station_');
       const btnOptions = isTaskSlide ? { suppressOrange: true } : {};
       const shouldEnable = !isLastSlide;
       setBtnState(shouldEnable, btnOptions);
