@@ -30,7 +30,7 @@ export const createConfig = () => {
     let idCounter = 1;
 
     // Helper függvény a typingSpeed és metadata átadására
-    const addSlide = (type, title, description, content = {}, metadata = {}) => {
+    const addSlide = (type, title, description, content = {}, metadata = {}, id = null) => {
         // Alapértelmezett logikai beállítások (nem stílusok!)
         const enrichedContent = {
             ...content,
@@ -38,7 +38,7 @@ export const createConfig = () => {
         };
 
         slides.push({
-            id: idCounter++,
+            id: id || idCounter++, // Használjuk a megadott ID-t vagy generálunk egyet
             type,
             title,
             description,
@@ -59,13 +59,13 @@ export const createConfig = () => {
 
     // === 0. ONBOARDING ===
     // Háttér: Eredeti Grade 3 háttérkép
-    const bgImage = 'assets/images/grade3/onboarding_bg.png';
+    const bgImage = 'assets/images/grade3/onboarding_bg.jpg';
 
     addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, bátor Kódmester!', 'Te lettél az egyik <b>Kiválasztott</b>, aki egy izgalmas és kalandokkal teli utazáson vesz részt.\nAz lesz a feladatod, hogy felfedezd a varázslatos <b>Kód Királyságot</b> és megállíts egy veszélyes, romboló vírust, amelyet egy egykori <b>Kódbölcs</b> készített. A megállításhoz és a királyság rendjének visszaállításához különböző digitális <b>Varázskulcsokat</b> kell megszerezned.\nA többi kiválasztottal együtt indulsz útnak, de remélhetőleg <b>Te</b> leszel az, aki sikerrel fejezi be a küldetését.', {
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
         audioSrc: 'assets/audio/grade3/welcome.mp3'
-    }, { section: 'onboarding', step: 0 });
+    }, { section: 'onboarding', step: 0 }, 'welcome');
 
     addSlide(SLIDE_TYPES.REGISTRATION, 'Első feladatként írd be a teljes nevedet az alábbi beviteli mezőbe! A teljes nevedre van szükség, ezért nem elég az, hogy Marci vagy Szofi.\nEzt követően add meg a becenevedet maximum 10 betűből, majd utána az osztályodat!', '', {
         fields: ['name', 'nickname', 'classId'],
@@ -80,7 +80,7 @@ export const createConfig = () => {
             classId: 1
         },
         audioSrc: 'assets/audio/grade3/registration.mp3'
-    }, { section: 'onboarding', step: 1 });
+    }, { section: 'onboarding', step: 1 }, 'registration');
 
     addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!\nA karakterek kattintással nagyíthatók!', '', {
         characters: {
@@ -103,7 +103,7 @@ export const createConfig = () => {
             selection: 1
         },
         audioSrc: 'assets/audio/grade3/character.mp3'
-    }, { section: 'onboarding', step: 2 });
+    }, { section: 'onboarding', step: 2 }, 'character');
 
     // === 1. BEVEZETÉS (FIX 1-4) ===
     for (let i = 1; i <= 4; i++) {
@@ -135,7 +135,7 @@ export const createConfig = () => {
         // Apply video config from JSON (Debug Panel settings)
         applyVideoConfig(slideConfig, `slide_${slideNum}`);
 
-        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', slideConfig, { section: 'intro', step: i - 1 });
+        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', slideConfig, { section: 'intro', step: i - 1 }, `intro_${i}`);
     }
 
     // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===
@@ -200,11 +200,12 @@ export const createConfig = () => {
 
             let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1} | Order: ${stationIndices.map(n => n + 1).join('-')})</span>`;
 
+            const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
             addSlide(SLIDE_TYPES.STORY, title, 'Teljesítsétek a kihívást...', {
                 imageUrl: `assets/images/grade3/slides/slide_${fileNumStr}.jpg`,
                 narration: narrationText,
                 audioSrc: `assets/audio/grade3/slide_${fileNumStr}.mp3`
-            }, { section: `station_${originalStationIdx + 1}`, step });
+            }, { section: `station_${originalStationIdx + 1}`, step }, slideId);
         }
     }
 
@@ -223,7 +224,7 @@ export const createConfig = () => {
             imageUrl: `assets/images/grade3/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade3/slide_${slideNum}.mp3`
-        }, { section: 'final', step: i - 25 });
+        }, { section: 'final', step: i - 25 }, `final_${i - 24}`);
     }
 
     // === 2. FELADATOK (Később) ===

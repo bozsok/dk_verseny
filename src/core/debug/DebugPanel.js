@@ -24,12 +24,18 @@ class DebugPanel {
         this._escListener = null;
 
         // Tab state
-        this.activeTab = 'selection'; // 'selection' | 'video'
+        this.activeTab = 'selection'; // 'selection' | 'video' | 'tasks'
         this.tabContentContainer = null;
 
         // Video config state
         this.videoConfig = { slides: {} };
         this.selectedVideoSlide = null;
+
+        // Tasks config state (lapbetöltéskor a debugManager-ből öröklünk)
+        this.tasksConfig = Object.assign(
+            { mazeTimeLimit: 600, mazeDifficulty: 16 },
+            options.debugManager?.tasksConfig || {}
+        );
     }
 
     /**
@@ -99,7 +105,8 @@ class DebugPanel {
 
         const tabs = [
             { id: 'selection', label: '📋 Selection', icon: '📋' },
-            { id: 'video', label: '🎬 Video', icon: '🎬' }
+            { id: 'video', label: '🎬 Video', icon: '🎬' },
+            { id: 'tasks', label: '🎯 Tasks', icon: '🎯' }
         ];
 
         tabs.forEach(tab => {
@@ -143,6 +150,8 @@ class DebugPanel {
             this._renderSelectionTab();
         } else if (this.activeTab === 'video') {
             this._renderVideoTab();
+        } else if (this.activeTab === 'tasks') {
+            this._renderTasksTab();
         }
     }
 
@@ -304,6 +313,129 @@ class DebugPanel {
     }
 
     /**
+     * Tasks Tab renderélése
+     */
+    _renderTasksTab() {
+        const container = document.createElement('div');
+        container.className = 'dkv-debug-video-tab'; // Azonos stilus, recycláljuk
+
+        const heading = document.createElement('h3');
+        heading.textContent = '🎯 Feladat beállítások';
+        heading.style.marginBottom = '16px';
+        container.appendChild(heading);
+
+        // === Maze időkorlát ===
+        const mazeSection = document.createElement('div');
+        mazeSection.className = 'dkv-debug-video-section';
+
+        const mazeTitle = document.createElement('h4');
+        mazeTitle.textContent = '🌀 Labirintus';
+        mazeTitle.style.cssText = 'color: #00eaff; margin: 0 0 12px; font-size: 1rem;';
+        mazeSection.appendChild(mazeTitle);
+
+        const timeLimitRow = document.createElement('div');
+        timeLimitRow.className = 'dkv-debug-video-row';
+
+        const timeLimitLabel = document.createElement('label');
+        timeLimitLabel.textContent = 'Időkorlát (másodperc, 0 = nincs):';
+        timeLimitLabel.htmlFor = 'dkv-debug-maze-timelimit';
+        timeLimitLabel.style.flex = '1';
+
+        const timeLimitInput = document.createElement('input');
+        timeLimitInput.type = 'number';
+        timeLimitInput.id = 'dkv-debug-maze-timelimit';
+        timeLimitInput.className = 'dkv-debug-video-input';
+        timeLimitInput.min = 0;
+        timeLimitInput.max = 3600;
+        timeLimitInput.step = 30;
+        timeLimitInput.value = this.tasksConfig.mazeTimeLimit;
+        timeLimitInput.style.width = '80px';
+
+        const timeLimitUnit = document.createElement('span');
+        timeLimitUnit.textContent = ' mp';
+        timeLimitUnit.style.color = 'rgba(255,255,255,0.6)';
+
+        timeLimitRow.appendChild(timeLimitLabel);
+        timeLimitRow.appendChild(timeLimitInput);
+        timeLimitRow.appendChild(timeLimitUnit);
+        mazeSection.appendChild(timeLimitRow);
+
+        // === Nehézség (pályaméret) ===
+        const diffRow = document.createElement('div');
+        diffRow.className = 'dkv-debug-video-row';
+        diffRow.style.marginTop = '12px';
+
+        const diffLabel = document.createElement('label');
+        diffLabel.textContent = 'Nehézség / pályaméret (NxN, páros):';
+        diffLabel.htmlFor = 'dkv-debug-maze-difficulty';
+        diffLabel.style.flex = '1';
+
+        const diffInput = document.createElement('input');
+        diffInput.type = 'number';
+        diffInput.id = 'dkv-debug-maze-difficulty';
+        diffInput.className = 'dkv-debug-video-input';
+        diffInput.min = 6;
+        diffInput.max = 30;
+        diffInput.step = 2; // Csak páros értékek: 6, 8, 10, 12, 14, ...
+        diffInput.value = this.tasksConfig.mazeDifficulty ?? 12;
+        diffInput.style.width = '80px';
+
+        const diffUnit = document.createElement('span');
+        diffUnit.textContent = ' cella';
+        diffUnit.style.color = 'rgba(255,255,255,0.6)';
+
+        diffRow.appendChild(diffLabel);
+        diffRow.appendChild(diffInput);
+        diffRow.appendChild(diffUnit);
+        mazeSection.appendChild(diffRow);
+
+        const diffInfo = document.createElement('p');
+        diffInfo.style.cssText = 'font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 4px 0 0;';
+        diffInfo.textContent = 'Alap: 16 (16×16). Értékek: 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30.';
+        mazeSection.appendChild(diffInfo);
+
+        // Info
+        const infoEl = document.createElement('p');
+        infoEl.style.cssText = 'font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 8px 0 0;';
+        infoEl.textContent = 'Alapértelmezett: 600 mp (10 perc). A változás azonnal érvényesül a következő indításnál.';
+        mazeSection.appendChild(infoEl);
+
+        // Apply gomb
+        const applyBtn = document.createElement('button');
+        applyBtn.className = 'dkv-debug-btn dkv-debug-btn-apply';
+        applyBtn.textContent = 'Mentés';
+        applyBtn.style.marginTop = '12px';
+        applyBtn.addEventListener('click', () => {
+            const timeVal = parseInt(timeLimitInput.value, 10);
+            let diffVal = parseInt(diffInput.value, 10);
+            // Kényszerítünk páros értéket
+            if (isNaN(diffVal) || diffVal < 6) diffVal = 12;
+            if (diffVal % 2 !== 0) diffVal = diffVal - 1;
+
+            this.tasksConfig.mazeTimeLimit = isNaN(timeVal) ? 600 : timeVal;
+            this.tasksConfig.mazeDifficulty = diffVal;
+
+            if (this.debugManager) {
+                this.debugManager.tasksConfig = { ...this.tasksConfig };
+                this.debugManager.saveConfig({
+                    ...this.debugManager.skipConfig,
+                    tasksConfig: this.tasksConfig
+                });
+            }
+            applyBtn.textContent = '✅ Mentve!';
+            applyBtn.disabled = true;
+            setTimeout(() => {
+                applyBtn.textContent = 'Mentés';
+                applyBtn.disabled = false;
+            }, 1500);
+        });
+        mazeSection.appendChild(applyBtn);
+
+        container.appendChild(mazeSection);
+        this.tabContentContainer.appendChild(container);
+    }
+
+    /**
      * Slide key generálása (slide_01, slide_02, stb.)
      */
     _getSlideKey(slide) {
@@ -318,37 +450,74 @@ class DebugPanel {
     }
 
     /**
-     * Video config betöltése API-ból
+     * Video config betöltése
+     * Elsőlegesen localStorage-ból, fejlesztői API másodlagos (csak ha elérhető)
      */
     async _loadVideoConfig() {
+        const grade = this.debugManager.currentGrade;
+        const lsKey = `dkv-video-config-grade${grade}`;
+
+        // 1. localStorage-ból tölt
         try {
-            const grade = this.debugManager.currentGrade;
-            const response = await fetch(`/__api/video-config/${grade}`);
-            if (response.ok) {
-                this.videoConfig = await response.json();
+            const stored = localStorage.getItem(lsKey);
+            if (stored) {
+                this.videoConfig = JSON.parse(stored);
+                console.log('[DebugPanel] Video config loaded from localStorage');
             }
-        } catch (err) {
-            console.warn('[DebugPanel] Failed to load video config:', err);
+        } catch (e) {
+            this.videoConfig = { slides: {} };
+        }
+
+        // 2. API (csak fejlesztői környezetben érhető el - felülírja a localStorage-t)
+        try {
+            const response = await fetch(`/__api/video-config/${grade}`, { signal: AbortSignal.timeout(1000) });
+            if (response.ok) {
+                const apiConfig = await response.json();
+                // Merge: API-ban lévő értékek felülírják a localStorage-t
+                this.videoConfig = apiConfig;
+                // Szinkronizálás visszafelé is
+                localStorage.setItem(lsKey, JSON.stringify(this.videoConfig));
+                console.log('[DebugPanel] Video config loaded from API (dev mode)');
+            }
+        } catch {
+            // Éles szerveren ez normális - nem hiba
+        }
+
+        if (!this.videoConfig) {
             this.videoConfig = { slides: {} };
         }
     }
 
     /**
-     * Video beállítások mentése API-ba
+     * Video beállítások mentése
+     * Mindig localStorage-ba ment (éles szerveren is működik),
+     * ezenfelül megpróbálja az API-t is (csak fejlesztői környezetben sikeres)
      */
     async _saveVideoConfig() {
+        const grade = this.debugManager.currentGrade;
+        const lsKey = `dkv-video-config-grade${grade}`;
+
+        // 1. localStorage mentés (mindig működik)
         try {
-            const grade = this.debugManager.currentGrade;
+            localStorage.setItem(lsKey, JSON.stringify(this.videoConfig));
+            console.log('[DebugPanel] Video config saved to localStorage');
+        } catch (e) {
+            console.error('[DebugPanel] localStorage save failed:', e);
+        }
+
+        // 2. API mentés (csak fejlesztői - ha nem érhető el, csendesen sikertelen)
+        try {
             const response = await fetch(`/__api/video-config/${grade}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(this.videoConfig)
+                body: JSON.stringify(this.videoConfig),
+                signal: AbortSignal.timeout(2000)
             });
             if (response.ok) {
-                console.log('[DebugPanel] Video config saved');
+                console.log('[DebugPanel] Video config also saved to API (dev mode)');
             }
-        } catch (err) {
-            console.error('[DebugPanel] Failed to save video config:', err);
+        } catch {
+            // Éles szerveren normális - nem hiba
         }
     }
 
@@ -454,16 +623,17 @@ class DebugPanel {
             });
 
             const text = document.createElement('span');
-            text.textContent = `${section.name} (${section.slideIndices.length} slides)`;
+            text.className = 'dkv-debug-section-name';
+            text.textContent = section.name;
 
             label.appendChild(checkbox);
             label.appendChild(text);
 
-            // Click to view details (de ne a checkbox-on)
-            label.addEventListener('click', (e) => {
-                if (e.target !== checkbox) {
-                    this._selectSection(section);
-                }
+            // Csak a névre kattintás válassza ki a szekciót
+            text.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this._selectSection(section);
             });
 
             panel.appendChild(label);
@@ -596,16 +766,24 @@ class DebugPanel {
 
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            checkbox.value = idx;
-            checkbox.checked = this.debugManager.skipConfig.skipSlides.includes(idx);
+            const slideValue = slide.id || idx;
+            checkbox.value = slideValue;
+
+            // Ha van ID, csak azt nézzük (index-mentesítés)
+            if (slide.id) {
+                checkbox.checked = this.debugManager.skipConfig.skipSlides.includes(slide.id);
+            } else {
+                checkbox.checked = this.debugManager.skipConfig.skipSlides.includes(idx);
+            }
+
             checkbox.disabled = isSectionSkipped; // Disabled ha section skip
 
             checkbox.addEventListener('change', () => {
-                this._onSlideCheckboxChange(idx, checkbox.checked);
+                this._onSlideCheckboxChange(slideValue, checkbox.checked);
             });
 
             const text = document.createElement('span');
-            text.textContent = `Slide ${idx + 1}: ${slide.title}`;
+            text.textContent = `[${slide.id}] ${slide.title}`;
 
             label.appendChild(checkbox);
             label.appendChild(text);
@@ -641,31 +819,66 @@ class DebugPanel {
         }
 
         this._updateStats();
+
+        // AUTO-SAVE: Mentés azonnal, hogy code-reload esetén ne vesszen el
+        this._autoSave();
+    }
+
+    _autoSave() {
+        const muteCheckbox = document.getElementById('dkv-debug-mute-music');
+        const config = {
+            enabled: true,
+            skipSections: this.debugManager.skipConfig.skipSections,
+            skipSlides: this.debugManager.skipConfig.skipSlides,
+            useDummyData: true,
+            muteMusic: muteCheckbox ? muteCheckbox.checked : true,
+            tasksConfig: this.tasksConfig
+        };
+        this.debugManager.saveConfig(config);
+        this._exportBuildConfig(config);
     }
 
     /**
-     * Individual slide checkbox change handler
+     * Debug beállításokat elmenti a public/build-config.json-be (fejlesztői API)
+     * Ez a fájl bekerül a dist/-be és éles szerveren is érvényes lesz.
+     * @param {Object} config
+     */
+    async _exportBuildConfig(config) {
+        try {
+            await fetch('/__api/build-config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(config),
+                signal: AbortSignal.timeout(2000)
+            });
+        } catch {
+            // Éles szerveren néma hiba - nem zár az API
+        }
+    }
+
+    /**
+     * Slide checkbox change handler
      * 
-     * @param {number} slideIndex - Slide index
+     * @param {string|number} slideId - Slide ID vagy index
      * @param {boolean} checked - Checkbox állapot
      */
-    _onSlideCheckboxChange(slideIndex, checked) {
+    _onSlideCheckboxChange(slideId, checked) {
         const config = this.debugManager.skipConfig;
 
         if (checked) {
-            // Hozzáadás
-            if (!config.skipSlides.includes(slideIndex)) {
-                config.skipSlides.push(slideIndex);
+            if (!config.skipSlides.includes(slideId)) {
+                config.skipSlides.push(slideId);
             }
         } else {
-            // Eltávolítás
-            const idx = config.skipSlides.indexOf(slideIndex);
+            const idx = config.skipSlides.indexOf(slideId);
             if (idx > -1) {
                 config.skipSlides.splice(idx, 1);
             }
         }
 
         this._updateStats();
+        // AUTO-SAVE: Mentés azonnal
+        this._autoSave();
     }
 
     /**
@@ -686,19 +899,20 @@ class DebugPanel {
     _onSave() {
         const muteCheckbox = document.getElementById('dkv-debug-mute-music');
 
-        // useDummyData mindig true lesz (Onboarding skip auto-enable)
         const config = {
-            enabled: true, // Automatikusan enabled
+            enabled: true,
             skipSections: this.debugManager.skipConfig.skipSections,
             skipSlides: this.debugManager.skipConfig.skipSlides,
-            useDummyData: true, // Mindig true, az Onboarding skip automatikusan engedélyezi
-            muteMusic: muteCheckbox ? muteCheckbox.checked : true // Default: true (némítva)
+            useDummyData: true,
+            muteMusic: muteCheckbox ? muteCheckbox.checked : true,
+            tasksConfig: this.tasksConfig
         };
 
         this.debugManager.saveConfig(config);
-        this.debugManager.reloadConfig(); // Hot reload
+        this.debugManager.reloadConfig();
+        this._exportBuildConfig(config);
 
-        console.log('[DEBUG] Config saved and reloaded', config);
+        console.log('[DEBUG] Config saved, reloaded and exported to build-config.json', config);
 
         this.close();
     }

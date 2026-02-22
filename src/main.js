@@ -21,6 +21,8 @@ import CharacterSlide from './ui/components/CharacterSlide.js';
 import StorySlide from './ui/components/StorySlide.js';
 import GameInterface from './ui/components/GameInterface.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
+import MazeGame from './content/grade3/tasks/maze/MazeGame.js';
+import './content/grade3/tasks/maze/Maze.css';
 import './ui/styles/design-system.css';
 
 // Debug System (csak DEV módban töltődik be)
@@ -63,6 +65,7 @@ class DigitalKulturaVerseny {
     this.debugManager = null;
     this.debugPanel = null;
     this.debugBadge = null;
+    this.buildConfig = null; // build-config.json tartalma (DEV és PROD módban egyaránt)
   }
 
   /**
@@ -181,9 +184,73 @@ class DigitalKulturaVerseny {
       }
     }
 
+    // Build config betöltése (DEV és PROD módban egyaránt)
+    await this._loadBuildConfig();
+
     if (this.logger) {
       this.logger.info('Core components initialized');
     }
+  }
+
+  /**
+   * Build config betöltése a public/build-config.json fájlból.
+   * Fejlesztői módban: debugManager localStorage-a van előnyben.
+   * Éles szerveren: ez az egyetlen forrás.
+   */
+  async _loadBuildConfig() {
+    try {
+      const response = await fetch('./build-config.json', { signal: AbortSignal.timeout(3000) });
+      if (response.ok) {
+        const config = await response.json();
+        this.buildConfig = config;
+        // DEV módban: a debugManager localStorage-os konfigja felülírja
+        if (this.debugManager) {
+          const lsConfig = this.debugManager.skipConfig;
+          if (lsConfig && lsConfig.enabled !== undefined) {
+            // localStorage-ban van konfig -> az a mérvadó
+            return;
+          }
+          // Különben: build-config átkerül a debugManager-be is
+          this.debugManager.skipConfig = config;
+          this.debugManager.isEnabled = config.enabled || false;
+          this.debugManager.tasksConfig = Object.assign(
+            { mazeTimeLimit: 600, mazeDifficulty: 16 },
+            config.tasksConfig || {}
+          );
+        }
+        if (this.logger) {
+          this.logger.info('[App] build-config.json betöltve', config);
+        }
+      }
+    } catch {
+      // Ha nem érhető el, halógatjuk (alapértelmezettekkel működik)
+    }
+  }
+
+  /**
+   * Éles szerveren: eldönti, hogy egy dia kihagyandó-e a buildConfig alapján.
+   * Ez a debugManager.shouldSkipSlide() production megfelelője.
+   * @param {Object} slide
+   * @param {number} slideIndex
+   * @returns {boolean}
+   */
+  _prodShouldSkipSlide(slide, slideIndex) {
+    const cfg = this.buildConfig;
+    if (!cfg || !cfg.enabled) return false;
+
+    // Individual slide skip - ID-alapú (shuffle-safe), fallback indexre
+    // FONTOS: skipSlides string ID-kat tartalmaz (pl. "st1_s1"), nem numerikus indexet!
+    if (cfg.skipSlides && cfg.skipSlides.length > 0) {
+      if (slide.id && cfg.skipSlides.includes(slide.id)) return true;
+      if (!slide.id && cfg.skipSlides.includes(slideIndex)) return true;
+    }
+
+    // Szekció skip - metadata.section alapján
+    if (cfg.skipSections && slide.metadata?.section) {
+      if (cfg.skipSections.includes(slide.metadata.section)) return true;
+    }
+
+    return false;
   }
 
   /**
@@ -493,35 +560,44 @@ class DigitalKulturaVerseny {
     // Helyette a slide objektumból keressük meg az indexet.
     const slideIndex = this.slideManager.slides.findIndex(s => s.id === slide.id);
 
-    if (this.debugManager && slideIndex !== -1 && this.debugManager.shouldSkipSlide(slideIndex)) {
-      console.log(`[DEBUG] Skipping slide ${slide.id} (index=${slideIndex}, depth=${skipDepth}, direction=${direction}, title="${slide.title}")`);
+    // === SKIP CHECK (DEV: debugManager, PROD: buildConfig) ===
+    const shouldSkip = slideIndex !== -1 && (
+      this.debugManager
+        ? this.debugManager.shouldSkipSlide(slideIndex)
+        : (this.buildConfig?.enabled && this._prodShouldSkipSlide(slide, slideIndex))
+    );
 
-      // Depth limit check (infinite loop protection)
+    if (shouldSkip) {
+      console.log(`[Skip] Skipping slide ${slide.id} (index=${slideIndex}, depth=${skipDepth}, direction=${direction})`);
+
       if (skipDepth > MAX_SKIP_DEPTH) {
-        console.error('[DEBUG] Max skip depth reached! Disabling debug mode for safety.');
-        this.debugManager.disable();
-        // Continue with normal render (fallback)
+        console.error('[Skip] Max skip depth reached!');
+        if (this.debugManager) this.debugManager.disable();
+        // Tovább a normál renderelőssel (fallback)
       } else {
-        // Onboarding skip → Apply dummy data (csak forward irányban)
         if (direction === 'forward' && slide.metadata?.section === 'onboarding' && !this.stateManager.getStateValue('userProfile')) {
-          this.debugManager.applyDummyData();
-          console.log('[DEBUG] Onboarding skipped, dummy data applied');
+          if (this.debugManager) {
+            this.debugManager.applyDummyData();
+          } else if (this.buildConfig?.useDummyData) {
+            // PROD mód: dummy adatok alkalmazása (onboarding kihagyva)
+            this.stateManager?.updateState({
+              userProfile: { name: 'Tanuló', nickname: 'Player', classId: '3.a' },
+              characterSelected: true
+            });
+          }
+          console.log('[Skip] Onboarding skipped, dummy data applied');
         }
 
-        // Skip to next/prev slide (bidirectional)
         const targetSlide = direction === 'forward'
           ? this.slideManager.nextSlide()
           : this.slideManager.prevSlide();
 
         if (targetSlide) {
-          this.renderSlide(targetSlide, skipDepth + 1, direction); // +1 depth, preserve direction
-          return; // EARLY EXIT - nem folytatjuk a renderelést
+          this.renderSlide(targetSlide, skipDepth + 1, direction);
+          return;
         } else {
-          // Nincs több slide ebben az irányban
-          // NE rendereljük az aktuálisat, ha az is skip-elve van!
-          // Csak logoljuk és visszatérünk (skip chain vége)
-          console.warn(`[DEBUG] No more slides to skip to (${direction}), ending skip chain at index=${slideIndex}`);
-          return; // EARLY EXIT - ne rendereljük a skip-elt slide-ot
+          console.warn(`[Skip] No more slides to skip to (${direction}), ending skip chain at index=${slideIndex}`);
+          return;
         }
       }
     }
@@ -704,7 +780,8 @@ class DigitalKulturaVerseny {
 
       // Alapértelmezett gomb állapot
       const btnOptions = isTaskSlide ? { suppressOrange: true } : {};
-      const enableButton = !isLastSlide && alreadyPlayed;
+      // Feladat dián a fő navigációs gombot letiltjuk, amíg a feladat nincs kész
+      const enableButton = !isLastSlide && alreadyPlayed && !isTaskSlide;
       setBtnState(enableButton, btnOptions);
 
       this.playAudio(audioSrc, () => {
@@ -715,10 +792,55 @@ class DigitalKulturaVerseny {
 
         // Feladat slide esetén automatikusan megnyitjuk a modalt
         if (isTaskSlide && this.activeGameInterface) {
-          const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
-          this.activeGameInterface.showTaskModal(taskContent, () => {
-            this.handleNext();
-          });
+          const isMaze = slide.metadata && slide.metadata.section === 'station_1';
+
+          if (isMaze) {
+            // Maze feladat indítása
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'maze-task-container';
+            taskContainer.style.width = '100%';
+            taskContainer.style.height = '100%';
+
+            this.activeGameInterface.showTaskModal(taskContainer, null, { hideHeader: true });
+
+            // Időlimit: Debug Panel TASKS füléből, vagy alapértelmezett 600mp (10 perc)
+            const mazeTimeLimit = this.debugManager?.tasksConfig?.mazeTimeLimit
+              ?? this.buildConfig?.tasksConfig?.mazeTimeLimit
+              ?? 600;
+
+            // Példányosítás (a showTaskModal után, hogy a DOM-ban legyen)
+            const maze = new MazeGame(taskContainer, {
+              difficulty: this.debugManager?.tasksConfig?.mazeDifficulty
+                ?? this.buildConfig?.tasksConfig?.mazeDifficulty
+                ?? 16,
+              timeLimit: mazeTimeLimit,
+              onComplete: (result) => {
+                // Pontozás
+                const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                this.stateManager?.updateState({ score: currentScore + result.points });
+                this.activeGameInterface?.updateHUD(this.stateManager?.getState());
+
+                // Eredmény modal megjelenítése
+                this.showMazeResultModal(result, () => {
+                  this.activeGameInterface.hideTaskModal();
+                  this.handleNext();
+                });
+              }
+            });
+
+            // OK gomb elrejtése – a result modal veszi át a szerepet
+            setTimeout(() => {
+              const okBtn = document.querySelector('.dkv-task-ok-btn');
+              if (okBtn) okBtn.style.display = 'none';
+            }, 50);
+
+          } else {
+            // Alapértelmezett (szöveges) feladat
+            const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
+            this.activeGameInterface.showTaskModal(taskContent, () => {
+              this.handleNext();
+            });
+          }
         }
 
         setBtnState(true, btnOptions);
@@ -733,16 +855,110 @@ class DigitalKulturaVerseny {
       // Ha nincs hang, de feladat, akkor is megjeleníthetjük (opcionális késleltetéssel)
       if (isTaskSlide && this.activeGameInterface) {
         setTimeout(() => {
-          const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
-          this.activeGameInterface.showTaskModal(taskContent, () => {
-            this.handleNext();
-          });
+          const isMaze = slide.metadata && slide.metadata.section === 'station_1';
+
+          if (isMaze) {
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'maze-task-container';
+            taskContainer.style.width = '100%';
+            taskContainer.style.height = '100%';
+
+            this.activeGameInterface.showTaskModal(taskContainer, null, { hideHeader: true });
+
+            const mazeTimeLimit = this.debugManager?.tasksConfig?.mazeTimeLimit
+              ?? this.buildConfig?.tasksConfig?.mazeTimeLimit
+              ?? 600;
+
+            new MazeGame(taskContainer, {
+              difficulty: this.debugManager?.tasksConfig?.mazeDifficulty
+                ?? this.buildConfig?.tasksConfig?.mazeDifficulty
+                ?? 16,
+              timeLimit: mazeTimeLimit,
+              onComplete: (result) => {
+                const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                this.stateManager?.updateState({ score: currentScore + result.points });
+                this.activeGameInterface?.updateHUD(this.stateManager?.getState());
+
+                this.showMazeResultModal(result, () => {
+                  this.activeGameInterface.hideTaskModal();
+                  this.handleNext();
+                });
+              }
+            });
+
+            setTimeout(() => {
+              const okBtn = document.querySelector('.dkv-task-ok-btn');
+              if (okBtn) okBtn.style.display = 'none';
+            }, 50);
+
+          } else {
+            const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
+            this.activeGameInterface.showTaskModal(taskContent, () => {
+              this.handleNext();
+            });
+          }
         }, 1000);
       }
     }
 
     // 5. Preloading
     this.preloadNextSlide(currentIndex);
+  }
+
+  /**
+   * Maze eredmény modal megjelenítése
+   * @param {{ success: boolean, timeElapsed: number, stepCount: number, points: number }} result
+   * @param {Function} onContinue - Callback a Tovább gomb megnyomásakor
+   */
+  showMazeResultModal(result, onContinue) {
+    const mins = Math.floor(result.timeElapsed / 60).toString().padStart(2, '0');
+    const secs = (result.timeElapsed % 60).toString().padStart(2, '0');
+    const timeStr = `${mins}:${secs}`;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'maze-result-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = `maze-result-modal ${result.success ? 'success' : 'failure'}`;
+
+    modal.innerHTML = `
+      <div class="maze-result-icon">${result.success ? '🎉' : '😢'}</div>
+      <h2 class="maze-result-title">
+        ${result.success
+        ? 'Gratulálunk! Sikerült eljutni a kulcsig!'
+        : 'Sajnáljuk, nem sikerült teljesíteni a labirintus pályát!'}
+      </h2>
+      <div class="maze-result-stats">
+        <div class="maze-result-stat">
+          <span class="maze-result-stat-label">Felhasznált időd:</span>
+          <span class="maze-result-stat-value">${timeStr}</span>
+        </div>
+        <div class="maze-result-stat">
+          <span class="maze-result-stat-label">Lépések száma:</span>
+          <span class="maze-result-stat-value">${result.stepCount}</span>
+        </div>
+        <div class="maze-result-stat">
+          <span class="maze-result-stat-label">Kapott pontok:</span>
+          <span class="maze-result-stat-value points">${result.points} pont</span>
+        </div>
+      </div>
+      <button class="maze-result-btn">Tovább</button>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Megjelenítési animáció
+    requestAnimationFrame(() => overlay.classList.add('open'));
+
+    // Tovább gomb
+    modal.querySelector('.maze-result-btn').addEventListener('click', () => {
+      overlay.classList.remove('open');
+      setTimeout(() => {
+        overlay.remove();
+        if (onContinue) onContinue();
+      }, 300);
+    });
   }
 
   // --- SAFE NAVIGATION HANDLERS ---

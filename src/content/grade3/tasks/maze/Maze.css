@@ -1,0 +1,219 @@
+/* Maze Game Styles - Grade 3 */
+
+.maze-game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    color: #ffffff;
+    font-family: 'Source Code Pro', monospace;
+    overflow: hidden;
+}
+
+.maze-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 40px;
+    background: rgba(0, 234, 255, 0.05);
+    border-bottom: 2px solid rgba(0, 234, 255, 0.2);
+    gap: 20px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.maze-instructions-header {
+    flex: 1;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #00eaff;
+    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+    font-weight: 500;
+}
+
+.maze-timer,
+.maze-steps {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    width: 160px;
+    flex-shrink: 0;
+}
+
+.maze-steps {
+    justify-content: flex-end;
+}
+
+.step-count {
+    display: inline-block;
+    min-width: 3ch;
+    text-align: right;
+}
+
+.timer-time {
+    color: #00eaff;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+}
+
+.maze-canvas-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: radial-gradient(circle at center, rgba(0, 99, 110, 0.1) 0%, transparent 70%);
+    overflow: hidden;
+}
+
+#mazeCanvas {
+    background: rgba(0, 21, 30, 0.4);
+    border-radius: 4px;
+}
+
+/* Modal specifikus finomhangolás - TÖRÖLVE, a szülő Grid kezeli a centerezést */
+
+/* A konténer és a wrapper ne legyen nagyobb mint a tartalom, így a szülő flex középre tudja rakni */
+.maze-task-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: auto !important;
+    min-height: min-content;
+}
+
+/* =============================================
+   MAZE EREDMÉNY MODAL
+   ============================================= */
+
+.maze-result-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 5000;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.maze-result-overlay.open {
+    opacity: 1;
+}
+
+.maze-result-modal {
+    background: rgba(0, 21, 30, 0.97);
+    border-radius: 16px;
+    padding: 48px 56px;
+    min-width: 480px;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    transform: scale(0.85);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-family: 'Source Code Pro', monospace;
+    text-align: center;
+}
+
+.maze-result-overlay.open .maze-result-modal {
+    transform: scale(1);
+}
+
+.maze-result-modal.success {
+    border: 2px solid #00eaff;
+    box-shadow: 0 0 20px rgba(0, 234, 255, 0.5), inset 0 0 30px rgba(0, 234, 255, 0.1);
+}
+
+.maze-result-modal.failure {
+    border: 2px solid #ff4d4d;
+    box-shadow: 0 0 20px rgba(255, 77, 77, 0.4), inset 0 0 30px rgba(255, 77, 77, 0.1);
+}
+
+.maze-result-icon {
+    font-size: 4rem;
+    line-height: 1;
+}
+
+.maze-result-title {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: none;
+    letter-spacing: 1px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.maze-result-modal.success .maze-result-title {
+    text-shadow: 0 0 15px rgba(0, 234, 255, 0.8);
+}
+
+.maze-result-modal.failure .maze-result-title {
+    text-shadow: 0 0 15px rgba(255, 77, 77, 0.8);
+}
+
+.maze-result-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.maze-result-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: rgba(0, 234, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 234, 255, 0.15);
+}
+
+.maze-result-stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+}
+
+.maze-result-stat-value {
+    color: #00eaff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(0, 234, 255, 0.6);
+}
+
+.maze-result-stat-value.points {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+}
+
+.maze-result-btn {
+    margin-top: 8px;
+    min-width: 160px;
+    height: 52px;
+    font-family: 'Impact', sans-serif;
+    font-size: 1.4rem;
+    background: #00636e;
+    color: white;
+    border: 2px solid #00eaff;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 234, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.maze-result-btn:hover {
+    background: #007582;
+    box-shadow: 0 0 30px rgba(0, 234, 255, 0.8);
+}

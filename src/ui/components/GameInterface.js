@@ -181,9 +181,7 @@ class GameInterface {
                 <div class="dkv-task-modal-body">
                     <!-- Feladat tartalom helye -->
                 </div>
-                <div class="dkv-task-modal-footer">
-                    <button class="dkv-task-ok-btn">OK</button>
-                </div>
+                <button class="dkv-task-ok-btn">OK</button>
             </div>
         `;
         this.element.appendChild(this.taskModalOverlay);
@@ -466,9 +464,16 @@ class GameInterface {
      * Feladat modal megjelenítése
      * @param {string|HTMLElement} content - A feladat leírása vagy HTML eleme
      * @param {Function} onOk - Callback az OK gomb megnyomásakor
+     * @param {Object} options - Opcionális beállítások (pl. hideHeader)
      */
-    showTaskModal(content, onOk) {
+    showTaskModal(content, onOk, options = {}) {
         if (!this.taskModalOverlay) return;
+
+        // Fejléc kezelése
+        const header = this.taskModalOverlay.querySelector('.dkv-task-modal-header');
+        if (header) {
+            header.style.display = options.hideHeader ? 'none' : 'flex';
+        }
 
         // Tartalom beállítása
         if (typeof content === 'string') {
@@ -483,6 +488,7 @@ class GameInterface {
             if (onOk) onOk();
             this.hideTaskModal();
         };
+        this.taskOkBtn.classList.add('visible');
 
         // Megjelenítés
         this.taskModalOverlay.classList.add('open');
@@ -494,6 +500,7 @@ class GameInterface {
     hideTaskModal() {
         if (this.taskModalOverlay) {
             this.taskModalOverlay.classList.remove('open');
+            this.taskOkBtn.classList.remove('visible');
         }
     }
 

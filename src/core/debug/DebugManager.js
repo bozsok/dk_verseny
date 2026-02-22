@@ -23,6 +23,44 @@ class DebugManager {
         this.sections = [];
         this.skipConfig = this.loadSkipConfig();
         this.isEnabled = this.skipConfig.enabled || false;
+        this.tasksConfig = Object.assign(
+            { mazeTimeLimit: 600, mazeDifficulty: 16 },
+            this.skipConfig.tasksConfig || {}
+        );
+
+        // Éles szerveren: ha localStorage üres, betöltés build-config.json-ből
+        // Ez az állítás aszinkron, az inicializálás része
+        this._buildConfigLoaded = this._loadBuildConfigIfNeeded();
+    }
+
+    /**
+     * Éles szerveren: ha localStorage-ban nincs konfig, betölti a build-config.json-ből.
+     * Fejlesztői módban: localStorage van élnyomásban.
+     */
+    async _loadBuildConfigIfNeeded() {
+        const stored = localStorage.getItem('dkv-debug-config');
+        if (stored) return; // localStorage prioritás
+
+        try {
+            const response = await fetch('./build-config.json', { signal: AbortSignal.timeout(2000) });
+            if (!response.ok) return;
+            const config = await response.json();
+            if (!config || config.enabled === undefined) return;
+
+            // Éles szerveren: átvesszük a lefordított konfigot
+            this.skipConfig = config;
+            this.isEnabled = config.enabled || false;
+            this.tasksConfig = Object.assign(
+                { mazeTimeLimit: 600, mazeDifficulty: 16 },
+                config.tasksConfig || {}
+            );
+
+            if (this.logger) {
+                this.logger.info('[DEBUG] Config loaded from build-config.json', config);
+            }
+        } catch {
+            // Ha nem érhető el a fájl, nincs hiba - alapértelmezettekkel megy tovább
+        }
     }
 
     /**
@@ -70,7 +108,8 @@ class DebugManager {
             skipSections: [],
             skipSlides: [],
             useDummyData: false,
-            muteMusic: true // Default: true (némítva)
+            muteMusic: true, // Default: true (némítva)
+            tasksConfig: { mazeTimeLimit: 600, mazeDifficulty: 16 }
         };
     }
 
@@ -119,10 +158,19 @@ class DebugManager {
         const slide = this.slides[slideIndex];
         if (!slide) return false;
 
-        // 1. Individual slide skip (magasabb prioritás)
-        if (this.skipConfig.skipSlides.includes(slideIndex)) {
+        // 1. Individual slide skip (magasabb prioritás) - ID-alapú ha van ID, különben Index
+        let isSkipped = false;
+        if (slide.id) {
+            // Ha van ID, akkor CSAK az ID-t nézzük (shuffle-safe)
+            isSkipped = this.skipConfig.skipSlides.includes(slide.id);
+        } else {
+            // Fallback az indexre ha nincs ID (legacy vagy speciális diák)
+            isSkipped = this.skipConfig.skipSlides.includes(slideIndex);
+        }
+
+        if (isSkipped) {
             if (this.logger) {
-                this.logger.debug('[DEBUG] Individual skip', { slideIndex, title: slide.title });
+                this.logger.debug('[DEBUG] Individual skip', { slideIndex, id: slide.id, title: slide.title });
             }
             return true;
         }

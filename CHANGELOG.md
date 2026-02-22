@@ -5,6 +5,66 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.8.2] - 2026-02-22
+
+### Javítva
+- **`build-config.json` skip logika javítása (éles szerver):**
+  - `_prodShouldSkipSlide()` mostantól `slide.id` (string, pl. `"st1_s1"`) alapján hasonlít a `skipSlides` tömbhöz – korábban numerikus indexet (`slideIndex`) használt, ami soha nem egyezett. A kihagyás most shuffle-biztos és helyes PROD módban.
+  - `useDummyData: true` esetén az onboarding skip PROD módban is alkalmazza az alapértelmezett profil adatokat (felhasználói profil + karakterválasztás).
+- **Labirintus nehézség (PROD):**
+  - `mazeDifficulty` és `mazeTimeLimit` mostantól `buildConfig`-ból töltődik be, ha `debugManager` nincs jelen – korábban hardkódolt `12`-es és `600`-as fallback volt. Mindkét `MazeGame` példányosítási ponton javítva.
+- **Képek kiterjesztés-korrekciója:**
+  - JPEG tartalmú, tévesen `.png` kiterjesztésű fájlok átnevezve: `hub-bg.png` → `hub-bg.jpg`, `icon-192.png` → `icon-192.jpg`, `icon-512.png` → `icon-512.jpg`.
+  - `grade3/onboarding_bg.png` törölve (a `.jpg` változat már létezett).
+  - `grade4–6/config.js` hivatkozások szintén `onboarding_bg.jpg`-re mutatnak.
+  - `design-system.css` és `manifest.json` frissítve (type: `image/jpeg`).
+
+### Módosítva
+- **Labirintus vizuális stílus:**
+  - Neon ragyogás eltávolítva a canvas falak rajzolóból (`ctx.shadowColor`, `ctx.shadowBlur`).
+  - `box-shadow` eltávolítva a `#mazeCanvas`-ról.
+  - Az eredmény modal (`success`/`failure`) `box-shadow` intenzitása csökkentve (40px → 20px).
+  - A feladatmodal általános `box-shadow` értéke mérsékelve.
+
+## [0.8.1] - 2026-02-22
+
+### Hozzáadva
+- **Éles szerverre telepítés támogatása** 🚀
+  - Új `public/build-config.json` fájl: a fejlesztői Debug Panelen elvégzett beállítások (szekcióugrás, időlimit, nehézség stb.) ebbe a fájlba exportálódnak, és `npm run build` után bekerülnek a `dist/` könyvtárba, így éles szerveren is érvényesülnek.
+  - Új `/__api/build-config` GET/POST Vite plugin endpoint: a Debug Panel mentéskor automatikusan frissíti a `public/build-config.json`-t.
+  - `base: './'` beállítás a `vite.config.js`-ben: az összes asset-hivatkozás relatív útvonalú lesz a buildben, így a program **bármilyen nevű almappából** működik az éles szerveren.
+- **Éles szerveren is érvényes skip logika** 🎮
+  - Új `_loadBuildConfig()` metódus a `main.js`-ben: DEV és PROD módban egyaránt betölti a `build-config.json`-t.
+  - Új `_prodShouldSkipSlide()` metódus: éles szerveren a `buildConfig.skipSections` és `skipSlides` alapján dönti el, hogy egy dia kihagyandó-e (a debugManager nélkül).
+  - A `renderSlide()` section skip logikája mostantól mindkét módban (DEV/PROD) helyesen működik.
+- **Video konfig localStorage-tárolás** 💾
+  - A videóbeállítások (késleltetés, ismétlés) mostantól `localStorage`-ban is tárolódnak (`dkv-video-config-grade3` stb.), így éles szerveren is megmaradnak – a fejlesztői API-tól függetlenül.
+
+### Módosítva
+- **Labirintus nehézség alapértéke:** 12×12 → **16×16**-os rács.
+- **Labirintus lépésszámláló layout javítás:** A lépések 3 számjegyűre váltásakor már nem tolja el a „Juss el a kulcsig!" feliratot. A `.maze-steps` fix szélességű (`width: 160px`), a `.step-count` `min-width: 3ch` értékű, jobbra igazított.
+- **Debug Panel Tasks fül:** Az időlimit és nehézség mentésgombja együttesen exportálja a beállításokat a `build-config.json`-ba.
+
+## [0.8.0] - 2026-02-22
+
+### Added
+- **Stabil Slide ID Rendszer** 🛡️
+  - **100% Metadata-alapú mapping:** Megszüntettem az összes keménykódolt indexet a `DebugConfig.js`-ben. Mostantól minden szekció és dia azonosítása a `metadata.section` és `slide.id` alapján történik, ami immúnissá teszi a rendszert a Station Shuffle-re és a diák számának változására.
+  - A Debug Panel mostantól megjeleníti az ID-kat a listában ([id] formátum) a pontosabb tesztelés érdekében.
+  - **Auto-save:** A Debug Panel beállításai (skip list) azonnal mentésre kerülnek a `localStorage`-ba.
+
+### Fixed
+- **Debug Panel Persistence:** Megszűnt a beállítások elcsúszása az állomások sorsolása után az ID-alapú mentésnek köszönhetően.
+- **Maze Vertical Centering (Végleges Javítás):** A Labirintuskert feladat most már tökéletesen és biztonságosan középre igazítva jelenik meg a 900px-es modálban.
+    - A valódi hibaok a `main.js`-ben volt: a `maze-task-container`-ből hiányzott a `height: 100%` stílus, emiatt nem töltötte ki a Grid cellát.
+    - A Task Modal Overlay Grid struktúrát kapott (`grid-template-rows: 1fr`), ahol a törzs, a fejléc és az OK gomb egymásra rétegezve jelennek meg.
+    - A törzs (`dkv-task-modal-body`) `display: grid; place-items: center;` segítségével centerezi a tartalmát.
+    - **Izolált Architektúra:** A módosítások kizárólag a Task Modalt és a `main.js` Maze-indítási logikáját érintik.
+- **Debug UI Finomhangolás:**
+  - A szekciók neve mellől eltávolítva a zavaró "(X slides)" felirat.
+  - A szekció kiválasztása (névre kattintás) mostantól elválik a skip funkciótól (checkbox).
+  - Vizuális visszajelzés (kurzor és aláhúzás) a kattintható szekciónevekhez.
+
 ## [0.7.5] - 2026-01-29
 
 ### Added

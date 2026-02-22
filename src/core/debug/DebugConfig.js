@@ -18,87 +18,75 @@
 export const buildSectionMap = (slides, grade = 3) => {
     const sections = [];
 
-    // === ONBOARDING (Fix, mindig 0-2) ===
-    sections.push({
-        id: 'onboarding',
-        name: 'Onboarding',
-        description: '3 slides (Welcome, Registration, Character)',
-        slideIndices: [0, 1, 2],
-        requiresDummyData: true // Dummy data szükséges skip esetén
-    });
-
-    // === INTRO (Fix, mindig 3-6) ===
-    sections.push({
-        id: 'intro',
-        name: 'Intro',
-        description: '4 slides (Story Introduction)',
-        slideIndices: [3, 4, 5, 6],
-        requiresDummyData: false
-    });
-
-    // === ÁLLOMÁSOK (Dinamikus - MEGJELENÍTETT sorrend!) ===
-    // Először megállapítjuk a MEGJELENÍTETT sorrendet a slides metadata alapján
-    const displayOrder = [];
-    slides.forEach((slide, idx) => {
-        if (slide.metadata?.section?.startsWith('station_')) {
-            const stationNum = parseInt(slide.metadata.section.split('_')[1]);
-            // Csak egyszer adjuk hozzá minden állomást
-            if (!displayOrder.includes(stationNum)) {
-                displayOrder.push(stationNum);
-            }
-        }
-    });
-
-    console.log('[DEBUG CONFIG] Station display order:', displayOrder.map(n => `station_${n}`).join(', '));
-
-    // Most végigmegyünk a MEGJELENÍTETT sorrendben
-    displayOrder.forEach((originalStationNum, displayIdx) => {
-        const stationSlides = slides
+    // Helper függvény szekciók kinyeréséhez metadata alapján
+    const getSlidesBySection = (sectionId) => {
+        return slides
             .map((s, idx) => ({ slide: s, index: idx }))
-            .filter(({ slide }) => slide.metadata?.section === `station_${originalStationNum}`)
+            .filter(({ slide }) => slide.metadata?.section === sectionId)
             .map(({ index }) => index);
+    };
 
+    // 1. ONBOARDING
+    const onboardingSlides = getSlidesBySection('onboarding');
+    if (onboardingSlides.length > 0) {
         sections.push({
-            id: `station_${originalStationNum}`, // ID marad az eredeti (metadata compatibility)
-            name: `${displayIdx + 1}. Állomás`, // DE a név a megjelenített sorszám!
-            description: `4 slides (Eredeti: ${originalStationNum}. állomás)`,
-            slideIndices: stationSlides,
+            id: 'onboarding',
+            name: 'Onboarding',
+            description: 'Welcome, Registration, Character',
+            slideIndices: onboardingSlides,
+            requiresDummyData: true
+        });
+    }
+
+    // 2. INTRO
+    const introSlides = getSlidesBySection('intro');
+    if (introSlides.length > 0) {
+        sections.push({
+            id: 'intro',
+            name: 'Intro',
+            description: 'Story Introduction',
+            slideIndices: introSlides,
             requiresDummyData: false
         });
-    });
+    }
 
-    // === FINAL (Grade-dependent, fix indexek) ===
-    // Grade 3: 25-28 (4 slides)
-    // Grade 4-6: TODO (később hozzáadandó)
-    const finalIndices = getFinalSlideIndices(grade);
+    // 3. ÁLLOMÁSOK (1-5)
+    const stationNames = {
+        1: 'Labirintuskert',
+        2: 'Adat-tenger',
+        3: 'Tudás Torony',
+        4: 'Pixel Palota',
+        5: 'Hangerdő'
+    };
 
-    sections.push({
-        id: 'final',
-        name: 'Final',
-        description: '4 slides (Finale)',
-        slideIndices: finalIndices,
-        requiresDummyData: false
-    });
+    for (let stationNum = 1; stationNum <= 5; stationNum++) {
+        const stationSlides = getSlidesBySection(`station_${stationNum}`);
+
+        if (stationSlides.length > 0) {
+            sections.push({
+                id: `station_${stationNum}`,
+                name: `${stationNum}. Állomás (${stationNames[stationNum] || 'Ismeretlen'})`,
+                description: `Eredeti: ${stationNum}. állomás`,
+                slideIndices: stationSlides,
+                requiresDummyData: false
+            });
+        }
+    }
+
+    // 4. FINAL
+    const finalSlides = getSlidesBySection('final');
+    if (finalSlides.length > 0) {
+        sections.push({
+            id: 'final',
+            name: 'Final',
+            description: 'Finale slides',
+            slideIndices: finalSlides,
+            requiresDummyData: false
+        });
+    }
 
     return sections;
 };
-
-/**
- * Grade-dependent final slide indexek
- * 
- * @param {number} grade - Évfolyam (3-6)
- * @returns {Array<number>} Final slide indexek
- */
-function getFinalSlideIndices(grade) {
-    const finalIndexMap = {
-        3: [25, 26, 27, 28],  // Grade 3: 28 slides total
-        4: [25, 26, 27, 28],  // Grade 4: TODO - verify
-        5: [25, 26, 27, 28],  // Grade 5: TODO - verify
-        6: [25, 26, 27, 28]   // Grade 6: TODO - verify
-    };
-
-    return finalIndexMap[grade] || [];
-}
 
 /**
  * Section keresése slide index alapján

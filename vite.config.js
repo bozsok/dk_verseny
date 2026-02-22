@@ -5,13 +5,14 @@ export default defineConfig({
   // === ALAPBEÁLLÍTÁSOK ===
   root: '.',
   publicDir: 'public',
+  base: './', // Relatív útvonalak: bármilyen almappából működik éles szerveren
 
   // === BUILD BEÁLLÍTÁSOK ===
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: true,
-    minify: 'terser',
+    minify: 'esbuild',
     chunkSizeWarningLimit: 1000,
 
     // Rollup beállítások
@@ -34,16 +35,6 @@ export default defineConfig({
       }
     },
 
-    // Terser beállítások
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      },
-      mangle: {
-        safari10: true
-      }
-    }
   },
 
   // === DEVELOPMENT SERVER ===
@@ -145,6 +136,49 @@ export default defineConfig({
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify({ success: true }));
                 console.log(`[Video Config API] Saved config for grade ${grade}`);
+              } catch (err) {
+                res.statusCode = 500;
+                res.end(JSON.stringify({ error: err.message }));
+              }
+            });
+          } else {
+            next();
+          }
+        });
+      }
+    },
+    // Build Config API (Development only) - Debug Panel beállításait menti public/build-config.json-ba
+    {
+      name: 'build-config-api',
+      configureServer(server) {
+        const fs = require('fs');
+        const path = require('path');
+        const buildConfigPath = path.resolve(__dirname, 'public/build-config.json');
+
+        server.middlewares.use((req, res, next) => {
+          if (req.url !== '/__api/build-config') return next();
+
+          if (req.method === 'GET') {
+            try {
+              const data = fs.existsSync(buildConfigPath)
+                ? fs.readFileSync(buildConfigPath, 'utf-8')
+                : JSON.stringify({ enabled: false, skipSections: [], skipSlides: [], useDummyData: false, muteMusic: true, tasksConfig: { mazeTimeLimit: 600, mazeDifficulty: 16 } });
+              res.setHeader('Content-Type', 'application/json');
+              res.end(data);
+            } catch (err) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: err.message }));
+            }
+          } else if (req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk; });
+            req.on('end', () => {
+              try {
+                const data = JSON.parse(body);
+                fs.writeFileSync(buildConfigPath, JSON.stringify(data, null, 2), 'utf-8');
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true }));
+                console.log('[Build Config API] public/build-config.json frissítve');
               } catch (err) {
                 res.statusCode = 500;
                 res.end(JSON.stringify({ error: err.message }));

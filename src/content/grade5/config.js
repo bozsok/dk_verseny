@@ -52,7 +52,7 @@ export const createConfig = () => {
         }
     };
 
-    const bgImage = 'assets/images/grade5/onboarding_bg.png';
+    const bgImage = 'assets/images/grade5/onboarding_bg.jpg';
 
     addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, Ügynök!', 'Te lettél az egyik <b>Kiválasztott</b>, aki beléphet a szigorúan védett <b>Mátrix</b> rendszerbe.\nFeladatod a rendszer integritásának helyreállítása és a <b>Vírus</b> semlegesítése. A művelethez különböző digitális <b>Kódokat</b> kell megszerezned.\nCsatlakozz a csapathoz, és hajtsd végre a küldetést!', {
         buttonText: 'Belépés',

@@ -317,9 +317,16 @@
   flex-shrink: 0;
 }
 
-.dkv-debug-section-item span {
+.dkv-debug-section-item span.dkv-debug-section-name {
   flex: 1;
   font-size: 0.95rem;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+.dkv-debug-section-item span.dkv-debug-section-name:hover {
+  color: #00d2d3;
+  text-decoration: underline;
 }
 
 /* ===== SEPARATOR ===== */

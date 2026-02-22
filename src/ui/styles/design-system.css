@@ -60,7 +60,7 @@ body {
   line-height: 1.6;
 
   /* Background Image Setup */
-  background-image: url('/assets/hub-bg.png');
+  background-image: url('/assets/hub-bg.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -868,20 +868,19 @@ h3 {
 .dkv-task-modal {
   width: 1200px;
   height: 900px;
-  background: rgba(0, 21, 30, 0.85);
+  background: rgba(0, 21, 30, 0.9);
   border: 2px solid #00eaff;
-  /* 1px-es finom keret az onboarding modalok mintájára */
   border-radius: 12px;
-  /* 10-12px a standard Grade 3-ban */
-  box-shadow: 0 0 20px rgba(0, 234, 255, 0.7), inset 0 0 30px rgba(0, 234, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.5), inset 0 0 20px rgba(0, 234, 255, 0.2);
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
   overflow: hidden;
   transform: scale(0.9);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   font-family: 'Source Code Pro', monospace;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(20px);
 }
 
 .dkv-task-modal-overlay.open .dkv-task-modal {
@@ -889,12 +888,15 @@ h3 {
 }
 
 .dkv-task-modal-header {
+  grid-area: 1 / 1 / 2 / 2;
   height: 100px;
   background: rgba(0, 210, 211, 0.1);
   display: flex;
   align-items: center;
   padding: 0 50px;
   border-bottom: 2px solid rgba(0, 234, 255, 0.3);
+  align-self: start;
+  z-index: 2;
 }
 
 .dkv-task-modal-header h2 {
@@ -908,44 +910,47 @@ h3 {
 }
 
 .dkv-task-modal-body {
-  flex: 1;
-  padding: 50px;
+  grid-area: 1 / 1 / 2 / 2;
+  height: 100%;
+  padding: 0;
   color: #fff;
   font-size: 1.5rem;
   font-weight: 200;
   line-height: 1.8;
-  overflow-y: auto;
+  overflow: hidden;
+  display: grid;
 }
 
-.dkv-task-modal-footer {
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 50px;
-  background: rgba(0, 0, 0, 0.2);
-}
+/* dkv-task-modal-footer törölve a DOM-ból is */
 
 .dkv-task-ok-btn {
-  min-width: 120px;
-  height: 56px;
+  grid-area: 1 / 1 / 2 / 2;
+  align-self: end;
+  justify-self: end;
+  margin: 40px;
+  min-width: 140px;
+  height: 60px;
   font-family: 'Impact', sans-serif;
-  font-size: 1.5rem;
-  font-weight: normal;
+  font-size: 1.6rem;
   background: #00636e;
   color: white;
   border: 2px solid #00eaff;
   border-radius: 10px;
-  /* Téglalap alakú lekerekítéssel, mint a Grade 3 gombok */
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
-  display: flex;
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.5);
+  display: none;
+  /* Csak szükség esetén (JS-ből) jelenik meg */
   align-items: center;
   justify-content: center;
   padding: 0 30px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  z-index: 10;
+}
+
+.dkv-task-modal-overlay.open .dkv-task-ok-btn.visible {
+  display: flex;
 }
 
 .dkv-task-ok-btn:hover {

@@ -52,7 +52,7 @@ export const createConfig = () => {
         }
     };
 
-    const bgImage = 'assets/images/grade4/onboarding_bg.png';
+    const bgImage = 'assets/images/grade4/onboarding_bg.jpg';
 
     addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, bátor Lovag!', 'Te lettél az egyik <b>Kiválasztott</b>, aki egy izgalmas és kalandokkal teli utazáson vesz részt.\nAz lesz a feladatod, hogy felfedezd a varázslatos <b>Lovagrendet</b> és megállíts egy veszélyes fenyegetést. A rend helyreállításához különböző <b>Ereklyéket</b> kell összegyűjtened.\nA többi kiválasztottal együtt indulsz útnak, de remélhetőleg <b>Te</b> leszel az, aki sikerrel fejezi be a küldetését.', {
         buttonText: 'Tovább',

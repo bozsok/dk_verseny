@@ -52,7 +52,7 @@ export const createConfig = () => {
         }
     };
 
-    const bgImage = 'assets/images/grade6/onboarding_bg.png';
+    const bgImage = 'assets/images/grade6/onboarding_bg.jpg';
 
     addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek a Fedélzeten!', 'Te lettél az egyik <b>Űrhajós</b>, aki részt vesz a galaxis legnagyobb felfedező küldetésén.\nCélunk a titokzatos <b>Kristály Bolygó</b> elérése és az ott rejtőző energiaforrások felkutatása. A hajód navigálásához különböző <b>Csillagtérképeket</b> kell megszerezned.\nIndítsd be a hajtóműveket, és készülj a felszállásra!', {
         buttonText: 'Indítás',
