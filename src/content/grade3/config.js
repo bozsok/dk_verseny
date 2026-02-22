@@ -129,10 +129,8 @@ export const createConfig = () => {
             audioSrc: `assets/audio/grade3/slide_${slideNum}.mp3`
         };
 
-        // Videó háttér hozzáadása az 1. diához
-        if (i === 1) {
-            slideConfig.videoUrl = `assets/video/grade3/slide_${slideNum}.mp4`;
-        }
+        // Videó háttér - mindig beállítva, ha nincs fájl, a StorySlide kezeli
+        slideConfig.videoUrl = `assets/video/grade3/slide_${slideNum}.mp4`;
 
         // Apply video config from JSON (Debug Panel settings)
         applyVideoConfig(slideConfig, `slide_${slideNum}`);
@@ -165,40 +163,40 @@ export const createConfig = () => {
             if (originalNum === 5) {
                 storyContent = `A Labirintuskert hatalmas dimenzióival uralja a Kód Királyság tájképét. Kódrétegek millióiból felépülve a kert annyira kiterjedt, hogy a látóhatárt is betölti, az ég és a föld között lebegő digitális ködbe burkolózva.<br>A legendák szerint a kert közepén található a Kód Királyság egyik kulcsa, amely évezredek óta őrzi titkait.`;
             } else if (originalNum === 6) {
-                storyContent = `[Labirintuskert - Dia 2] Ide írd a folytatást...`;
+                storyContent = `A Labirintuskert közelében furcsa érzés támad benned. A szemeid előtt jelenik meg a kert  hatalmassága. Egy varázslatos helyet látsz magad előtt, digitális szimbólumok rajzolják az eget, kódok sorozata látható a növények szárain, amelyek már-már oszlopként magasodnak.`;
             } else if (originalNum === 7) {
-                storyContent = `[Labirintuskert - Dia 3] Ide írd a feladat leírását...`;
+                storyContent = `A kert bejáratánál egy hatalmas kapu fogad, amely mintha maga is része lenne a labirintus élő, pulzáló rendszerének, folyamatosan változtatja alakját és színét. Ahogy áthaladsz a kert óriási kapuján, a labirintus kanyargós ösvényei életre kelnek körülötted. Út közben különböző kereszteződésekkel találkozol, ahol Neked kell eldönteni, hogy merre menj tovább. Minden döntésed és megfejtésed közelebb visz a kulcshoz, amely a kert közepén rejtőzik.`;
             } else if (originalNum === 8) {
-                storyContent = `[Labirintuskert - Dia 4] Ide írd a sikeres megoldás szövegét...`;
+                storyContent = `Sikeresen megfejtetted a Labirintuskert helyes útvonalát. A kert közepén találod magad, ahol a világ hirtelen megváltozik körülötted. A központi térben, egy lebegő, kristálytiszta platformon található a varázskulcs. Aranyló fénye betölti a teret, és halkan morajló dallammal jelzi, hogy készen áll arra, hogy kezedbe vedd. Ahogy megérinted, a csarnok ismét átalakul, és feltárul előtted  egy káprázatos mágikus kapu, amely a következő helyszínre teleportál.`;
             }
 
             // === 2. ÁLLOMÁS: ADAT-TENGER (Eredeti: 9-12) ===
             else if (originalNum === 9) {
-                storyContent = `[Adat-tenger - Dia 1] Ide írd a bevezetőt...`;
-            } else if (originalNum === 10) { storyContent = `[Adat-tenger - Dia 2] ...`; }
-            else if (originalNum === 11) { storyContent = `[Adat-tenger - Dia 3] (Feladat)...`; }
-            else if (originalNum === 12) { storyContent = `[Adat-tenger - Dia 4] (Siker)...`; }
+                storyContent = `Miután átkeltél a mágikus kapun, elérkezel a félelmetes Adat-tengerhez. Ez a digitális világ végtelen óceánként terül el. Információkat hordozó gömbök emelkednek ki a vízből, majd lassan újra alámerülnek. A tenger közepén valami különleges vár Téged - egy sziget, a varázskulcs helyszíne.`;
+            } else if (originalNum === 10) { storyContent = `Kiválasztottként az egyik gömböt magadhoz szólítod, majd belelépsz. A gömb óvatosan megmozdul és elemelkedik a felszín közeléből. A gömböt a felemelkedése közben egy másik távoli gömb felé irányítod, hogy átléphess abba és tovább folytathasd bennük az utad. Az átszállásokat addig folytatod, míg el nem éred a szigetet.`; }
+            else if (originalNum === 11) { storyContent = `A lebegő gömbökkel eljutottál a sziget szívébe. Egy hatalmas, digitális fa emelkedik az ég felé, amely a sziget erejét képezi. A fa koronája olyan, mint egy színes kaleidoszkóp. A gyökerei között pedig a kulcs rejtőzik. Ehhez újabb feladatot kell megoldanod.`; }
+            else if (originalNum === 12) { storyContent = `Sikeresen megfejtetted a szimbólumok feladatait! A földalatti terem közepén kristálygyökerek emelkednek ki a földből. A gyökerek tetejéből kékes színű ragyogás tör a felszín felé, közepében megjelenik a varázs kulcs. Alakjával felidézi a korábbi próbát, amellyel közelebb jutottál hozzá. Miután megszerezted a kulcsot, a földalatti terem átalakul. A fa tövéből egy varázskapu emelkedik lassan és arany ívvé formálódik. Digitális fényekből álló ívével a következő állomásra vezet át.`; }
 
             // === 3. ÁLLOMÁS: TUDÁS TORONY (Eredeti: 13-16) ===
             else if (originalNum === 13) {
-                storyContent = `[Tudás torony - Dia 1] Ide írd a bevezetőt...`;
-            } else if (originalNum === 14) { storyContent = `[Tudás torony - Dia 2] ...`; }
-            else if (originalNum === 15) { storyContent = `[Tudás torony - Dia 3] (Feladat)...`; }
-            else if (originalNum === 16) { storyContent = `[Tudás torony - Dia 4] (Siker)...`; }
+                storyContent = `Ahogy átérsz a varázs kapun, előtted magasodik egy hatalmas, égig érő torony, amely olyan, mintha maga a digitális világ történetének őrzője lenne. Ez a Tudás Torony, a Kód Királyság legfontosabb építménye, ahol minden idők bölcsessége, titkai és történetei rejtőznek.`;
+            } else if (originalNum === 14) { storyContent = `A torony kapujában Hexalogos vár Rád, a kódbölcsek legidősebbike és legbölcsebb tagja. Magas, tekintélyt parancsoló alakját egy holografikus köpeny öleli körül. A hangja mély és nyugodt: „Aki be akar lépni a torony szívébe, annak bizonyítania kell, hogy ismeri a királyság múltját, és érti a technológia nyelvét.” Egy finom kézmozdulatával a torony kapuja lassan megnyílik előtted, feltárva a belső tér lenyűgöző látványát.`; }
+            else if (originalNum === 15) { storyContent = `FELADAT: Ahogy áthaladsz a kapun, színes holografikus könyvtár tárul eléd, amely a Kód Királyság történetének minden részletét megőrzi. A kulcs, amit keresel, azonban nem itt van: a torony legfelső szintjén található, ahová csak az juthat el, aki egy próbát kiáll. A próba során Hexalogos tíz kérdést tesz fel a technológia alapjaival kapcsolatban.`; }
+            else if (originalNum === 16) { storyContent = `Miután sikeresen megoldottad a próbát, Hexalogos elégedetten bólint, és egy finom kézmozdulat kíséretében megidézi a torony legfelső szintjének ajtaját. A szint közepén egy ragyogó fénnyel övezett aranyláda emelkedik ki a padlóból. A láda fedele egy halk, zenei hang kíséretében lassan kinyílik, feltárva a várt kulcsot. Ahogy a kulcs a kezedbe kerül, a torony belsejében átalakulás történik. Egy fénylő kapu formálódik előtted azért, hogy átvezessen a következő helyre.`; }
 
             // === 4. ÁLLOMÁS: PIXEL PALOTA (Eredeti: 17-20) ===
             else if (originalNum === 17) {
-                storyContent = `[Pixel Palota - Dia 1] Ide írd a bevezetőt...`;
-            } else if (originalNum === 18) { storyContent = `[Pixel Palota - Dia 2] ...`; }
-            else if (originalNum === 19) { storyContent = `[Pixel Palota - Dia 3] (Feladat)...`; }
-            else if (originalNum === 20) { storyContent = `[Pixel Palota - Dia 4] (Siker)...`; }
+                storyContent = `Megérkezel a Pixel palotához, amely lenyűgöző látványával szinte magába szippantja a tekinteted. A palota szinte lélegzik: a mozaikok folyamatosan átrendeződnek, mintha maguk is próbálnák helyreállítani a rendet, amit az Árnyprogram eltorzított. A digitális kódokból álló falakon a káosz jól észrevehető: sok kép elmosódott, és számos darab teljesen elmozdult a helyéről.`;
+            } else if (originalNum === 18) { storyContent = `A palota közepén áll Pixela, a hely őrzője, aki a digitális világ kreativitásának esszenciáját képviseli. Elegáns alakja holografikus színekben ragyog, ruházata mozaikokból áll, mintha a palota élete is hozzá kötődne.`; }
+            else if (originalNum === 19) { storyContent = `A Pixel Palota egyik legfontosabb térképe, amely a következő kulcs pontos helyét mutatta, teljesen megsemmisült. A térkép korábban a palota egyik legnagyobb büszkesége volt, de az Árnyprogram támadása során az összhangja megsemmisült, és csak töredékek maradtak hátra.`; }
+            else if (originalNum === 20) { storyContent = `Ahogy elkészítetted az új térképet, a környezet ismét megváltozik. A padló lassan kristályos fénybe borul, a terem közepén megjelenik egy különleges fényörvény, amely mintha a mennyezet mozaikjából süllyedne alá. Az örvény közepén, finoman lebegve, kibontakozik a varázskulcs. Amint megérinted a kulcsot, a terem átalakuláson megy keresztül. Lágy, holografikus fények mutatják az utat a következő állomásra, ahol újabb próbatételek és titkok várnak rád.`; }
 
             // === 5. ÁLLOMÁS: HANGERDŐ (Eredeti: 21-24) ===
             else if (originalNum === 21) {
-                storyContent = `[Hangerdő - Dia 1] Ide írd a bevezetőt...`;
-            } else if (originalNum === 22) { storyContent = `[Hangerdő - Dia 2] ...`; }
-            else if (originalNum === 23) { storyContent = `[Hangerdő - Dia 3] (Feladat)...`; }
-            else if (originalNum === 24) { storyContent = `[Hangerdő - Dia 4] (Siker)...`; }
+                storyContent = `Áthaladva a varázslatos kapun megérkezel a Hangerdőbe. Azonnal érzed, hogy különleges helyen folytatod az utadat. Az erdő közepén egy hatalmas Fa áll, magával ragadó látványával uralja a tájat. Az ágai minden irányba kinyúlnak, suttogó hangokat bocsátanak ki, amelyek mintha a fák közötti titkos beszélgetések lennének.`;
+            } else if (originalNum === 22) { storyContent = `A Hangerdő őrzője, Sonora, egy különleges lény, aki teljes egészében hangokból áll - alakja hol körvonalazódik, hol feloldódik a dallamokban, mintha maga is a Hangerdő része lenne. Sonora a hangok különleges nyelvén szól hozzád, amely egyszerre érthető és varázslatos: „A hangok a kulcsok, hallgasd meg őket, és fejtsd meg a titkaikat, hogy hozzáférj a varázskulcshoz.`; }
+            else if (originalNum === 23) { storyContent = `Amint belépsz a Hangerdő mélyére, finom zümmögés tölti be a levegőt, mintha az egész erdő ébredezne a jelenlétedre. A fák finom rezgésekkel adják tudtodra, hogy készen állnak egy különleges üzenetet átadni. Ez az üzenet több szinten rejt információkat: ritmusa, tónusa és a háttérben húzódó finom szimbólumok mind elengedhetetlenek a teljes dekódoláshoz.`; }
+            else if (originalNum === 24) { storyContent = `Miután megfejtetted a hangüzenetet, az erdő megváltozik. Ahogy közelebb lépsz a hatalmas fa gyökereihez, érzed, hogy a levegő megtelik különös energiával. A fa törzsén szövevényes mintázatot alkotó, ragyogó fénycsíkok jelennek meg. A mintázat közepén lassan kibontakozik az újabb varázskulcs. Amint a kulcs a kezedbe kerül, az erdő környezete ismét megváltozik. A hatalmas fa gyökerei lassan visszahúzódnak, utat engedve a törzsében kialakuló ragyogó kapunak, amely a Hangerdőből való kijárathoz és egyben a következő helyszínre való érkezéshez vezet.`; }
 
             let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1} | Order: ${stationIndices.map(n => n + 1).join('-')})</span>`;
 
@@ -214,10 +212,10 @@ export const createConfig = () => {
     for (let i = 25; i <= 28; i++) {
         const slideNum = String(i).padStart(2, '0');
         let title = "Finálé: ";
-        if (i === 25) title += "Kontextus";
-        else if (i === 26) title += "Feladat";
-        else if (i === 27) title += "Siker, Öröm";
-        else title += "Összefoglaló";
+        if (i === 25) title += "Miután megszerezted az öt kulcsot a Kód Királyság különböző állomásain, elérkezel a végső helyszínre, egy ősi, misztikus kapuhoz. Az őrző, Chronosz, az idő és tudás megtestesítője, méltóságteljesen áll a kapu előtt. Alakja lenyűgöző: holografikus kódszálak alkotják, mintha az idő, maga szőné őt. Ahogy közelebb lépsz, Chronos holografikus kivetülése élő testbe költözik. Hangja mély és együtthangzó, minden szava mintha egy ősi zenei akkord lenne: „A kulcsok önmagukban nem elegendők. Csak azok nyithatják meg a Nagy Zárat, akik képesek egyesíteni a tudásukat és használni az összes megszerzett információt.";
+        else if (i === 26) title += "Ahhoz, hogy kinyisd a Nagy Zárat, nem csupán fizikailag kell összeillesztened a kulcsokat, hanem meg kell értened, hogy minden állomásról szerzett információ hogyan kapcsolódik össze. A kulcsok pulzáló fényében felismered a Kód Királyság történetét, minden egyes állomás tanulságait és a megszerzett tudás szimbólumait.";
+        else if (i === 27) title += "Amint helyesen megoldottad a rejtvényt, az öt varázskulcs, amelyeket annyi kihívás során gyűjtöttél össze, a zár belsejébe hatolnak. A Zár életre kel, és nagy méltósággal kinyílik. Mögötte feltárul a Kód Királyság szíve: egy hatalmas, kristályból álló tér. A kristály mérete lenyűgöző, szinte az egész teret betölti, belsejéből tiszta, erőteljes fény árad. Amint a kristály fénye az Árnyprogramot megérinti, az elkezd széthullani. A sötét kódszálak, amelyek egykor fenyegették a Királyságot, most lassan feloldódnak a kristály által kibocsátott ragyogásban. Az Árnyprogram hatalmas ereje végleg eltűnik, és a kristály tiszta fénye helyreállítja a Királyság minden sérült részét. Érzed, hogy a Királyság mostantól biztonságban van, készen arra, hogy újra virágozzon.";
+        else title += "Gratulálunk!";
 
         let narrationText = `<b>${title}</b><br><br>Itt olvasható majd a kaland története.<br>Jelenleg ez egy helyőrző szöveg a ${i}. diánál.`;
 

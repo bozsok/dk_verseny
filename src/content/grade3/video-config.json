@@ -1,7 +1,19 @@
 {
   "slides": {
     "slide_01": {
-      "videoDelay": 10000,
+      "videoDelay": 14000,
+      "videoLoop": false
+    },
+    "slide_02": {
+      "videoDelay": 0,
+      "videoLoop": false
+    },
+    "slide_03": {
+      "videoDelay": 0,
+      "videoLoop": false
+    },
+    "slide_04": {
+      "videoDelay": 8000,
       "videoLoop": false
     }
   }
