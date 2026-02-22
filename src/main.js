@@ -690,9 +690,9 @@ class DigitalKulturaVerseny {
     const isLastSlide = (currentIndex >= totalSlides - 1);
 
     // Helper to set button state in whichever interface is active
-    const setBtnState = (enabled) => {
+    const setBtnState = (enabled, extraOptions = {}) => {
       if (!isFullscreen && this.activeGameInterface) {
-        this.activeGameInterface.setNextButtonState(enabled);
+        this.activeGameInterface.setNextButtonState(enabled, extraOptions);
       } else if (isFullscreen && this.currentSlideComponent && this.currentSlideComponent.setNextButtonState) {
         this.currentSlideComponent.setNextButtonState(enabled);
       }
@@ -700,20 +700,45 @@ class DigitalKulturaVerseny {
 
     if (audioSrc) {
       const alreadyPlayed = this.playedAudioSlides && this.playedAudioSlides.has(slide.id);
+      const isTaskSlide = slide.metadata && slide.metadata.step === 2;
+
+      // Alapértelmezett gomb állapot
+      const btnOptions = isTaskSlide ? { suppressOrange: true } : {};
       const enableButton = !isLastSlide && alreadyPlayed;
-      setBtnState(enableButton);
+      setBtnState(enableButton, btnOptions);
 
       this.playAudio(audioSrc, () => {
         if (isLastSlide) {
           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
           return;
         }
-        setBtnState(true);
+
+        // Feladat slide esetén automatikusan megnyitjuk a modalt
+        if (isTaskSlide && this.activeGameInterface) {
+          const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
+          this.activeGameInterface.showTaskModal(taskContent, () => {
+            this.handleNext();
+          });
+        }
+
+        setBtnState(true, btnOptions);
         if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
       });
     } else {
+      const isTaskSlide = slide.metadata && slide.metadata.step === 2;
+      const btnOptions = isTaskSlide ? { suppressOrange: true } : {};
       const shouldEnable = !isLastSlide;
-      setBtnState(shouldEnable);
+      setBtnState(shouldEnable, btnOptions);
+
+      // Ha nincs hang, de feladat, akkor is megjeleníthetjük (opcionális késleltetéssel)
+      if (isTaskSlide && this.activeGameInterface) {
+        setTimeout(() => {
+          const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
+          this.activeGameInterface.showTaskModal(taskContent, () => {
+            this.handleNext();
+          });
+        }, 1000);
+      }
     }
 
     // 5. Preloading

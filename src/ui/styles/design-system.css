@@ -280,8 +280,8 @@ h3 {
 }
 
 .dkv-nav-arrow {
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.4);
@@ -836,4 +836,141 @@ h3 {
 .dkv-settings-panel.open {
   right: 20px;
   /* Slide in Position */
+}
+
+/* ============================================
+   TASK MODAL (1200x900)
+   ============================================ */
+
+.dkv-task-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  pointer-events: auto;
+}
+
+.dkv-task-modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dkv-task-modal {
+  width: 1200px;
+  height: 900px;
+  background: rgba(0, 21, 30, 0.85);
+  border: 2px solid #00eaff;
+  /* 1px-es finom keret az onboarding modalok mintájára */
+  border-radius: 12px;
+  /* 10-12px a standard Grade 3-ban */
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.7), inset 0 0 30px rgba(0, 234, 255, 0.2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: 'Source Code Pro', monospace;
+  backdrop-filter: blur(15px);
+}
+
+.dkv-task-modal-overlay.open .dkv-task-modal {
+  transform: scale(1);
+}
+
+.dkv-task-modal-header {
+  height: 100px;
+  background: rgba(0, 210, 211, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 50px;
+  border-bottom: 2px solid rgba(0, 234, 255, 0.3);
+}
+
+.dkv-task-modal-header h2 {
+  font-family: 'Impact', sans-serif;
+  font-size: 3rem;
+  color: #fff;
+  text-shadow: 0 0 15px rgba(0, 234, 255, 0.8);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.dkv-task-modal-body {
+  flex: 1;
+  padding: 50px;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 200;
+  line-height: 1.8;
+  overflow-y: auto;
+}
+
+.dkv-task-modal-footer {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 50px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.dkv-task-ok-btn {
+  min-width: 120px;
+  height: 56px;
+  font-family: 'Impact', sans-serif;
+  font-size: 1.5rem;
+  font-weight: normal;
+  background: #00636e;
+  color: white;
+  border: 2px solid #00eaff;
+  border-radius: 10px;
+  /* Téglalap alakú lekerekítéssel, mint a Grade 3 gombok */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dkv-task-ok-btn:hover {
+  background: #007582;
+  box-shadow: 0 0 30px rgba(0, 234, 255, 0.8);
+  transform: scale(1.05);
+}
+
+.dkv-task-ok-btn:active {
+  transform: scale(0.98);
+}
+
+/* Gomb színátmenetének kikapcsolása speciális esetekben */
+.dkv-nav-next.no-attention {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+.dkv-nav-next.no-attention::after {
+  display: none !important;
+}
+
+.dkv-btn-to-orange.suppressed {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
 }

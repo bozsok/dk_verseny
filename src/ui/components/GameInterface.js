@@ -170,6 +170,28 @@ class GameInterface {
 
         this.element.appendChild(bottomBar);
 
+        // 5. FELADAT MODAL (1200x900)
+        this.taskModalOverlay = document.createElement('div');
+        this.taskModalOverlay.className = 'dkv-task-modal-overlay';
+        this.taskModalOverlay.innerHTML = `
+            <div class="dkv-task-modal">
+                <div class="dkv-task-modal-header">
+                    <h2>KÜLDETÉS: FELADAT</h2>
+                </div>
+                <div class="dkv-task-modal-body">
+                    <!-- Feladat tartalom helye -->
+                </div>
+                <div class="dkv-task-modal-footer">
+                    <button class="dkv-task-ok-btn">OK</button>
+                </div>
+            </div>
+        `;
+        this.element.appendChild(this.taskModalOverlay);
+
+        // OK gomb eseménykezelő
+        this.taskOkBtn = this.taskModalOverlay.querySelector('.dkv-task-ok-btn');
+        this.taskModalBody = this.taskModalOverlay.querySelector('.dkv-task-modal-body');
+
         // Cache referenciák
         this.timelineBar = this.element.querySelector('#dkv-timeline-bar');
         this.timelineText = this.element.querySelector('#dkv-timeline-pct');
@@ -441,11 +463,47 @@ class GameInterface {
     }
 
     /**
+     * Feladat modal megjelenítése
+     * @param {string|HTMLElement} content - A feladat leírása vagy HTML eleme
+     * @param {Function} onOk - Callback az OK gomb megnyomásakor
+     */
+    showTaskModal(content, onOk) {
+        if (!this.taskModalOverlay) return;
+
+        // Tartalom beállítása
+        if (typeof content === 'string') {
+            this.taskModalBody.innerHTML = `<div>${content}</div>`;
+        } else {
+            this.taskModalBody.innerHTML = '';
+            this.taskModalBody.appendChild(content);
+        }
+
+        // OK gomb bekötése
+        this.taskOkBtn.onclick = () => {
+            if (onOk) onOk();
+            this.hideTaskModal();
+        };
+
+        // Megjelenítés
+        this.taskModalOverlay.classList.add('open');
+    }
+
+    /**
+     * Feladat modal elrejtése
+     */
+    hideTaskModal() {
+        if (this.taskModalOverlay) {
+            this.taskModalOverlay.classList.remove('open');
+        }
+    }
+
+    /**
      * Tovább gomb engedélyezése/tiltása
      * Animált aktiválás + 8mp után attention grab
      * @param {boolean} enabled 
+     * @param {Object} options - Opcionális beállítások (pl. { suppressOrange: true })
      */
-    setNextButtonState(enabled) {
+    setNextButtonState(enabled, options = {}) {
         const btn = this.element.querySelector('.dkv-btn-next');
         if (!btn) return;
 
@@ -473,6 +531,13 @@ class GameInterface {
             // 3. 8 mp után → színátmenet (1.2s), majd attention grab
             this._attentionTimer = setTimeout(() => {
                 btn.classList.remove('dkv-btn-active', 'dkv-btn-breathing');
+
+                // Speciális eset: Ne váltsunk narancssárgára (pl. feladat előtt)
+                if (options.suppressOrange) {
+                    btn.classList.add('dkv-btn-breathing'); // Csak maradjon kék pulzálás
+                    return;
+                }
+
                 btn.classList.add('dkv-btn-to-orange');
 
                 // 1.2mp után → átváltás attention légzésre
