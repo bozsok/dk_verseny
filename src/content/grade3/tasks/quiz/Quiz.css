@@ -1,0 +1,279 @@
+/* Tudás Torony (Kvíz) Játék Stílusok */
+
+.quiz-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 200px 40px 10px 40px;
+    /* Megemelt felső padding, hogy ne lógjon bele a kérdés semmilyen kis felbontáson a header-be */
+}
+
+/* Timer sáv a fejlécben, jobb szélen (abszolút pozicionálva a header-ben) */
+.quiz-timer-bar {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 234, 255, 0.12);
+    border: 1px solid rgba(0, 234, 255, 0.5);
+    border-radius: 8px;
+    padding: 6px 16px;
+    z-index: 10;
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
+}
+
+/* Kvíz progress felirat a fejlécben */
+.quiz-header-progress {
+    position: absolute;
+    right: 220px;
+    /* Az időzítő előtt */
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quiz-timer-icon {
+    font-size: 1.2rem;
+}
+
+.quiz-timer-time {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #00eaff;
+    letter-spacing: 2px;
+}
+
+.quiz-loading,
+.quiz-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.5rem;
+    color: #00eaff;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.quiz-error {
+    color: #ff4d4d;
+}
+
+/* Tartalom terület és áttűnés */
+.quiz-content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    overflow-y: auto;
+    padding: 10px 10px 30px 10px;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.quiz-content-area.fade-out {
+    opacity: 0;
+    transform: scale(0.98);
+}
+
+/* Kérdések stílusai */
+.quiz-question-container {
+    background: rgba(10, 20, 35, 0.6);
+    border: 1px solid rgba(0, 234, 255, 0.2);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.quiz-question-title {
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    text-shadow: 0 0 5px rgba(0, 234, 255, 0.3);
+}
+
+.quiz-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Kisebb térköz 1 feladatnál */
+}
+
+/* Válaszopció kártya */
+.quiz-option {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    /* Kisebb belső padding */
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.quiz-option:hover {
+    background: rgba(0, 234, 255, 0.1);
+    border-color: rgba(0, 234, 255, 0.4);
+}
+
+/* Kijelölt állapot */
+.quiz-option:has(input[type="radio"]:checked) {
+    background: rgba(0, 234, 255, 0.2);
+    border-color: #00eaff;
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
+}
+
+/* Radio button elrejtése - vagy egyedi stílus */
+.quiz-option input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    outline: none;
+    margin-right: 15px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.quiz-option input[type="radio"]:checked {
+    border-color: #00eaff;
+    background: rgba(0, 234, 255, 0.2);
+}
+
+.quiz-option input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00eaff;
+    box-shadow: 0 0 10px #00eaff;
+}
+
+/* Betű és szöveg */
+.quiz-option-letter {
+    font-weight: bold;
+    color: #00eaff;
+    margin-right: 15px;
+    font-size: 1.2rem;
+    font-family: 'Source Code Pro', monospace;
+    width: 20px;
+}
+
+.quiz-option-text {
+    flex-grow: 1;
+    font-size: 1.1rem;
+    color: #e0e0e0;
+    font-weight: 300;
+    line-height: 1.4;
+}
+
+.quiz-option:has(input[type="radio"]:checked) .quiz-option-text {
+    color: #fff;
+    font-weight: 400;
+}
+
+/* Navigációs sáv */
+.quiz-nav-area {
+    display: flex;
+    justify-content: center;
+    /* Csak egy gomb középre rendezve */
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 10px;
+}
+
+/* ... a quiz-progress törölve, mert a fejlécbe került ... */
+
+.quiz-nav-btn {
+    min-width: 250px;
+    height: 60px;
+    font-family: 'Impact', sans-serif;
+    font-size: 1.6rem;
+    background: #00636e;
+    color: white;
+    border: 2px solid #00eaff;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 234, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.quiz-nav-btn:hover {
+    background: #007582;
+    box-shadow: 0 0 20px rgba(0, 234, 255, 0.8);
+}
+
+.quiz-nav-btn:active {
+    transform: scale(0.98);
+}
+
+.quiz-nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #334155;
+    border-color: #555;
+    box-shadow: none;
+}
+
+/* Kvíz Specifikus Pont Animáció (Modal kompatibilis z-index-szel) */
+.quiz-floating-point {
+    position: fixed;
+    /* Fixed pozíció, hogy biztosan a böngészőablakhoz mérve maradjon a top/left javascript beállítás után és ne nyelje el overflow */
+    color: #ffd700;
+    font-family: 'Impact', sans-serif;
+    font-size: 3.5rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 99999;
+    /* Nagyon magas, hogy a 2000-es modal overlay felett legyen */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    animation: quizFloatUp 1.5s ease-out forwards;
+}
+
+@keyframes quizFloatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-80px) scale(1);
+    }
+}

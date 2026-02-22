@@ -5,7 +5,24 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.8.6] - 2026-02-22
+
+### Hozzáadva
+- **Tudás Torony (Kvíz) feladat implementálása** 🧠
+  - Kvíz betöltése dinamikusan a `public/assets/data/grade3/quiz/3.txt` fájlból.
+  - Új `QuizGame.js` és `Quiz.css` komponensek az alkalmazás neon vizuális nyelvezetével.
+  - Lapozható felület 1 kérdés / oldal beállítással, ami biztosítja a tökéletes illeszkedést a képernyőre.
+  - **Véletlenszerűség (Anti-Cheat):** Fájlból olvasás után a rendszer megkeveri a kérdések listáját, és azokon belül a lehetséges válaszok (A,B,C,D) sorrendjét is! Így két játékos sosem kapja ugyanazt a tesztsort azonos sorrendben.
+  - **Valós idejű pontozás:** "Lebegő pont" (+1, +0) animációk implementálva az egyes válaszelemek (`quiz-option`) kiválasztásakor (referencia: onboarding design). A szerzett pontok azonnal megjelennek a játék HUD felületén is.
+
+### Módosítva
+- **Eredmények Modál (`main.js`)**
+  - A korábbi "Labirintus" specifikus összesítő ablak most már minden állomásnál dinamikusan testreszabott címeket jelenít meg (pl. "TUDÁS TORONY SIKERES!").
+  - A "Lépések száma" statisztikai elem elrejtésre kerül, amennyiben a feladat nem labirintus (nincs `stepCount` paraméter).
+  - A kiértékelés az eddigi "fix pont" helyett rögzíti, és ki is írja a maximálisan szerezhető pontot, az elért eredményhez viszonyítva.
+
 ## [0.8.5] - 2026-02-22
+
 
 ### Módosítva
 - **Adat-tenger (Memory) finomhangolása** 🧩

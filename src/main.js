@@ -23,8 +23,10 @@ import GameInterface from './ui/components/GameInterface.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import MazeGame from './content/grade3/tasks/maze/MazeGame.js';
 import MemoryGame from './content/grade3/tasks/memory/MemoryGame.js';
+import QuizGame from './content/grade3/tasks/quiz/QuizGame.js';
 import './content/grade3/tasks/maze/Maze.css';
 import './content/grade3/tasks/memory/Memory.css';
+import './content/grade3/tasks/quiz/Quiz.css';
 import './ui/styles/design-system.css';
 
 // Debug System (csak DEV módban töltődik be)
@@ -809,8 +811,9 @@ class DigitalKulturaVerseny {
           const section = slide.metadata?.section || 'unknown';
           const isMaze = section === 'station_1';
           const isMemory = section === 'station_2' || (slide.id && slide.id.toString().startsWith('st2_'));
+          const isQuiz = section === 'station_3' || (slide.id && slide.id.toString().startsWith('st3_'));
 
-          console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}, isMaze: ${isMaze}, isMemory: ${isMemory}`);
+          console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}, isMaze: ${isMaze}, isMemory: ${isMemory}, isQuiz: ${isQuiz}`);
 
           if (isMaze) {
             // Maze feladat indítása
@@ -884,17 +887,58 @@ class DigitalKulturaVerseny {
                     this.activeGameInterface?.updateHUD(this.stateManager?.getState());
                     this.stateManager?.markSlideCompleted(slide.id);
                   }
-                  this.showMazeResultModal({ ...result, title: 'ADAT-TENYÉR SIKERES!' }, () => {
+                  this.showMazeResultModal({ ...result, title: 'Megtaláltad az összes párt!' }, () => {
                     this.activeGameInterface.hideTaskModal();
                     this.handleNext();
                   });
                 } else {
                   // Idő lejárt - sikertelen modal, 0 pont
-                  this.showMazeResultModal({ ...result, title: 'LEJÁRT AZ IDŐ!', success: false }, () => {
+                  this.showMazeResultModal({ ...result, title: 'Sajnos lejárt az idő!', success: false }, () => {
                     this.activeGameInterface.hideTaskModal();
                     this.handleNext();
                   });
                 }
+              }
+            });
+
+            // OK gomb elrejtése
+            setTimeout(() => {
+              const okBtn = document.querySelector('.dkv-task-ok-btn');
+              if (okBtn) okBtn.style.display = 'none';
+            }, 50);
+
+          } else if (isQuiz) {
+            // Kvíz feladat indítása
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'quiz-task-container';
+            taskContainer.style.width = '100%';
+            taskContainer.style.height = '100%';
+
+            this.activeGameInterface.showTaskModal(taskContainer, null, {
+              title: 'Válaszold meg a kvíz kérdéseket!',
+              subtitle: 'Minden kérdés esetén csak egyetlen helyes megoldás van!'
+            });
+
+            new QuizGame(taskContainer, {
+              quizFile: 'assets/data/grade3/quiz/3.txt',
+              timeLimit: this.debugManager?.tasksConfig?.quizTimeLimit
+                ?? this.buildConfig?.tasksConfig?.quizTimeLimit
+                ?? 600,
+              onComplete: (result) => {
+                const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
+                if (!alreadyDone) {
+                  const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                  this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
+                  this.activeGameInterface?.updateHUD(this.stateManager?.getState());
+                  this.stateManager?.markSlideCompleted(slide.id);
+                }
+
+                // Visszajelző modal ugyanazzal a mazeResultModal logikával
+                const modalTitle = result.success ? 'A kérdéseket megválaszoltad!' : 'Nem sikerült megválaszolni a kérdéseket!';
+                this.showMazeResultModal({ ...result, title: modalTitle }, () => {
+                  this.activeGameInterface.hideTaskModal();
+                  this.handleNext();
+                });
               }
             });
 
@@ -967,13 +1011,13 @@ class DigitalKulturaVerseny {
                     this.activeGameInterface?.updateHUD(this.stateManager?.getState());
                     this.stateManager?.markSlideCompleted(slide.id);
                   }
-                  this.showMazeResultModal({ ...result, title: 'ADAT-TENYÉR SIKERES!' }, () => {
+                  this.showMazeResultModal({ ...result, title: 'Megtaláltad az összes párt!' }, () => {
                     this.activeGameInterface.hideTaskModal();
                     this.handleNext();
                   });
                 } else {
                   // Idő lejárt - sikertelen modal, 0 pont
-                  this.showMazeResultModal({ ...result, title: 'LEJÁRT AZ IDŐ!', success: false }, () => {
+                  this.showMazeResultModal({ ...result, title: 'Sajnos lejárt az idő!', success: false }, () => {
                     this.activeGameInterface.hideTaskModal();
                     this.handleNext();
                   });
@@ -981,6 +1025,47 @@ class DigitalKulturaVerseny {
               }
             });
 
+            setTimeout(() => {
+              const okBtn = document.querySelector('.dkv-task-ok-btn');
+              if (okBtn) okBtn.style.display = 'none';
+            }, 50);
+
+          } else if (isQuiz) {
+            // Kvíz feladat indítása
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'quiz-task-container';
+            taskContainer.style.width = '100%';
+            taskContainer.style.height = '100%';
+
+            this.activeGameInterface.showTaskModal(taskContainer, null, {
+              title: 'Válaszold meg a kvíz kérdéseket!',
+              subtitle: 'Minden kérdés esetén csak egyetlen helyes megoldás van!'
+            });
+
+            new QuizGame(taskContainer, {
+              quizFile: 'assets/data/grade3/quiz/3.txt',
+              timeLimit: this.debugManager?.tasksConfig?.quizTimeLimit
+                ?? this.buildConfig?.tasksConfig?.quizTimeLimit
+                ?? 600,
+              onComplete: (result) => {
+                const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
+                if (!alreadyDone) {
+                  const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                  this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
+                  this.activeGameInterface?.updateHUD(this.stateManager?.getState());
+                  this.stateManager?.markSlideCompleted(slide.id);
+                }
+
+                // Visszajelző modal ugyanazzal a mazeResultModal logikával
+                const modalTitle = result.success ? 'A kérdéseket megválaszoltad!' : 'Nem sikerült megválaszolni a kérdéseket!';
+                this.showMazeResultModal({ ...result, title: modalTitle }, () => {
+                  this.activeGameInterface.hideTaskModal();
+                  this.handleNext();
+                });
+              }
+            });
+
+            // OK gomb elrejtése
             setTimeout(() => {
               const okBtn = document.querySelector('.dkv-task-ok-btn');
               if (okBtn) okBtn.style.display = 'none';
@@ -1013,24 +1098,32 @@ class DigitalKulturaVerseny {
     const overlay = document.createElement('div');
     overlay.className = 'maze-result-overlay';
 
+    const isMaze = result.hasOwnProperty('stepCount') && result.stepCount !== undefined;
+
     const modal = document.createElement('div');
     modal.className = `maze-result-modal ${result.success ? 'success' : 'failure'}`;
 
     modal.innerHTML = `
       <div class="maze-result-icon">${result.success ? '🎉' : '😢'}</div>
       <h2 class="maze-result-title">
-        ${result.success
+        ${result.title ? result.title : (result.success
         ? 'Gratulálunk! Sikerült eljutni a kulcsig!'
-        : 'Sajnáljuk, nem sikerült teljesíteni a labirintus pályát!'}
+        : 'Sajnáljuk, nem sikerült teljesíteni a labirintus pályát!')}
       </h2>
       <div class="maze-result-stats">
         <div class="maze-result-stat">
           <span class="maze-result-stat-label">Felhasznált időd:</span>
           <span class="maze-result-stat-value">${timeStr}</span>
         </div>
+        ${isMaze ? `
         <div class="maze-result-stat">
           <span class="maze-result-stat-label">Lépések száma:</span>
           <span class="maze-result-stat-value">${result.stepCount}</span>
+        </div>
+        ` : ''}
+        <div class="maze-result-stat">
+          <span class="maze-result-stat-label">Szerezhető pontok max:</span>
+          <span class="maze-result-stat-value">${result.maxPoints ? result.maxPoints : '5'} pont</span>
         </div>
         <div class="maze-result-stat">
           <span class="maze-result-stat-label">Kapott pontok:</span>
@@ -1039,6 +1132,7 @@ class DigitalKulturaVerseny {
       </div>
       <button class="maze-result-btn">Tovább</button>
     `;
+
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
