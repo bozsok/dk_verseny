@@ -897,6 +897,8 @@ h3 {
   border-bottom: 2px solid rgba(0, 234, 255, 0.3);
   align-self: start;
   z-index: 2;
+  position: relative;
+  /* Abszolút pozicionált elemekhez (pl. óra) */
 }
 
 .dkv-task-modal-header h2 {
@@ -907,6 +909,34 @@ h3 {
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 3px;
+}
+
+/* Memory feladat header - olvasható bőtűtípussal, egymás alatt */
+.dkv-task-modal-header.memory-header {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+}
+
+.dkv-task-modal-header.memory-header h2 {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(0, 234, 255, 0.7);
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 1px;
+}
+
+.dkv-task-modal-header.memory-header p {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  letter-spacing: 0.5px;
 }
 
 .dkv-task-modal-body {
@@ -955,8 +985,8 @@ h3 {
 
 .dkv-task-ok-btn:hover {
   background: #007582;
-  box-shadow: 0 0 30px rgba(0, 234, 255, 0.8);
-  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.8);
+  /* transform: scale(1.05); */
 }
 
 .dkv-task-ok-btn:active {

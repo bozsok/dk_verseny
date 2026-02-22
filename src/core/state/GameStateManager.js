@@ -34,6 +34,7 @@ class GameStateManager {
 
       progress: {
         completedLevels: [],     // Befejezett szintek listája
+        completedSlides: [],     // Befejezett diák (feladatok) listája (ÚJ)
         totalScore: 0,           // Teljes pontszám (Hosszú távú)
         timeSpent: 0,            // Eltöltött idő (másodpercben)
         achievements: []         // Elért eredmények
@@ -209,6 +210,38 @@ class GameStateManager {
   }
 
   /**
+   * Dia megjelölése befejezettként (ÚJ)
+   * 
+   * @param {string|number} slideId - A dia azonosítója
+   */
+  markSlideCompleted(slideId) {
+    if (!slideId) return;
+
+    const currentProgress = this.state.progress;
+    const completedSlides = currentProgress.completedSlides || [];
+
+    if (!completedSlides.includes(slideId)) {
+      const newProgress = {
+        ...currentProgress,
+        completedSlides: [...completedSlides, slideId]
+      };
+      this.updateState({ progress: newProgress });
+    }
+  }
+
+  /**
+   * Ellenőrzi, hogy a dia már befejezett-e (ÚJ)
+   * 
+   * @param {string|number} slideId - A dia azonosítója
+   * @returns {boolean}
+   */
+  isSlideCompleted(slideId) {
+    if (!slideId) return false;
+    const completedSlides = this.state.progress.completedSlides || [];
+    return completedSlides.includes(slideId);
+  }
+
+  /**
    * State validáció
    */
   validateState(updates) {
@@ -265,6 +298,9 @@ class GameStateManager {
     return {
       completedLevels: Array.isArray(progress.completedLevels)
         ? progress.completedLevels.filter(level => typeof level === 'number')
+        : [],
+      completedSlides: Array.isArray(progress.completedSlides)
+        ? progress.completedSlides
         : [],
       totalScore: typeof progress.totalScore === 'number' && progress.totalScore >= 0
         ? progress.totalScore

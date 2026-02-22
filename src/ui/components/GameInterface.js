@@ -472,7 +472,31 @@ class GameInterface {
         // Fejléc kezelése
         const header = this.taskModalOverlay.querySelector('.dkv-task-modal-header');
         if (header) {
-            header.style.display = options.hideHeader ? 'none' : 'flex';
+            if (options.hideHeader) {
+                header.style.display = 'none';
+                header.classList.remove('memory-header');
+            } else {
+                header.style.display = 'flex';
+                // Dinamikus cím és alcím beállítása
+                if (options.title !== undefined || options.subtitle !== undefined) {
+                    header.classList.add('memory-header');
+                    header.innerHTML = '';
+                    if (options.title) {
+                        const h2 = document.createElement('h2');
+                        h2.textContent = options.title;
+                        header.appendChild(h2);
+                    }
+                    if (options.subtitle) {
+                        const sub = document.createElement('p');
+                        sub.textContent = options.subtitle;
+                        header.appendChild(sub);
+                    }
+                } else {
+                    // Visszaállítás az alapértékre
+                    header.classList.remove('memory-header');
+                    header.innerHTML = '<h2>KÜLDETÉS: FELADAT</h2>';
+                }
+            }
         }
 
         // Tartalom beállítása

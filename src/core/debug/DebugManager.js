@@ -109,7 +109,7 @@ class DebugManager {
             skipSlides: [],
             useDummyData: false,
             muteMusic: true, // Default: true (némítva)
-            tasksConfig: { mazeTimeLimit: 600, mazeDifficulty: 16 }
+            tasksConfig: { mazeTimeLimit: 600, mazeDifficulty: 16, memoryTimeLimit: 600, memoryDifficulty: 16 }
         };
     }
 

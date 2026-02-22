@@ -15,6 +15,7 @@
 class DebugPanel {
     constructor(options = {}) {
         this.debugManager = options.debugManager;
+        this.stateManager = options.stateManager;
         this.onClose = options.onClose;
 
         this.element = null;
@@ -33,7 +34,7 @@ class DebugPanel {
 
         // Tasks config state (lapbetöltéskor a debugManager-ből öröklünk)
         this.tasksConfig = Object.assign(
-            { mazeTimeLimit: 600, mazeDifficulty: 16 },
+            { mazeTimeLimit: 600, mazeDifficulty: 16, memoryTimeLimit: 600, memoryDifficulty: 16 },
             options.debugManager?.tasksConfig || {}
         );
     }
@@ -432,6 +433,146 @@ class DebugPanel {
         mazeSection.appendChild(applyBtn);
 
         container.appendChild(mazeSection);
+
+        // === Memory (Adat-tenger) ===
+        const memorySection = document.createElement('div');
+        memorySection.className = 'dkv-debug-video-section';
+        memorySection.style.marginTop = '20px';
+
+        const memoryTitle = document.createElement('h4');
+        memoryTitle.textContent = '🌊 Adat-tenger (Memória)';
+        memoryTitle.style.cssText = 'color: #00eaff; margin: 0 0 12px; font-size: 1rem;';
+        memorySection.appendChild(memoryTitle);
+
+        const memDiffRow = document.createElement('div');
+        memDiffRow.className = 'dkv-debug-video-row';
+
+        const memDiffLabel = document.createElement('label');
+        memDiffLabel.textContent = 'Kártyák száma (8, 12, 16, 20, 24):';
+        memDiffLabel.htmlFor = 'dkv-debug-memory-difficulty';
+        memDiffLabel.style.flex = '1';
+
+        const memDiffInput = document.createElement('input');
+        memDiffInput.type = 'number';
+        memDiffInput.id = 'dkv-debug-memory-difficulty';
+        memDiffInput.className = 'dkv-debug-video-input';
+        memDiffInput.min = 4;
+        memDiffInput.max = 48;
+        memDiffInput.step = 2;
+        memDiffInput.value = this.tasksConfig.memoryDifficulty ?? 16;
+        memDiffInput.style.width = '80px';
+
+        memDiffRow.appendChild(memDiffLabel);
+        memDiffRow.appendChild(memDiffInput);
+        memorySection.appendChild(memDiffRow);
+
+        // === Időkorlát ===
+        const memTimeLimitRow = document.createElement('div');
+        memTimeLimitRow.className = 'dkv-debug-video-row';
+        memTimeLimitRow.style.marginTop = '12px';
+
+        const memTimeLimitLabel = document.createElement('label');
+        memTimeLimitLabel.textContent = 'Időkorlát (másodperc, 0 = nincs):';
+        memTimeLimitLabel.htmlFor = 'dkv-debug-memory-timelimit';
+        memTimeLimitLabel.style.flex = '1';
+
+        const memTimeLimitInput = document.createElement('input');
+        memTimeLimitInput.type = 'number';
+        memTimeLimitInput.id = 'dkv-debug-memory-timelimit';
+        memTimeLimitInput.className = 'dkv-debug-video-input';
+        memTimeLimitInput.min = 0;
+        memTimeLimitInput.max = 3600;
+        memTimeLimitInput.step = 30;
+        memTimeLimitInput.value = this.tasksConfig.memoryTimeLimit ?? 600;
+        memTimeLimitInput.style.width = '80px';
+
+        const memTimeLimitUnit = document.createElement('span');
+        memTimeLimitUnit.textContent = ' mp';
+        memTimeLimitUnit.style.color = 'rgba(255,255,255,0.6)';
+
+        memTimeLimitRow.appendChild(memTimeLimitLabel);
+        memTimeLimitRow.appendChild(memTimeLimitInput);
+        memTimeLimitRow.appendChild(memTimeLimitUnit);
+        memorySection.appendChild(memTimeLimitRow);
+
+        const memInfo = document.createElement('p');
+        memInfo.style.cssText = 'font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 4px 0 0;';
+        memInfo.textContent = 'Páros kártyaszám kell. Alap: 16 kártya (8 pár), 600 mp (10 perc).';
+        memorySection.appendChild(memInfo);
+
+        const memApplyBtn = document.createElement('button');
+        memApplyBtn.className = 'dkv-debug-btn dkv-debug-btn-apply';
+        memApplyBtn.textContent = 'Mentés';
+        memApplyBtn.style.marginTop = '12px';
+        memApplyBtn.addEventListener('click', () => {
+            let mDiff = parseInt(memDiffInput.value, 10);
+            if (isNaN(mDiff) || mDiff < 4) mDiff = 16;
+            if (mDiff % 2 !== 0) mDiff += 1;
+
+            const mTimeLimit = parseInt(memTimeLimitInput.value, 10);
+
+            this.tasksConfig.memoryDifficulty = mDiff;
+            this.tasksConfig.memoryTimeLimit = isNaN(mTimeLimit) ? 600 : mTimeLimit;
+
+            if (this.debugManager) {
+                this.debugManager.tasksConfig = { ...this.tasksConfig };
+                this.debugManager.saveConfig({
+                    ...this.debugManager.skipConfig,
+                    tasksConfig: this.tasksConfig
+                });
+            }
+            memApplyBtn.textContent = '✅ Mentve!';
+            memApplyBtn.disabled = true;
+            setTimeout(() => {
+                memApplyBtn.textContent = 'Mentés';
+                memApplyBtn.disabled = false;
+            }, 1500);
+        });
+        memorySection.appendChild(memApplyBtn);
+
+        container.appendChild(memorySection);
+
+        // === RESET ===
+        const resetSection = document.createElement('div');
+        resetSection.className = 'dkv-debug-video-section';
+        resetSection.style.cssText = 'margin-top: 24px; border-top: 1px solid rgba(255,50,50,0.3); padding-top: 16px;';
+
+        const resetTitle = document.createElement('h4');
+        resetTitle.textContent = '🔄 Haladás visszaállítása';
+        resetTitle.style.cssText = 'color: #ff6b6b; margin: 0 0 8px; font-size: 1rem;';
+        resetSection.appendChild(resetTitle);
+
+        const resetInfo = document.createElement('p');
+        resetInfo.style.cssText = 'font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 0 0 12px;';
+        resetInfo.textContent = 'Törli a befejezett feladatok listáját és a pontszámot, így a modalok újra megjelennek.';
+        resetSection.appendChild(resetInfo);
+
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'dkv-debug-btn';
+        resetBtn.style.cssText = 'background: rgba(255,60,60,0.2); border-color: #ff6b6b; color: #ff6b6b; width: 100%;';
+        resetBtn.textContent = '🗑️ Feladatok reset';
+        resetBtn.addEventListener('click', () => {
+            if (!this.stateManager) {
+                alert('StateManager nem elérhető!');
+                return;
+            }
+            this.stateManager.updateState({
+                progress: {
+                    ...this.stateManager.state.progress,
+                    completedSlides: [],
+                    score: 0
+                }
+            });
+            resetBtn.textContent = '✅ Törölve!';
+            resetBtn.disabled = true;
+            setTimeout(() => {
+                resetBtn.textContent = '🗑️ Feladatok reset';
+                resetBtn.disabled = false;
+            }, 1500);
+        });
+        resetSection.appendChild(resetBtn);
+
+        container.appendChild(resetSection);
         this.tabContentContainer.appendChild(container);
     }
 

@@ -5,6 +5,33 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.8.5] - 2026-02-22
+
+### Módosítva
+- **Adat-tenger (Memory) finomhangolása** 🧩
+  - **Vizuális fejlesztések:** fehér kártyaszegélyek, teljes méretű ikonok (`background-size: cover`), megtalált párok animált eltűnése.
+  - **Fejléc korrekció:** olvashatóbb betűtípus a modalban, egymás alá rendezett cím és alcím a jobb helykihasználásért.
+  - **Időzítő:** előre számoló óra (⏱️ 00:00), amely a fejléc jobb felső sarkában kapott helyet az átláthatóbb játéktér érdekében.
+  - **Pontozás:** fix 5 pont a teljesítéskor (labirintus feladattal szinkronizálva).
+- **Debug & Konfiguráció** 🛠️
+  - **Memory időkorlát:** a Debug Panelen mostantól másodperc alapú időkorlát is megadható (0 = végtelen).
+  - **StateManager:** javított feladat-visszaállítási logika a Debug Panelen.
+- **Rendszerszintű javítások** ⚙️
+  - Robusztusabb audio lejátszás kezelés (`readyState` ellenőrzés és `load()` kényszerítés).
+  - Rugalmasabb `showTaskModal` fejléc kezelés (dinamikus cím/alcím támogatás).
+
+## [0.8.3] - 2026-02-22
+
+### Hozzáadva
+- **Adat-tenger (Memory) feladat implementálása** 🌊
+  - Teljesen új `MemoryGame.js` és `Memory.css` komponensek.
+  - 28 darab egyedi informatikai ikon, dinamikus rácsméret (alap: 16 kártya).
+  - Modern, cyberpunk vizuális világ (neon keretek, bináris minták, animált kártyafordítás).
+  - Debug Panel támogatás: a memóriajáték nehézsége (kártyák száma) mostantól állítható és menthető.
+- **Feladatok egyszeri kitöltésének védelme** 🛡️
+  - A `GameStateManager` már perzisztensen tárolja a befejezett diák ID-it.
+  - Ha egy feladatot egyszer már megoldottak, visszalépéskor a modal nem nyílik meg újra, és a pontszerzés is korlátozva lett.
+
 ## [0.8.2] - 2026-02-22
 
 ### Javítva
