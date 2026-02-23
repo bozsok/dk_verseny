@@ -1,0 +1,267 @@
+/* Puzzle Game Styles */
+
+.puzzle-game {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'BBH Sans Hegarty', sans-serif;
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.game-header h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.game-info {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.timer {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.pieces-count {
+  font-weight: 500;
+}
+
+/* Menu Styles */
+.game-menu {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+}
+
+.menu-section {
+  margin-bottom: 2rem;
+}
+
+.menu-section h3 {
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.menu-button {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+  min-width: 120px;
+}
+
+.menu-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.3);
+}
+
+.piece-options {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.piece-button {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 60px;
+}
+
+.piece-button:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.piece-button.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.start-button {
+  background: linear-gradient(135deg, var(--success-color), #45a049);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 2rem auto 0;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+/* Game Container */
+.game-container {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+  position: relative;
+  min-height: 500px;
+}
+
+.game-canvas {
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Puzzle Pieces */
+.puzzle-piece {
+  position: absolute;
+  cursor: grab;
+  transition: transform 0.2s ease;
+  transform-origin: center center;
+  opacity: 1;
+}
+
+.puzzle-piece.dragging {
+  cursor: grabbing;
+  z-index: 1000 !important;
+  /* Remove scale to allow reaching exact screen edges without early clamp */
+  /* transform: scale(1.05); */
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));
+}
+
+/* Fade out pieces on completion */
+.puzzle-completed-visual .puzzle-piece {
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+/* Full image canvas layer (fades in on completion) */
+.full-image-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 764px;
+  height: 540px;
+  opacity: 0;
+  transition: opacity 400ms ease;
+  pointer-events: none;
+  border-radius: 0; /* matches game area */
+}
+
+.full-image-canvas.visible {
+  opacity: 1;
+}
+
+/* Completion Modal */
+.game-completed {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+}
+
+.game-completed h2 {
+  font-size: 2rem;
+  color: var(--success-color);
+  margin-bottom: 1rem;
+}
+
+.game-completed p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* Game Controls */
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.control-button {
+  background: var(--secondary-color);
+  color: var(--text-primary);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.control-button:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .puzzle-game {
+    padding: 1rem;
+  }
+  
+  .game-header h1 {
+    font-size: 2rem;
+  }
+  
+  .game-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .piece-options {
+    justify-content: center;
+  }
+  
+  .game-container {
+    height: 400px;
+  }
+}
+
+/* Animation Classes */
+.moving {
+  transition: left 1s ease-out, top 1s ease-out !important;
+}
+
+@keyframes celebration {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.celebration {
+  animation: celebration 0.5s ease-in-out;
+}

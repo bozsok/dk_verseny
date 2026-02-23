@@ -24,7 +24,7 @@ class DebugManager {
         this.skipConfig = this.loadSkipConfig();
         this.isEnabled = this.skipConfig.enabled || false;
         this.tasksConfig = Object.assign(
-            { mazeTimeLimit: 600, mazeDifficulty: 16 },
+            { globalTimeLimit: 900, mazeDifficulty: 16, memoryDifficulty: 16, puzzleDifficulty: 16 },
             this.skipConfig.tasksConfig || {}
         );
 
@@ -51,7 +51,7 @@ class DebugManager {
             this.skipConfig = config;
             this.isEnabled = config.enabled || false;
             this.tasksConfig = Object.assign(
-                { mazeTimeLimit: 600, mazeDifficulty: 16 },
+                { globalTimeLimit: 900, mazeDifficulty: 16, memoryDifficulty: 16, puzzleDifficulty: 16 },
                 config.tasksConfig || {}
             );
 
@@ -109,7 +109,7 @@ class DebugManager {
             skipSlides: [],
             useDummyData: false,
             muteMusic: true, // Default: true (némítva)
-            tasksConfig: { mazeTimeLimit: 600, mazeDifficulty: 16, memoryTimeLimit: 600, memoryDifficulty: 16 }
+            tasksConfig: { globalTimeLimit: 900, mazeDifficulty: 16, memoryDifficulty: 16, puzzleDifficulty: 16 }
         };
     }
 

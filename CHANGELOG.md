@@ -5,6 +5,16 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.8.8] - 2026-02-22
+
+### Hozzáadva
+- **Pixel Palota (Puzzle) feladat implementálása** 🧩
+  - Teljes értékű Vanilla JS átirat a React alapú kódokból (jigsaw generátor, bezier görbék, canvas rajzolás).
+  - Drag and drop (vonszolás) funkció egyedi árnyék / lebegés animációval, és automatikus mágneses összeillesztéssel (snapping) a szomszédos elemek megtalálására.
+  - Középre igazított, reszponzív játékmező: a generált puzzle csoport minden indításkor a látható képernyő (viewport) közepén inicializálódik a könnyű játszhatóság érdekében.
+  - Integráció az 1-es állomáshoz hasonló (Maze) keretrendszeri szolgáltatásokkal: előre számoló stopper, pontozás és modals ablakok.
+  - **Debug Panel Támogatás:** A 'Tasks' fül alatt valós időben állíthatóvá vált a feladat nehézsége (darabszám). Bevezetésre került egy központosított **Egységes Időkorlát** beállítás, amely az összes játék állomására érvényes, és alapértelmezetten 900 másodperc (15 perc).
+
 ## [0.8.7] - 2026-02-22
 
 ### Javítva

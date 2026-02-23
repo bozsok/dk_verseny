@@ -24,9 +24,11 @@ import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import MazeGame from './content/grade3/tasks/maze/MazeGame.js';
 import MemoryGame from './content/grade3/tasks/memory/MemoryGame.js';
 import QuizGame from './content/grade3/tasks/quiz/QuizGame.js';
+import { PuzzleGame } from './content/grade3/tasks/puzzle/PuzzleGame.js';
 import './content/grade3/tasks/maze/Maze.css';
 import './content/grade3/tasks/memory/Memory.css';
 import './content/grade3/tasks/quiz/Quiz.css';
+import './content/grade3/tasks/puzzle/Puzzle.css';
 import './ui/styles/design-system.css';
 
 // Debug System (csak DEV módban töltődik be)
@@ -812,8 +814,9 @@ class DigitalKulturaVerseny {
           const isMaze = section === 'station_1';
           const isMemory = section === 'station_2' || (slide.id && slide.id.toString().startsWith('st2_'));
           const isQuiz = section === 'station_3' || (slide.id && slide.id.toString().startsWith('st3_'));
+          const isPuzzle = section === 'station_4' || (slide.id && slide.id.toString().startsWith('st4_'));
 
-          console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}, isMaze: ${isMaze}, isMemory: ${isMemory}, isQuiz: ${isQuiz}`);
+          console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}, isMaze: ${isMaze}, isMemory: ${isMemory}, isQuiz: ${isQuiz}, isPuzzle: ${isPuzzle}`);
 
           if (isMaze) {
             // Maze feladat indítása
@@ -824,17 +827,17 @@ class DigitalKulturaVerseny {
 
             this.activeGameInterface.showTaskModal(taskContainer, null, { hideHeader: true });
 
-            // Időlimit: Debug Panel TASKS füléből, vagy alapértelmezett 600mp (10 perc)
-            const mazeTimeLimit = this.debugManager?.tasksConfig?.mazeTimeLimit
-              ?? this.buildConfig?.tasksConfig?.mazeTimeLimit
-              ?? 600;
+            // Időlimit: Debug Panel TASKS füléből, vagy alapértelmezett 900mp (15 perc)
+            const globalTimeLimit = this.debugManager?.tasksConfig?.globalTimeLimit
+              ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+              ?? 900;
 
             // Példányosítás (a showTaskModal után, hogy a DOM-ban legyen)
             const maze = new MazeGame(taskContainer, {
               difficulty: this.debugManager?.tasksConfig?.mazeDifficulty
                 ?? this.buildConfig?.tasksConfig?.mazeDifficulty
                 ?? 16,
-              timeLimit: mazeTimeLimit,
+              timeLimit: globalTimeLimit,
               onComplete: (result) => {
                 // Pontozás (Csak ha még nem volt kész)
                 const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
@@ -875,9 +878,9 @@ class DigitalKulturaVerseny {
               difficulty: this.debugManager?.tasksConfig?.memoryDifficulty
                 ?? this.buildConfig?.tasksConfig?.memoryDifficulty
                 ?? 16,
-              timeLimit: this.debugManager?.tasksConfig?.memoryTimeLimit
-                ?? this.buildConfig?.tasksConfig?.memoryTimeLimit
-                ?? 600,
+              timeLimit: this.debugManager?.tasksConfig?.globalTimeLimit
+                ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+                ?? 900,
               onComplete: (result) => {
                 if (result.success) {
                   const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
@@ -921,9 +924,9 @@ class DigitalKulturaVerseny {
 
             new QuizGame(taskContainer, {
               quizFile: 'assets/data/grade3/quiz/3.txt',
-              timeLimit: this.debugManager?.tasksConfig?.quizTimeLimit
-                ?? this.buildConfig?.tasksConfig?.quizTimeLimit
-                ?? 600,
+              timeLimit: this.debugManager?.tasksConfig?.globalTimeLimit
+                ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+                ?? 900,
               onComplete: (result) => {
                 const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
                 if (!alreadyDone) {
@@ -935,6 +938,50 @@ class DigitalKulturaVerseny {
 
                 // Visszajelző modal ugyanazzal a mazeResultModal logikával
                 const modalTitle = result.success ? 'A kérdéseket megválaszoltad!' : 'Nem sikerült megválaszolni a kérdéseket!';
+                this.showMazeResultModal({ ...result, title: modalTitle }, () => {
+                  this.activeGameInterface.hideTaskModal();
+                  this.handleNext();
+                });
+              }
+            });
+
+            // OK gomb elrejtése
+            setTimeout(() => {
+              const okBtn = document.querySelector('.dkv-task-ok-btn');
+              if (okBtn) okBtn.style.display = 'none';
+            }, 50);
+
+          } else if (isPuzzle) {
+            // Puzzle feladat indítása
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'puzzle-task-container';
+            taskContainer.style.width = '100%';
+            taskContainer.style.height = '100%';
+
+            this.activeGameInterface.showTaskModal(taskContainer, null, {
+              title: 'Rakd ki a képet!',
+              subtitle: 'Húzd a darabokat az egérrel a megfelelő helyre! Kezdjed a fehér szélű darabokkal!'
+            });
+
+            new PuzzleGame(taskContainer, {
+              numPieces: this.debugManager?.tasksConfig?.puzzleDifficulty
+                ?? this.buildConfig?.tasksConfig?.puzzleDifficulty
+                ?? 16,
+              timeLimit: this.debugManager?.tasksConfig?.globalTimeLimit
+                ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+                ?? 900,
+              imagePath: 'assets/images/grade3/puzzle/puzzle.jpg',
+              onComplete: (result) => {
+                const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
+                if (!alreadyDone) {
+                  const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                  this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
+                  this.activeGameInterface?.updateHUD(this.stateManager?.getState());
+                  this.stateManager?.markSlideCompleted(slide.id);
+                }
+
+                // Visszajelző modal
+                const modalTitle = result.success ? 'Sikeresen összeraktad a képet!' : 'Sajnos lejárt az idő!';
                 this.showMazeResultModal({ ...result, title: modalTitle }, () => {
                   this.activeGameInterface.hideTaskModal();
                   this.handleNext();
@@ -975,6 +1022,8 @@ class DigitalKulturaVerseny {
           const section = slide.metadata?.section || 'unknown';
           const isMaze = section === 'station_1';
           const isMemory = section === 'station_2' || (slide.id && slide.id.toString().startsWith('st2_'));
+          const isQuiz = section === 'station_3' || (slide.id && slide.id.toString().startsWith('st3_'));
+          const isPuzzle = section === 'station_4' || (slide.id && slide.id.toString().startsWith('st4_'));
 
           if (isMaze) {
             const taskContainer = document.createElement('div');
@@ -999,9 +1048,9 @@ class DigitalKulturaVerseny {
               difficulty: this.debugManager?.tasksConfig?.memoryDifficulty
                 ?? this.buildConfig?.tasksConfig?.memoryDifficulty
                 ?? 16,
-              timeLimit: this.debugManager?.tasksConfig?.memoryTimeLimit
-                ?? this.buildConfig?.tasksConfig?.memoryTimeLimit
-                ?? 600,
+              timeLimit: this.debugManager?.tasksConfig?.globalTimeLimit
+                ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+                ?? 900,
               onComplete: (result) => {
                 if (result.success) {
                   const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
@@ -1044,9 +1093,9 @@ class DigitalKulturaVerseny {
 
             new QuizGame(taskContainer, {
               quizFile: 'assets/data/grade3/quiz/3.txt',
-              timeLimit: this.debugManager?.tasksConfig?.quizTimeLimit
-                ?? this.buildConfig?.tasksConfig?.quizTimeLimit
-                ?? 600,
+              timeLimit: this.debugManager?.tasksConfig?.globalTimeLimit
+                ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+                ?? 900,
               onComplete: (result) => {
                 const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
                 if (!alreadyDone) {
@@ -1058,6 +1107,50 @@ class DigitalKulturaVerseny {
 
                 // Visszajelző modal ugyanazzal a mazeResultModal logikával
                 const modalTitle = result.success ? 'A kérdéseket megválaszoltad!' : 'Nem sikerült megválaszolni a kérdéseket!';
+                this.showMazeResultModal({ ...result, title: modalTitle }, () => {
+                  this.activeGameInterface.hideTaskModal();
+                  this.handleNext();
+                });
+              }
+            });
+
+            // OK gomb elrejtése
+            setTimeout(() => {
+              const okBtn = document.querySelector('.dkv-task-ok-btn');
+              if (okBtn) okBtn.style.display = 'none';
+            }, 50);
+
+          } else if (isPuzzle) {
+            // Puzzle feladat indítása
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'puzzle-task-container';
+            taskContainer.style.width = '100%';
+            taskContainer.style.height = '100%';
+
+            this.activeGameInterface.showTaskModal(taskContainer, null, {
+              title: 'Rakd ki a képet!',
+              subtitle: 'Húzd a darabokat az egérrel a megfelelő helyre! Kezdjed a fehér szélű darabokkal!'
+            });
+
+            new PuzzleGame(taskContainer, {
+              numPieces: this.debugManager?.tasksConfig?.puzzleDifficulty
+                ?? this.buildConfig?.tasksConfig?.puzzleDifficulty
+                ?? 18,
+              timeLimit: this.debugManager?.tasksConfig?.globalTimeLimit
+                ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+                ?? 900,
+              imagePath: 'assets/images/grade3/puzzle/puzzle.jpg',
+              onComplete: (result) => {
+                const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
+                if (!alreadyDone) {
+                  const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                  this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
+                  this.activeGameInterface?.updateHUD(this.stateManager?.getState());
+                  this.stateManager?.markSlideCompleted(slide.id);
+                }
+
+                // Visszajelző modal
+                const modalTitle = result.success ? 'Sikeresen összeraktad a képet!' : 'Sajnos lejárt az idő!';
                 this.showMazeResultModal({ ...result, title: modalTitle }, () => {
                   this.activeGameInterface.hideTaskModal();
                   this.handleNext();

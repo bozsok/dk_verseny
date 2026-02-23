@@ -34,7 +34,7 @@ class DebugPanel {
 
         // Tasks config state (lapbetöltéskor a debugManager-ből öröklünk)
         this.tasksConfig = Object.assign(
-            { mazeTimeLimit: 600, mazeDifficulty: 16, memoryTimeLimit: 600, memoryDifficulty: 16 },
+            { globalTimeLimit: 900, mazeDifficulty: 16, memoryDifficulty: 16, puzzleDifficulty: 16 },
             options.debugManager?.tasksConfig || {}
         );
     }
@@ -325,31 +325,24 @@ class DebugPanel {
         heading.style.marginBottom = '16px';
         container.appendChild(heading);
 
-        // === Maze időkorlát ===
-        const mazeSection = document.createElement('div');
-        mazeSection.className = 'dkv-debug-video-section';
-
-        const mazeTitle = document.createElement('h4');
-        mazeTitle.textContent = '🌀 Labirintus';
-        mazeTitle.style.cssText = 'color: #00eaff; margin: 0 0 12px; font-size: 1rem;';
-        mazeSection.appendChild(mazeTitle);
-
+        // === Globális Időkorlát ===
         const timeLimitRow = document.createElement('div');
         timeLimitRow.className = 'dkv-debug-video-row';
+        timeLimitRow.style.marginBottom = '20px'; // Kis távolság az első játéktól
 
         const timeLimitLabel = document.createElement('label');
-        timeLimitLabel.textContent = 'Időkorlát (másodperc, 0 = nincs):';
-        timeLimitLabel.htmlFor = 'dkv-debug-maze-timelimit';
+        timeLimitLabel.textContent = 'Egységes Időkorlát (másodperc, 0 = nincs):';
+        timeLimitLabel.htmlFor = 'dkv-debug-global-timelimit';
         timeLimitLabel.style.flex = '1';
 
         const timeLimitInput = document.createElement('input');
         timeLimitInput.type = 'number';
-        timeLimitInput.id = 'dkv-debug-maze-timelimit';
+        timeLimitInput.id = 'dkv-debug-global-timelimit';
         timeLimitInput.className = 'dkv-debug-video-input';
         timeLimitInput.min = 0;
         timeLimitInput.max = 3600;
         timeLimitInput.step = 30;
-        timeLimitInput.value = this.tasksConfig.mazeTimeLimit;
+        timeLimitInput.value = this.tasksConfig.globalTimeLimit ?? 900;
         timeLimitInput.style.width = '80px';
 
         const timeLimitUnit = document.createElement('span');
@@ -359,7 +352,16 @@ class DebugPanel {
         timeLimitRow.appendChild(timeLimitLabel);
         timeLimitRow.appendChild(timeLimitInput);
         timeLimitRow.appendChild(timeLimitUnit);
-        mazeSection.appendChild(timeLimitRow);
+        container.appendChild(timeLimitRow);
+
+        // === Maze (Labirintus) ===
+        const mazeSection = document.createElement('div');
+        mazeSection.className = 'dkv-debug-video-section';
+
+        const mazeTitle = document.createElement('h4');
+        mazeTitle.textContent = '🌀 Labirintus';
+        mazeTitle.style.cssText = 'color: #00eaff; margin: 0 0 12px; font-size: 1rem;';
+        mazeSection.appendChild(mazeTitle);
 
         // === Nehézség (pályaméret) ===
         const diffRow = document.createElement('div');
@@ -395,10 +397,9 @@ class DebugPanel {
         diffInfo.textContent = 'Alap: 16 (16×16). Értékek: 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30.';
         mazeSection.appendChild(diffInfo);
 
-        // Info
         const infoEl = document.createElement('p');
         infoEl.style.cssText = 'font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 8px 0 0;';
-        infoEl.textContent = 'Alapértelmezett: 600 mp (10 perc). A változás azonnal érvényesül a következő indításnál.';
+        infoEl.textContent = 'A változás azonnal érvényesül a következő indításnál.';
         mazeSection.appendChild(infoEl);
 
         // Apply gomb
@@ -407,13 +408,13 @@ class DebugPanel {
         applyBtn.textContent = 'Mentés';
         applyBtn.style.marginTop = '12px';
         applyBtn.addEventListener('click', () => {
-            const timeVal = parseInt(timeLimitInput.value, 10);
+            const globalTimeVal = parseInt(timeLimitInput.value, 10);
             let diffVal = parseInt(diffInput.value, 10);
             // Kényszerítünk páros értéket
             if (isNaN(diffVal) || diffVal < 6) diffVal = 12;
             if (diffVal % 2 !== 0) diffVal = diffVal - 1;
 
-            this.tasksConfig.mazeTimeLimit = isNaN(timeVal) ? 600 : timeVal;
+            this.tasksConfig.globalTimeLimit = isNaN(globalTimeVal) ? 900 : globalTimeVal;
             this.tasksConfig.mazeDifficulty = diffVal;
 
             if (this.debugManager) {
@@ -466,38 +467,9 @@ class DebugPanel {
         memDiffRow.appendChild(memDiffInput);
         memorySection.appendChild(memDiffRow);
 
-        // === Időkorlát ===
-        const memTimeLimitRow = document.createElement('div');
-        memTimeLimitRow.className = 'dkv-debug-video-row';
-        memTimeLimitRow.style.marginTop = '12px';
-
-        const memTimeLimitLabel = document.createElement('label');
-        memTimeLimitLabel.textContent = 'Időkorlát (másodperc, 0 = nincs):';
-        memTimeLimitLabel.htmlFor = 'dkv-debug-memory-timelimit';
-        memTimeLimitLabel.style.flex = '1';
-
-        const memTimeLimitInput = document.createElement('input');
-        memTimeLimitInput.type = 'number';
-        memTimeLimitInput.id = 'dkv-debug-memory-timelimit';
-        memTimeLimitInput.className = 'dkv-debug-video-input';
-        memTimeLimitInput.min = 0;
-        memTimeLimitInput.max = 3600;
-        memTimeLimitInput.step = 30;
-        memTimeLimitInput.value = this.tasksConfig.memoryTimeLimit ?? 600;
-        memTimeLimitInput.style.width = '80px';
-
-        const memTimeLimitUnit = document.createElement('span');
-        memTimeLimitUnit.textContent = ' mp';
-        memTimeLimitUnit.style.color = 'rgba(255,255,255,0.6)';
-
-        memTimeLimitRow.appendChild(memTimeLimitLabel);
-        memTimeLimitRow.appendChild(memTimeLimitInput);
-        memTimeLimitRow.appendChild(memTimeLimitUnit);
-        memorySection.appendChild(memTimeLimitRow);
-
         const memInfo = document.createElement('p');
         memInfo.style.cssText = 'font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 4px 0 0;';
-        memInfo.textContent = 'Páros kártyaszám kell. Alap: 16 kártya (8 pár), 600 mp (10 perc).';
+        memInfo.textContent = 'Páros kártyaszám kell. Alap: 16 kártya (8 pár).';
         memorySection.appendChild(memInfo);
 
         const memApplyBtn = document.createElement('button');
@@ -509,10 +481,10 @@ class DebugPanel {
             if (isNaN(mDiff) || mDiff < 4) mDiff = 16;
             if (mDiff % 2 !== 0) mDiff += 1;
 
-            const mTimeLimit = parseInt(memTimeLimitInput.value, 10);
+            const globalTimeVal = parseInt(timeLimitInput.value, 10);
 
             this.tasksConfig.memoryDifficulty = mDiff;
-            this.tasksConfig.memoryTimeLimit = isNaN(mTimeLimit) ? 600 : mTimeLimit;
+            this.tasksConfig.globalTimeLimit = isNaN(globalTimeVal) ? 900 : globalTimeVal;
 
             if (this.debugManager) {
                 this.debugManager.tasksConfig = { ...this.tasksConfig };
@@ -531,6 +503,74 @@ class DebugPanel {
         memorySection.appendChild(memApplyBtn);
 
         container.appendChild(memorySection);
+
+        // === Puzzle (Pixel Palota) ===
+        const puzzleSection = document.createElement('div');
+        puzzleSection.className = 'dkv-debug-video-section';
+        puzzleSection.style.marginTop = '20px';
+
+        const puzzleTitle = document.createElement('h4');
+        puzzleTitle.textContent = '🧩 Pixel Palota (Puzzle)';
+        puzzleTitle.style.cssText = 'color: #00eaff; margin: 0 0 12px; font-size: 1rem;';
+        puzzleSection.appendChild(puzzleTitle);
+
+        const puzzleDiffRow = document.createElement('div');
+        puzzleDiffRow.className = 'dkv-debug-video-row';
+
+        const puzzleDiffLabel = document.createElement('label');
+        puzzleDiffLabel.textContent = 'Irányadó darabszám (kb. érték):';
+        puzzleDiffLabel.htmlFor = 'dkv-debug-puzzle-difficulty';
+        puzzleDiffLabel.style.flex = '1';
+
+        const puzzleDiffInput = document.createElement('input');
+        puzzleDiffInput.type = 'number';
+        puzzleDiffInput.id = 'dkv-debug-puzzle-difficulty';
+        puzzleDiffInput.className = 'dkv-debug-video-input';
+        puzzleDiffInput.min = 4;
+        puzzleDiffInput.max = 100;
+        puzzleDiffInput.step = 1;
+        puzzleDiffInput.value = this.tasksConfig.puzzleDifficulty ?? 16;
+        puzzleDiffInput.style.width = '80px';
+
+        puzzleDiffRow.appendChild(puzzleDiffLabel);
+        puzzleDiffRow.appendChild(puzzleDiffInput);
+        puzzleSection.appendChild(puzzleDiffRow);
+
+        const puzzleInfo = document.createElement('p');
+        puzzleInfo.style.cssText = 'font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 4px 0 0;';
+        puzzleInfo.textContent = 'A játék a képarány miatt az optimális rácsot (pl. 5×3=15) generálja le ehhez a legközelebb.';
+        puzzleSection.appendChild(puzzleInfo);
+
+        const puzzleApplyBtn = document.createElement('button');
+        puzzleApplyBtn.className = 'dkv-debug-btn dkv-debug-btn-apply';
+        puzzleApplyBtn.textContent = 'Mentés';
+        puzzleApplyBtn.style.marginTop = '12px';
+        puzzleApplyBtn.addEventListener('click', () => {
+            let pDiff = parseInt(puzzleDiffInput.value, 10);
+            if (isNaN(pDiff) || pDiff < 4) pDiff = 16;
+
+            const globalTimeVal = parseInt(timeLimitInput.value, 10);
+
+            this.tasksConfig.puzzleDifficulty = pDiff;
+            this.tasksConfig.globalTimeLimit = isNaN(globalTimeVal) ? 900 : globalTimeVal;
+
+            if (this.debugManager) {
+                this.debugManager.tasksConfig = { ...this.tasksConfig };
+                this.debugManager.saveConfig({
+                    ...this.debugManager.skipConfig,
+                    tasksConfig: this.tasksConfig
+                });
+            }
+            puzzleApplyBtn.textContent = '✅ Mentve!';
+            puzzleApplyBtn.disabled = true;
+            setTimeout(() => {
+                puzzleApplyBtn.textContent = 'Mentés';
+                puzzleApplyBtn.disabled = false;
+            }, 1500);
+        });
+        puzzleSection.appendChild(puzzleApplyBtn);
+
+        container.appendChild(puzzleSection);
 
         // === RESET ===
         const resetSection = document.createElement('div');
