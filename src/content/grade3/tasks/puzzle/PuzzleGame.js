@@ -44,6 +44,14 @@ export class PuzzleGame {
             this.overlayEl.parentNode.removeChild(this.overlayEl);
         }
 
+        // Timer elem eltávolítása a headerből, ha oda tettük
+        if (this.timerTimeEl) {
+            const timerBar = this.timerTimeEl.closest('.puzzle-timer-bar');
+            if (timerBar && timerBar.parentNode) {
+                timerBar.parentNode.removeChild(timerBar);
+            }
+        }
+
         if (this.container) {
             this.container.innerHTML = '';
         }
@@ -56,10 +64,7 @@ export class PuzzleGame {
             </div>
             
             <div class="puzzle-ui" style="display: none;">
-                <div class="timer-display-absolute" style="position: absolute; top: 20px; right: 20px; font-size: 24px; color: var(--neon-cyan); background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--neon-cyan); z-index: 5;">
-                    <span class="timer-icon">⏱️</span>
-                    <span class="timer-time">00:00</span>
-                </div>
+                <!-- Ide kerülhetnének extra UI elemek, a timer kikerült a fejlécbe -->
             </div>
 
             <div class="puzzle-canvas-container" style="display: none; width: 100%; height: 100%; justify-content: center; align-items: center;">
@@ -77,7 +82,22 @@ export class PuzzleGame {
         this.playfieldEl = this.container.querySelector('.puzzle-playfield');
         this.containerBoxEl = this.container.querySelector('.puzzle-container-box');
         this.fullImageCanvas = this.container.querySelector('.full-image-canvas');
-        this.timerTimeEl = this.container.querySelector('.timer-time');
+
+        // Timer sáv dinamikus generálása a modal fejlécébe
+        const timerBar = document.createElement('div');
+        timerBar.className = 'puzzle-timer-bar';
+        timerBar.innerHTML = `
+            <span class="puzzle-timer-icon">⏱️</span>
+            <span class="puzzle-timer-time">00:00</span>
+        `;
+
+        const modalHeader = this.container.closest('.dkv-task-modal-overlay')?.querySelector('.dkv-task-modal-header');
+        if (modalHeader) {
+            modalHeader.appendChild(timerBar);
+        } else {
+            this.container.appendChild(timerBar);
+        }
+        this.timerTimeEl = timerBar.querySelector('.puzzle-timer-time');
 
         this.overlayEl = document.createElement('div');
         this.overlayEl.className = 'puzzle-overlay';
@@ -457,7 +477,8 @@ export class PuzzleGame {
             this.onComplete({
                 success: true,
                 timeElapsed: this.timer,
-                points: 5
+                points: 5,
+                maxPoints: 5
             });
         }
     }
@@ -473,7 +494,8 @@ export class PuzzleGame {
             this.onComplete({
                 success: false,
                 timeElapsed: this.timeLimit,
-                points: 0
+                points: 0,
+                maxPoints: 5
             });
         }
     }

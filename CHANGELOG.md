@@ -5,6 +5,15 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.8.9] - 2026-02-23
+
+### Hozzáadva
+- **Hangerdő (Sound) 5. állomás feladat implementálása** 🎧
+  - JS Audio API alapú, Vanilla JS egyedi lejátszó sebességszabályzóval (0.25x - 4x) a feladat megoldásához.
+  - Feltételes feladatmegjelenítés (Reveal), mely animálva fedi fel a kérdéseket a hang legelső végighallgatása után.
+  - Dinamikus sorrendfüggő (fő üzenet) és sorrendfüggetlen (suttogások, számok) szöveg-/számkiértékelő rendszere.
+  - Integráció a központi 15 perces időkorláttal és pontrendszerrel (fix 5 pont az 5. állomás teljesítéséért).
+
 ## [0.8.8] - 2026-02-22
 
 ### Hozzáadva

@@ -25,10 +25,12 @@ import MazeGame from './content/grade3/tasks/maze/MazeGame.js';
 import MemoryGame from './content/grade3/tasks/memory/MemoryGame.js';
 import QuizGame from './content/grade3/tasks/quiz/QuizGame.js';
 import { PuzzleGame } from './content/grade3/tasks/puzzle/PuzzleGame.js';
+import { SoundGame } from './content/grade3/tasks/sound/SoundGame.js';
 import './content/grade3/tasks/maze/Maze.css';
 import './content/grade3/tasks/memory/Memory.css';
 import './content/grade3/tasks/quiz/Quiz.css';
 import './content/grade3/tasks/puzzle/Puzzle.css';
+import './content/grade3/tasks/sound/Sound.css';
 import './ui/styles/design-system.css';
 
 // Debug System (csak DEV módban töltődik be)
@@ -815,8 +817,9 @@ class DigitalKulturaVerseny {
           const isMemory = section === 'station_2' || (slide.id && slide.id.toString().startsWith('st2_'));
           const isQuiz = section === 'station_3' || (slide.id && slide.id.toString().startsWith('st3_'));
           const isPuzzle = section === 'station_4' || (slide.id && slide.id.toString().startsWith('st4_'));
+          const isSound = section === 'station_5' || (slide.id && slide.id.toString().startsWith('st5_'));
 
-          console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}, isMaze: ${isMaze}, isMemory: ${isMemory}, isQuiz: ${isQuiz}, isPuzzle: ${isPuzzle}`);
+          console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}, isMaze: ${isMaze}, isMemory: ${isMemory}, isQuiz: ${isQuiz}, isPuzzle: ${isPuzzle}, isSound: ${isSound}`);
 
           if (isMaze) {
             // Maze feladat indítása
@@ -995,6 +998,47 @@ class DigitalKulturaVerseny {
               if (okBtn) okBtn.style.display = 'none';
             }, 50);
 
+          } else if (isSound) {
+            // Sound feladat (Hangerdő) indítása
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'sound-task-container';
+            taskContainer.style.width = '100%';
+            taskContainer.style.height = '100%';
+
+            this.activeGameInterface.showTaskModal(taskContainer, null, {
+              title: 'Hallgasd meg az erdő üzenetét!',
+              subtitle: 'Indítsd el a hangfájlt, és hallgasd meg többször figyelmesen!'
+            });
+
+            new SoundGame(taskContainer, {
+              timeLimit: this.debugManager?.tasksConfig?.globalTimeLimit
+                ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+                ?? 900,
+              taskData: null, // grade3 adatok vannak alapértelmezetten a SoundGame constructorban
+              onComplete: (result) => {
+                const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
+                if (!alreadyDone) {
+                  const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                  this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
+                  this.activeGameInterface?.updateHUD(this.stateManager?.getState());
+                  this.stateManager?.markSlideCompleted(slide.id);
+                }
+
+                // Visszajelző modal ugyanazzal a mazeResultModal logikával
+                const modalTitle = result.success ? 'Sikeresen dekódoltad az üzenetet!' : 'Sajnos lejárt az idő vagy nem volt sikeres!';
+                this.showMazeResultModal({ ...result, title: modalTitle }, () => {
+                  this.activeGameInterface.hideTaskModal();
+                  this.handleNext();
+                });
+              }
+            });
+
+            // OK gomb elrejtése
+            setTimeout(() => {
+              const okBtn = document.querySelector('.dkv-task-ok-btn');
+              if (okBtn) okBtn.style.display = 'none';
+            }, 50);
+
           } else {
             // Alapértelmezett (szöveges) feladat
             const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
@@ -1024,6 +1068,7 @@ class DigitalKulturaVerseny {
           const isMemory = section === 'station_2' || (slide.id && slide.id.toString().startsWith('st2_'));
           const isQuiz = section === 'station_3' || (slide.id && slide.id.toString().startsWith('st3_'));
           const isPuzzle = section === 'station_4' || (slide.id && slide.id.toString().startsWith('st4_'));
+          const isSound = section === 'station_5' || (slide.id && slide.id.toString().startsWith('st5_'));
 
           if (isMaze) {
             const taskContainer = document.createElement('div');
@@ -1151,6 +1196,47 @@ class DigitalKulturaVerseny {
 
                 // Visszajelző modal
                 const modalTitle = result.success ? 'Sikeresen összeraktad a képet!' : 'Sajnos lejárt az idő!';
+                this.showMazeResultModal({ ...result, title: modalTitle }, () => {
+                  this.activeGameInterface.hideTaskModal();
+                  this.handleNext();
+                });
+              }
+            });
+
+            // OK gomb elrejtése
+            setTimeout(() => {
+              const okBtn = document.querySelector('.dkv-task-ok-btn');
+              if (okBtn) okBtn.style.display = 'none';
+            }, 50);
+
+          } else if (isSound) {
+            // Sound feladat (Hangerdő) indítása
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'sound-task-container';
+            taskContainer.style.width = '100%';
+            taskContainer.style.height = '100%';
+
+            this.activeGameInterface.showTaskModal(taskContainer, null, {
+              title: 'Hallgasd meg az erdő üzenetét!',
+              subtitle: 'Indítsd el a hangfájlt, és hallgasd meg többször figyelmesen!'
+            });
+
+            new SoundGame(taskContainer, {
+              timeLimit: this.debugManager?.tasksConfig?.globalTimeLimit
+                ?? this.buildConfig?.tasksConfig?.globalTimeLimit
+                ?? 900,
+              taskData: null, // grade3 adatok vannak alapértelmezetten a SoundGame constructorban
+              onComplete: (result) => {
+                const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
+                if (!alreadyDone) {
+                  const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                  this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
+                  this.activeGameInterface?.updateHUD(this.stateManager?.getState());
+                  this.stateManager?.markSlideCompleted(slide.id);
+                }
+
+                // Visszajelző modal
+                const modalTitle = result.success ? 'Sikeresen dekódoltad az üzenetet!' : 'Sajnos lejárt az idő vagy nem volt sikeres!';
                 this.showMazeResultModal({ ...result, title: modalTitle }, () => {
                   this.activeGameInterface.hideTaskModal();
                   this.handleNext();
