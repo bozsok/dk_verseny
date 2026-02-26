@@ -20,6 +20,7 @@ import RegistrationSlide from './ui/components/RegistrationSlide.js';
 import CharacterSlide from './ui/components/CharacterSlide.js';
 import StorySlide from './ui/components/StorySlide.js';
 import GameInterface from './ui/components/GameInterface.js';
+import { PortalTransition } from './ui/components/PortalTransition.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import MazeGame from './content/grade3/tasks/maze/MazeGame.js';
 import MemoryGame from './content/grade3/tasks/memory/MemoryGame.js';
@@ -32,6 +33,7 @@ import './content/grade3/tasks/quiz/Quiz.css';
 import './content/grade3/tasks/puzzle/Puzzle.css';
 import './content/grade3/tasks/sound/Sound.css';
 import './ui/styles/design-system.css';
+import './ui/styles/Portal.css';
 
 // Debug System (csak DEV módban töltődik be)
 let DebugManager = null;
@@ -1329,15 +1331,110 @@ class DigitalKulturaVerseny {
     });
   }
 
+  // --- DOM GENERÁLÓ SEGÉDFÜGGVÉNYEK A PORTÁLHOZ ---
+  _instantiateSlideComponent(slide) {
+    const commonOptions = {
+      logger: this.logger,
+      slideManager: this.slideManager,
+      onNext: () => this.handleNext(),
+      onPrev: () => this.handlePrev(),
+      onComplete: () => this.slideManager.completeCurrentSlide()
+    };
+    let newComponent;
+    switch (slide.type) {
+      case SLIDE_TYPES.WELCOME: newComponent = new WelcomeSlide(slide, commonOptions); break;
+      case SLIDE_TYPES.REGISTRATION: newComponent = new RegistrationSlide(slide, commonOptions); break;
+      case SLIDE_TYPES.CHARACTER: newComponent = new CharacterSlide(slide, commonOptions); break;
+      case SLIDE_TYPES.STORY: newComponent = new StorySlide(slide, commonOptions); break;
+      case SLIDE_TYPES.VIDEO:
+      case SLIDE_TYPES.REWARD: newComponent = new VideoSlide(slide, commonOptions); break;
+      case SLIDE_TYPES.TASK: newComponent = new TaskSlide(slide, commonOptions); break;
+      default:
+        console.warn('Unknown slide type:', slide.type);
+        newComponent = new VideoSlide(slide, commonOptions);
+    }
+    return { newComponent, commonOptions };
+  }
+
+  _createSlideDOMElement(component, slide, isFullscreen, gradeClass) {
+    if (!component) return null;
+    const el = component.createElement();
+    if (isFullscreen && slide.content && slide.content.backgroundUrl) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'dkv-slide-wrapper';
+      if (gradeClass) wrapper.classList.add(gradeClass);
+      wrapper.style.backgroundImage = `url('${slide.content.backgroundUrl}')`;
+      wrapper.style.backgroundSize = 'cover';
+      wrapper.style.backgroundPosition = 'center';
+      wrapper.appendChild(el);
+      return wrapper;
+    }
+    return el;
+  }
+
   // --- SAFE NAVIGATION HANDLERS ---
 
   async handleNext() {
+    if (this.isTransitioning) {
+      if (this.logger) this.logger.warn('Navigáció blokkolva: Portál tranzíció folyamatban van.');
+      return;
+    }
+
     await this.ensureAudioFeedback();
+
+    const currentSlide = this.slideManager.getCurrentSlide();
+    const nextSlide = this.slideManager.slides[this.slideManager.currentIndex + 1];
+
+    const isStationEnd = currentSlide?.metadata?.step === 3 && currentSlide?.metadata?.section?.startsWith('station_');
+    const isNextStationStart = nextSlide?.metadata?.step === 0 && nextSlide?.metadata?.section?.startsWith('station_');
+
+    if (isStationEnd && isNextStationStart) {
+      if (this.logger) this.logger.info('Portal Transition Triggered! (WebGL)');
+
+      const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
+      const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
+      const isFullscreen = [SLIDE_TYPES.WELCOME, SLIDE_TYPES.REGISTRATION, SLIDE_TYPES.CHARACTER].includes(nextSlide.type);
+
+      const { newComponent } = this._instantiateSlideComponent(nextSlide);
+      const nextSlideDOM = this._createSlideDOMElement(newComponent, nextSlide, isFullscreen, gradeClass);
+
+      const portal = new PortalTransition({
+        newSlideHtml: nextSlideDOM,
+        animationConfig: {
+          duration: 3500, // A WebGL shader miatt adhatunk neki több időt
+          keyframes: [
+            { time: 0, maskRadius: 0 },
+            { time: 0.1, maskRadius: 3 }, // Kicsi villanás
+            { time: 0.4, maskRadius: 25 },
+            { time: 0.7, maskRadius: 80 },
+            { time: 1.0, maskRadius: 151 } // 150vw bőven kimegy a képernyőből
+          ]
+        },
+        onComplete: () => {
+          this.isTransitioning = false; // Tranzíció véget ért, feloldjuk a zárat
+
+          // Léptetjük a belső motort 
+          const next = this.slideManager.nextSlide();
+          // Rendereljük be hivatalosan a DOM-ba a már alul látott diát.
+          if (next) this.renderSlide(next, 0, 'forward');
+        }
+      });
+
+      // Zárjuk a navigációt a portál időtartamára!
+      this.isTransitioning = true;
+
+      // Hozzáadjuk a dokumentumhoz (átfedi a React/Vanilla appot)
+      document.body.appendChild(portal.createElement());
+      portal.start();
+      return;
+    }
+
     const next = this.slideManager.nextSlide();
     if (next) this.renderSlide(next, 0, 'forward'); // Direction: forward (explicit)
   }
 
   async handlePrev() {
+    if (this.isTransitioning) return;
     await this.ensureAudioFeedback();
     const prev = this.slideManager.prevSlide();
     if (prev) this.renderSlide(prev, 0, 'backward'); // Direction: backward

@@ -1,0 +1,67 @@
+/**
+ * DIGITÁLIS KULTÚRA VERSENY
+ * PORTAL TRANSITION (Teleport) EFFECTS (WebGL / Three.js)
+ */
+
+.dkv-portal-click-blocker {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2400;
+    /* Legfelül van, blokkolja a kattintásokat a tranzíció alatt */
+    background-color: transparent;
+    pointer-events: auto;
+    /* Csak ez fogja meg a kattintásokat */
+}
+
+/* Az új dia befoglaló rétege, amin a CSS clip-path maszk lesz */
+.dkv-portal-mask-container {
+    position: fixed;
+    /* Közvetlenül a viewport-hoz mérve */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2200;
+    /* A Shader vászon (canvas) *ALÁ* kell, mint tartalom */
+
+    /* Hardveres gyorsítás a maszk tágulásához */
+    will-change: clip-path;
+
+    /* Alap maszk, JS fogja az %-ot frissíteni frame-enként */
+    clip-path: ellipse(0vw 0vw at 50% 50%);
+    -webkit-clip-path: ellipse(0vw 0vw at 50% 50%);
+
+    background-color: #000;
+    /* Preloader háttér amíg nincs betöltve a kép */
+    pointer-events: none;
+}
+
+/* Az új dia ami a maszk alatt lakik (teljes méretű) */
+.dkv-portal-mask-container .dkv-slide-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2201;
+}
+
+/* A Fánk Portál rendering (WebGL Three.js canvas) */
+.dkv-portal-canvas {
+    position: fixed;
+    /* Közvetlenül a viewport-hoz mérve, izolálatlanul */
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 2300;
+    /* A maszk FÖLÉ kerül a portál effektünk (ami belül lyukas) */
+    pointer-events: none;
+
+    /* Mivel WebGL-ben alfa-csatornát (luma-key-t) használtam, NEM KELL mix-blend-mode! */
+}
