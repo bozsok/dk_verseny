@@ -295,7 +295,7 @@ class DigitalKulturaVerseny {
     this.layerUI.id = 'dkv-layer-ui';
     // Stílust a belekerülő GameInterface adja majd, de alapból áteresztő
     Object.assign(this.layerUI.style, {
-      position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '1000', pointerEvents: 'none'
+      position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '2500', pointerEvents: 'none'
     });
 
     app.appendChild(this.layerBackground);
@@ -1386,9 +1386,12 @@ class DigitalKulturaVerseny {
     const nextSlide = this.slideManager.slides[this.slideManager.currentIndex + 1];
 
     const isStationEnd = currentSlide?.metadata?.step === 3 && currentSlide?.metadata?.section?.startsWith('station_');
-    const isNextStationStart = nextSlide?.metadata?.step === 0 && nextSlide?.metadata?.section?.startsWith('station_');
+    const isNextSectionStart = nextSlide?.metadata?.step === 0 && (
+      nextSlide?.metadata?.section?.startsWith('station_') ||
+      nextSlide?.metadata?.section === 'final'
+    );
 
-    if (isStationEnd && isNextStationStart) {
+    if (isStationEnd && isNextSectionStart) {
       if (this.logger) this.logger.info('Portal Transition Triggered! (WebGL)');
 
       const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;

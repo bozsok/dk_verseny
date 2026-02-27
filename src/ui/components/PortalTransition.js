@@ -245,6 +245,7 @@ export class PortalTransition {
             uniform float iTime;
             uniform sampler2D iChannel0;
             uniform float uOpen;  // 0.0-1.0: portál nyitás (ease-out)
+            uniform float uZoom;  // 0.0-1.0: portál tágulás a képernyőn túlra
             
             varying vec2 vUv;
 
@@ -298,9 +299,10 @@ export class PortalTransition {
                 vec2 p_raw = fragCoord.xy / iResolution.xy - 0.5;
             p_raw.x *= iResolution.x / iResolution.y;
 
-                // === PORTÁL – mindig végleges méretben, körkörös maszk szabályozza a láthatóságot ===
+                // === PORTÁL – uZoom csökkenti a skálát → portál fizikailag nagyobb ===
                 vec2 p = p_raw;
-                p *= 3.077; // Fix végleges méret (nincs kinagyítás!)
+                float scale = mix(3.077, 0.15, uZoom); // 3.077=normál, 0.15=hatalmas (≈ 20x)
+                p *= scale;
                 
                 float rz = dualfbm(p);
 
@@ -327,7 +329,9 @@ export class PortalTransition {
 
                 // KÖRKÖRÖS MASZK: uOpen szabályozza a látható terület sugarát
                 // uOpen=0 → pont (0.001), uOpen=1 → teljes portál (0.5)
-                float maskRadius = mix(0.001, 0.5, uOpen);
+                // uZoom → a portál túltágul a képernyőn (0.5 → 2.0)
+                float maxRadius = mix(0.5, 2.0, uZoom);
+                float maskRadius = mix(0.001, maxRadius, uOpen);
                 float maskDist = length(p_raw);
                 float mask = smoothstep(maskRadius, maskRadius * 0.7, maskDist);
 
@@ -344,7 +348,8 @@ export class PortalTransition {
                 iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
                 iTime: { value: 0.0 },
                 iChannel0: { value: noiseTexture },
-                uOpen: { value: 0.0 }
+                uOpen: { value: 0.0 },
+                uZoom: { value: 0.0 }
             },
             transparent: true,
             blending: THREE.NormalBlending
@@ -390,9 +395,17 @@ export class PortalTransition {
             // Részecske pozíciók frissítése
             this._updateParticles(elapsed / 1000.0, phase);
 
+            // 3. FÁZIS: Portál tágulás a képernyőn túlra (9mp+, 2mp alatt)
+            let uZoom = 0;
+            if (elapsed > 9000) {
+                const rawZoom = Math.min((elapsed - 9000) / 2000.0, 1.0);
+                uZoom = rawZoom * rawZoom; // easeInQuad – lassan indul, gyorsul
+            }
+
             if (this.material) {
                 this.material.uniforms.iTime.value = elapsed / 1000.0;
                 this.material.uniforms.uOpen.value = uOpen;
+                this.material.uniforms.uZoom.value = uZoom;
             }
 
             // === KÉT PASS RENDERELÉS ===
@@ -412,11 +425,21 @@ export class PortalTransition {
                 // hole_p.y /= 1.666, és p = p_raw * 3.077
                 // Tehát a belső átlátszó zóna p_raw-ban ≈ 0.029 sugár → ~2.9vw / ~4.8vh
                 if (this.maskContainer) {
-                    // Ovális: 4000ms-től indul, 0.5mp fade-in
+                    // Ovális: 4200ms-től fade-in (változatlan)
                     const ovalProgress = Math.min(Math.max((elapsed - 4200) / 700, 0), 1);
                     this.maskContainer.style.opacity = ovalProgress;
-                    this.maskContainer.style.clipPath = `ellipse(20vh 35vh at 50% 50%)`;
+
+                    // Clip-path: ellipszis vh-ban, uZoom-mal nő
+                    const clipW = 20 + uZoom * 100;  // 20vh → 120vh
+                    const clipH = 35 + uZoom * 85;   // 35vh → 120vh
+                    this.maskContainer.style.clipPath = `ellipse(${clipW}vh ${clipH}vh at 50% 50%)`;
                 }
+            }
+
+            // Zoom vége: tranzíció befejezése → új dia átveszi az irányítást
+            if (uZoom >= 1) {
+                this.finish();
+                return;
             }
 
             this.animationFrameId = requestAnimationFrame(updateAnimation);
@@ -455,7 +478,7 @@ export class PortalTransition {
 
         window.removeEventListener('resize', this._handleResize);
 
-        // Three.js cleanup
+        // Three.js cleanup (erőforrások felszabadítása)
         if (this.renderer) {
             this.renderer.dispose();
         }
@@ -469,17 +492,23 @@ export class PortalTransition {
             this.particleGeometry.dispose();
         }
 
-        if (this.maskContainer && this.maskContainer.parentNode) {
-            this.maskContainer.parentNode.removeChild(this.maskContainer);
-        }
-        if (this.renderer && this.renderer.domElement.parentNode) {
-            this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
-        }
-        if (this.clickBlocker && this.clickBlocker.parentNode) {
-            this.clickBlocker.parentNode.removeChild(this.clickBlocker);
-        }
-
-        // Befejeztük a teljes animációt
+        // Először rendereljük az új diát
         this.onComplete();
+
+        // DOM cleanup KÉTSZERES rAF: 1. frame = DOM build, 2. frame = paint.
+        // Csak ezután töröljük a portál rétegeket.
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                if (this.maskContainer && this.maskContainer.parentNode) {
+                    this.maskContainer.parentNode.removeChild(this.maskContainer);
+                }
+                if (this.renderer && this.renderer.domElement.parentNode) {
+                    this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
+                }
+                if (this.clickBlocker && this.clickBlocker.parentNode) {
+                    this.clickBlocker.parentNode.removeChild(this.clickBlocker);
+                }
+            });
+        });
     }
 }

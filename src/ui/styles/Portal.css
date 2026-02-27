@@ -36,6 +36,8 @@
 
     background-color: #000;
     /* Preloader háttér amíg nincs betöltve a kép */
+    opacity: 0;
+    /* Kezdetben láthatatlan – a JS animáció állítja fokozatosan láthatóvá */
     pointer-events: none;
 }
 

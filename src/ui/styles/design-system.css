@@ -493,7 +493,7 @@ h3 {
   background: transparent;
   /* Removed #000 to allow Content Layer visibility */
   color: white;
-  z-index: 1000;
+  z-index: 2500;
   display: flex;
   flex-direction: column;
   pointer-events: none;
