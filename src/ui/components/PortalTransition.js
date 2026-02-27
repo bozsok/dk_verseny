@@ -412,10 +412,10 @@ export class PortalTransition {
                 // hole_p.y /= 1.666, és p = p_raw * 3.077
                 // Tehát a belső átlátszó zóna p_raw-ban ≈ 0.029 sugár → ~2.9vw / ~4.8vh
                 if (this.maskContainer) {
-                    const clipOpen = Math.min(uOpen * 1.3, 1.0); // Kicsit megelőzi a shader maszkot
-                    const clipW = clipOpen * 20;
-                    const clipH = clipOpen * 35;
-                    this.maskContainer.style.clipPath = `ellipse(${clipW}vh ${clipH}vh at 50% 50%)`;
+                    // Ovális: 4000ms-től indul, 0.5mp fade-in
+                    const ovalProgress = Math.min(Math.max((elapsed - 4200) / 700, 0), 1);
+                    this.maskContainer.style.opacity = ovalProgress;
+                    this.maskContainer.style.clipPath = `ellipse(20vh 35vh at 50% 50%)`;
                 }
             }
 
