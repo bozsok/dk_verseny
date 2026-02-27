@@ -12,8 +12,8 @@
     z-index: 2400;
     /* Legfelül van, blokkolja a kattintásokat a tranzíció alatt */
     background-color: transparent;
-    pointer-events: auto;
-    /* Csak ez fogja meg a kattintásokat */
+    pointer-events: none;
+    /* Nem blokkolja a kattintásokat – a kezelőszervek felette vannak */
 }
 
 /* Az új dia befoglaló rétege, amin a CSS clip-path maszk lesz */

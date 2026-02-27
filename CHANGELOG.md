@@ -5,6 +5,22 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.9.0] - 2026-02-27
+
+### Hozzáadva
+- **Portál VFX szekvencia** ✨
+  - **Three.js Points részecske rendszer:** 4 darab izzó, 3D-s pályákon keringő energiapont, `AdditiveBlending`-gel és radiális gradiens `CanvasTexture`-rel igazi ragyogás érdekében.
+  - **Kétpasszos renderelés:** `renderer.autoClear = false` – az 1. passz a részecskéket additívan rajzolja, a 2. passz a portál shader-t normál blendinggel rétegezi rá.
+  - **Anticipáció fázis (0–4 mp):** A részecskék a portál megjelenését előzik meg, jelezve, hogy valami készülődik.
+  - **Portál belső kép:** A portál fánk közepén (`alphaInner` által átlátszó zóna) a `maskContainer` CSS `clip-path: ellipse()` segítségével a következő helyszín képe jelenik meg, `uOpen`-nel szinkronban tágulva.
+  - **Körkörös maszk megnyitás:** A portál nem koordináta-skálázással, hanem `smoothstep` körkörös maszkkal jelenik meg – `uOpen=0`-nál rejtett, `uOpen=1`-nél teljes méret.
+  - **Core glow:** Kékes–fehér izzás a portál belső peremén.
+
+### Módosítva
+- **Portál shader letisztítása:** Az `uPhase`, `uFlash` és `ACESFilm` kódok eltávolítva – a shader most kizárólag a portál mintázatát és a körkörös maszkot kezeli.
+- **Portál teljes színnel jelenik meg:** Az `* uOpen` szorzó eltávolítva az alfából – a portál soha nem átlátszó/fakó a nyitás során.
+- **Click-blocker `pointer-events: none`:** A kezelőszervek (idővonal, avatar, gombok) kattinthatóak a portál réteg felett.
+
 ## [0.8.9] - 2026-02-23
 
 ### Hozzáadva

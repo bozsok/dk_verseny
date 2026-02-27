@@ -27,6 +27,13 @@ export class PortalTransition {
         this.material = null;
         this.plane = null;
 
+        // Részecske rendszer
+        this.particleScene = null;
+        this.particleMaterial = null;
+        this.particleGeometry = null;
+        this.particles = null;
+        this.particleData = []; // Egyedi pálya-paraméterek
+
         this._handleResize = this._handleResize.bind(this);
     }
 
@@ -59,6 +66,140 @@ export class PortalTransition {
         return fragment;
     }
 
+    // === RADIÁLIS GRADIENS TEXTÚRA RÉSZECSKÉKHEZ ===
+    _createGlowTexture() {
+        const size = 64;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        // Radiális gradiens: fehér közép → átlátszó szél
+        const gradient = ctx.createRadialGradient(
+            size / 2, size / 2, 0,
+            size / 2, size / 2, size / 2
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+        gradient.addColorStop(0.15, 'rgba(255, 255, 255, 0.8)');
+        gradient.addColorStop(0.4, 'rgba(200, 220, 255, 0.3)');
+        gradient.addColorStop(0.7, 'rgba(150, 180, 255, 0.05)');
+        gradient.addColorStop(1.0, 'rgba(100, 150, 255, 0.0)');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, size, size);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+        return texture;
+    }
+
+    // === RÉSZECSKE RENDSZER INICIALIZÁLÁSA ===
+    _initParticles() {
+        this.particleScene = new THREE.Scene();
+
+        const PARTICLE_COUNT = 4;
+        this.particleGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(PARTICLE_COUNT * 3);
+        const sizes = new Float32Array(PARTICLE_COUNT);
+
+        // Egyedi pálya-paraméterek generálása minden részecskéhez
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const h1 = Math.sin(i * 127.1) * 311.7 % 1;
+            const h2 = Math.sin(i * 269.5) * 183.3 % 1;
+            const h3 = Math.sin(i * 419.2) * 547.9 % 1;
+            const h4 = Math.sin(i * 631.3) * 729.1 % 1;
+
+            this.particleData.push({
+                speed: 1.2 + Math.abs(h1) * 2.0,           // Keringési sebesség
+                radius: 0.03 + Math.abs(h2) * 0.04,        // Pályasugár (szoros!)
+                tiltAngle: (Math.abs(h3) - 0.5) * 1.4,     // Pályasík döntése
+                phaseOffset: Math.abs(h4) * Math.PI * 2,    // Kezdő fázis
+                baseSize: 15 + Math.abs(h3) * 20            // Pont méret pixelben
+            });
+
+            positions[i * 3] = 0;
+            positions[i * 3 + 1] = 0;
+            positions[i * 3 + 2] = 0;
+            sizes[i] = 0;
+        }
+
+        this.particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        this.particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        const glowTexture = this._createGlowTexture();
+
+        // Vertex shader: egyedi méret gl_PointSize-nak
+        const particleVS = `
+            attribute float size;
+            void main() {
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_PointSize = size;
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        `;
+
+        // Fragment shader: textúra alapú fénypont
+        const particleFS = `
+            uniform sampler2D uTexture;
+            void main() {
+                vec4 texColor = texture2D(uTexture, gl_PointCoord);
+                gl_FragColor = texColor;
+            }
+        `;
+
+        this.particleMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                uTexture: { value: glowTexture }
+            },
+            vertexShader: particleVS,
+            fragmentShader: particleFS,
+            transparent: true,
+            blending: THREE.AdditiveBlending,   // !!! ADDITÍV = igazi ragyogás
+            depthWrite: false,
+            depthTest: false
+        });
+
+        this.particles = new THREE.Points(this.particleGeometry, this.particleMaterial);
+        this.particleScene.add(this.particles);
+    }
+
+    // === RÉSZECSKE POZÍCIÓK FRISSÍTÉSE ===
+    _updateParticles(time, phase) {
+        if (!this.particleGeometry) return;
+
+        const positions = this.particleGeometry.attributes.position.array;
+        const sizes = this.particleGeometry.attributes.size.array;
+        const aspect = window.innerWidth / window.innerHeight;
+
+        for (let i = 0; i < this.particleData.length; i++) {
+            const pd = this.particleData[i];
+
+            // Sugár animáció: fokozatos megjelenés, stabil pálya
+            const orbitRadius = Math.min(phase / 0.2, 1.0) * pd.radius;
+
+            // Alfa / méret animáció: fade-in 0–0.1, fade-out 0.75–0.95
+            let alpha = Math.min(phase / 0.1, 1.0);
+            if (phase > 0.75) alpha *= Math.max(1.0 - (phase - 0.75) / 0.2, 0.0);
+
+            // 3D pozíció számítás döntött pályasíkkal
+            const angle = time * pd.speed + pd.phaseOffset;
+            const x3d = Math.cos(angle) * orbitRadius;
+            const yFlat = Math.sin(angle) * orbitRadius;
+            const y3d = yFlat * Math.cos(pd.tiltAngle);
+
+            // Ortografikus kamera -1..1 tartomány, aspect ratio korrekció
+            positions[i * 3] = x3d / aspect * 2.0;  // X: aspect-kompenzált
+            positions[i * 3 + 1] = y3d * 2.0;       // Y
+            positions[i * 3 + 2] = 0;
+
+            // Méret: pixelben, alfa-skálázott
+            sizes[i] = pd.baseSize * alpha * Math.min(window.devicePixelRatio, 2);
+        }
+
+        this.particleGeometry.attributes.position.needsUpdate = true;
+        this.particleGeometry.attributes.size.needsUpdate = true;
+    }
+
     initThreeJs() {
         this.scene = new THREE.Scene();
 
@@ -67,11 +208,10 @@ export class PortalTransition {
 
         this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimalizáció
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.autoClear = false; // !!! Két pass rendereléshez kell
 
         // --- 1. ZAJ TEXTÚRA GENERÁLÁSA iChannel0 SZÁMÁRA ---
-        // A Shadertoy textúra (iChannel0) hiánya matematikai hash-t igényelt korábban, ami rángatott.
-        // Visszatérünk az eredeti ShaderToy módszerhez egy DataTexture zajjal.
         const size = 256;
         const data = new Uint8Array(size * size * 4);
         for (let i = 0; i < size * size * 4; i += 4) {
@@ -104,6 +244,7 @@ export class PortalTransition {
             uniform vec2 iResolution;
             uniform float iTime;
             uniform sampler2D iChannel0;
+            uniform float uOpen;  // 0.0-1.0: portál nyitás (ease-out)
             
             varying vec2 vUv;
 
@@ -112,7 +253,6 @@ export class PortalTransition {
 
             mat2 makem2(in float theta){float c = cos(theta);float s = sin(theta);return mat2(c,-s,s,c);}
             
-            // AZ EREDETI TEXTÚRA ALAPÚ ZAJ (Ez adja az eredeti lágy pulzálást!)
             float noise( in vec2 x ){return texture2D(iChannel0, x*.01).x;}
 
             float fbm(in vec2 p)
@@ -155,35 +295,43 @@ export class PortalTransition {
 
         void main() {
                 vec2 fragCoord = vUv * iResolution;
-                vec2 p = fragCoord.xy / iResolution.xy - 0.5;
-            p.x *= iResolution.x / iResolution.y;
-                // Fix eredeti ShaderToy méret (A forráskódban a lencse kintrébb is helyezkedik el a "p *= 4" miatt)
-                p *= 4.0;
-                vec2 p_scaled = p;
-                
-                float rz = dualfbm(p_scaled);
+                vec2 p_raw = fragCoord.xy / iResolution.xy - 0.5;
+            p_raw.x *= iResolution.x / iResolution.y;
 
-                rz *= abs((-circ(vec2(p_scaled.x / 4.2, p_scaled.y / 7.0))));
-                rz *= abs((-circ(vec2(p_scaled.x / 4.2, p_scaled.y / 7.0))));
-                rz *= abs((-circ(vec2(p_scaled.x / 4.2, p_scaled.y / 7.0))));
+                // === PORTÁL – mindig végleges méretben, körkörös maszk szabályozza a láthatóságot ===
+                vec2 p = p_raw;
+                p *= 3.077; // Fix végleges méret (nincs kinagyítás!)
+                
+                float rz = dualfbm(p);
+
+                rz *= abs((-circ(vec2(p.x / 4.2, p.y / 7.0))));
+                rz *= abs((-circ(vec2(p.x / 4.2, p.y / 7.0))));
+                rz *= abs((-circ(vec2(p.x / 4.2, p.y / 7.0))));
                 
                 vec3 col = vec3(.1, 0.1, 0.4) / rz;
                 col = pow(abs(col), vec3(.99));
 
-                // ALPHA KISZÁMÍTÁSA A LÁTHATÓSÁGHOZ (Ettől még az eredeti shadertoy algoritmus fut!)
+                // ALFA az eredeti portálszínből
                 float luma = dot(col, vec3(0.299, 0.587, 0.114));
                 float alphaOuter = smoothstep(0.02, 0.25, luma);
 
-                // 2. Belső lyuk kialakítása (A "fánk" közepe maradjon átlátszó)
-                vec2 unscaled_p = p_scaled;
-                // ÁLLÓ ELLIPSZIS LÉTREHOZÁSA (A y-t torzítjuk az 1.666 arányszámmal)
-                unscaled_p.y /= 1.666; 
-                float dist = length(unscaled_p);
-                
-                // Mivel Y osztva lett, X-en a sugár 0.09, Y-on 0.15 marad (álló)
+                // Belső lyuk (fánk közepe átlátszó)
+                vec2 hole_p = p;
+                hole_p.y /= 1.666; 
+                float dist = length(hole_p);
                 float alphaInner = smoothstep(0.09, 0.20, dist);
 
-                float finalAlpha = alphaOuter * alphaInner;
+                // CORE GLOW (belső perem izzás)
+                float glowZone = smoothstep(0.20, 0.09, dist) * smoothstep(0.02, 0.09, dist);
+                col += vec3(0.3, 0.5, 1.0) * glowZone * 0.5 * uOpen;
+
+                // KÖRKÖRÖS MASZK: uOpen szabályozza a látható terület sugarát
+                // uOpen=0 → pont (0.001), uOpen=1 → teljes portál (0.5)
+                float maskRadius = mix(0.001, 0.5, uOpen);
+                float maskDist = length(p_raw);
+                float mask = smoothstep(maskRadius, maskRadius * 0.7, maskDist);
+
+                float finalAlpha = alphaOuter * alphaInner * mask;
 
                 gl_FragColor = vec4(col, finalAlpha);
         }
@@ -195,7 +343,8 @@ export class PortalTransition {
             uniforms: {
                 iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
                 iTime: { value: 0.0 },
-                iChannel0: { value: noiseTexture }
+                iChannel0: { value: noiseTexture },
+                uOpen: { value: 0.0 }
             },
             transparent: true,
             blending: THREE.NormalBlending
@@ -203,6 +352,9 @@ export class PortalTransition {
 
         this.plane = new THREE.Mesh(geometry, this.material);
         this.scene.add(this.plane);
+
+        // === RÉSZECSKE RENDSZER INICIALIZÁLÁSA ===
+        this._initParticles();
     }
 
     _handleResize() {
@@ -222,15 +374,50 @@ export class PortalTransition {
 
             const elapsed = timestamp - startTime;
 
-            // Nincs CSS maszk tágulás!
-            // Nincs Shader lencsetágulás!
+            // === FÁZISLOGIKA ===
+            let phase = 0, uFlash = 0, uOpen = 0;
 
-            // Csak sima WebGL renderelés, kizárólag az idő telik (zajpulzálás)
-            if (this.material) {
-                this.material.uniforms.iTime.value = elapsed / 1000.0;
+            if (elapsed <= 4000) {
+                // 1. FÁZIS: Anticipáció (0–4 mp) – részecskék keringenek
+                phase = elapsed / 4000.0;
+            } else {
+                // 2. FÁZIS: Portál tágulás (4.0 mp+)
+                phase = 1.0;
+                const rawOpen = Math.min((elapsed - 4000) / 1000.0, 1.0);
+                uOpen = 1 - Math.pow(1 - rawOpen, 3);
             }
 
-            this.renderer.render(this.scene, this.camera);
+            // Részecske pozíciók frissítése
+            this._updateParticles(elapsed / 1000.0, phase);
+
+            if (this.material) {
+                this.material.uniforms.iTime.value = elapsed / 1000.0;
+                this.material.uniforms.uOpen.value = uOpen;
+            }
+
+            // === KÉT PASS RENDERELÉS ===
+            this.renderer.clear();
+
+            // 1. PASS: Részecskék (ADDITÍV blending)
+            if (elapsed <= 4000) {
+                this.renderer.render(this.particleScene, this.camera);
+            }
+
+            // 2. PASS: Portál shader (csak 4mp után!)
+            if (elapsed > 4000) {
+                this.renderer.render(this.scene, this.camera);
+
+                // MaskContainer clip-path: a portál belső lyukjával szinkronban
+                // A shader-ben a lyuk: smoothstep(0.09, 0.20, dist) ahol dist = length(hole_p)
+                // hole_p.y /= 1.666, és p = p_raw * 3.077
+                // Tehát a belső átlátszó zóna p_raw-ban ≈ 0.029 sugár → ~2.9vw / ~4.8vh
+                if (this.maskContainer) {
+                    const clipOpen = Math.min(uOpen * 1.3, 1.0); // Kicsit megelőzi a shader maszkot
+                    const clipW = clipOpen * 20;
+                    const clipH = clipOpen * 35;
+                    this.maskContainer.style.clipPath = `ellipse(${clipW}vh ${clipH}vh at 50% 50%)`;
+                }
+            }
 
             this.animationFrameId = requestAnimationFrame(updateAnimation);
         };
@@ -274,6 +461,12 @@ export class PortalTransition {
         }
         if (this.material) {
             this.material.dispose();
+        }
+        if (this.particleMaterial) {
+            this.particleMaterial.dispose();
+        }
+        if (this.particleGeometry) {
+            this.particleGeometry.dispose();
         }
 
         if (this.maskContainer && this.maskContainer.parentNode) {
