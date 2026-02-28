@@ -195,35 +195,75 @@ class DebugPanel {
 
         // Group by section
         const sections = this.debugManager.sections;
-        sections.forEach(section => {
+
+        // Asynchronous videó meglét ellenőrzés
+        const videoExistsCache = {};
+        const checkVideoExists = async (slide, slideKey) => {
+            if (slide.content?.videoUrl) return true; // Ha benne van a configban, biztosan van
+            const url = `/assets/video/grade${this.debugManager.currentGrade}/${slideKey}.mp4`;
+            try {
+                const response = await fetch(url, { method: 'HEAD', cache: 'no-cache' });
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    // Ha Vite visszadobja az index.html-t (SPA fallback), akkor text/html lesz
+                    if (contentType && contentType.includes('text/html')) {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            } catch {
+                return false;
+            }
+        };
+
+        for (const section of sections) {
             const optgroup = document.createElement('optgroup');
             optgroup.label = section.name;
 
-            section.slideIndices.forEach(idx => {
+            for (const idx of section.slideIndices) {
                 const slide = this.debugManager.slides[idx];
-                if (!slide) return;
+                if (!slide) continue;
 
                 const option = document.createElement('option');
                 const slideKey = this._getSlideKey(slide);
                 option.value = slideKey;
                 option.dataset.slideIndex = idx; // Store index for lookup
-                option.textContent = slide.title;
+
+                // Truncate title to avoid infinite width dropdown in OS level rendering
+                let displayTitle = slide.title || slideKey;
+                if (displayTitle.length > 40) {
+                    displayTitle = displayTitle.substring(0, 37) + '...';
+                }
+                option.textContent = displayTitle;
 
                 // Mark if has video config
                 if (this.videoConfig.slides[slideKey]) {
                     option.textContent += ' ⚙️';
                 }
 
-                // Mark if has video URL
-                if (slide.content?.videoUrl) {
+                // Async fetch-check a fájl létezésére
+                const hasVideo = await checkVideoExists(slide, slideKey);
+                if (hasVideo) {
                     option.textContent += ' 📹';
+                    videoExistsCache[slideKey] = true; // Mentjük le a későbbi _updateVideoSettings() -hoz
+
+                    // AUTO-DETECT: Ha a json configban nem volt videoUrl, de a hálózaton létezik a fájl,
+                    // beinjektáljuk a slide objektumba a futásidejű állapotba, hogy a VideoSlide használja
+                    if (!slide.content) slide.content = {};
+                    if (!slide.content.videoUrl) {
+                        slide.content.videoUrl = `/assets/video/grade${this.debugManager.currentGrade}/${slideKey}.mp4`;
+                    }
                 }
 
                 optgroup.appendChild(option);
-            });
+            }
 
             select.appendChild(optgroup);
-        });
+        }
+
+        // Kimentjük az osztály szintjére az eredményt, hogy a Settings frissítő is tudjon róla
+        this.videoExistsCache = videoExistsCache;
 
         select.addEventListener('change', () => {
             this.selectedVideoSlide = select.value;
@@ -726,9 +766,12 @@ class DebugPanel {
         const slide = (slideIndex !== undefined && slideIndex >= 0)
             ? this.debugManager.slides[slideIndex]
             : null;
+
         if (statusDiv) {
-            if (slide?.content?.videoUrl) {
-                statusDiv.innerHTML = `<span class="status-ok">✅ Videó van: ${slide.content.videoUrl.split('/').pop()}</span>`;
+            // Check mind a json config arrayt, mind a valós (fetched) cache arrayt
+            if (slide?.content?.videoUrl || (this.videoExistsCache && this.videoExistsCache[slideKey])) {
+                const videoName = slide?.content?.videoUrl ? slide.content.videoUrl.split('/').pop() : `${slideKey}.mp4`;
+                statusDiv.innerHTML = `<span class="status-ok">✅ Videó van: ${videoName}</span>`;
             } else {
                 statusDiv.innerHTML = `<span class="status-warn">⚠️ Nincs videó ehhez a diához</span>`;
             }

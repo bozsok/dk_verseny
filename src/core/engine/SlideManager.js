@@ -28,6 +28,41 @@ class SlideManager {
             const module = await import(`../../content/grade${grade}/config.js`);
             this.slides = module.createConfig();
 
+            // Auto-detect videók: végigiterálunk a diákon és megnézzük, hogy az adott slideId-vel létezik-e .mp4
+            const fetchPromises = this.slides.map(async (slide, idx) => {
+                // A diák sorrendje shuffled lehet (Állomások), így az imageUrl-ből kell kibontani a slide azonosítót
+                let slideKey = `slide_${String(idx + 1).padStart(2, '0')}`;
+                const urlMatch = slide.content?.imageUrl?.match(/slide_(\d+)/);
+                if (urlMatch) {
+                    slideKey = `slide_${urlMatch[1]}`;
+                } else if (slide.id?.split('_')[0] === 'station') {
+                    slideKey = slide.id;
+                }
+
+                // Ha már be lett állítva a JSON-ben, meghagyjuk az eredeti típusát
+                if (slide.content && slide.content.videoUrl) {
+                    return;
+                }
+
+                const url = `/assets/video/grade${grade}/${slideKey}.mp4`;
+                try {
+                    const response = await fetch(url, { method: 'HEAD', cache: 'no-cache' });
+                    if (response.ok) {
+                        const contentType = response.headers.get('content-type');
+                        // Vite SPA fallback szűrés
+                        if (contentType && !contentType.includes('text/html')) {
+                            // A fájl valóban egy videó
+                            if (!slide.content) slide.content = {};
+                            slide.content.videoUrl = url;
+                            this.logger && this.logger.info(`Auto-detected video for ${slideKey}`);
+                        }
+                    }
+                } catch {
+                    // Csendesen elnyomjuk, ha nincs videó
+                }
+            });
+            await Promise.all(fetchPromises);
+
             this.logger && this.logger.info(`Loaded config for grade ${grade}`, { slides: this.slides.length });
         } catch (error) {
             console.error(`Failed to load config for grade ${grade}:`, error);

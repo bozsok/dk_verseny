@@ -200,12 +200,17 @@ export const createConfig = () => {
 
             let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1} | Order: ${stationIndices.map(n => n + 1).join('-')})</span>`;
 
-            const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
-            addSlide(SLIDE_TYPES.STORY, title, 'Teljesítsétek a kihívást...', {
+            const slideConfig = {
                 imageUrl: `assets/images/grade3/slides/slide_${fileNumStr}.jpg`,
                 narration: narrationText,
                 audioSrc: `assets/audio/grade3/slide_${fileNumStr}.mp3`
-            }, { section: `station_${originalStationIdx + 1}`, step }, slideId);
+            };
+
+            // Apply video config from JSON (Debug Panel settings)
+            applyVideoConfig(slideConfig, `slide_${fileNumStr}`);
+
+            const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
+            addSlide(SLIDE_TYPES.STORY, title, 'Teljesítsétek a kihívást...', slideConfig, { section: `station_${originalStationIdx + 1}`, step }, slideId);
         }
     }
 
@@ -220,11 +225,15 @@ export const createConfig = () => {
 
         let narrationText = `<b>${title}</b><br><br>Itt olvasható majd a kaland története.<br>Jelenleg ez egy helyőrző szöveg a ${i}. diánál.`;
 
-        addSlide(SLIDE_TYPES.STORY, title, 'A végső megmérettetés...', {
+        const slideConfig = {
             imageUrl: `assets/images/grade3/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade3/slide_${slideNum}.mp3`
-        }, { section: 'final', step: i - 25 }, `final_${i - 24}`);
+        };
+
+        applyVideoConfig(slideConfig, `slide_${slideNum}`);
+
+        addSlide(SLIDE_TYPES.STORY, title, 'A végső megmérettetés...', slideConfig, { section: 'final', step: i - 25 }, `final_${i - 24}`);
     }
 
     // === 2. FELADATOK (Később) ===

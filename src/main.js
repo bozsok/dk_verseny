@@ -1332,13 +1332,14 @@ class DigitalKulturaVerseny {
   }
 
   // --- DOM GENERÁLÓ SEGÉDFÜGGVÉNYEK A PORTÁLHOZ ---
-  _instantiateSlideComponent(slide) {
+  _instantiateSlideComponent(slide, isPreview = false) {
     const commonOptions = {
       logger: this.logger,
       slideManager: this.slideManager,
       onNext: () => this.handleNext(),
       onPrev: () => this.handlePrev(),
-      onComplete: () => this.slideManager.completeCurrentSlide()
+      onComplete: () => this.slideManager.completeCurrentSlide(),
+      isPreview
     };
     let newComponent;
     switch (slide.type) {
@@ -1374,6 +1375,28 @@ class DigitalKulturaVerseny {
 
   // --- SAFE NAVIGATION HANDLERS ---
 
+  /**
+   * Visszadja a ténylegesen következő diát a skip-szabályok (Debug/Prod) figyelembevételével,
+   * anélkül, hogy megváltoztatná az állapotot.
+   */
+  _peekNextValidSlide() {
+    let peekIndex = this.slideManager.currentIndex + 1;
+    const slides = this.slideManager.slides;
+
+    while (peekIndex < slides.length) {
+      const slide = slides[peekIndex];
+      const shouldSkip = this.debugManager
+        ? this.debugManager.shouldSkipSlide(peekIndex)
+        : (this.buildConfig?.enabled && this._prodShouldSkipSlide(slide, peekIndex));
+
+      if (!shouldSkip) {
+        return slide; // Ez lesz az első NEM skippelt dia
+      }
+      peekIndex++;
+    }
+    return null; // Nincs több valid dia
+  }
+
   async handleNext() {
     if (this.isTransitioning) {
       if (this.logger) this.logger.warn('Navigáció blokkolva: Portál tranzíció folyamatban van.');
@@ -1383,7 +1406,16 @@ class DigitalKulturaVerseny {
     await this.ensureAudioFeedback();
 
     const currentSlide = this.slideManager.getCurrentSlide();
-    const nextSlide = this.slideManager.slides[this.slideManager.currentIndex + 1];
+    // A sima `this.slideManager.slides[this.slideManager.currentIndex + 1]` helyett okos peek-et használunk,
+    // amely ismeri a Debug Panel (vagy Prod build) skip beállításait, így a portál jó képre vált!
+    const nextSlide = this._peekNextValidSlide();
+
+    if (!nextSlide) {
+      // Ha nincs több dia, játsszuk le a vége-folyamatot a sima nextSlide meghívásával
+      const next = this.slideManager.nextSlide();
+      if (next) this.renderSlide(next, 0, 'forward');
+      return;
+    }
 
     const isStationEnd = currentSlide?.metadata?.step === 3 && currentSlide?.metadata?.section?.startsWith('station_');
     const isNextSectionStart = nextSlide?.metadata?.step === 0 && (
@@ -1398,11 +1430,48 @@ class DigitalKulturaVerseny {
       const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
       const isFullscreen = [SLIDE_TYPES.WELCOME, SLIDE_TYPES.REGISTRATION, SLIDE_TYPES.CHARACTER].includes(nextSlide.type);
 
-      const { newComponent } = this._instantiateSlideComponent(nextSlide);
+      // Portál előnézetnél (PortalTransition mögött) a videó lejátszást letiltjuk (isPreview = true)
+      const { newComponent } = this._instantiateSlideComponent(nextSlide, true);
       const nextSlideDOM = this._createSlideDOMElement(newComponent, nextSlide, isFullscreen, gradeClass);
+
+      // Állomás-függő portál színek (4 színű paletta per állomás)
+      const hexToRgb = (hex) => {
+        const n = parseInt(hex.replace('#', ''), 16);
+        return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255];
+      };
+
+      const portalColorMap = {
+        station_1: [ // Labirintuskert (4 db egyedi szín)
+          hexToRgb('#1c4708'), hexToRgb('#1c4708'),
+          hexToRgb('#1c4708'), hexToRgb('#063819')
+        ],
+        station_2: [ // Adat-tenger (jelenleg egy szín megadva, 4x klónozzuk)
+          hexToRgb('#256489'), hexToRgb('#153f58'),
+          hexToRgb('#153f58'), hexToRgb('#153f58')
+        ],
+        station_3: [ // Tudás Torony #TODO
+          hexToRgb('#306169'), hexToRgb('#306169'),
+          hexToRgb('#306169'), hexToRgb('#134d57')
+        ],
+        station_4: [ // Pixel Palota #TODO
+          hexToRgb('#122a36'), hexToRgb('#122a36'),
+          hexToRgb('#122a36'), hexToRgb('#1f3642')
+        ],
+        station_5: [ // Hangerdő #TODO
+          hexToRgb('#1d320b'), hexToRgb('#1d320b'),
+          hexToRgb('#1d320b'), hexToRgb('#214603')
+        ],
+        final: [ // Finálé #TODO
+          hexToRgb('#0e2e47'), hexToRgb('#0e2e47'),
+          hexToRgb('#0e2e47'), hexToRgb('#162c37')
+        ]
+      };
+      // Ha nincs megadva, a PortalTransition class default kékjét használja
+      const activeColors = portalColorMap[nextSlide?.metadata?.section] || null;
 
       const portal = new PortalTransition({
         newSlideHtml: nextSlideDOM,
+        colors: activeColors,
         animationConfig: {
           duration: 3500, // A WebGL shader miatt adhatunk neki több időt
           keyframes: [

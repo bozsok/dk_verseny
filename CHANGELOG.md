@@ -5,6 +5,39 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.9.2] - 2026-02-28
+
+### Hozzáadva
+- **Automatikus Videófelismerés (Debug & Éles motor):** A `Debug Panel` mellett immár a `SlideManager` is automatikusan ellenőrzi (`HEAD` kérésekkel) a `/public/assets/video/...` mappát pálya (grade) inicializáláskor. Ha a diának megfelelő nevű videót talál (Pl.: `slide_05.mp4`), felülírja a dia típusát `SLIDE_TYPES.VIDEO`-ra és beállítja az elérést. Így a videók (mind az intro, mind az állomásoké) élesben le fognak játszódni `video-config.json` módosítása nélkül is az elhelyezést követően.
+
+### Javítva
+- **Debug panel:** A "Videó" fül alatti legördülő dia-kiválasztó (`Select`) mező szélessége korlátozásra került (JS `substring` karakter limit), így hosszú dia-nevek esetén sem nyílik túl a panel határain maga az operációs rendszer által rajzolt popup.
+- **Automatikus Videófelismerés Célzottsága:** A `HEAD` kérés feldolgozásához beépült egy `Content-Type` ellenőrzés (kiszűrve a `text/html`-t), kiküszöbölve ezzel a Vite lokális szerver SPA fallbackjéből származó hamis pozitív találatokat (nem létező videók fals validálása).
+- **Portál szűréskezelése:** Kijavítva az a hiba, ami miatt a `Debug Panel`-ben történő diaszűréskor a portál átlapolódása alatti háttérkép deszinkronba került a ténylegesen következő prezentált dia hátterével. A pontos DOM-kép generálásához bevezetésre került a `_peekNextValidSlide()` logika.
+- **Portál Videólejátszás Kiküszöbölése:** A portál átmenet közben az ideiglenesen legenerált következő dia ezentúl `isPreview` módban példányosul, ami letiltja a `StorySlide` videólejátszását a tranzíció alatt (csak a "poster" statikus kép jelenik meg az átlapolódás során, elkerülve a dupla/zavaró videóidítást).
+- Belső transzparens "lyuk" (Alpha átmenet) fekete peremének kijavítása.
+- Fehér színkezelés a "core glow" részen `premultiplied alpha` segítségével.
+
+### Módosítva
+- **Portál Shader Újratervezés:** A portál korábbi `color / rz` számítási logikája szétbontásra került független skaláris `glow` (fényerő, struktúra) és szín (`color`) rétegekre. Ezáltal a portál domináns fehér sávja és belső lyuk átmérője fix és konzisztens maradt, függetlenül az alkalmazott színektől.
+- **Színkeveredési logika:** Teljesen új, súlyozott négyzetes fbm (folyamatos zaj) alapú színkeveredési logika valósult meg, amely 4 db szabadon definiálható, fáziseltolt szín (hex paletta) örvénylő egybeolvadását biztosítja minden állomásnál. Megszűnt a csatorna-klampolás miatti nem kívánt türkizes torzulás a sötétkék színeknél.
+- **Állomás-függő portál színek:** A `main.js`-ben paraméterezhetővé váltak az állomásokhoz tartozó portálszínek 4 független hex értékből álló tömbben (pl. a Labirintuskert 4 zöld árnyalatot használ), amely színeket a WebGL ShaderMaterial Uniform változóin keresztül adunk át.
+
+## [0.9.1] - 2026-02-28
+
+
+### Hozzáadva
+- **Portál állomás-függő szín:** Egyetlen `uColor` uniform a shaderben, amely állomásonként eltérő portálszínt biztosít (pl. Labirintuskert: `#4c6d5a`). A szín luminanciája automatikusan normalizálódik, hogy a fehér sáv vastagsága és a belső lyuk mérete bármilyen szín esetén azonos maradjon.
+- **Portál → Finálé tranzíció:** Az 5. állomás (`station_5`) utolsó diájáról a Finálé (`section: 'final'`) első diájára is portál tranzíció indul.
+
+### Módosítva
+- **UI z-index javítás:** A `#dkv-layer-ui` z-index értéke 1000-ről 2500-ra emelve, hogy a kezelőszervek (gombok, idővonal, avatar, pontszám) mindig a portál rétegek (2200–2400) felett legyenek.
+- **Finish pattanás javítás:** A portál DOM cleanup `requestAnimationFrame` kettős késleltetéssel (double rAF) történik, így az új dia kirajzolása után törlődnek a portál rétegek – nincs fekete villanás.
+- **Portál maskContainer kezdeti opacity:** CSS-ben `opacity: 0`-ról indulva a DOM-ba kerüléskor láthatatlan, a JS animáció állítja fokozatosan láthatóvá – nincs indulási pattanás.
+- **Háttérkép ovális tágulás leválasztása:** Az ovális clip-path saját `ovalZoom = pow(uZoom, 1.5)` ütemmel tágul, függetlenül a portál shader `uZoom`-jától – lassabban indul, a végén beéri.
+- **Háttérkép teljes képernyős lefedés:** Az ellipszis `120vh × 120vh`-ra nő (`uZoom=1`-nél), ami a 16:9-es képernyő átlóját (≈102vh) bőven lefedi.
+- **Fehér sáv vastagságának szabályozása:** A `circ()` függvény meredeksége hangolhatóvá vált a szorzó értékkel (eredeti: `3.`, jelenlegi: felhasználó által beállított).
+
 ## [0.9.0] - 2026-02-27
 
 ### Hozzáadva

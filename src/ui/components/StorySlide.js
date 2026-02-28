@@ -5,8 +5,9 @@
  * tartalmakat jelenít meg. Támogatja a 'Poster Image' -> 'Video' átmenetet.
  */
 class StorySlide {
-    constructor(slideData) {
+    constructor(slideData, options = {}) {
         this.slideData = slideData;
+        this.options = options;
         this.element = null;
         this.videoElement = null;
         this.imageLayer = null;
@@ -36,8 +37,8 @@ class StorySlide {
         const videoDelay = content.videoDelay ?? 1000; // Default: 1s (backwards compatible)
         const videoLoop = content.videoLoop ?? true;   // Default: true (backwards compatible)
 
-        // 1. VIDEÓ RÉTEG (Alul)
-        if (videoUrl) {
+        // 1. VIDEÓ RÉTEG (Alul) - Csak akkor, ha nincs előnézeti (portal) módban!
+        if (videoUrl && !this.options.isPreview) {
             const video = document.createElement('video');
             video.src = videoUrl;
             video.muted = true; // Ambient háttérvideó

@@ -16,6 +16,12 @@ export class PortalTransition {
         };
         this.onComplete = options.onComplete || (() => { });
 
+        // Portál színek (4 szín, fbm-alapú örvénylő keveredéssel)
+        // Default: eredeti kék minden pozícióban
+        const defaultBlue = [0.1, 0.1, 0.4];
+        const c = options.colors || [defaultBlue, defaultBlue, defaultBlue, defaultBlue];
+        this.colors = c.map(rgb => new THREE.Vector3(rgb[0], rgb[1], rgb[2]));
+
         this.clickBlocker = null;
         this.maskContainer = null;
         this.animationFrameId = null;
@@ -246,6 +252,10 @@ export class PortalTransition {
             uniform sampler2D iChannel0;
             uniform float uOpen;  // 0.0-1.0: portál nyitás (ease-out)
             uniform float uZoom;  // 0.0-1.0: portál tágulás a képernyőn túlra
+            uniform vec3 uColor1;
+            uniform vec3 uColor2;
+            uniform vec3 uColor3;
+            uniform vec3 uColor4;
             
             varying vec2 vUv;
 
@@ -291,7 +301,7 @@ export class PortalTransition {
         {
                 float r = length(p);
             r = log(sqrt(r));
-            return abs(mod(r * 2., tau) - 4.54) * 3. + .5;
+            return abs(mod(r * 2., tau) - 4.54) * 3. + .5; // 6. = fehér sáv vékonyabb (3 volt az eredeti érték)
         }
 
         void main() {
@@ -301,41 +311,77 @@ export class PortalTransition {
 
                 // === PORTÁL – uZoom csökkenti a skálát → portál fizikailag nagyobb ===
                 vec2 p = p_raw;
-                float scale = mix(3.077, 0.15, uZoom); // 3.077=normál, 0.15=hatalmas (≈ 20x)
+                float scale = mix(3.077, 0.15, uZoom);
                 p *= scale;
-                
+
+                // === 1. STRUKTÚRA: skaláris fényerő (szín-független) ===
                 float rz = dualfbm(p);
-
                 rz *= abs((-circ(vec2(p.x / 4.2, p.y / 7.0))));
                 rz *= abs((-circ(vec2(p.x / 4.2, p.y / 7.0))));
                 rz *= abs((-circ(vec2(p.x / 4.2, p.y / 7.0))));
-                
-                vec3 col = vec3(.1, 0.1, 0.4) / rz;
-                col = pow(abs(col), vec3(.99));
+                float glow = 1.0 / max(rz, 0.002);
 
-                // ALFA az eredeti portálszínből
-                float luma = dot(col, vec3(0.299, 0.587, 0.114));
-                float alphaOuter = smoothstep(0.02, 0.25, luma);
+                // === 2. SZÍNEK: 4 szín fbm-alapú örvénylő keveredése ===
+                // 4 független, fáziseltolt zaj a kiegyensúlyozott eloszláshoz
+                float w1 = fbm(p * 2.0 + time * 3.0);
+                float w2 = fbm(p * 2.0 - time * 2.5 + vec2(10.0));
+                float w3 = fbm(p * 2.3 + time * 4.0 + vec2(20.0, -10.0));
+                float w4 = fbm(p * 2.1 - time * 3.5 + vec2(-15.0, 25.0));
 
-                // Belső lyuk (fánk közepe átlátszó)
+                // Kontraszt növelése a határozottabb elkülönülésért
+                w1 = pow(w1 * 1.5, 2.0);
+                w2 = pow(w2 * 1.5, 2.0);
+                w3 = pow(w3 * 1.5, 2.0);
+                w4 = pow(w4 * 1.5, 2.0);
+
+                // Normalizálás, hogy a súlyok összege mindig 1 maradjon (ne legyen túl világos/sötét)
+                float totalW = w1 + w2 + w3 + w4 + 0.001;
+                w1 /= totalW; w2 /= totalW; w3 /= totalW; w4 /= totalW;
+
+                vec3 portalColor = uColor1*w1 + uColor2*w2 + uColor3*w3 + uColor4*w4;
+
+                // === 3. FEHÉR SÁV: ahol glow nagyon magas → fehér ===
+                float whiteAmount = smoothstep(3.5, 8.0, glow);
+
+                // === 4. VÉGSŐ SZÍN: hex szín + tiszta fehér blend ===
+                // A színt SOHA NEM SÖTÉTÍTJÜK, különben a peremeken fekete sáv (füst) jelenik meg!
+                // Itt mindig a megadott szín 100%-a van (esetleg picit felerősítve hogy ragyogjon, ha nagyon sötét hexet adtunk meg).
+                vec3 col = mix(portalColor * 1.5, vec3(1.0), whiteAmount);
+
+                // === ALFA: glow-ból (szín-független) ===
+                float alphaOuter = smoothstep(0.5, 2.0, glow);
+
+                // === Belső lyuk (fánk közepe átlátszó) ===
                 vec2 hole_p = p;
-                hole_p.y /= 1.666; 
+                hole_p.y /= 1.666;
                 float dist = length(hole_p);
-                float alphaInner = smoothstep(0.09, 0.20, dist);
+                
+                // 1. Élesebb alfa átmenet: a széles "szürke/koszos" zóna elkerülése miatt
+                // vékonyítjuk azt a sávot, ahol a félig átlátszó sötét pixel keveredik a háttérrel.
+                float alphaInner = smoothstep(0.14, 0.19, dist);
 
-                // CORE GLOW (belső perem izzás)
-                float glowZone = smoothstep(0.20, 0.09, dist) * smoothstep(0.02, 0.09, dist);
-                col += vec3(0.3, 0.5, 1.0) * glowZone * 0.5 * uOpen;
+                // === CORE GLOW (belső perem ragyogása) ===
+                // 2. Erős fénnyel világítjuk meg a belső peremet
+                // Még mielőtt teljesen átlátszóvá válna a portál, a belső él visszakapja
+                // a portal ragyogó, fehérbe hajló fényét. Így nem jön létre sötét "füst" hatás.
+                float glowZone = smoothstep(0.24, 0.12, dist);
+                
+                // A perem fénye: 70% tiszta fehér, 30% a portál saját színe, erősen túlexponálva
+                vec3 rimLight = mix(portalColor, vec3(1.0), 0.7) * 2.5; 
+                col += rimLight * glowZone * uOpen;
 
-                // KÖRKÖRÖS MASZK: uOpen szabályozza a látható terület sugarát
-                // uOpen=0 → pont (0.001), uOpen=1 → teljes portál (0.5)
-                // uZoom → a portál túltágul a képernyőn (0.5 → 2.0)
+                // === KÖRKÖRÖS MASZK ===
                 float maxRadius = mix(0.5, 2.0, uZoom);
                 float maskRadius = mix(0.001, maxRadius, uOpen);
                 float maskDist = length(p_raw);
                 float mask = smoothstep(maskRadius, maskRadius * 0.7, maskDist);
 
                 float finalAlpha = alphaOuter * alphaInner * mask;
+
+                // PRE-MULTIPLIED ALPHA a "sötét perem" (dark fringe) elkerüléséhez!
+                // Mivel a canvas transzparens és keveredik a DOM hátterével, 
+                // az RGB csatornákat be kell szorozni az Alfával.
+                col.rgb *= finalAlpha;
 
                 gl_FragColor = vec4(col, finalAlpha);
         }
@@ -349,7 +395,11 @@ export class PortalTransition {
                 iTime: { value: 0.0 },
                 iChannel0: { value: noiseTexture },
                 uOpen: { value: 0.0 },
-                uZoom: { value: 0.0 }
+                uZoom: { value: 0.0 },
+                uColor1: { value: this.colors[0] },
+                uColor2: { value: this.colors[1] },
+                uColor3: { value: this.colors[2] },
+                uColor4: { value: this.colors[3] }
             },
             transparent: true,
             blending: THREE.NormalBlending
@@ -426,12 +476,14 @@ export class PortalTransition {
                 // Tehát a belső átlátszó zóna p_raw-ban ≈ 0.029 sugár → ~2.9vw / ~4.8vh
                 if (this.maskContainer) {
                     // Ovális: 4200ms-től fade-in (változatlan)
-                    const ovalProgress = Math.min(Math.max((elapsed - 4200) / 700, 0), 1);
+                    const ovalProgress = Math.min(Math.max((elapsed - 4200) / 300, 0), 1);
                     this.maskContainer.style.opacity = ovalProgress;
 
-                    // Clip-path: ellipszis vh-ban, uZoom-mal nő
-                    const clipW = 20 + uZoom * 100;  // 20vh → 120vh
-                    const clipH = 35 + uZoom * 85;   // 35vh → 120vh
+                    // Clip-path: ellipszis vh-ban, saját ütemmel (lassabb mint a portál)
+                    // ovalZoom: pow(uZoom, 1.5) → lassabban indul, végén beéri
+                    const ovalZoom = Math.pow(uZoom, 1.5);
+                    const clipW = 20 + ovalZoom * 100;  // 20vh → 120vh
+                    const clipH = 35 + ovalZoom * 85;   // 35vh → 120vh
                     this.maskContainer.style.clipPath = `ellipse(${clipW}vh ${clipH}vh at 50% 50%)`;
                 }
             }
