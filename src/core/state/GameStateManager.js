@@ -35,6 +35,7 @@ class GameStateManager {
       progress: {
         completedLevels: [],     // Befejezett szintek listája
         completedSlides: [],     // Befejezett diák (feladatok) listája (ÚJ)
+        inventory: [],           // Megszerzett kulcsok (állomás azonosítók pl. 'station_1')
         totalScore: 0,           // Teljes pontszám (Hosszú távú)
         timeSpent: 0,            // Eltöltött idő (másodpercben)
         achievements: []         // Elért eredmények
@@ -242,6 +243,51 @@ class GameStateManager {
   }
 
   /**
+   * Kulcs hozzáadása az inventory-hoz
+   * 
+   * @param {string} stationId - Az állomás azonosítója (pl. 'station_1')
+   */
+  addKey(stationId) {
+    if (!stationId) return;
+
+    const currentProgress = this.state.progress;
+    const inventory = currentProgress.inventory || [];
+
+    if (!inventory.includes(stationId)) {
+      const newProgress = {
+        ...currentProgress,
+        inventory: [...inventory, stationId]
+      };
+      this.updateState({ progress: newProgress });
+
+      if (this.eventBus) {
+        this.eventBus.emit('inventory:key_added', { stationId, inventory: newProgress.inventory });
+      }
+    }
+  }
+
+  /**
+   * Ellenőrzi, hogy egy adott kulcs már megvan-e
+   * 
+   * @param {string} stationId - Az állomás azonosítója
+   * @returns {boolean}
+   */
+  hasKey(stationId) {
+    if (!stationId) return false;
+    const inventory = this.state.progress.inventory || [];
+    return inventory.includes(stationId);
+  }
+
+  /**
+   * Teljes inventory lekérése
+   * 
+   * @returns {Array} - A megszerzett kulcsok listája
+   */
+  getInventory() {
+    return this.state.progress.inventory || [];
+  }
+
+  /**
    * State validáció
    */
   validateState(updates) {
@@ -301,6 +347,9 @@ class GameStateManager {
         : [],
       completedSlides: Array.isArray(progress.completedSlides)
         ? progress.completedSlides
+        : [],
+      inventory: Array.isArray(progress.inventory)
+        ? progress.inventory
         : [],
       totalScore: typeof progress.totalScore === 'number' && progress.totalScore >= 0
         ? progress.totalScore

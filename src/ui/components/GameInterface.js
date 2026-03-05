@@ -263,6 +263,56 @@ class GameInterface {
                 this.currentDisplayedScore = targetScore;
             }
         }
+
+        // Inventory letöltés (ÚJ)
+        if (state.progress && Array.isArray(state.progress.inventory)) {
+            this.updateInventory(state.progress.inventory);
+        }
+    }
+
+    /**
+     * HUD Inventory slotok frissítése a state alapján
+     * @param {Array<string>} inventory - A megszerzett kulcsok (stationId) array-je
+     */
+    updateInventory(inventory = []) {
+        if (!this.element) return;
+        const slots = this.element.querySelectorAll('.dkv-inventory-slot');
+        if (!slots || slots.length === 0) return;
+
+        // Map az állomás ID-hez és a kép nevékhez
+        const keyMap = {
+            'station_1': 'keyA',
+            'station_2': 'keyB',
+            'station_3': 'keyC',
+            'station_4': 'keyD',
+            'station_5': 'keyE'
+        };
+
+        // Töröljük az összes tartalmat elölről (biztos, ami biztos)
+        slots.forEach(slot => {
+            slot.innerHTML = '';
+            slot.style.backgroundImage = 'none';
+        });
+
+        // Betöltjük az eddig megszerzett kulcsokat a slot-okba (sorrendben)
+        for (let i = 0; i < inventory.length; i++) {
+            if (i >= slots.length) break;
+
+            const stationId = inventory[i];
+            const keyPrefix = keyMap[stationId];
+
+            if (keyPrefix) {
+                // A drop képet használjuk (pl. key_maze_drop.png) az oldalsávon
+                const imgPath = `/assets/images/grade3/keys/${keyPrefix}_drop.png`;
+                const imgElement = document.createElement('img');
+                imgElement.src = imgPath;
+                imgElement.style.width = '100%';
+                imgElement.style.height = '100%';
+                imgElement.style.objectFit = 'contain';
+
+                slots[i].appendChild(imgElement);
+            }
+        }
     }
 
     _animateScore(start, end) {

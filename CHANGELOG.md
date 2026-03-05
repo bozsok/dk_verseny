@@ -5,6 +5,28 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.9.3] - 2026-03-05
+
+### Hozzáadva
+- **Kulcsgyűjtés** animáció implementálása
+- **`KeyCollectionAnimation.destroy()` metódus:** Biztonságos, manuális megsemmisítési lehetőség az animációhoz. Visszafelé lapozáskor, valamint bármiféle diaváltáskor a `main.js` megsemmisíti és nullázza az esetleges beragadt kulcsaniámációt.
+- **Kulcsanimáció 6 mp-es késleltetése:** A Siker/Öröm dián az animáció (sötétedés, csillogás, nagy kulcs megjelenése) egységesen 6 másodperccel a dia betöltése után indul, hagyva teret a narrációnak. A `_keyAnimationTimer` referencia biztonságosan törölhető lapozáskor.
+- **`onAfterFade` callback a `showMazeResultModal`-ban:** Az összegző ablak gombkattintásához egy új, opcionális harmadik paramétert vezettünk be, amellyel pontosan szabályozható az overlay fade-out utáni időzítés.
+
+### Javítva
+- **Feladat Modal automatikus megjelenése:** A modal ablak mostantól kizárólag a „Tovább" (jobbra nyíl) gombra kattintva nyílik meg a feladat dián; az automatikus 1500 ms-os indítás eltávolításra került.
+- **Beragadó kulcsanimáció (kritikus hiba):** Visszafelé lapozáskor a képernyőn maradt a pulzáló nagy kulcs. A `renderSlide` minden hívásának elején törli a beragadt animációt (és annak időzítőjét), így egyszerre sosem jelenhet meg kettő.
+- **Kulcs fájlnevei:** A `KeyCollectionAnimation` belső `keyMap`-jébe visszakerültek a pontos fájlnevek (`keyA_drop`, `keyA_large_part1` stb.), amelyek egyeznek a `public/assets/images/grade3/keys` mappában lévő valódi fájlokkal.
+- **Portál utáni pattanás (villanás):** A portál mögött megjelenő következő dia ezentúl `isPreview: false` módban példányosul, és a kész DOM elemét (`prebuiltComponent`, `prebuiltDOM`) közvetlenül kapja meg a `renderSlide`. Így a portál végén nincs újabb átépítés és villanás.
+- **Kulcs pop-in animáció „pattanása":** Az overshoot `cubic-bezier` easing `ease-out`-ra cserélve. A `floatKey` CSS-animáció indítása a transition befejezése utánra (900 ms-ra) tolódott, és indítás előtt a `transition: none` kerül a kulcsra, kiküszöbölve a kétféle animáció ütközéséből adódó ugrást.
+- **Kulcs sárga fénye a pop-in alatt:** A `drop-shadow` filter mostantól a kulcs kezdeti stílusának része, ezért a fény már a kiscsi méretű megjelenéstől fogva látható, nem csak a pulzáció indulásakor.
+- **Összegző modal átmenetek sorrendje:** A „Tovább" gombra kattintva az eseménysor mostantól: 1. azonnali diaváltás (siker/öröm dia jelenik meg a háttérben), 2. 300 ms múlva a feladatmodal tűnik el, 3. az összegző overlay utolsóként halvályul el – a feladat dia többé nem villan vissza.
+
+### Módosítva
+- **`renderSlide` signature bővítése:** Új `prebuiltComponent` és `prebuiltDOM` opcionális paraméterekkel egészült ki, amelyek lehetővé teszik a portál alatti előregyártott komponens zökkenőmentes átvételét rendereléskor.
+- **`_instantiateSlideComponent` bővítése:** Mostantól átadja a `stateManager`, `timeManager` és `apiService` hivatkozásokat is, biztosítva a teljes adatelérést a portálon átmenő komponenseknek.
+- **Pulzálás sebessége:** A `floatKey` CSS animáció ciklusa 4 s-ről 5 s-re nőtt, a mozgás amplitúdója (`translateY(-10px) scale(1.05)` → `-5px` és `1.02`) csökkent a természetesebb lebegés érdekében.
+
 ## [0.9.2] - 2026-02-28
 
 ### Hozzáadva
