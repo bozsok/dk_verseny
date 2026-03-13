@@ -72,3 +72,4 @@ _bmad
 # Large assets (videos, audio, images in public folder)
 public/assets/
 others/
+.agents/

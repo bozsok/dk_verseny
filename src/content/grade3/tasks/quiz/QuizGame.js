@@ -245,13 +245,17 @@ class QuizGame {
             nextBtn.textContent = 'Befejezés és Értékelés';
             nextBtn.classList.add('quiz-finish-btn');
             nextBtn.onclick = () => {
+                // Azonnal zároljuk a gombokat és az inputokat (dupla kattintás ellen)
+                this._lockCurrentPage();
                 this.evaluateCurrentPage();
-                setTimeout(() => this.evaluateQuiz(), 800); // Vár egy picit az animációra
+                setTimeout(() => this.evaluateQuiz(), 800);
             };
         } else {
             nextBtn.textContent = 'Kiértékelés';
             nextBtn.onclick = () => {
                 if (this.currentPage < pages - 1) {
+                    // Azonnal zároljuk a gombokat és az inputokat (dupla kattintás ellen)
+                    this._lockCurrentPage();
                     this.evaluateCurrentPage();
 
                     // Késleltetett lapozás az animáció miatt
@@ -259,7 +263,7 @@ class QuizGame {
                         this.contentArea.classList.add('fade-out');
                         setTimeout(() => {
                             this.currentPage++;
-                            this.renderPage();
+                            this.renderPage(); // Új kérdésnél az inputok újra aktívak!
                             this.contentArea.classList.remove('fade-out');
                         }, 400); // transition
                     }, 800); // 800ms hogy látszódjon a +1
@@ -308,6 +312,29 @@ class QuizGame {
                 this.endGame(false, 0); // Időtúllépés = 0 pont
             }
         }, 1000);
+    }
+
+    /**
+     * Azonnal letiltja az aktuális oldal összes inputját és a gombot,
+     * megakadályozva a dupla kiértékelést gyors kattintáskor.
+     * A zárolás automatikusan feloldódik a következő renderPage() hívásakor.
+     */
+    _lockCurrentPage() {
+        // Gomb letiltása
+        if (this.nextBtnRef) {
+            this.nextBtnRef.disabled = true;
+        }
+        // Összes rádiógomb letiltása az aktuális oldalon
+        if (this.contentArea) {
+            this.contentArea.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.disabled = true;
+            });
+            // Vizuális visszajelzés: a label-eket is inaktívnak jelöljük
+            this.contentArea.querySelectorAll('.quiz-option').forEach(label => {
+                label.style.pointerEvents = 'none';
+                label.style.opacity = '0.7';
+            });
+        }
     }
 
     evaluateCurrentPage() {

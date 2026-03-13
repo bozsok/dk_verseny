@@ -1,92 +1,57 @@
-# Sprint 3: Onboarding & Architecture (Core Mechanics)
+# Sprint 3: Rejtvény Engine és az első állomások
 
-**Goal:** Establish the core game loop foundation: Grade selection -> Dynamic Config Loading -> Onboarding (Registration/Avatar) -> Intro Video -> Task Engine.
-
----
-
-## 0. Infrastructure & Onboarding (PRIORITY)
-
-### Story 0.1: Grade 3 Config + Onboarding (DONE)
-- **As a** Developer
-- **I want** to set up the basic config and onboarding slides for Grade 3
-- **So that** 3rd graders can enter the game properly.
-
-**Acceptance Criteria:**
-- [x] Create `src/content/grade3/config.js`
-- [x] Define `WelcomeSlide`, `RegistrationSlide`, `CharacterSlide` logic in config.
-- [x] `RegistrationSlide` inputs: Name, Nickname, ClassID (simple validation).
-- [x] `CharacterSlide` allows choosing Boy/Girl avatar.
-
-### Story 0.2: Content Structure (DONE)
-- **As a** Developer
-- **I want** to establish a folder structure for all grades (`src/content/gradeX`)
-- **So that** I can easily add content for Grade 4, 5, 6 later.
-
-**Acceptance Criteria:**
-- [x] Folders `grade3`, `grade4`, `grade5`, `grade6` exist in `src/content`.
-- [x] `SlideManager` dynamically imports the correct config based on selected grade.
-
-### Story 0.3: Profile State (DONE)
-- **As a** System
-- **I want** to save the user's name, nickname, and avatar to the `StateManager`
-- **So that** we can use it later in the game (e.g. displaying name, scoreboard).
-
-**Acceptance Criteria:**
-- [x] Registration data is saved to `state.userProfile`.
-- [x] Character selection is saved to `state.userProfile.avatar`.
-
-### Story 0.4: Replicate Grade 4-6 (DONE)
-- **As a** Developer
-- **I want** to replicate the Grade 3 config structure for Grades 4, 5, and 6
-- **So that** all grades have a functional onboarding flow with correct validation specific to their grade.
-
-**Acceptance Criteria:**
-- [x] `config.js` created for Grade 4, 5, 6.
-- [x] Validation rules (allowedClasses) configured for each grade.
-- [x] Titles and descriptions match the Hub definition.
+**Cél:** A feladatkezelő rendszer (`TaskSlide`) alapjainak lefektetése és az első két interaktív állomás (Maze, Puzzle) implementálása.
 
 ---
 
-## 1. Intro Video Integration
+## 🏗️ 1. Task Engine Alapok (DONE)
 
-### Story 1.1: Video Player Component (TODO)
-- **As a** Player
-- **I want** to watch an intro video after creating my character
-- **So that** I understand the story context.
-
-**Acceptance Criteria:**
-- [ ] Create `src/ui/components/VideoSlide.js`.
-- [ ] It should handle `<video>` playback.
-- [ ] "Skip" button (optional, or after X seconds).
-- [ ] Auto-advance to next slide when video ends.
-
-### Story 1.2: Video Content Config (TODO)
-- **As a** Content Creator
-- **I want** to define video URLs in the `config.js`
-- **So that** each grade can have different story intros.
+### Story 3.1: TaskSlide Keretrendszer
+- **As a** Fejlesztő
+- **I want** egy generikus `TaskSlide` komponenst
+- **So that** különböző típusú mini-játékokat tudjak megjeleníteni a történetben.
 
 **Acceptance Criteria:**
-- [ ] Add `SLIDE_TYPES.VIDEO` entries to `grade3/config.js` (placeholders).
-- [ ] Ensure `VideoSlide` receives the URL from config.
+- [x] `src/ui/components/TaskSlide.js` létrehozása.
+- [x] Dinamikus komponens betöltés a `taskType` alapján.
+- [x] Integráció a `main.js` renderelési folyamatába.
+
+### Story 3.2: Egységes Pontozás és Időmérés
+- **As a** Fejlesztő
+- **I want** egy központi pontozási rendszert
+- **So that** minden feladat egységesen tudjon pontokat és időt beküldeni.
+
+**Acceptance Criteria:**
+- [x] Pontszerzés (+1) vizuális visszajelzés (Floating Points).
+- [x] Sikeres feladatmegoldás utáni automatikus eredmény-modal megjelenítés.
 
 ---
 
-## 2. Task Engine Groundwork
+## 🎮 2. Első Állomások (DONE)
 
-### Story 2.1: Simple Task Engine (TODO)
-- **As a** Developer
-- **I want** a generic `TaskSlide` component
-- **So that** I can render different types of mini-games/questions.
+### Story 3.3: Maze (Útvesztő) Implementáció
+- **As a** Játékos
+- **I want** egy labirintus feladatot az 1. állomáson
+- **So that** interaktív módon szerezhessem meg az első kulcsot.
 
 **Acceptance Criteria:**
-- [ ] Create `src/ui/components/TaskSlide.js`.
-- [ ] It should read `taskType` from config.
-- [ ] Implement at least one dummy task type (e.g. "info" or simple "multiple choice").
+- [x] `MazeGame.js` és `Maze.css` létrehozása.
+- [x] Billentyűzet alapú irányítás.
+- [x] Random labirintus generálás.
+- [x] Kilépési pont elérésekor pontszerzés és továbbhaladás.
+
+### Story 3.4: Pixel Palota (Puzzle) Implementáció
+- **As a** Játékos
+- **I want** egy kirakós feladatot a 2. állomáson
+- **So that** vizuális készségeimet is próbára tehessem.
+
+**Acceptance Criteria:**
+- [x] `PuzzleGame.js` létrehozása.
+- [x] Drag & Drop mechanika mágneses illesztéssel.
+- [x] Teljes kép kirakása után gratuláció és továbbhaladás.
 
 ---
 
-## Notes
-- **Styling:** Use Tailwind CSS or `design-system.css`.
-- **Fonts:** Ha új betűtípust vezetsz be egy Grade configban, ne felejtsd el importálni az `index.html`-ben!
-- **Validation:** Registration needs strict validation (Hungarian names, class ID format).
-- **State:** Use `StateManager` (Singleton) for data persistence.
+## Feljegyzések
+- **Stílus:** Kizárólag a `design-system.css` és az egyedi komponens CSS fájlok használatosak. (Tailwind nem használt).
+- **Állapot:** Minden itt leírt funkció a v0.8.8-as verzióra elkészült.

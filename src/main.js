@@ -819,9 +819,6 @@ class DigitalKulturaVerseny {
       const shouldEnable = !isLastSlide;
       setBtnState(shouldEnable, btnOptions);
     }
-    const isTaskSlideActive = slide.metadata && slide.metadata.step === 2 && slide.metadata.section?.startsWith('station_');
-    const isSlideCompleted = this.stateManager?.isSlideCompleted(slide.id);
-
     // A feladat modal-t KISZEDTÜK INNEN! Nem indul el magától 1500ms után!
     // A felhasználónak kell a felvillanó "Tovább" nyílra kattintania!
 
@@ -1015,9 +1012,9 @@ class DigitalKulturaVerseny {
       const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
       const isFullscreen = [SLIDE_TYPES.WELCOME, SLIDE_TYPES.REGISTRATION, SLIDE_TYPES.CHARACTER].includes(nextSlide.type);
 
-      // A Portál alatt lévő következő diának azonnal engedélyezzük a végleges betöltést (isPreview = false), 
-      // hogy ne villanjon a videó/komponens átalakításánál.
-      const { newComponent } = this._instantiateSlideComponent(nextSlide, false);
+      // A Portál alatt lévő következő diát ELŐNÉZET módban példányosítjuk (isPreview = true),
+      // így a videó/komponens nem indul el a tranzíció alatt.
+      const { newComponent } = this._instantiateSlideComponent(nextSlide, true);
       const nextSlideDOM = this._createSlideDOMElement(newComponent, nextSlide, isFullscreen, gradeClass);
 
       // --- KULCS ANIMÁCIÓ BEKÖTÉSE (FÁZIS B) ---
@@ -1100,7 +1097,7 @@ class DigitalKulturaVerseny {
           newSlideHtml: nextSlideDOM,
           colors: activeColors,
           animationConfig: {
-            duration: 3500, // A WebGL shader miatt adhatunk neki több időt
+            duration: 11000, // Visszaállítva az eredeti 11 másodpercre
             keyframes: [
               { time: 0, maskRadius: 0 },
               { time: 0.1, maskRadius: 3 }, // Kicsi villanás
@@ -1115,7 +1112,13 @@ class DigitalKulturaVerseny {
             // Léptetjük a belső motort 
             const next = this.slideManager.nextSlide();
             // Rendereljük be hivatalosan a DOM-ba a már alul látott diát aszinkron isPreview mentesen
-            if (next) this.renderSlide(next, 0, 'forward', newComponent, nextSlideDOM);
+            if (next) {
+              this.renderSlide(next, 0, 'forward', newComponent, nextSlideDOM);
+              // MOST indítjuk el a videót, miután megérkeztünk!
+              if (newComponent && typeof newComponent.playVideo === 'function') {
+                newComponent.playVideo();
+              }
+            }
           }
         });
 

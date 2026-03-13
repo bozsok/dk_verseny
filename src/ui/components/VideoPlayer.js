@@ -11,6 +11,7 @@ class VideoPlayer {
         this.src = options.src;
         this.poster = options.poster || '';
         this.onComplete = options.onComplete || (() => { });
+        this.isPreview = options.isPreview || false;
         this.element = null;
         this.videoElement = null;
 
@@ -75,7 +76,13 @@ class VideoPlayer {
      */
     play() {
         if (this.videoElement) {
-            this.videoElement.play().catch(e => console.log('Autoplay prevented', e));
+            console.log(`[VideoPlayer] Starting playback for: ${this.src}`);
+            if (this.videoElement.paused) {
+                this.videoElement.load();
+            }
+            this.videoElement.play().catch(e => console.log('Autoplay prevented or failed', e));
+        } else {
+            console.warn('[VideoPlayer] Cannot play: videoElement is null');
         }
     }
 

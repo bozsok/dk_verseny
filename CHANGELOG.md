@@ -5,6 +5,22 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.9.4] - 2026-03-14
+
+### Javítva
+- **Portál és Videó szinkronizáció:** A diák videói mostantól szigorúan csak a portál tranzíció teljes befejezése (az örvény kinyílása) után indulnak el.
+- **Portál időzítés korrekciója:** A tranzíció fázisai (anticipáció, nyitás, zoom) újra az eredeti, látványos 11 másodperces dinamikát követik.
+- **`StorySlide` videó elem hiba:** Kijavítva a hiba, ami miatt `isPreview` módban nem jött létre a videó elem, így a portál után nem volt mit elindítani.
+- **Videó betöltési stabilitás:** Bevezetésre került egy kényszerített `load()` hívás és egy 5 másodperces biztonsági időzítő, amely garantálja a videó elindulását lassabb hálózat esetén is.
+- **Kép-fátyol eltűntetése:** A videó feletti statikus kép mostantól minden esetben (sikertelen lejátszáskor is) eltűnik a tranzíció végén, elkerülve a beragadt takarást.
+- **Sprint dokumentáció szinkronizálása:** A `docs/` mappában lévő `sprint-3-stories.md` aktualizálva, és létrehozva a `sprint-4-stories.md`, tükrözve a projekt valós előrehaladását (v0.9.4). Minden Tailwind CSS utalás eltávolítva.
+
+### Hozzáadva
+- **`project-context.md`:** Áthelyezve a gyökérkönyvtárba. Ez a fájl tartalmazza a projekt alapvető technikai kontextusát, szabályait és az AI ágensek számára kritikus utasításokat.
+- **Projektmenedzsment infrastruktúra:** Létrehozva az `_bmad-output` könyvtár, amely tartalmazza az epikeket (`epics.md`) és a sprint állapotát (`sprint-status.yaml`), biztosítva a strukturált fejlesztési folyamatot.
+- **`isPreview` mód a diákhoz:** Lehetővé teszi a diák vizuális előnézetét (pl. portál lyukában) a lejátszási logika és a hang elindítása nélkül.
+- **`playVideo()` metódus:** Egységes interfész a videólejátszás manuális, késleltetett indításához a `StorySlide` és `VideoSlide` komponensekben.
+
 ## [0.9.3] - 2026-03-05
 
 ### Hozzáadva

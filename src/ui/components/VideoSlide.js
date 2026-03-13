@@ -33,10 +33,16 @@ class VideoSlide {
         // Videó lejátszó
         this.videoPlayer = new VideoPlayer({
             src: this.slideData.content.videoUrl,
+            isPreview: this.options.isPreview,
             onComplete: () => this.handleVideoComplete()
         });
 
         this.element.appendChild(this.videoPlayer.createElement());
+
+        // Ha nem előnézet, indítjuk (VideoPlayer.play kezeli a belső logikát)
+        if (!this.options.isPreview) {
+            this.videoPlayer.play();
+        }
 
         // Tovább gomb (kezdetben inaktív/rejtett)
         this.nextButton = document.createElement('button');
@@ -59,6 +65,15 @@ class VideoSlide {
             this.nextButton.textContent = 'Tovább a következőre ✨';
             // Itt hívhatnánk az onComplete-et is, ha automatikusan menteni akarunk
             this.onComplete();
+        }
+    }
+
+    /**
+     * Videó indítása (Portal utáni híváshoz)
+     */
+    playVideo() {
+        if (this.videoPlayer) {
+            this.videoPlayer.play();
         }
     }
 

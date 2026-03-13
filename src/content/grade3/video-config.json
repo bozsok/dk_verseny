@@ -17,7 +17,7 @@
       "videoLoop": false
     },
     "slide_05": {
-      "videoDelay": 1000,
+      "videoDelay": 0,
       "videoLoop": false
     }
   }
