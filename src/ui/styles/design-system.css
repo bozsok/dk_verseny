@@ -60,7 +60,7 @@ body {
   line-height: 1.6;
 
   /* Background Image Setup */
-  background-image: url('/assets/hub-bg.jpg');
+  background-image: url('../../../public/assets/hub-bg.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -1077,3 +1077,45 @@ h3 {
     transform: scale(1);
   }
 }
+
+/* ============================================
+   ADMIN / MASTER MODE UI
+   ============================================ */
+
+.dkv-admin-group {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.dkv-btn-admin {
+  background: linear-gradient(135deg, #00636e 0%, #004d4d 100%);
+  color: #00eaff !important;
+  border: 2px solid #00eaff !important;
+  border-radius: 30px;
+  padding: 0.8rem 2rem;
+  font-family: var(--dkv-font-sans);
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  pointer-events: auto;
+}
+
+.dkv-btn-admin:hover {
+  background: #00eaff !important;
+  color: #00151e !important;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 234, 255, 0.5);
+}
+
+.dkv-btn-admin:active {
+  transform: translateY(-1px) scale(0.98);
+}

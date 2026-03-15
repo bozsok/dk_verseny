@@ -195,7 +195,8 @@ class MemoryGame {
             success,
             timeElapsed: this.timeElapsed,
             attempts: this.attempts,
-            points: success ? this.REWARD_POINTS : 0
+            points: success ? this.REWARD_POINTS : 0,
+            maxPoints: this.REWARD_POINTS
         };
 
         setTimeout(() => {

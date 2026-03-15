@@ -200,7 +200,7 @@ class DebugPanel {
         const videoExistsCache = {};
         const checkVideoExists = async (slide, slideKey) => {
             if (slide.content?.videoUrl) return true; // Ha benne van a configban, biztosan van
-            const url = `/assets/video/grade${this.debugManager.currentGrade}/${slideKey}.mp4`;
+            const url = `assets/video/grade${this.debugManager.currentGrade}/${slideKey}.mp4`;
             try {
                 const response = await fetch(url, { method: 'HEAD', cache: 'no-cache' });
                 if (response.ok) {
@@ -252,7 +252,7 @@ class DebugPanel {
                     // beinjektáljuk a slide objektumba a futásidejű állapotba, hogy a VideoSlide használja
                     if (!slide.content) slide.content = {};
                     if (!slide.content.videoUrl) {
-                        slide.content.videoUrl = `/assets/video/grade${this.debugManager.currentGrade}/${slideKey}.mp4`;
+                        slide.content.videoUrl = `assets/video/grade${this.debugManager.currentGrade}/${slideKey}.mp4`;
                     }
                 }
 
@@ -1145,7 +1145,7 @@ class DebugPanel {
      * Clear All gomb handler
      */
     _onClearAll() {
-        if (!confirm('Clear all skip settings? This will reset the debug configuration.')) {
+        if (!confirm('Clear only skip settings? This will reset the section and slide skips but keep task configurations.')) {
             return;
         }
 
@@ -1153,13 +1153,16 @@ class DebugPanel {
             enabled: false,
             skipSections: [],
             skipSlides: [],
-            useDummyData: false
+            useDummyData: false,
+            muteMusic: true,
+            tasksConfig: this.tasksConfig // Preserve task configurations
         };
 
         this.debugManager.saveConfig(config);
         this.debugManager.reloadConfig();
+        this._exportBuildConfig(config);
 
-        console.log('[DEBUG] All settings cleared');
+        console.log('[DEBUG] Skip settings cleared, task config preserved');
 
         this.close();
     }

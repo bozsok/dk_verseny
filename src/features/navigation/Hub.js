@@ -19,6 +19,9 @@ class Hub {
 
     this.gradeCards = new Map();
     this.eventListeners = new Map();
+    this.clickCount = 0;
+    this.lastClickTime = 0;
+    this.isMasterMode = localStorage.getItem('dkv_master_mode') === 'true';
     this.init();
   }
 
@@ -62,6 +65,29 @@ class Hub {
     const title = document.createElement('h1');
     title.className = 'dkv-hub-title';
     title.textContent = 'Digitális Kultúra Verseny';
+    title.style.cursor = 'default';
+    title.style.userSelect = 'none';
+
+    // Titkos trigger: 5 kattintás
+    title.addEventListener('click', () => {
+        const now = Date.now();
+        if (now - this.lastClickTime > 2000) this.clickCount = 0; // Reset ha túl sok idő telt el
+        this.clickCount++;
+        this.lastClickTime = now;
+
+        if (this.clickCount === 5) {
+            this.isMasterMode = !this.isMasterMode;
+            localStorage.setItem('dkv_master_mode', this.isMasterMode);
+            this.clickCount = 0;
+            
+            if (this.options.logger) {
+                this.options.logger.info(`Master Mode ${this.isMasterMode ? 'Enabled' : 'Disabled'}`);
+            }
+            
+            // UI frissítése gomb hozzáadásával/eltávolításával
+            this.toggleAdminButton();
+        }
+    });
 
     const selectionTitle = document.createElement('h2');
     selectionTitle.className = 'dkv-hub-selection-title';
@@ -74,9 +100,19 @@ class Hub {
     container.appendChild(title);
     container.appendChild(selectionTitle);
     container.appendChild(subtitle);
+    
+    // Admin gomb konténer
+    const adminContainer = document.createElement('div');
+    adminContainer.id = 'dkv-admin-group';
+    adminContainer.className = 'dkv-admin-group';
+    container.appendChild(adminContainer);
+    
     header.appendChild(container);
 
     this.element.appendChild(header);
+    
+    // Gomb inicializálása ha már aktív a mód
+    setTimeout(() => this.toggleAdminButton(), 0);
   }
 
   /**
@@ -443,6 +479,35 @@ class Hub {
 
     if (this.options.logger) {
       this.options.logger.info('Hub destroyed');
+    }
+  }
+
+  /**
+   * Admin gomb megjelenítése/elrejtése
+   */
+  toggleAdminButton() {
+    const container = this.element.querySelector('#dkv-admin-group');
+    if (!container) return;
+
+    if (this.isMasterMode) {
+        if (container.querySelector('#dkv-admin-btn')) return;
+
+        const btn = document.createElement('button');
+        btn.id = 'dkv-admin-btn';
+        btn.className = 'dkv-btn dkv-btn-admin';
+        btn.innerHTML = '🎯 Ranglista és Adminisztráció';
+        btn.onclick = () => window.open('./ranglista/', '_blank');
+        
+        container.appendChild(btn);
+        
+        // Animáció
+        btn.animate([
+            { opacity: 0, transform: 'scale(0.8)' },
+            { opacity: 1, transform: 'scale(1)' }
+        ], { duration: 300, easing: 'ease-out' });
+    } else {
+        const btn = container.querySelector('#dkv-admin-btn');
+        if (btn) btn.remove();
     }
   }
 

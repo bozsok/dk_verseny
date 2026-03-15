@@ -87,7 +87,7 @@ class KeyCollectionAnimation {
 
         // Csillogás 1 (hátsó)
         this.sparkle1 = document.createElement('img');
-        this.sparkle1.src = '/assets/images/grade3/sparkle/01.png';
+        this.sparkle1.src = 'assets/images/grade3/sparkle/01.png';
         Object.assign(this.sparkle1.style, {
             position: 'absolute', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%)',
@@ -100,7 +100,7 @@ class KeyCollectionAnimation {
 
         // Csillogás 2 (elülső)
         this.sparkle2 = document.createElement('img');
-        this.sparkle2.src = '/assets/images/grade3/sparkle/02.png';
+        this.sparkle2.src = 'assets/images/grade3/sparkle/02.png';
         Object.assign(this.sparkle2.style, {
             position: 'absolute', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%)',
@@ -113,7 +113,7 @@ class KeyCollectionAnimation {
 
         // Nagy Kulcs
         this.largeKey = document.createElement('img');
-        this.largeKey.src = `/assets/images/grade3/keys/${this.keyNames.large}.png`;
+        this.largeKey.src = `assets/images/grade3/keys/${this.keyNames.large}.png`;
         Object.assign(this.largeKey.style, {
             position: 'absolute', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%) scale(0.1)', // Kezdeti kicsinyítés
@@ -194,7 +194,7 @@ class KeyCollectionAnimation {
 
             // B Fázis Kis (Drop) Kulcs
             this.dropKey = document.createElement('img');
-            this.dropKey.src = `/assets/images/grade3/keys/${this.keyNames.drop}.png`;
+            this.dropKey.src = `assets/images/grade3/keys/${this.keyNames.drop}.png`;
 
             const largeRect = this.largeKey.getBoundingClientRect();
 

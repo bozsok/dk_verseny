@@ -1,238 +1,71 @@
 # 🏆 Digitális Kultúra Verseny
 > *"Egy fantasy kaland vár, tele kódolási kihívásokkal és rejtvényekkel!"*
 
-Üdvözlünk a **Digitális Kultúra Verseny** hivatalos oldalán! Ez az alkalmazás egy interaktív, történetvezérelt versenyplatform, amelyet kifejezetten általános iskolás diákok (3-6. osztály) számára készítettünk.
-
-## 🌟 A Kaland
-Nem egy átlagos tesztet kell kitöltened. Egy küldetésre hívunk!
-A verseny során egy izgalmas történet főszereplőjévé válsz. Videókon keresztül ismersz meg egy fantáziavilágot, ahol problémák merülnek fel - és csak TE tudod megoldani őket a logikáddal és digitális tudásoddal.
+Üdvözlünk a **Digitális Kultúra Verseny** hivatalos oldalán! Ez az alkalmazás egy interaktív, történetvezérelt versenyplatform, amelyet kifejezetten általános iskolás diákok (3-6. osztály) számára készült. Nem egy átlagos tesztet kell kitöltened. Egy küldetésre hívunk!
+A verseny során egy izgalmas történet főszereplőjévé válsz. Videókon keresztül ismersz meg egy fantáziatemet, ahol problémák merülnek fel - és csak TE tudod megoldani őket a logikáddal és digitális tudásoddal.
 
 ### 🗺️ Az Út
-A verseny **30 állomásból** (diából) áll, amely végigvezet a történeten:
+A verseny évfolyamtól függően **több mint 30 diából** áll, amely végigvezet a történeten:
 1.  **Bevezetés:** Megismered a világot és a konfliktust.
 2.  **5 Állomás:** Különböző helyszíneken kell helytállnod. Mindenhol videók vezetnek fel egy-egy kihívást.
-3.  **A Feladat:** Itt a te tudásodra van szükség! Logika, kódolás, rejtvények.
-4.  **Végjáték:** A legnagyobb próbatétel a kaland végén.
+3.  **Játékmodulok:** Labirintus, Kvíz, Memória, Puzzle és Hangalapú feladatok.
+4.  **Végjáték (Finale):** A végső próbatétel, ahol az összegyűjtött kulcsokat kell használnod.
 
 ## 🎓 Tanároknak és Szervezőknek
-Ez az alkalmazás modern webes technológiákra épül (HTML5, JavaScript), hogy bármilyen iskolai gépen gördülékenyen fusson.
-- **Biztonságos:** A versenyállás titkosítva mentődik, így áramszünet esetén is folytatható.
-- **Fair Play:** Precíz időmérés gondoskodik a rangsorolásról.
-- **Offline-First:** A rendszer úgy lett tervezve, hogy minimális internetkapcsolattal is stabilan működjön (hamarosan).
-
-Jó versenyezést és sikeres küldetést kívánunk! ⚔️🛡️
-
-A Digitális Kultúra Verseny egy modern, web-alapú oktatási platform, amely segít a diákoknak fejleszteni digitális készségeiket. Az alkalmazás SEL (State-Event-Logger) architektúrával épül, és reszponzív design-t kínál minden eszközön.
-
-### 🎯 Célok
-- **Digitális kompetenciák fejlesztése**: Alapvető digitális készségek oktatása
-- **Játékos tanulás**: Interaktív feladatok és kihívások
-- **Évfolyamonkénti differenciálás**: 3-6. osztályig tartalom
-- **Progress tracking**: Haladás követése és eredmények rögzítése
+Ez az alkalmazás modern webes technológiákra épül (HTML5, JavaScript, Vite), hogy bármilyen iskolai gépen gördülékenyen fusson.
+- **Biztonságos (Checkpoint System):** A versenyállás minden sikeres állomás után automatikusan mentődik a szerverre, így technikai hiba esetén is pontosan onnan folytatható, ahol abbamaradt.
+- **Fair Play:** Precíz időmérés és véletlenszerűen generált állomássorrend gondoskodik a tisztaságról.
+- **Ranglista & Admin DashBoard:** Beépített statisztikák, kereshető eredmények, részletes feladatonkénti vizuális kimutatások és letölthető oklevélgenerálás a verseny végén.
 
 ## 🚀 Főbb Funkciók
 
-### ✅ Sprint 1 (MVP Alap Infrastruktúra)
-- [x] **SEL Architektúra**: State Manager, EventBus, Logger System
-- [x] **Hub Navigation**: Központi évfolyam választó felület
-- [x] **UI Komponensek**: Button, Card, Progress Bar
-- [x] **Design System**: Teljes CSS design system
-- [x] **Build System**: Vite, PostCSS, Jest konfiguráció
-
-### 🔄 Tervezett Funkciók (Sprint 2+)
-- [ ] **Játékmodulok**: Évfolyamonkénti feladatok
-- [ ] **Progress System**: Részletes haladás követés
-- [ ] **Achievements**: Eredmények és jelvények
-- [ ] **Teacher Dashboard**: Tanári felület
-- [ ] **Analytics**: Haladás statisztikák
+### ✅ Megvalósult Fejlesztések
+- [x] **SEL Architektúra**: State Manager, EventBus, Logger System.
+- [x] **Dinamikus Történetvezetés**: Unified App Shell architektúra videós háttérrel.
+- [x] **Játékmodulok**: Teljes körűen implementált feladatok (3-6. osztály).
+- [x] **Intelligens Hangrendszer**: Web Audio API alapú SFX és narráció.
+- [x] **Leaderboard System**: Szerveroldali (PHP/JSON) tárolás és admin felület.
+- [x] **Build-config & Debug**: Rugalmas konfigurálhatóság éles és fejlesztői környezetben.
 
 ## 🏗️ Architektúra
 
 ### SEL (State-Event-Logger) Architektúra
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   GameState     │    │    EventBus     │    │   GameLogger    │
-│   Manager       │◄──►│                 │◄──►│                 │
-│                 │    │                 │    │                 │
-│ - State         │    │ - Events        │    │ - Logging       │
-│ - Validation    │    │ - Listeners     │    │ - Storage       │
-│ - Persistence   │    │ - Middleware    │    │ - GDPR          │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
+Az alkalmazás egy reaktív, eseményvezérelt magra épül, amely biztosítja az adatok konzisztenciáját és a haladás pontos követését.
 
-### Komponens Struktúra
-- **Core Components**: State Manager, EventBus, Logger
-- **UI Components**: Button, Card, Progress Bar
-- **Features**: Hub, Grade Selection, Game Modules
-- **Styles**: Design System CSS
+### Adattárolás
+A versenyzők adatai a `public/gameData/` mappában tárolódnak JSON formátumban. A mentésről a `manage_leaderboard.php` gondoskodik.
 
 ## 🛠️ Technológiák
-
-### Frontend
-- **JavaScript ES6+**: Modern JavaScript features
-- **Vite**: Build tool és development server
-- **CSS3**: Custom properties, Grid, Flexbox
-- **PostCSS**: CSS processing
-
-### Testing & Quality
-- **Jest**: Unit testing framework
-- **ESLint**: JavaScript linting
-- **Prettier**: Code formatting
-
-### Build & Deploy
-- **Vite**: Modern build tool
-- **PostCSS**: CSS optimization
-- **GitHub Actions**: CI/CD pipeline (tervezett)
+- **Frontend**: JavaScript (ES6+), Vite, Vanilla CSS.
+- **Backend**: PHP (adatkezelés és ranglista).
+- **Adat**: JSON alapú perzisztencia.
+- **Grafika & Okmányok**: html2canvas alapú dinamikus generálás.
 
 ## 📁 Projekt Struktúra
-
 ```
 digitális-kultúra-verseny/
 ├── src/
-│   ├── core/                 # SEL architektúra
-│   │   ├── state/
-│   │   ├── events/
-│   │   └── logging/
-│   ├── features/             # Funkcionális modulok
-│   │   └── navigation/
-│   ├── ui/                   # UI komponensek
-│   │   ├── components/
-│   │   └── styles/
-│   └── main.js              # Alkalmazás belépési pont
-├── tests/                    # Tesztek
-│   ├── unit/
-│   └── e2e/
-├── public/                   # Statikus fájlok
-│   └── index.html
-├── docs/                     # Dokumentáció
-├── package.json             # Projekt konfiguráció
-├── vite.config.js           # Build konfiguráció
-└── jest.config.js           # Teszt konfiguráció
+│   ├── core/                 # SEL architektúra mag
+│   ├── features/             # Játékmodulok és játékmenet
+│   ├── ui/                   # Vizualizáció és komponensek
+│   └── main.js               # Alkalmazás belépési pont
+├── public/                   # Statikus fájlok és eszközök
+│   ├── assets/               # Képek, videók, hangok
+│   ├── ranglista/            # Ranglista és Admin Dashboard
+│   └── gameData/             # Játékos adatok (szerveroldal)
+└── package.json              # Projekt konfiguráció
 ```
-
-## 🚀 Gyors Kezdés
-
-### Előfeltételek
-- **Node.js** 18+ verzió
-- **npm** vagy **yarn** package manager
-- **Modern böngésző** (Chrome, Firefox, Safari, Edge)
-
-### Telepítés
-
-1. **Klónozás**
-   ```bash
-   git clone https://github.com/[username]/digitális-kultúra-verseny.git
-   cd digitális-kultúra-verseny
-   ```
-
-2. **Függőségek telepítése**
-   ```bash
-   npm install
-   ```
-
-3. **Development server indítása**
-   ```bash
-   npm run dev
-   ```
-
-4. **Build production**
-   ```bash
-   npm run build
-   ```
-
-### Tesztelés
-
-```bash
-# Unit tesztek futtatása
-npm test
-
-# Coverage riport
-npm run test:coverage
-
-# Watch mode
-npm run test:watch
-```
-
-## 📱 Böngésző Támogatás
-
-| Böngésző | Verzió | Támogatás |
-|----------|--------|-----------|
-| Chrome | 90+ | ✅ Full |
-| Firefox | 88+ | ✅ Full |
-| Safari | 14+ | ✅ Full |
-| Edge | 90+ | ✅ Full |
-| IE | 11 | ❌ Not Supported |
-
-## 🎨 Design System
-
-### Színpaletta
-- **Primary**: Blue (#3b82f6)
-- **Secondary**: Green (#22c55e)
-- **Accent**: Amber (#d97706)
-- **Neutral**: Gray skála
-
-### Komponensek
-- **Button**: Primary, secondary, outline variánsok
-- **Card**: Évfolyam kártyák progress barokkal
-- **Progress Bar**: Haladás megjelenítése
-- **Typography**: Fluid typography system
-
-## 🔧 Fejlesztés
-
-### Code Quality
-- **ESLint**: JavaScript kód minőség ellenőrzése
-- **Prettier**: Automatikus kód formázás
-- **Pre-commit hooks**: Automatikus ellenőrzés
-
-### Git Workflow
-1. **Branch létrehozása**: `git checkout -b feature/feature-name`
-2. **Változtatások**: Kódolás és tesztelés
-3. **Commit**: `git commit -m "feat: add new feature"`
-4. **Push**: `git push origin feature/feature-name`
-5. **Pull Request**: Code review és merge
-
-### Commit Message Konvenció
-- `feat:` Új funkció
-- `fix:` Hiba javítás
-- `docs:` Dokumentáció frissítés
-- `style:` Kód formázás
-- `refactor:` Kód refaktorálás
-- `test:` Tesztek hozzáadása
-- `chore:` Egyéb változtatások
 
 ## 📊 Projekt Állapot
+### Jelenlegi Verzió: v0.9.7 (2026-03-15)
+A projekt elérte a végleges, versenyre kész állapotot! Minden tervezett funkció (feladatok, pontozás, ranglista) stabilan működik.
 
-### Sprint 1 (2025. január 15-31.) - LEZÁRVA ✅
-- **Status**: 95% kész
-- **Kész Stories**: 12/13
-- **Story Points**: 41/43
-- **Architektúra**: Unified App Shell (Rétegezett, Lifecycle-Managed)
+---
 
-### Milestones
-- [x] **Január 20**: Core architektúra kész
-- [x] **Január 31**: Hub navigation működik
-- [x] **Január 03 (2026)**: Unified App Shell architektúra implementálva
-- [x] **Január 03 (2026)**: Audio rendszer stabilizálva
-- [ ] **Február 15**: Játékmodulok implementálása (Content creation)
-- [ ] **Február 28**: Teacher dashboard
+**© 2026 Digitális Kultúra Verseny - Minden jog fenntartva**
 
-### Jelenlegi Verzió: v0.6.1 (2026-01-03)
-**Főbb funkciók:**
-- ✅ SEL Architektúra (State-Event-Logger)
-- ✅ Unified App Shell (3-layer perzisztens UI)
-- ✅ Onboarding Flow (Welcome → Registration → Character)
-- ✅ Audio Core System (Háttérzene, Narráció, SFX)
-- ✅ Zero-latency hangeffektek (Web Audio API)
-- ✅ Multi-Grade struktúra (Grade 3-6)
-- ⏳ Content creation (Feladatok, grafikák, hanganyagok)
+*Utolsó frissítés: 2026. március 15.*
 
-## 🤝 Közreműködés
-
-### Fejlesztői Csapat
-- **Project Manager**: Bmad Master
-- **Lead Frontend Developer**: TBD
-- **Frontend Developer**: TBD
-- **UI/UX Designer**: TBD
 
 ### Hogyan járulhatsz hozzá?
 1. Fork a repository
@@ -259,6 +92,6 @@ Ez a projekt MIT licenc alatt áll - lásd a [LICENSE](LICENSE) fájlt a részle
 
 ---
 
-**© 2025 Digitális Kultúra Verseny - Minden jog fenntartva**
+**© 2026 Digitális Kultúra Verseny - Minden jog fenntartva**
 
-*Utolsó frissítés: 2025. január 21.*
+*Utolsó frissítés: 2026. március 15.*

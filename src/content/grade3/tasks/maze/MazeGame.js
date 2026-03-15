@@ -234,7 +234,8 @@ class MazeGame {
             success,
             timeElapsed: this.timeElapsed,
             stepCount: this.stepCount,
-            points
+            points,
+            maxPoints: 5
         };
 
         if (success) {

@@ -5,6 +5,33 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.9.7] - 2026-03-15
+
+### Hozzáadva
+- **Részletes feladateredmények rögzítése:** Az `onTaskComplete` esemény mostantól egy strukturált `taskResults` tömbben gyűjti össze az egyes játékok eredményét (elért és maximális pontok, megoldási idő, próbálkozások száma, lépések stb.), majd ezt az új adatstruktúrát menti a szerverre az elavult `attempts` és `taskMetrics` helyett.
+- **Felhasználóbarát Admin Dashboard:** A `dashboard.js` részletes eredmény modalját teljesen újraírtuk. A korábbi nyers, technikai listák (pl. belső azonosítókkal szereplő tömbök) helyett vizuálisan tiszta, soronkénti kimutatást ad minden feladatról ikonokkal, emberileg olvasható nevekkel, pontszámokkal és időkkel. Új CSS stílusok kerültek a `style.css`-be az adatok rácsos megjelenítéséhez.
+
+### Javítva
+- **FinaleGame adatbővítés:** Az utolsó feladat (`FinaleGame`) most már visszaküldi a szavak és a sorrend helyességének különálló adatait is, ami tökéletesen integrálódik az új dashboard nézetbe.
+- **Kompatibilitás:** A dashboard képes kezelni a régi (0.9.6 és korábbi) mentéseket is, ilyenkor egy figyelmeztető "fallback" üzenetet jelenít meg a részletek hiányáról, miközben az összesített adatokat továbbra is mutatja.
+
+## [0.9.6] - 2026-03-15
+
+- **Ranglista és admin dashboard:** Teljesen új, önálló ranglista rendszer (`public/ranglista`), amely tartalmazza a statisztikai kimutatásokat (Chart.js), kereshető eredménylistát és az oklevélszerkesztőt.
+- **Checkpoint-alapú mentés (v2):** A játékmenet során minden sikeresen teljesített állomás után automatikus mentés történik a szerverre (`manage_leaderboard.php`), minimalizálva az adatvesztés kockázatát.
+- **Dinamikus Okmánygenerálás:** Oklevél és Gratulációs lap generálása PDF-szerű látványvilággal, letölthető formátumban.
+- **Adminisztrációs elérés:** Rejtett trigger (5 kattintás a Hub címére) a ranglista eléréséhez.
+
+### Javítva
+- **Karakter megjelenítés az okmányokon:** Kijavítva a hiba, ami miatt a választott karakter nem jelent meg az oklevélen. Mostantól rétegzett módon jelenik meg a nagy felbontású (`large`) kép a háttérkép és a keret között.
+- **Rugalmas útvonalkezelés:** A rendszer mostantól intelligensen felismeri a karakter azonosítóját a mentett adatokból, és a helyes évfolyam-specifikus útvonalat használja a képekhez.
+- **Debug beállítások perzisztenciája:** A `DebugPanel.js` most már szelektíven törli a szekcióugrásokat, megőrizve a feladatkonfigurációkat, és szinkronizálva azokat a `build-config.json` fájllal.
+- **gameData mappa elhelyezése:** A ranglista adatai a webalkalmazáson belülre, a `public/gameData/` mappába kerültek a jobb hordozhatóság érdekében.
+
+### Módosítva
+- **Vizuális finomhangolás:** Az oklevélen és gratulációs lapon a karakterek láthatósága (`opacity: 1`) és pozicionálása korrigálva.
+- **Dashboard stílus:** Az admin felület reszponzívabbá vált, és támogatja az előnézeti módokat (`toggleCertificateEditor`).
+
 ## [0.9.5] - 2026-03-14
 
 ### Hozzáadva

@@ -303,7 +303,7 @@ class GameInterface {
 
             if (keyPrefix) {
                 // A drop képet használjuk (pl. key_maze_drop.png) az oldalsávon
-                const imgPath = `/assets/images/grade3/keys/${keyPrefix}_drop.png`;
+                const imgPath = `assets/images/grade3/keys/${keyPrefix}_drop.png`;
                 const imgElement = document.createElement('img');
                 imgElement.src = imgPath;
                 imgElement.title = 'Kattints a megtekintéshez';
@@ -344,7 +344,7 @@ class GameInterface {
 
         const img = document.createElement('img');
         img.className = 'dkv-lightbox-image';
-        img.src = `/assets/images/grade3/keys/${keyPrefix}_large_${partMap[keyPrefix]}.png`;
+        img.src = `assets/images/grade3/keys/${keyPrefix}_large_${partMap[keyPrefix]}.png`;
 
         content.appendChild(img);
         overlay.appendChild(content);

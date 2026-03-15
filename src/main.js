@@ -79,6 +79,11 @@ class DigitalKulturaVerseny {
     this.debugPanel = null;
     this.debugBadge = null;
     this.buildConfig = null; // build-config.json tartalma (DEV és PROD módban egyaránt)
+
+    // Leaderboard Tracking
+    this.leaderboardId = null;
+    this.isSaving = false;
+    this.taskResults = []; // Feladatonkénti részletes eredmény a dashboardhoz
   }
 
   /**
@@ -1596,6 +1601,53 @@ class DigitalKulturaVerseny {
   }
 
   /**
+   * Eredmény mentése a ranglistába (Checkpoint rendszer)
+   */
+  async saveResultToLeaderboard() {
+    if (this.isSaving) return;
+
+    const state = this.stateManager.getState();
+    if (!state.userProfile) return;
+
+    this.isSaving = true;
+
+    try {
+      const payload = {
+        action: this.leaderboardId ? 'update' : 'create',
+        id: this.leaderboardId,
+        data: {
+          id: this.leaderboardId,
+          nickname: state.userProfile.nickname,
+          heroName: state.userProfile.name,
+          playerClass: state.userProfile.classId,
+          score: state.score || 0,
+          timeMs: this.timeManager ? this.timeManager.getElapsedTime() : 0,
+          selectedCharacterId: state.avatar,
+          taskResults: this.taskResults
+        }
+      };
+
+      const response = await fetch('./ranglista/manage_leaderboard.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.status === 'success' && result.id) {
+          this.leaderboardId = result.id; // Mentjük az ID-t a következő checkpoint-hoz
+          if (this.logger) this.logger.info(`[Leaderboard] Checkpoint saved successfully (ID: ${this.leaderboardId})`);
+        }
+      }
+    } catch (err) {
+      console.warn('[Leaderboard] Failed to save result:', err);
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  /**
    * Feladat automatikus meghívása és inicializálása
    * A renderSlide-ban került leválasztásra az audió eseménykezelésből
    */
@@ -1613,6 +1665,18 @@ class DigitalKulturaVerseny {
 
     console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}`);
 
+    // --- Feladat típus és megnevezés leképezése ---
+    const taskTypeMap = {
+      station_1: { label: 'Labirintuskert – Labirintus' },
+      station_2: { label: 'Adat-tenger – Memóriajáték' },
+      station_3: { label: 'Tudás torony – Kvíz' },
+      station_4: { label: 'Pixel Palota – Kirakós (Puzzle)' },
+      station_5: { label: 'Hangerdő – Hangfájl feladat' }
+    };
+    const taskLabel = slide.id === 'final_2'
+      ? 'Nagy Zár – Végjáték'
+      : (taskTypeMap[section]?.label || slide.title || slide.id);
+
     const onTaskComplete = (result) => {
       const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
       if (!alreadyDone) {
@@ -1620,6 +1684,24 @@ class DigitalKulturaVerseny {
         this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
         this.activeGameInterface?.updateHUD(this.stateManager?.getState());
         this.stateManager?.markSlideCompleted(slide.id);
+
+        // --- Feladat részletei rögzítése a dashboardhoz ---
+        this.taskResults.push({
+          slideId: slide.id,
+          label: taskLabel,
+          success: result.success ?? false,
+          points: result.points ?? 0,
+          maxPoints: result.maxPoints ?? null,
+          timeElapsed: result.timeElapsed ?? null,
+          // Felatattípus-specifikus extra adatok:
+          attempts: result.attempts ?? null,    // MemoryGame: összpróbálkozás
+          stepCount: result.stepCount ?? null,  // MazeGame: lépésszám
+          wordCorrect: result.wordCorrect ?? null,   // FinaleGame
+          orderCorrect: result.orderCorrect ?? null   // FinaleGame
+        });
+
+        // --- CHECKPOINT MENTÉS MINDEN FELADAT UTÁN ---
+        this.saveResultToLeaderboard();
       }
 
       const modalTitle = result.success ? 'Gratulálunk, sikeresen teljesítetted!' : 'Sajnos lejárt az idő vagy nem volt sikeres!';
@@ -1726,6 +1808,8 @@ class DigitalKulturaVerseny {
           finale.destroy();
           // A standard onTaskComplete-et hívjuk a végén
           onTaskComplete(result);
+          
+          // --- A Finale után is lefut a mentés az onTaskComplete hívása miatt ---
         }
       });
       // Az OK gombot a FinaleGame updateButtonState-je fogja engedélyezni

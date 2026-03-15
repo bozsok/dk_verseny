@@ -44,7 +44,7 @@ class SlideManager {
                     return;
                 }
 
-                const url = `/assets/video/grade${grade}/${slideKey}.mp4`;
+                const url = `assets/video/grade${grade}/${slideKey}.mp4`;
                 try {
                     const response = await fetch(url, { method: 'HEAD', cache: 'no-cache' });
                     if (response.ok) {
