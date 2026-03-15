@@ -857,12 +857,13 @@ h3 {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s ease, visibility 0.4s ease;
-  pointer-events: auto;
+  pointer-events: none; /* Rejtett állapotban ne blokkolja a navigációt! */
 }
 
 .dkv-task-modal-overlay.open {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto; /* Csak nyitva lehet kattintani */
 }
 
 .dkv-task-modal {
@@ -1008,4 +1009,71 @@ h3 {
 .dkv-btn-to-orange.suppressed {
   background: rgba(255, 255, 255, 0.1) !important;
   color: white !important;
+}
+
+/* === INVENTORY LIGHTBOX === */
+.dkv-inventory-slot img {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.dkv-inventory-slot img:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(0, 210, 211, 0.6));
+}
+
+.dkv-lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  animation: dkv-fade-only 0.3s ease-out;
+}
+
+.dkv-lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+}
+
+.dkv-lightbox-image {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  animation: dkv-fade-only 0.3s ease-out;
+  /* No shadows, no borders as requested */
+  pointer-events: none;
+}
+
+@keyframes dkv-fade-only {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

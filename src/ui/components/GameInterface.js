@@ -306,13 +306,53 @@ class GameInterface {
                 const imgPath = `/assets/images/grade3/keys/${keyPrefix}_drop.png`;
                 const imgElement = document.createElement('img');
                 imgElement.src = imgPath;
+                imgElement.title = 'Kattints a megtekintéshez';
                 imgElement.style.width = '100%';
                 imgElement.style.height = '100%';
                 imgElement.style.objectFit = 'contain';
 
+                // Eseménykezelő a lightbox megjelenítéséhez
+                imgElement.onclick = (e) => {
+                    e.stopPropagation();
+                    this.showKeyLightbox(keyPrefix);
+                };
+
                 slots[i].appendChild(imgElement);
             }
         }
+    }
+
+    /**
+     * Kulcs nagyított nézetének (lightbox) megjelenítése
+     * @param {string} keyPrefix - A kulcs azonosítója (pl. 'keyA')
+     */
+    showKeyLightbox(keyPrefix) {
+        // Fájlnév sorszáma (keyA -> part1, keyB -> part2, ...)
+        const partMap = {
+            'keyA': 'part1',
+            'keyB': 'part2',
+            'keyC': 'part3',
+            'keyD': 'part4',
+            'keyE': 'part5'
+        };
+
+        const overlay = document.createElement('div');
+        overlay.className = 'dkv-lightbox-overlay';
+
+        const content = document.createElement('div');
+        content.className = 'dkv-lightbox-content';
+
+        const img = document.createElement('img');
+        img.className = 'dkv-lightbox-image';
+        img.src = `/assets/images/grade3/keys/${keyPrefix}_large_${partMap[keyPrefix]}.png`;
+
+        content.appendChild(img);
+        overlay.appendChild(content);
+
+        // Kattintás bárhova -> bezárás
+        overlay.onclick = () => overlay.remove();
+
+        document.body.appendChild(overlay);
     }
 
     _animateScore(start, end) {
@@ -374,18 +414,8 @@ class GameInterface {
                 </div>
             `;
 
-            // Bezárás gomb
             journalPanel.querySelector('button').onclick = () => journalPanel.classList.remove('open');
             this.element.appendChild(journalPanel);
-
-            // Click outside
-            document.addEventListener('mousedown', (e) => {
-                if (journalPanel.classList.contains('open') &&
-                    !journalPanel.contains(e.target) &&
-                    !e.target.closest('button[title="Napló"]')) {
-                    journalPanel.classList.remove('open');
-                }
-            });
 
             void journalPanel.offsetWidth;
         }
@@ -521,6 +551,17 @@ class GameInterface {
 
         // Fejléc kezelése
         const header = this.taskModalOverlay.querySelector('.dkv-task-modal-header');
+        const modal = this.taskModalOverlay.querySelector('.dkv-task-modal');
+        
+        // Modal osztályok tisztítása és beállítása
+        if (modal) {
+            // Megtartjuk az alap osztályt
+            modal.className = 'dkv-task-modal';
+            if (options.modalClass) {
+                modal.classList.add(options.modalClass);
+            }
+        }
+
         if (header) {
             if (options.hideHeader) {
                 header.style.display = 'none';
@@ -576,6 +617,18 @@ class GameInterface {
         if (this.taskModalOverlay) {
             this.taskModalOverlay.classList.remove('open');
             this.taskOkBtn.classList.remove('visible');
+        }
+    }
+
+    /**
+     * Feladat OK gombjának engedélyezése/tiltása
+     * @param {boolean} enabled 
+     */
+    setTaskOkButtonState(enabled) {
+        if (this.taskOkBtn) {
+            this.taskOkBtn.disabled = !enabled;
+            this.taskOkBtn.style.opacity = enabled ? '1' : '0.5';
+            this.taskOkBtn.style.cursor = enabled ? 'pointer' : 'default';
         }
     }
 

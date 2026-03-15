@@ -5,6 +5,28 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.9.5] - 2026-03-14
+
+### Hozzáadva
+- **Finale feladat (Nagy Zár) teljes implementálása:** A `FinaleGame` komponens (`FinaleGame.js`, `FinaleGame.css`) megvalósítja az 5 kulcs sorrendbe rakását drag-and-drop interakcióval, és a varázsszó bevitelét (`5kulcskell`).
+- **Finale időzítő:** Az összefoglaló modalban megjelenik az eltelt idő, az időzítő az első kulcskattintás, bevitel vagy húzás pillanatában indul el – konzisztensen a többi feladatéval.
+- **Inventory kulcs lightbox a Finale alatt:** A jobb oldali inventory-ban lévő kulcsokra kattintva a `GameInterface.showKeyLightbox()` hívódik meg, így a nagyított kulcskép megtekinthető a feladat alatt is.
+- **Részleges pontozás (Finale):** A varázsszó és a kulcssorrend külön-külön pontozódik (5-5 pont), `help_json.txt` specifikáció alapján.
+- **Küldetésnapló (journal) a Finale felett:** A Napló gomb és panel a feladat modal felett jelenik meg, `z-index` és `pointer-events` beállításokkal.
+- **Napló csak gombbal zárható:** A Küldetésnapló panelt játék közben csak a „Bezárás" gombbal lehet bezárni, mellékattintásra nem.
+
+### Javítva
+- **Visszanavigáció a Finale után (kritikus hiba):** A feladat teljesítése utáni dián a bal nyíl (Vissza) nem reagált. Gyökérok: a `FinaleGame.init()` `finale-active` CSS-osztályt adott a bottom bar-hoz, ami `pointer-events: none`-t okozott (`FinaleGame.css`), és ez az osztály sosem törlődött le dia váltáskor. Javítva: `finale.destroy()` hívása az értékelési callback-ekben (`main.js`).
+- **Finale feladat indítása visszalépéskor:** A `final_2` feladat mostantól csak előre haladáskor (`direction === 'forward'`) indul el automatikusan. Visszalépéskor nem nyílik meg a feladat modal újra.
+- **`.maze-result-overlay` kattintás blokkolás:** Az összegző overlay `pointer-events: none` lett az alap állapotban, `pointer-events: auto` csak `.open` osztálynál (`Maze.css`). Így a fade-out közben nem blokkolta a navigációs gombokat.
+- **`.dkv-task-modal-overlay` kattintás blokkolás:** Azonos `pointer-events` javítás az általános feladat modal overlay-n is (`design-system.css`).
+- **Inventory kulcs drag kép torzulása:** A kulcsok húzásakor az inventory slotban a kép összenyomódott. CSS `object-fit: contain` és flexbox igazítással javítva (`FinaleGame.css`).
+- **Varázsszó (helyes érték):** A `CORRECT_WORD` értéke `"5kulcskell"` lett a `help_json.txt` specifikáció alapján (`FinaleGame.js`).
+
+### Módosítva
+- **Finale summary modal:** A kiértékelés után megjelenő összegző ablak a többi feladathoz hasonló `maze-result-modal` komponenst használja, a Tovább gomb dia váltást végez.
+- **Visszalépés-kezelő (`handlePrev`) ideiglenes diagnosztikai naplózás:** A `handlePrev` metódus konzol naplókat ír ki a visszalépés nyomkövetéséhez (fejlesztési segédeszköz).
+
 ## [0.9.4] - 2026-03-14
 
 ### Javítva

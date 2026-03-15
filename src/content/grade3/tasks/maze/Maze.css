@@ -102,10 +102,12 @@
     backdrop-filter: blur(8px);
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none; /* Rejtett állapotban ne blokkolja a navigációs gombokat! */
 }
 
 .maze-result-overlay.open {
     opacity: 1;
+    pointer-events: auto; /* Csak nyitva lehet kattintani */
 }
 
 .maze-result-modal {

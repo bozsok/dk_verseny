@@ -83,19 +83,9 @@ class TaskSlide {
                     <button class="dkv-button">Bezárás</button>
                 </div>
             `;
-            // Bezárás gomb
             journalPanel.querySelector('button').onclick = () => journalPanel.classList.remove('open');
 
             this.gameInterface.element.appendChild(journalPanel);
-
-            // Bezárás ha mellé kattintunk
-            document.addEventListener('mousedown', (e) => {
-                if (journalPanel.classList.contains('open') &&
-                    !journalPanel.contains(e.target) &&
-                    !e.target.closest('button[title="Napló"]')) {
-                    journalPanel.classList.remove('open');
-                }
-            });
 
             // Kényszerítjük a böngészőt, hogy számolja újra a stílusokat (Reflow)
             // Mielőtt rátennénk az 'open' osztályt.

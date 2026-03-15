@@ -28,11 +28,13 @@ import MemoryGame from './content/grade3/tasks/memory/MemoryGame.js';
 import QuizGame from './content/grade3/tasks/quiz/QuizGame.js';
 import { PuzzleGame } from './content/grade3/tasks/puzzle/PuzzleGame.js';
 import { SoundGame } from './content/grade3/tasks/sound/SoundGame.js';
+import FinaleGame from './content/grade3/tasks/finale/FinaleGame.js';
 import './content/grade3/tasks/maze/Maze.css';
 import './content/grade3/tasks/memory/Memory.css';
 import './content/grade3/tasks/quiz/Quiz.css';
 import './content/grade3/tasks/puzzle/Puzzle.css';
 import './content/grade3/tasks/sound/Sound.css';
+import './content/grade3/tasks/finale/FinaleGame.css';
 import './ui/styles/design-system.css';
 import './ui/styles/Portal.css';
 
@@ -607,6 +609,20 @@ class DigitalKulturaVerseny {
           console.log('[Skip] Onboarding skipped, dummy data applied');
         }
 
+        // --- AUTOMATIC KEY COLLECTION FOR SKIPPED SECTIONS ---
+        if (direction === 'forward' && slide.metadata?.section?.startsWith('station_')) {
+          const stationId = slide.metadata.section;
+          if (this.stateManager && !this.stateManager.hasKey(stationId)) {
+            console.log(`[Skip] Adding key for skipped station: ${stationId}`);
+            this.stateManager.addKey(stationId);
+            
+            // HUD frissítése, hogy azonnal látszódjon (ha már létezik az interfész)
+            if (this.activeGameInterface) {
+              this.activeGameInterface.updateHUD(this.stateManager.getState());
+            }
+          }
+        }
+
         const targetSlide = direction === 'forward'
           ? this.slideManager.nextSlide()
           : this.slideManager.prevSlide();
@@ -812,12 +828,25 @@ class DigitalKulturaVerseny {
         console.warn(`[DKV CALLBACK] Audio vége: slide.id=${slide.id}`);
         setBtnState(true, btnOptions);
         if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
+
+        // Automatikus feladat indítás a 26. dián (Nagy Zár) - Csak előrefelé haladva!
+        if (slide.id === 'final_2' && direction === 'forward') {
+          console.log(`[DKV] Auto-launching Finale task (Direction: ${direction})`);
+          this._launchTask(slide);
+        }
       });
     } else {
       const isTaskSlide = slide.metadata && slide.metadata.step === 2 && slide.metadata.section?.startsWith('station_');
-      const btnOptions = isTaskSlide ? { suppressOrange: true } : {};
+      const isFinalTask = slide.id === 'final_2';
+      const btnOptions = (isTaskSlide || isFinalTask) ? { suppressOrange: true } : {};
       const shouldEnable = !isLastSlide;
       setBtnState(shouldEnable, btnOptions);
+
+      // Finale task indítása akkor is, ha nincs audió
+      if (isFinalTask && direction === 'forward') {
+        console.log(`[DKV] Auto-launching Finale task (No Audio, Direction: ${direction})`);
+        this._launchTask(slide);
+      }
     }
     // A feladat modal-t KISZEDTÜK INNEN! Nem indul el magától 1500ms után!
     // A felhasználónak kell a felvillanó "Tovább" nyílra kattintania!
@@ -1137,9 +1166,14 @@ class DigitalKulturaVerseny {
   }
 
   async handlePrev() {
-    if (this.isTransitioning) return;
+    console.log(`[DKV handlePrev] Called. isTransitioning=${this.isTransitioning}, currentIndex=${this.slideManager?.currentIndex}, currentSlide=${this.slideManager?.getCurrentSlide()?.id}`);
+    if (this.isTransitioning) {
+      console.warn('[DKV handlePrev] BLOCKED by isTransitioning!');
+      return;
+    }
     await this.ensureAudioFeedback();
     const prev = this.slideManager.prevSlide();
+    console.log(`[DKV handlePrev] prevSlide result: ${prev?.id || 'null'}`);
     if (prev) this.renderSlide(prev, 0, 'backward'); // Direction: backward
   }
 
@@ -1575,6 +1609,7 @@ class DigitalKulturaVerseny {
     const isQuiz = section === 'station_3' || (slide.id && slide.id.toString().startsWith('st3_'));
     const isPuzzle = section === 'station_4' || (slide.id && slide.id.toString().startsWith('st4_'));
     const isSound = section === 'station_5' || (slide.id && slide.id.toString().startsWith('st5_'));
+    const isFinalChallenge = slide.id === 'final_2';
 
     console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}`);
 
@@ -1673,6 +1708,38 @@ class DigitalKulturaVerseny {
         onComplete: onTaskComplete
       });
       hideOkBtn();
+    } else if (isFinalChallenge) {
+      const taskContainer = document.createElement('div');
+      taskContainer.className = 'finale-task-container';
+      taskContainer.style.width = '100%';
+      taskContainer.style.height = '100%';
+      this.activeGameInterface.showTaskModal(taskContainer, null, {
+        title: 'Eljutottál az utolsó próbához!',
+        subtitle: 'Add meg a helyes sorrendet és a varázsszót!',
+        modalClass: 'finale-modal'
+      });
+
+      const finale = new FinaleGame(taskContainer, {
+        gameInterface: this.activeGameInterface,
+        onComplete: (result) => {
+          // Takarítás: finale-active osztályok eltávolítása (pointer-events helyreállítása!)
+          finale.destroy();
+          // A standard onTaskComplete-et hívjuk a végén
+          onTaskComplete(result);
+        }
+      });
+      // Az OK gombot a FinaleGame updateButtonState-je fogja engedélyezni
+      const okBtn = document.querySelector('.dkv-task-ok-btn');
+      if (okBtn) {
+        okBtn.style.display = 'block';
+        okBtn.disabled = true;
+        // Átkötjük a gombot az evaluate hívására
+        okBtn.onclick = () => {
+          const result = finale.evaluate();
+          finale.destroy(); // Takarítás itt is, ha közvetlenül OK-val fejezik be
+          onTaskComplete(result);
+        };
+      }
     } else {
       const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
       this.activeGameInterface.showTaskModal(taskContent, () => {

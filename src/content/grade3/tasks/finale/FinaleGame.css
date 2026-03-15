@@ -1,0 +1,259 @@
+.finale-game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    color: #fff;
+    font-family: 'Source Code Pro', monospace;
+    text-align: center;
+}
+
+/* Modal magasságának felülbírálása specifitással a !important helyett */
+.dkv-game-interface .dkv-task-modal.finale-modal {
+    height: 700px;
+}
+
+.finale-instructions {
+    margin-top: 80px;
+    width: 100%;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+
+.finale-instructions p, .finale-instructions ol {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #fff;
+}
+
+.finale-instructions ol {
+    display: inline-block;
+    text-align: left;
+    margin: 15px 0;
+    padding-left: 30px;
+}
+
+.finale-word-section {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+.finale-word-section label {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.finale-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#finale-word-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid #00d2d3;
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: #fff;
+    font-size: 20px;
+    outline: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+#finale-word-input:focus {
+    box-shadow: 0 0 15px rgba(0, 210, 211, 0.4);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.finale-tooltip-icon {
+    width: 30px;
+    height: 30px;
+    background: #00d2d3;
+    color: #00151e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: help;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.finale-tooltip-icon:hover {
+    transform: scale(1.1);
+}
+
+.finale-slots-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.finale-key-slot {
+    width: 120px;
+    height: 160px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px dashed #00d2d3;
+    border-radius: 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.finale-key-slot.drag-over {
+    background: rgba(0, 210, 211, 0.2);
+    border-style: solid;
+    transform: scale(1.05);
+}
+
+.slot-number {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.placed-key-img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    cursor: grab;
+    filter: drop-shadow(0 0 5px rgba(0, 210, 211, 0.5));
+    transition: transform 0.2s ease;
+}
+
+.placed-key-img:active {
+    cursor: grabbing;
+}
+
+.placed-key-img:hover {
+    transform: scale(1.05);
+}
+
+/* Kiemelt z-index a sidebar számára a finálé alatt specifitással */
+.dkv-game-interface .dkv-game-sidebar.finale-active {
+    z-index: 3100;
+}
+
+/* Napló és Alsó sáv kiemelése a finálé idejére specifitással */
+.dkv-game-interface .dkv-game-bottom-bar.finale-active {
+    z-index: 3200;
+    pointer-events: none; /* Ne akadályozza a modal elérését */
+}
+
+/* Navigációs nyilak elrejtése a finálé alatt (mint a többi feladatnál - ott a modal fedi) */
+.dkv-game-interface .dkv-game-bottom-bar.finale-active .dkv-nav-controls {
+    visibility: hidden;
+}
+
+/* Napló és Funkció gombok kiemelése a finálé idejére - specifitással */
+.dkv-game-interface .dkv-func-buttons.finale-active {
+    pointer-events: auto; /* Csak a gombok legyenek kattinthatóak */
+}
+
+.dkv-game-interface .dkv-btn-journal.finale-active {
+    z-index: 3201;
+    position: relative; /* Fontos: enélkül a z-index nem érvényesül! */
+    pointer-events: auto;
+}
+
+/* Narráció elrejtése a finálé idejére, ha csak a Napló kell */
+.dkv-game-bottom-bar.finale-active .dkv-btn-narrator {
+    display: none;
+}
+
+/* Napló panel rétegkezelése specifitással */
+.dkv-game-interface .dkv-journal-panel {
+    z-index: 4000; /* Minden felett (modal overlay 3000, modal 3100-3200) */
+    pointer-events: auto;
+    left: -400px; /* Alaphelyzet megerősítése */
+    transition: left 0.3s ease-in-out; /* Animáció garantálása */
+}
+
+.dkv-game-interface .dkv-journal-panel.open {
+    left: 0; /* Kifejezett felülbírálás a láthatósághoz */
+}
+
+.dkv-game-sidebar.finale-active .dkv-inventory-slot {
+    border-color: #00d2d3;
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.3);
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dkv-game-sidebar.finale-active .dkv-inventory-slot img {
+    width: auto !important;
+    height: 80% !important;
+    max-width: 90% !important;
+    object-fit: contain !important;
+    pointer-events: auto;
+}
+
+/* Időmérő - a fejlécben jobb szélen abszolút pozicionálva (mint a Sound feladatnál) */
+.finale-timer-bar {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 234, 255, 0.12);
+    border: 1px solid rgba(0, 234, 255, 0.5);
+    border-radius: 8px;
+    padding: 6px 16px;
+    z-index: 10;
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
+}
+
+.finale-timer-icon {
+    font-size: 1.2rem;
+}
+
+.finale-timer-time {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #00eaff !important;
+    letter-spacing: 2px;
+}
+
+/* Custom Tooltip a Finale feladathoz */
+.finale-custom-tooltip {
+    position: absolute;
+    background: rgba(0, 21, 30, 0.95);
+    border: 1px solid #00eaff;
+    border-radius: 10px;
+    padding: 15px;
+    color: #fff;
+    max-width: 350px;
+    z-index: 10000;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 234, 255, 0.2);
+    pointer-events: none;
+}
+
+.finale-custom-tooltip b {
+    color: #00eaff;
+}
