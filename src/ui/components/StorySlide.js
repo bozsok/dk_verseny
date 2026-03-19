@@ -148,10 +148,10 @@ class StorySlide {
                 
                 // Biztonsági időzítő: ha 5mp alatt nem jön meg a canplaythrough, próbáljuk meg elindítani
                 setTimeout(() => {
-                    if (this.videoElement.paused) {
+                    if (this.videoElement && this.videoElement.paused) {
                         startPlayback();
                     }
-                }, 5000);
+                }, 5500); // Kicsit növelve a biztonság kedvéért
             }
         }, videoDelay);
     }

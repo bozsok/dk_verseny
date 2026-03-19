@@ -28,9 +28,10 @@ development_status:
 
   4-1-final-story-conclusion: done
   4-2-finale-interaction: done
+  4-3-portal-sfx-integration: in-progress
 
   # Retrospectives
   epic-1-retrospective: done
   epic-2-retrospective: done
   epic-3-retrospective: done
-  epic-4-retrospective: optional
+  epic-4-retrospective: in-progress

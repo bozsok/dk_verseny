@@ -1,0 +1,147 @@
+/**
+ * Summary Slide Styles - Digitális Kultúra Verseny
+ */
+@font-face {
+    font-family: "Book Antiqua";
+    src: url("../../../assets/fonts/bookantiqua.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+.summary-slide-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.certificate-scaler {
+    width: 90%;
+    max-width: 1200px;
+    aspect-ratio: 3508 / 2480;
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+.certificate-content {
+    width: 3508px;
+    height: 2480px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    /* Ezt a JS fogja skálázni */
+    font-family: "Book Antiqua", serif;
+    color: #281c1c;
+    background-size: cover;
+    background-position: center;
+}
+
+.certificate-bg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.cert-character-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1000px;
+    height: 1000px;
+    z-index: 5;
+}
+
+#cert-img-summary {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cert-character-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+}
+
+.cert-text {
+    position: absolute;
+    z-index: 10;
+}
+
+/* Gratuláció stílus (Krisztián kérése alapján) */
+#summary-name {
+    top: 770px;
+    width: 100%;
+    text-align: center;
+    font-size: 150px;
+}
+
+#summary-class {
+    top: 1107px;
+    left: 1444px;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+#summary-score {
+    top: 1354px;
+    left: 2170px;
+    font-size: 65px;
+    font-weight: bold;
+}
+
+#summary-time {
+    top: 1435px;
+    left: 1734px;
+    font-size: 60px;
+    font-variant: small-caps;
+}
+
+#summary-date {
+    bottom: 130px;
+    left: 360px;
+    font-size: 50px;
+}
+
+/* Gombok */
+.summary-actions {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.btn-continue {
+    padding: 15px 30px;
+    background: #e94560;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+}
+
+/* Kisebb képernyőkre */
+@media (max-width: 600px) {
+    .dkv-summary-details {
+        grid-template-columns: 1fr;
+    }
+    .dkv-summary-title {
+        font-size: 2rem;
+    }
+}

@@ -514,8 +514,11 @@ h3 {
   /* Base bg */
   z-index: 1100;
   flex-shrink: 0;
-  pointer-events: auto;
-  /* Re-enable clicks */
+  pointer-events: none; /* Allow clicks to pass through gaps */
+}
+
+.dkv-hud-left-group, .dkv-hud-timeline, .dkv-hud-right-group {
+  pointer-events: auto; /* Re-enable for content groups */
 }
 
 .dkv-hud-left-group {
@@ -642,8 +645,11 @@ h3 {
   /* Fontos: Grid-szerű elosztás */
   position: relative;
   z-index: 1100;
-  pointer-events: auto;
-  /* Re-enable clicks */
+  pointer-events: none; /* Allow clicks to pass through to SummarySlide buttons */
+}
+
+.dkv-func-buttons, .dkv-nav-controls {
+  pointer-events: auto; /* Re-enable for controls */
 }
 
 .dkv-func-buttons {
@@ -652,6 +658,11 @@ h3 {
   bottom: 2rem;
   display: flex;
   gap: 1rem;
+  pointer-events: none; /* Only children buttons should be clickable */
+}
+
+.dkv-func-btn {
+  pointer-events: auto; /* Re-enable for buttons */
 }
 
 .dkv-func-btn {
@@ -677,6 +688,11 @@ h3 {
   display: flex;
   gap: 400px;
   /* "Elegendő eltartás" */
+  pointer-events: none; /* Only children arrows should be clickable */
+}
+
+.dkv-nav-arrow {
+  pointer-events: auto; /* Re-enable for arrows */
 }
 
 .dkv-nav-arrow:hover {

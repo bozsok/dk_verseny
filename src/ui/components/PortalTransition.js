@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export class PortalTransition {
     constructor(options) {
-        this.portalVideoSrc = options.portalVideoSrc; // Már nem használjuk, de API compatibilitás miatt marad
+        this.options = options;
         this.newSlideHtml = options.newSlideHtml;
         this.animationConfig = options.animationConfig || {
             duration: 2500,
@@ -25,6 +25,10 @@ export class PortalTransition {
         this.clickBlocker = null;
         this.maskContainer = null;
         this.animationFrameId = null;
+
+        // Audio asset (MP3)
+        this.audioSrc = options.audioSrc || null;
+        this.audio = null;
 
         // Three.js elemek
         this.scene = null;
@@ -422,6 +426,14 @@ export class PortalTransition {
     start() {
         if (!this.maskContainer || !this.renderer) return;
 
+        // Audio indítása (ha van megadva forrás)
+        if (this.audioSrc) {
+            this.audio = new Audio(this.audioSrc);
+            // Ha van megadva hangerő az opciókban, használjuk azt, egyébként 0.5
+            this.audio.volume = this.options.volume !== undefined ? this.options.volume : 0.5;
+            this.audio.play().catch(e => console.warn('Portal audio play blocked', e));
+        }
+
         let startTime = null;
 
         const updateAnimation = (timestamp) => {
@@ -529,6 +541,25 @@ export class PortalTransition {
         }
 
         window.removeEventListener('resize', this._handleResize);
+
+        // Audio megállítása fade-outtal
+        if (this.audio) {
+            const audio = this.audio;
+            const fadeTime = 500; // ms
+            const step = 50;
+            const volStep = audio.volume / (fadeTime / step);
+            
+            const interval = setInterval(() => {
+                if (audio.volume > volStep) {
+                    audio.volume -= volStep;
+                } else {
+                    audio.volume = 0;
+                    audio.pause();
+                    clearInterval(interval);
+                    this.audio = null;
+                }
+            }, step);
+        }
 
         // Three.js cleanup (erőforrások felszabadítása)
         if (this.renderer) {

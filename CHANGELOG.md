@@ -1,9 +1,22 @@
+```
 # Changelog
 
 Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
+
+## [0.10.0] - 2026-03-19
+### Javítva
+- **Hub visszatérés és TypeError**: Kijavítva a `showHub` metódusban fellépő hiba, a Hub mostantól tiszta állapotban és újrainicializálva jelenik meg a játék végén (visszatéréskor az évfolyamválasztóhoz).
+- **Befejezés gomb**: A `SummarySlide` (összegző dia) „Befejezés” gombja most már kattintható és visszavisz a Hub-ba a központi navigáción keresztül.
+- **Időzítő megállítása**: Az időzítő mostantól leáll az utolsó feladat (Finale) befejezésekor, még a mentés előtt, biztosítva a ranglista és a kijelző közötti tökéletes összhangot.
+- **UI rétegek kattinthatósága**: A HUD és az alsó sáv átlátszó részei már nem blokkolják a kattintásokat (`pointer-events: none`), így az alatta lévő gombok is interaktívak maradtak.
+
+## [0.9.9] - 2026-03-19
+### Hozzáadva
+- **Portál SFX**: Prémium MP3 alapú hanghatás a portál átmenethez, automatikus elhalkulással (fade-out).
+- **Összegző Dia**: Játék végi statisztikai összefoglaló (Név, Osztály, Pontszám, Idő) elegáns glassmorphism designnal.
 
 ## [0.9.8] - 2026-03-19
 

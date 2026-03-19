@@ -19,6 +19,7 @@ import WelcomeSlide from './ui/components/WelcomeSlide.js';
 import RegistrationSlide from './ui/components/RegistrationSlide.js';
 import CharacterSlide from './ui/components/CharacterSlide.js';
 import StorySlide from './ui/components/StorySlide.js';
+import SummarySlide from './ui/components/SummarySlide.js';
 import GameInterface from './ui/components/GameInterface.js';
 import { PortalTransition } from './ui/components/PortalTransition.js';
 import KeyCollectionAnimation from './ui/components/KeyCollectionAnimation.js';
@@ -37,6 +38,7 @@ import './content/grade3/tasks/sound/Sound.css';
 import './content/grade3/tasks/finale/FinaleGame.css';
 import './ui/styles/design-system.css';
 import './ui/styles/Portal.css';
+import './ui/styles/Summary.css';
 
 // Debug System (csak DEV módban töltődik be)
 let DebugManager = null;
@@ -325,7 +327,7 @@ class DigitalKulturaVerseny {
   /**
    * Hub inicializálása
    */
-  async initHub() {
+  initHub() {
     this.hub = new Hub({
       stateManager: this.stateManager,
       eventBus: this.eventBus,
@@ -543,6 +545,7 @@ class DigitalKulturaVerseny {
       // Hub eltüntetése
       if (this.hub) {
         this.hub.destroy();
+        this.hub = null;
       }
 
       this.renderSlide(firstSlide);
@@ -728,6 +731,12 @@ class DigitalKulturaVerseny {
 
       // 2. Render New Content TO DOM
       if (newComponent && newContent) {
+        // --- IDŐZÍTŐ MEGÁLLÍTÁSA (Biztonsági tartalék) ---
+        if (slide.id === 'summary' && this.timeManager && this.timeManager.globalTimer.isRunning) {
+          if (this.logger) this.logger.info('Summary slide reached, stopping timer...');
+          this.timeManager.stopCompetition();
+        }
+
         this.layerContent.appendChild(newContent);
         this.currentSlideComponent = newComponent;
       }
@@ -946,6 +955,7 @@ class DigitalKulturaVerseny {
       case SLIDE_TYPES.VIDEO:
       case SLIDE_TYPES.REWARD: newComponent = new VideoSlide(slide, commonOptions); break;
       case SLIDE_TYPES.TASK: newComponent = new TaskSlide(slide, commonOptions); break;
+      case SLIDE_TYPES.INFO: newComponent = new SummarySlide(slide, commonOptions); break;
       default:
         console.warn('Unknown slide type:', slide.type);
         newComponent = new VideoSlide(slide, commonOptions);
@@ -1023,7 +1033,14 @@ class DigitalKulturaVerseny {
     if (!nextSlide) {
       // Ha nincs több dia, játsszuk le a vége-folyamatot a sima nextSlide meghívásával
       const next = this.slideManager.nextSlide();
-      if (next) this.renderSlide(next, 0, 'forward');
+      if (next) {
+        this.renderSlide(next, 0, 'forward');
+      } else {
+        // NINCS TÖBB DIA -> Vissza a Hub-ba
+        if (this.logger) this.logger.info('End of slides reached, returning to Hub');
+        this.stopBackgroundMusicWithFade();
+        this.showHub();
+      }
       return;
     }
 
@@ -1124,6 +1141,8 @@ class DigitalKulturaVerseny {
         const portal = new PortalTransition({
           newSlideHtml: nextSlideDOM,
           colors: activeColors,
+          audioSrc: 'assets/audio/sfx/portal_transition.mp3',
+          volume: this.sfxVolume,
           animationConfig: {
             duration: 11000, // Visszaállítva az eredeti 11 másodpercre
             keyframes: [
@@ -1161,7 +1180,14 @@ class DigitalKulturaVerseny {
     }
 
     const next = this.slideManager.nextSlide();
-    if (next) this.renderSlide(next, 0, 'forward'); // Direction: forward (explicit)
+    if (next) {
+      this.renderSlide(next, 0, 'forward'); // Direction: forward (explicit)
+    } else {
+      // NINCS TÖBB DIA -> Vissza a Hub-ba
+      if (this.logger) this.logger.info('End of slides reached, returning to Hub (Direct)');
+      this.stopBackgroundMusicWithFade();
+      this.showHub();
+    }
   }
 
   async handlePrev() {
@@ -1209,10 +1235,37 @@ class DigitalKulturaVerseny {
    */
   showHub() {
     const app = document.getElementById('app');
-    if (app && this.hub) {
+    if (!app) return;
+
+    // 1. Ellenőrizzük, hogy a Hub létezik-e és van-e eleme (ha korábban destroy-olva lett, újrainicializáljuk)
+    if (!this.hub || !this.hub.getElement()) {
+      if (this.logger) this.logger.info('Hub was destroyed or missing, re-initializing...');
+      this.initHub();
+    }
+
+    if (this.hub) {
+      // 2. Állapot alaphelyzetbe állítása (Nincs aktív évfolyam, Hub fázis)
+      if (this.stateManager) {
+        this.stateManager.updateState({
+          currentGrade: null,
+          gamePhase: 'hub'
+        });
+      }
+
+      // 3. Konténer ürítése és Hub hozzáadása
       app.innerHTML = '';
       app.appendChild(this.hub.getElement());
+      
+      // 4. Kártyák újra-renderelése (Biztosítjuk, hogy láthatóak legyenek)
+      if (typeof this.hub.renderGradeCards === 'function') {
+        this.hub.renderGradeCards();
+      }
+      
       this.hub.show();
+      
+      if (this.logger) {
+        this.logger.info('Hub displayed (re-initialized and fresh render)');
+      }
     }
   }
 
@@ -1693,6 +1746,12 @@ class DigitalKulturaVerseny {
           wordCorrect: result.wordCorrect ?? null,   // FinaleGame
           orderCorrect: result.orderCorrect ?? null   // FinaleGame
         });
+
+        // --- A Finale után megállítjuk az időzítőt, hogy a mentett idő fix maradjon ---
+        if (isFinalChallenge && this.timeManager) {
+          if (this.logger) this.logger.info('[Leaderboard] Final challenge completed, stopping timer before save.');
+          this.timeManager.stopCompetition();
+        }
 
         // --- CHECKPOINT MENTÉS MINDEN FELADAT UTÁN ---
         this.saveResultToLeaderboard();

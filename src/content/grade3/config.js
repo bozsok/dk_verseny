@@ -233,7 +233,11 @@ export const createConfig = () => {
 
         applyVideoConfig(slideConfig, `slide_${slideNum}`);
 
-        addSlide(SLIDE_TYPES.STORY, title, 'A végső megmérettetés...', slideConfig, { section: 'final', step: i - 25 }, `final_${i - 24}`);
+        if (i === 28) {
+             addSlide(SLIDE_TYPES.INFO, title, 'Gratulálunk a verseny teljesítéséhez!', { showStats: true }, { section: 'final', step: 3 }, 'summary');
+        } else {
+             addSlide(SLIDE_TYPES.STORY, title, 'A végső megmérettetés...', slideConfig, { section: 'final', step: i - 25 }, `final_${i - 24}`);
+        }
     }
 
     // === 2. FELADATOK (Később) ===

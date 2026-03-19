@@ -19,6 +19,10 @@
     "slide_05": {
       "videoDelay": 0,
       "videoLoop": false
+    },
+    "slide_27": {
+      "videoDelay": 10000,
+      "videoLoop": false
     }
   }
 }

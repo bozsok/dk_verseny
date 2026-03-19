@@ -92,10 +92,8 @@ export const createSlidesConfig = (grade) => {
     addStorySlide('Végjáték - A Végső Harc', 'Konfrontáció', 'assets/videos/finale_1.mp4');
     addStorySlide('Végjáték - A Fordulat', 'Váratlan esemény', 'assets/videos/finale_2.mp4');
     addSlide(SLIDE_TYPES.TASK, 'Végjáték - Végső Próba', 'Mentsd meg a világot!', { taskId: 'task_finale', points: 300 });
-    addStorySlide('Végjáték - Győzelem', 'A küldetés teljesítve', 'assets/videos/finale_reward.mp4');
-
-    // === 4. LEVEZETÉS (Outro) - 2 dia ===
-    addStorySlide('Epilógus', 'A béke helyreállt', 'assets/videos/outro_1.mp4');
+    
+    // === 4. LEVEZETÉS (Összegzés) ===
     addSlide(SLIDE_TYPES.INFO, 'Vége', 'Gratulálunk a verseny teljesítéséhez!', { showStats: true });
 
     return slides;
