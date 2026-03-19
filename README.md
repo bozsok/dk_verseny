@@ -57,14 +57,14 @@ digitális-kultúra-verseny/
 ```
 
 ## 📊 Projekt Állapot
-### Jelenlegi Verzió: v0.9.7 (2026-03-15)
+### Jelenlegi Verzió: v0.9.8 (2026-03-19)
 A projekt elérte a végleges, versenyre kész állapotot! Minden tervezett funkció (feladatok, pontozás, ranglista) stabilan működik.
 
 ---
 
 **© 2026 Digitális Kultúra Verseny - Minden jog fenntartva**
 
-*Utolsó frissítés: 2026. március 15.*
+*Utolsó frissítés: 2026. március 19.*
 
 
 ### Hogyan járulhatsz hozzá?

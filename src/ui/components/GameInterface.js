@@ -349,10 +349,23 @@ class GameInterface {
         content.appendChild(img);
         overlay.appendChild(content);
 
-        // Kattintás bárhova -> bezárás
-        overlay.onclick = () => overlay.remove();
-
+        // Hozzáadjuk a dokumentumhoz
         document.body.appendChild(overlay);
+
+        // Nyitó animáció indítása (késleltetve, hogy a DOM-ba kerülés után induljon)
+        requestAnimationFrame(() => {
+            overlay.classList.add('open');
+        });
+
+        // Bezárás funkció: levesszük az osztályt, megvárjuk a transitiont (400ms)
+        const closeLightbox = () => {
+            overlay.classList.remove('open');
+            setTimeout(() => {
+                overlay.remove();
+            }, 400);
+        };
+
+        overlay.onclick = closeLightbox;
     }
 
     _animateScore(start, end) {

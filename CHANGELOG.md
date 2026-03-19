@@ -5,6 +5,12 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.9.8] - 2026-03-19
+
+### Javítva
+- **Inventory Lightbox animáció:** Az inventory-ban lévő kulcsok nagyított nézetének bezárása mostantól pontosan a nyitás fordítottja. A korábbi hirtelen eltűnés helyett a kulcs képe visszakicsinyedik és a háttér elmosódása (blur) szinkronizáltan lassan szűnik meg a CSS transition-öknek köszönhetően.
+- **Finale feladat trigger:** A Nagy Zár (Finale) feladat indítása mostantól konzisztens a többi állomással. A narráció elhangzása után a feladat modal nem ugrik fel automatikusan, hanem a felhasználónak a "Tovább" (jobbra) nyílra kell kattintania az indításhoz.
+
 ## [0.9.7] - 2026-03-15
 
 ### Hozzáadva

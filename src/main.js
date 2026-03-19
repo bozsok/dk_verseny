@@ -834,11 +834,8 @@ class DigitalKulturaVerseny {
         setBtnState(true, btnOptions);
         if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
 
-        // Automatikus feladat indítás a 26. dián (Nagy Zár) - Csak előrefelé haladva!
-        if (slide.id === 'final_2' && direction === 'forward') {
-          console.log(`[DKV] Auto-launching Finale task (Direction: ${direction})`);
-          this._launchTask(slide);
-        }
+        // Automatikus feladat indítás KISZEDVE a konzisztencia miatt!
+        // A felhasználónak a "Tovább" nyílra kell kattintania.
       });
     } else {
       const isTaskSlide = slide.metadata && slide.metadata.step === 2 && slide.metadata.section?.startsWith('station_');
@@ -847,11 +844,7 @@ class DigitalKulturaVerseny {
       const shouldEnable = !isLastSlide;
       setBtnState(shouldEnable, btnOptions);
 
-      // Finale task indítása akkor is, ha nincs audió
-      if (isFinalTask && direction === 'forward') {
-        console.log(`[DKV] Auto-launching Finale task (No Audio, Direction: ${direction})`);
-        this._launchTask(slide);
-      }
+      // Automatikus feladat indítás KISZEDVE!
     }
     // A feladat modal-t KISZEDTÜK INNEN! Nem indul el magától 1500ms után!
     // A felhasználónak kell a felvillanó "Tovább" nyílra kattintania!
@@ -1012,7 +1005,8 @@ class DigitalKulturaVerseny {
 
     // --- FELADAT MODAL ELINDÍTÁSA A GOMBNYOMÁSRA ---
     // Ha mi egy feladat slide-on vagyunk (step === 2) és még nincs megoldva...
-    const isTaskSlideActive = currentSlide?.metadata?.step === 2 && currentSlide?.metadata?.section?.startsWith('station_');
+    // A Finálé (final_2) is ide tartozik már!
+    const isTaskSlideActive = (currentSlide?.metadata?.step === 2 && currentSlide?.metadata?.section?.startsWith('station_')) || currentSlide?.id === 'final_2';
     const isSlideCompleted = this.stateManager?.isSlideCompleted(currentSlide?.id);
 
     if (isTaskSlideActive && !isSlideCompleted) {
