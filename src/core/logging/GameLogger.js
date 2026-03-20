@@ -79,28 +79,28 @@ class GameLogger {
      * ERROR szintű naplózás
      */
     error(message, context = {}) {
-        this.log('ERROR', message, context);
+        return this.log('ERROR', message, context);
     }
 
     /**
      * WARN szintű naplózás
      */
     warn(message, context = {}) {
-        this.log('WARN', message, context);
+        return this.log('WARN', message, context);
     }
 
     /**
      * INFO szintű naplózás
      */
     info(message, context = {}) {
-        this.log('INFO', message, context);
+        return this.log('INFO', message, context);
     }
 
     /**
      * DEBUG szintű naplózás
      */
     debug(message, context = {}) {
-        this.log('DEBUG', message, context);
+        return this.log('DEBUG', message, context);
     }
 
     /**

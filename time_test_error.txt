@@ -1,0 +1,53 @@
+﻿node.exe : FAIL tests/unit/core/time/TimeManager.test.js
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL tests/unit...Manager.test.js: 
+   String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  TimeManager
+    Initialization
+      ÔłÜ should restore elapsed time from stateManager (4 ms)
+      ÔłÜ should initialize with zero if no state is found
+    Competition Timer
+      ÔłÜ should start the competition and emit event (1 ms)
+      ├Ś should stop the competition and return final time (2 ms)
+      ÔłÜ should handle resuming correctly (1 ms)
+    Ticker & State Sync
+      ÔłÜ should emit tick events every second (1 ms)
+      ÔłÜ should sync time to stateManager every second (1 ms)
+      ÔłÜ should not redundant sync if second hasn't changed
+    Edge Cases
+      ÔłÜ should return correct elapsed time when not running
+      ÔłÜ should handle multiple start calls safely (1 ms)
+      ÔłÜ should handle stop calls when already stopped
+
+  ÔŚĆ TimeManager ÔÇ║ Competition Timer ÔÇ║ should stop the competition and retu
+rn final time
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 5500
+    Received: 0
+
+    [0m [90m 66 |[39m             [36mconst[39m finalTime [33m=[39m timeM
+anager[33m.[39mstopCompetition()[33m;[39m
+     [90m 67 |[39m             
+    [31m[1m>[22m[39m[90m 68 |[39m             expect(finalTime)[33m.[39m
+toBe([35m5500[39m)[33m;[39m
+     [90m    |[39m                               [31m[1m^[22m[39m
+     [90m 69 |[39m             expect(timeManager[33m.[39mglobalTimer[33m.
+[39misRunning)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 70 |[39m             expect(mockEventBus[33m.[39memit)[33m.[39mt
+oHaveBeenCalledWith([32m'timer:competition-ended'[39m[33m,[39m { duration[3
+3m:[39m [35m5500[39m })[33m;[39m
+     [90m 71 |[39m         })[33m;[39m[0m
+
+      at Object.toBe (tests/unit/core/time/TimeManager.test.js:68:31)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 10 passed, 11 total
+Snapshots:   0 total
+Time:        0.983 s, estimated 1 s
+Ran all test suites matching /tests\\unit\\core\\time\\TimeManager.test.js/i.

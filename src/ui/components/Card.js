@@ -11,12 +11,13 @@ class Card {
       title: options.title || '',
       description: options.description || '',
       grade: options.grade || null, // 3, 4, 5, 6
-      progress: options.progress || 0, // 0-100
       unlocked: options.unlocked || false,
       bestScore: options.bestScore || 0,
       clickable: options.clickable || false,
       variant: options.variant || 'default', // default, grade, feature
       size: options.size || 'medium', // small, medium, large
+      icon: options.icon || null,
+      style: options.style || null,
       eventBus: options.eventBus || null,
       logger: options.logger || null,
       onClick: options.onClick || null,
@@ -43,13 +44,13 @@ class Card {
     this.element = document.createElement('div');
     this.element.className = 'dkv-card';
     
+    // Icon
+    if (this.options.icon) {
+      this.createIcon();
+    }
+    
     // Card tartalom
     this.createCardContent();
-    
-    // Progress bar (ha szükséges)
-    if (this.options.variant === 'grade' && this.options.progress !== null) {
-      this.createProgressBar();
-    }
     
     // Locked state overlay
     if (!this.options.unlocked) {
@@ -69,7 +70,8 @@ class Card {
       const header = document.createElement('div');
       header.className = 'dkv-card-header';
       
-      if (this.options.grade) {
+      // Csak akkor mutatunk badge-et, ha nincs cím (vagy a cím nem ugyanaz)
+      if (this.options.grade && !this.options.title) {
         const gradeBadge = document.createElement('div');
         gradeBadge.className = 'dkv-card-grade';
         gradeBadge.textContent = `${this.options.grade}. osztály`;
@@ -113,35 +115,6 @@ class Card {
   }
 
   /**
-   * Progress bar létrehozása
-   */
-  createProgressBar() {
-    const progressContainer = document.createElement('div');
-    progressContainer.className = 'dkv-card-progress';
-    
-    const progressLabel = document.createElement('div');
-    progressLabel.className = 'dkv-progress-label';
-    progressLabel.textContent = 'Előrehaladás';
-    progressContainer.appendChild(progressLabel);
-    
-    const progressBar = document.createElement('div');
-    progressBar.className = 'dkv-progress-bar';
-    
-    const progressFill = document.createElement('div');
-    progressFill.className = 'dkv-progress-fill';
-    progressFill.style.width = `${Math.max(0, Math.min(100, this.options.progress))}%`;
-    progressBar.appendChild(progressFill);
-    
-    const progressText = document.createElement('div');
-    progressText.className = 'dkv-progress-text';
-    progressText.textContent = `${this.options.progress}%`;
-    progressBar.appendChild(progressText);
-    
-    progressContainer.appendChild(progressBar);
-    this.element.appendChild(progressContainer);
-  }
-
-  /**
    * Zárolt állapot overlay létrehozása
    */
   createLockedOverlay() {
@@ -160,6 +133,16 @@ class Card {
     overlay.appendChild(lockText);
     
     this.element.appendChild(overlay);
+  }
+
+  /**
+   * Ikon létrehozása
+   */
+  createIcon() {
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'dkv-card-icon';
+    iconDiv.innerHTML = this.options.icon;
+    this.element.appendChild(iconDiv);
   }
 
   /**
@@ -213,6 +196,27 @@ class Card {
     if (!this.options.unlocked) {
       this.element.classList.add('dkv-card-locked');
     }
+
+    // Egyedi stílusok alkalmazása
+    if (this.options.style) {
+      const { style } = this.options;
+      if (style.background) this.element.style.background = style.background;
+      if (style.border) this.element.style.border = style.border;
+      if (style.boxShadow) this.element.style.boxShadow = style.boxShadow;
+      if (style.color) this.element.style.color = style.color;
+      
+      const title = this.element.querySelector('.dkv-card-title');
+      if (title && style.titleFont) {
+          title.style.fontFamily = style.titleFont;
+          title.style.fontWeight = 'normal';
+      }
+
+      const desc = this.element.querySelector('.dkv-card-description');
+      if (desc) {
+          if (style.descFont) desc.style.fontFamily = style.descFont;
+          if (style.descFontSize) desc.style.fontSize = style.descFontSize;
+      }
+    }
   }
 
   /**
@@ -235,25 +239,7 @@ class Card {
   }
 
   /**
-   * Progress frissítése
-   */
-  setProgress(progress) {
-    this.options.progress = Math.max(0, Math.min(100, progress));
-    
-    const progressFill = this.element.querySelector('.dkv-progress-fill');
-    const progressText = this.element.querySelector('.dkv-progress-text');
-    
-    if (progressFill) {
-      progressFill.style.width = `${this.options.progress}%`;
-    }
-    
-    if (progressText) {
-      progressText.textContent = `${this.options.progress}%`;
-    }
-  }
-
-  /**
-   * Legjobb pontszám frissítése
+   * Feloldás állapot módosítása
    */
   setBestScore(score) {
     this.options.bestScore = score;

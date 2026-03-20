@@ -131,6 +131,7 @@ class TimeManager {
 
             // Optimalizálás: Csak akkor hívjuk a state update-et, ha változott a másodperc
             if (currentProgress.timeSpent !== elapsedSec) {
+                this.globalTimer.elapsed = elapsedMs; // Belső állapot frissítése
                 this.stateManager.updateState({
                     progress: {
                         ...currentProgress,
@@ -138,6 +139,9 @@ class TimeManager {
                     }
                 });
             }
+        } else {
+            // StateManager hiányában is frissítjük a belső értéket
+            this.globalTimer.elapsed = elapsedMs;
         }
     }
 

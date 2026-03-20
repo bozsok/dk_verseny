@@ -548,15 +548,23 @@ export class PortalTransition {
             const fadeTime = 500; // ms
             const step = 50;
             const volStep = audio.volume / (fadeTime / step);
+            let safetyCounter = 0;
+            const maxSteps = (fadeTime / step) * 2; // Biztonsági korlát
             
             const interval = setInterval(() => {
-                if (audio.volume > volStep) {
-                    audio.volume -= volStep;
+                safetyCounter++;
+                if (audio.volume > volStep && safetyCounter < maxSteps) {
+                    try {
+                        audio.volume -= volStep;
+                    } catch (e) {
+                        // Volume error transition (e.g. already 0 or paused)
+                        clearInterval(interval);
+                    }
                 } else {
                     audio.volume = 0;
                     audio.pause();
                     clearInterval(interval);
-                    this.audio = null;
+                    if (this.audio === audio) this.audio = null;
                 }
             }, step);
         }

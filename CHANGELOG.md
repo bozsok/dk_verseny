@@ -6,6 +6,35 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.14.3] - 2026-03-22
+### Eltávolítva
+- Hub UI: Az "Előrehaladás" (progress bar) funkció eltávolítva a kártyákról (versenyhelyzetben felesleges).
+
+### Javítva
+- `Card.js`: Szintaktikai hiba javítva az Előrehaladás sáv eltávolítása után.
+
+## [0.14.2] - 2026-03-22
+### Javítva
+- Hub UI: Eredeti évfolyam feliratok visszaállítva ("kőbe vésett" állapot).
+
+## [0.14.1] - 2026-03-22
+### Javítva
+- Hub UI: Kettős 'x. osztály' felirat eltávolítva a kártyákról.
+- Hub UI: A 0%-os előrehaladás jelzés elrejtve a letisztultabb felület érdekében.
+- Hub UI: Tematikusabb leírások az évfolyam kártyákhoz.
+
+## [0.14.0] - 2026-03-22
+### Hozzáadva
+- Átfogó unit tesztek a Core modulokhoz (`EventBus`, `GameLogger`, `TimeManager`).
+- `DocumentFragment` alapú hatékony renderelés a `Hub` komponensben.
+- Egyedi stílus és ikon támogatás a `Card` komponensben.
+- Biztonsági timeout az audio fade-out folyamathoz a `PortalTransition`-ben.
+
+### Javítva
+- `TimeManager` perzisztencia hiba: az eltelt idő szinkronizálása a belső állapot és a tároló között.
+- `Hub` komponens: felesleges `innerHTML` újrarajzolások megszüntetése.
+- Unit teszt környezet: `TimeManager` mock-olási anomáliák feloldva.
+
 ## [0.13.0] - 2026-03-20
 ### Hozzáadva
 - **Unit Teszt Alapozás (Phase 3)**: A projekt tesztlefedettsége 0%-ról ~89%-ra emelkedett a kritikus magmodulokban (`src/core/`).

@@ -114,5 +114,6 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Keep this file lean and focused on agent needs.
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
-
-Last Updated: 2026-03-20T23:50:00+01:00
+- **Fixed Strings**: A Hub évfolyam kártyáinak leírásai (pl. "A Kód Királyság titka") kőbe vannak vésve és NEM módosíthatók.
+- **Unit Testing**: Minimal goal of 85% coverage for core modules.
+- **Utoljára frissítve**: 2026-03-22T02:30:00+01:00
