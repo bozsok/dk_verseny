@@ -8,6 +8,7 @@ class StorySlide {
     constructor(slideData, options = {}) {
         this.slideData = slideData;
         this.options = options;
+        this.logger = options.logger;
         this.element = null;
         this.videoElement = null;
         this.imageLayer = null;
@@ -113,7 +114,7 @@ class StorySlide {
         const imgUrl = content.imageUrl || content.backgroundUrl;
 
         if (videoUrl) {
-            console.log(`[StorySlide] playVideo called for slide: ${this.slideData.id}`);
+            if (this.logger) this.logger.info(`[StorySlide] playVideo called for slide: ${this.slideData.id}`);
             this._startVideoLogic(videoUrl, imgUrl, 0); // Portál után nincs szükség extra várakozásra
         }
     }
@@ -136,7 +137,7 @@ class StorySlide {
                 this.videoElement.play().then(() => {
                     this.hideImageLayer();
                 }).catch(e => {
-                    console.warn('[StorySlide] Video playback failed:', e);
+                    if (this.logger) this.logger.warn('[StorySlide] Video playback failed:', { error: e.message });
                     this.hideImageLayer();
                 });
             };
@@ -163,7 +164,7 @@ class StorySlide {
         if (this.imageLayer) {
             this.imageLayer.style.opacity = '0';
             this.imageLayer.style.pointerEvents = 'none';
-            console.log(`[StorySlide] Image layer hidden.`);
+            if (this.logger) this.logger.info(`[StorySlide] Image layer hidden.`);
             
             // 0.2mp után el is távolítjuk a DOM-ból, hogy ne zavarjon
             setTimeout(() => {

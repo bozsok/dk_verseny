@@ -16,6 +16,7 @@ class CharacterSlide {
     this.slideData = slideData;
     this.onNext = options.onNext || (() => { });
     this.stateManager = options.stateManager;
+    this.logger = options.logger || (this.stateManager && this.stateManager.logger);
     this.typewriter = new Typewriter();
 
     // DOM elemek
@@ -190,7 +191,7 @@ class CharacterSlide {
     const failSafeTimeout = this._registerTimeout(() => {
       if (toggleSwitchEl.style.opacity !== '1') {
         sequenceFailed = true;
-        console.warn('Animation sequence timeout - Encouraging visibility');
+        if (this.logger) this.logger.warn('Animation sequence timeout - Encouraging visibility');
         toggleLabelEl.textContent = toggleText; // Szöveg beírása
         toggleSwitchEl.style.opacity = '1';
         this._renderCards();
@@ -597,7 +598,7 @@ class CharacterSlide {
         avatar: avatarUrl, // Ez most már a "small" képre mutat, ha van icon
         score: currentScore + selectionPoints
       });
-      console.log(`Karakter választva. +${selectionPoints} Pont. Összpontszám:`, currentScore + selectionPoints);
+      if (this.logger) this.logger.info(`Karakter választva. +${selectionPoints} Pont. Összpontszám: ${currentScore + selectionPoints}`);
     }
 
     this.onNext();

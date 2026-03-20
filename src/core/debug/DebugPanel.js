@@ -16,6 +16,7 @@ class DebugPanel {
     constructor(options = {}) {
         this.debugManager = options.debugManager;
         this.stateManager = options.stateManager;
+        this.logger = options.logger;
         this.onClose = options.onClose;
 
         this.element = null;
@@ -683,7 +684,7 @@ class DebugPanel {
             const stored = localStorage.getItem(lsKey);
             if (stored) {
                 this.videoConfig = JSON.parse(stored);
-                console.log('[DebugPanel] Video config loaded from localStorage');
+                if (this.logger) this.logger.info('[DebugPanel] Video config loaded from localStorage');
             }
         } catch (e) {
             this.videoConfig = { slides: {} };
@@ -698,7 +699,7 @@ class DebugPanel {
                 this.videoConfig = apiConfig;
                 // Szinkronizálás visszafelé is
                 localStorage.setItem(lsKey, JSON.stringify(this.videoConfig));
-                console.log('[DebugPanel] Video config loaded from API (dev mode)');
+                if (this.logger) this.logger.info('[DebugPanel] Video config loaded from API (dev mode)');
             }
         } catch {
             // Éles szerveren ez normális - nem hiba
@@ -721,9 +722,9 @@ class DebugPanel {
         // 1. localStorage mentés (mindig működik)
         try {
             localStorage.setItem(lsKey, JSON.stringify(this.videoConfig));
-            console.log('[DebugPanel] Video config saved to localStorage');
+            if (this.logger) this.logger.info('[DebugPanel] Video config saved to localStorage');
         } catch (e) {
-            console.error('[DebugPanel] localStorage save failed:', e);
+            if (this.logger) this.logger.error('[DebugPanel] localStorage save failed:', { error: e.message });
         }
 
         // 2. API mentés (csak fejlesztői - ha nem érhető el, csendesen sikertelen)
@@ -735,7 +736,7 @@ class DebugPanel {
                 signal: AbortSignal.timeout(2000)
             });
             if (response.ok) {
-                console.log('[DebugPanel] Video config also saved to API (dev mode)');
+                if (this.logger) this.logger.info('[DebugPanel] Video config also saved to API (dev mode)');
             }
         } catch {
             // Éles szerveren normális - nem hiba
@@ -1136,7 +1137,7 @@ class DebugPanel {
         this.debugManager.reloadConfig();
         this._exportBuildConfig(config);
 
-        console.log('[DEBUG] Config saved, reloaded and exported to build-config.json', config);
+        if (this.logger) this.logger.info('[DEBUG] Config saved, reloaded and exported to build-config.json', { config });
 
         this.close();
     }
@@ -1162,7 +1163,7 @@ class DebugPanel {
         this.debugManager.reloadConfig();
         this._exportBuildConfig(config);
 
-        console.log('[DEBUG] Skip settings cleared, task config preserved');
+        if (this.logger) this.logger.info('[DEBUG] Skip settings cleared, task config preserved');
 
         this.close();
     }
@@ -1186,7 +1187,7 @@ class DebugPanel {
         };
         document.addEventListener('keydown', this._escListener);
 
-        console.log('[DEBUG] Panel opened');
+        if (this.logger) this.logger.info('[DEBUG] Panel opened');
     }
 
     /**
@@ -1207,7 +1208,7 @@ class DebugPanel {
             this.onClose();
         }
 
-        console.log('[DEBUG] Panel closed');
+        if (this.logger) this.logger.info('[DEBUG] Panel closed');
     }
 
     /**

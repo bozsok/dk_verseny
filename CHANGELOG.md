@@ -6,6 +6,15 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.11.0] - 2026-03-20
+### Hozzáadva
+- **Strukturált Naplózás (Phase 1)**: Az összes közvetlen `console.log`, `console.warn` és `console.error` hívás kivezetése a kritikus modulokból. Mostantól a `GameLogger` biztosítja a perzisztens, kategóriákra bontott és formázott naplózást az egész alkalmazásban.
+- **Project Context & Gap Analysis**: Létrejött a `project-context.md` és `gap_analysis.md`, amelyek rögzítik a projekt technikai szabályait, az aszinkron hibakezelési mintákat és az építészeti döntések indoklását (pl. a `localStorage` kontrollált használata).
+
+### Javítva
+- **Init és Render hibakezelés**: A `main.js` inicializálási és diamegjelenítési folyamata robusztusabb lett a javított `try-catch` blokkoknak és a részletes hibanaplózásnak köszönhetően.
+- **Syntax Fixes**: Kijavítva több, a refaktorálás során keletkezett szintaktikai hiba a skip-logikában és az állapotkezelésben.
+
 ## [0.10.0] - 2026-03-19
 ### Javítva
 - **Hub visszatérés és TypeError**: Kijavítva a `showHub` metódusban fellépő hiba, a Hub mostantól tiszta állapotban és újrainicializálva jelenik meg a játék végén (visszatéréskor az évfolyamválasztóhoz).

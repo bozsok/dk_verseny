@@ -17,13 +17,12 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 ## Technology Stack & Versions
 
-- **Core:** JavaScript ES6+ (Vanilla JS for engine, Vue 3.3.0 for app shell)
-- **State Management:** Pinia 2.1.0, SEL (State-Eventbus-Logger) architecture
+- **Core:** JavaScript ES6+ (**ES Modules (ESM)** mandatory, **Vanilla JS** for App Shell and Logic)
+- **State Management:** **Custom GameStateManager**, SEL (State-Eventbus-Logger) architecture (Custom implementation, NOT Pinia)
 - **Graphics & VFX:** Three.js 0.183.1, WebGL Shaders
-- **Audio:** Web Audio API (Zero-latency)
-- **Build Tool:** Vite 7.3.0
+- **Audio:** Web Audio API (Zero-latency motor, **Aszinkron Pufferelés** mandatory)
+- **Build & Style:** Vite 7.3.0, **PostCSS (Autoprefixer, CSSnano)**, BEM methodology
 - **Testing:** Jest 29.7.0, Cypress 13.6.0
-- **Styling:** CSS3, BEM methodology, `design-system.css`
 - **Linting/Formatting:** ESLint 8.55.0, Prettier 3.1.0
 - **Environment:** Node.js >= 18.0.0
 
@@ -31,46 +30,73 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 ### Language-Specific Rules
 
-- **ES6+ Standards:** Always use arrow functions, destructuring, and template literals for better readability.
-- **Module Architecture:** Strictly follow `import/export` patterns for all modules and components.
-- **Shared Constants:** Use central files (e.g., `src/core/events/EventTypes.js`) for shared constants to prevent typos and ensure consistency.
-- **Error Handling:** Implement `try...catch` blocks for all asynchronous operations (API, video, audio loading) with mandatory `GameLogger` integration.
+- **ES6+ Standards:** Always use arrow functions, destructuring, and template literals. **Named Exports** are preferred over default exports.
+- **Naming Conventions:**
+    - **PascalCase:** For all components, classes, and their corresponding files (e.g., `CharacterSlide.js`).
+    - **SCREAMING_SNAKE_CASE:** For all constants and Event types (e.g., `GAME_START`).
+    - **camelCase:** For all variables, properties, methods, and utility functions.
+- **Error Handling & Async:**
+    - Each critical async call (API, Audio, Asset load) must use a **strict boilerplate**: `try { loading=true; await ... } catch { GameLogger.error(...) } finally { loading=false; }`.
+    - **No Floating Promises:** Every async call MUST be `await`-ed or explicitly `.catch()`-ed.
+    - **Loading Counter:** If multiple concurrent requests are possible within a component, use a **counter** instead of a boolean (only stop loading when counter is 0).
+    - **Lifecycle Events:** Complex loading states (VFX/Logic sync) must emit events to the `EventBus` to ensure consistent multi-pass initialization.
+- **Lifecycle & Memory:**
+    - Every complex object/class (Engine, Task) MUST implement a `destroy()` method for explicit cleanup of event listeners and timers.
+    - **GC Safety:** Avoid object allocation (`new {}`, `new []`) inside high-frequency loops (animation frames, fast events) to prevent jank. Use **Object Pooling** if needed.
+- **Constants:** Use central files (e.g., `src/core/events/EventTypes.js`) for all shared strings and constants to prevent typos.
 - **Robustness:** Use fallback mechanisms (e.g., `_prodShouldSkipSlide`) to ensure the application remains functional even if some assets are missing.
 
-### Framework-Specific Rules
+### Framework-Specific Rules (Vanilla JS & SEL)
 
-- **SEL Architecture:** All state changes must go through the `StateManager`, triggering events on the `EventBus`. Components must never modify each other's state directly.
+- **SEL Architecture:** All state changes must go through the **custom `StateManager`**, triggering events on the `EventBus`. Components must NEVER modify each other's style or state directly; always communicate via the Bus.
 - **Three.js & Shaders:** Use two-pass rendering for complex VFX. Always call `dispose()` on geometries, materials, and textures when destroying components to prevent memory leaks.
-- **Lifecycle Management:** Every custom component (Task Engine) must implement a `destroy()` method to clean up DOM elements, event listeners, and timeouts.
+- **Vanilla Component Pattern:** Components MUST be Classes that create DOM elements via `createElement()`.
+    - **Targeted Updates:** Use specific methods (e.g., `updateScore()`) that modify individual DOM nodes. NEVER use full `innerHTML` re-renders inside high-frequency updates.
+- **Lifecycle Management:** Every custom component MUST implement a `destroy()` method to clean up DOM elements, event listeners, and timeouts.
 
 ### Testing Rules
 
-- **Test Organization:** Unit tests must be placed in `__tests__` directories relative to the source file. Use `*.test.js` or `*.spec.js` naming conventions.
-- **Mocking Strategy:** Always mock external dependencies (Video API, LocalStorage, network requests) in unit tests using `jest.mock()` to ensure deterministic results.
-- **Coverage Goals:** Maintain 80%+ coverage for core business logic, including state management, event handling, and scoring algorithms.
-- **E2E Scenarios:** Use Cypress for critical user journey validation (e.g., complete registration, station navigation, task completion).
+- **Current Status:** The project currently has **0% test coverage** (Legacy debt).
+- **Mandatory Test-First (New Features):** Every **new** core module (`src/core`, `src/utils`, `src/features`) MUST be accompanied by a `*.test.js` file.
+- **Regression Protection:** When refactoring existing complex code (e.g., `SlideManager`, `StateManager`), a baseline unit test must be added first.
+- **Mocking Strategy:** Always mock external dependencies (Video API, Web Audio API, LocalStorage, network) in Jest using `jest.mock()`.
+- **E2E Scenarios (Cypress):** Critical user paths (Grade 3/4 flow) must have basic smoke tests as soon as the infrastructure allows.
 
 ### Code Quality & Style Rules
 
 - **Coding Standard:** Follow strict ESLint and Prettier configurations. Avoid `var`; use `const` for immutables and `let` for variables.
-- **Naming Conventions:** Use `PascalCase` for components/classes and `camelCase` for variables/utilities. CSS classes must use `kebab-case` with the `.dkv-` prefix (BEM style).
+- **CSS Naming:** Classes must use **kebab-case** with the `.dkv-` prefix (**BEM style**).
 - **Prohibited Patterns:** `console.log` is forbidden in production; use the built-in `GameLogger`.
 - **Documentation:** Hungarian JSDoc comments are mandatory for all public methods and modules.
 - **Changelog:** Maintain the `CHANGELOG.md` file in Hungarian, following Semantic Versioning (SemVer) principles.
 
 ### Development Workflow Rules
 
-- **Branching:** Use `feature/`, `bugfix/`, or `task/` prefixes for all branches (e.g., `feature/onboarding-ui`).
-- **Commits:** Provide descriptive Hungarian commit messages (e.g., `feat: Karakterválasztó felület implementálása`).
-- **QA Gate:** Run `npm run lint` and all tests (`npm run test`) before submitting a Pull Request.
-- **Resource Integrity:** Verify that all static assets (videos, audio) are correctly optimized and accessible before any production deployment.
+- **Branching & PRs:** 
+    - Use `feature/`, `bugfix/`, or `task/` prefixes for all branches.
+    - **PR Mandate:** Direct commits to `main` are forbidden. All changes must go through a Pull Request or a rigorous simulated review by an AI agent on a separate branch.
+- **Commits & Releases:**
+    - Provide descriptive Hungarian commit messages (e.g., `feat: Karakterválasztó felület implementálása`).
+    - **Tagging:** Use semantic Git Tags (e.g., `v0.10.0`) for every release candidate or competition milestone.
+- **Environment & QA:**
+    - **QA Gate:** Run `npm run lint` and all tests (`npm run test`) before merging any PR.
+    - **Config Sync:** The `build-config.json` must always have "skipping" flags disabled by default on the `main` branch to prevent accidental production impact.
+    - **Resource Integrity:** Verify that all static assets are correctly optimized and accessible before deployment.
 
 ### Critical Don't-Miss Rules
 
-- **Memory Leaks:** NEVER use `setInterval` or `addEventListener` without explicit cleanup in the `destroy()` method.
-- **State Persistence:** NEVER write directly to `localStorage`. All persistence must be handled via the `StateManager`.
+- **Memory Leaks & Disposal:**
+    - NEVER use `setInterval`, `setTimeout`, or `addEventListener` on `window/document` without explicit cleanup in the `destroy()` method.
+    - **GPU Disposal:** Every Three.js resource (`geometries`, `materials`, `textures`) MUST be explicitly `.dispose()`-ed in the `destroy()` method to prevent GPU memory bloat.
+- **State & Timer Integrity:**
+    - **Persistence Policy:** Use the **StateManager** for all game-related and user-progress data.
+    - **LocalStorage Bypasses:** Direct `localStorage` access is permitted **ONLY** for system-level flags (e.g., GDPR consent, Master/Debug mode) where the StateManager is not yet initialized or contextually inappropriate.
+    - **No direct write:** Never write directly to `localStorage` for game progress; use `SecureStorage` (via StateManager).
+    - **Timer Policy:** Only the `TimeManager` is allowed to modify the global competition clock. Components should only read the time via the `EventBus` or `StateManager`.
+- **Portal & Navigation Safety:**
+    - **Navigation Lock:** All navigation buttons MUST be disabled and `EventBus` navigation events ignored while a `PortalTransition` or Slide transition is in progress.
 - **Audio Policies:** Respect browser autoplay policies; initialize Web Audio context only after the first user interaction.
-- **Asset Loading:** Use asynchronous loading for all large assets (videos, 3D models) with appropriate UI feedback (loaders/spinners).
+- **Asset Loading:** Use asynchronous loading for all large assets (videos, 3D models) with appropriate UI feedback (**Loader/Progress UI**).
 - **Security:** Use `SecureStorage` for all sensitive user data.
 - **Performance:** Optimize rendering loop; avoid constant 60 FPS updates for static scenes.
 

@@ -16,6 +16,7 @@ class WelcomeSlide {
         this.slideData = slideData;
         this.onNext = options.onNext || (() => { });
         this.timeManager = options.timeManager;
+        this.logger = options.logger;
 
         this.element = null;
         this.typewriter = new Typewriter();
@@ -174,9 +175,9 @@ class WelcomeSlide {
 
         if (this.timeManager) {
             this.timeManager.startCompetition();
-            console.log('Verseny időmérés elindítva!');
+            if (this.logger) this.logger.info('Verseny időmérés elindítva!');
         } else {
-            console.warn('TimeManager hiányzik, az idő nem indult el!');
+            if (this.logger) this.logger.warn('TimeManager hiányzik, az idő nem indult el!');
         }
         this.onNext();
     }

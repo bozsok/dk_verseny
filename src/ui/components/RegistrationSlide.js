@@ -19,6 +19,7 @@ class RegistrationSlide {
         this.slideData = slideData;
         this.onNext = options.onNext || (() => { });
         this.stateManager = options.stateManager;
+        this.logger = options.logger || (this.stateManager && this.stateManager.logger);
         this.typewriter = new Typewriter(); // Ha kellene
 
         // Állapotkövetés
@@ -291,7 +292,7 @@ class RegistrationSlide {
             if (!silent && !this.fieldErrorOccurred[type]) {
                 this.fieldErrorOccurred[type] = true;
                 this.earnedPoints[type] = 0; // Pont levonás
-                console.log(`Pont elveszítve a(z) ${type} mezőnél hibás kitöltés miatt.`);
+                if (this.logger) this.logger.info(`Pont elveszítve a(z) ${type} mezőnél hibás kitöltés miatt.`);
             }
 
             inputElement.classList.remove('dkv-input-success');
@@ -536,7 +537,9 @@ class RegistrationSlide {
             const oldScore = this.stateManager.getStateValue('score') || 0;
             this.stateManager.updateState({ score: oldScore + currentScore });
 
-            console.log('Sikeres regisztráció. Szerzett pontok:', currentScore, 'Összpontszám:', oldScore + currentScore);
+            if (this.logger) {
+                this.logger.info('Sikeres regisztráció. Szerzett pontok: ' + currentScore + ' Összpontszám: ' + (oldScore + currentScore));
+            }
         }
 
         // Késleltetett továbbítás, hogy az animáció látható legyen

@@ -107,7 +107,7 @@ class DigitalKulturaVerseny {
         try {
           await this.apiService.initSession('student_guest_01');
         } catch (err) {
-          console.warn('Offline mode or API error:', err.message);
+          if (this.logger) this.logger.warn('Offline mode or API error:', { error: err.message });
         }
       }
 
@@ -136,7 +136,7 @@ class DigitalKulturaVerseny {
       }
 
     } catch (error) {
-      console.error('Application initialization failed:', error);
+      if (this.logger) this.logger.error('Application initialization failed:', { error: error.message, stack: error.stack });
       this.showError(error);
     }
   }
@@ -597,10 +597,10 @@ class DigitalKulturaVerseny {
     );
 
     if (shouldSkip) {
-      console.log(`[Skip] Skipping slide ${slide.id} (index=${slideIndex}, depth=${skipDepth}, direction=${direction})`);
+      if (this.logger) this.logger.info(`[Skip] Skipping slide ${slide.id} (index=${slideIndex}, depth=${skipDepth}, direction=${direction})`);
 
       if (skipDepth > MAX_SKIP_DEPTH) {
-        console.error('[Skip] Max skip depth reached!');
+        if (this.logger) this.logger.error('[Skip] Max skip depth reached!');
         if (this.debugManager) this.debugManager.disable();
         // Tovább a normál renderelőssel (fallback)
       } else {
@@ -614,14 +614,14 @@ class DigitalKulturaVerseny {
               characterSelected: true
             });
           }
-          console.log('[Skip] Onboarding skipped, dummy data applied');
-        }
+        if (this.logger) this.logger.info('[Skip] Onboarding skipped, dummy data applied');
+      }
 
         // --- AUTOMATIC KEY COLLECTION FOR SKIPPED SECTIONS ---
         if (direction === 'forward' && slide.metadata?.section?.startsWith('station_')) {
           const stationId = slide.metadata.section;
           if (this.stateManager && !this.stateManager.hasKey(stationId)) {
-            console.log(`[Skip] Adding key for skipped station: ${stationId}`);
+            if (this.logger) this.logger.info(`[Skip] Adding key for skipped station: ${stationId}`);
             this.stateManager.addKey(stationId);
             
             // HUD frissítése, hogy azonnal látszódjon (ha már létezik az interfész)
@@ -639,7 +639,7 @@ class DigitalKulturaVerseny {
           this.renderSlide(targetSlide, skipDepth + 1, direction);
           return;
         } else {
-          console.warn(`[Skip] No more slides to skip to (${direction}), ending skip chain at index=${slideIndex}`);
+          if (this.logger) this.logger.warn(`[Skip] No more slides to skip to (${direction}), ending skip chain at index=${slideIndex}`);
           return;
         }
       }
@@ -656,7 +656,7 @@ class DigitalKulturaVerseny {
     // Javítás: Ellenőrizzük, hogy a rétegek a DOM-ban vannak-e (.isConnected).
     // A Hub megjelenítése (showHub) törölheti őket az app.innerHTML = '' hívással.
     if (!this.layerContent || !this.layerUI || !this.layerContent.isConnected || !this.layerUI.isConnected) {
-      console.warn('App Shell detached or missing, rebuilding...');
+      if (this.logger) this.logger.warn('App Shell detached or missing, rebuilding...');
       this.setupAppShell();
     }
 
@@ -802,7 +802,7 @@ class DigitalKulturaVerseny {
         this.layerUI.style.display = 'none';
       }
     } catch (renderError) {
-      console.error("CRITICAL RENDER ERROR:", renderError);
+      if (this.logger) this.logger.error("CRITICAL RENDER ERROR:", { error: renderError.message, stack: renderError.stack });
       // Fallback: Ha a UI létezik, próbáljuk megmutatni a hibaüzenetet benne, vagy alert
       alert("Hiba történt a megjelenítéskor: " + renderError.message + ". Próbáld frissíteni az oldalt.");
     }
@@ -813,9 +813,9 @@ class DigitalKulturaVerseny {
 
     // === DIAGNOSZTIKA ===
     if (slide.metadata && slide.metadata.step === 2) {
-      console.warn(`[DKV DIAG] Feladat dia betöltés: ID=${slide.id}, step=${slide.metadata.step}, section=${slide.metadata.section}, audioSrc=${audioSrc}, isFullscreen=${isFullscreen}, activeGI=${!!this.activeGameInterface}`);
+      if (this.logger) this.logger.info(`[DKV DIAG] Feladat dia betöltés: ID=${slide.id}, step=${slide.metadata.step}, section=${slide.metadata.section}, audioSrc=${audioSrc}, isFullscreen=${isFullscreen}, activeGI=${!!this.activeGameInterface}`);
       const isCompleted_diag = this.stateManager?.isSlideCompleted(slide.id);
-      console.warn(`[DKV DIAG] isCompleted=${isCompleted_diag}`);
+      if (this.logger) this.logger.info(`[DKV DIAG] isCompleted=${isCompleted_diag}`);
     }
     // === VEGE DIAGNOSZTIKA ===
     // Helper to set button state in whichever interface is active
@@ -1191,14 +1191,14 @@ class DigitalKulturaVerseny {
   }
 
   async handlePrev() {
-    console.log(`[DKV handlePrev] Called. isTransitioning=${this.isTransitioning}, currentIndex=${this.slideManager?.currentIndex}, currentSlide=${this.slideManager?.getCurrentSlide()?.id}`);
+    if (this.logger) this.logger.info(`[DKV handlePrev] Called. isTransitioning=${this.isTransitioning}, currentIndex=${this.slideManager?.currentIndex}, currentSlide=${this.slideManager?.getCurrentSlide()?.id}`);
     if (this.isTransitioning) {
-      console.warn('[DKV handlePrev] BLOCKED by isTransitioning!');
+      if (this.logger) this.logger.warn('[DKV handlePrev] BLOCKED by isTransitioning!');
       return;
     }
     await this.ensureAudioFeedback();
     const prev = this.slideManager.prevSlide();
-    console.log(`[DKV handlePrev] prevSlide result: ${prev?.id || 'null'}`);
+    if (this.logger) this.logger.info(`[DKV handlePrev] prevSlide result: ${prev?.id || 'null'}`);
     if (prev) this.renderSlide(prev, 0, 'backward'); // Direction: backward
   }
 
@@ -1417,7 +1417,7 @@ class DigitalKulturaVerseny {
 
     if (this.debugManager.shouldMuteMusic()) {
       if (this.backgroundMusic) {
-        console.log('[DEBUG] Stopping background music (Muted)');
+        if (this.logger) this.logger.info('[DEBUG] Stopping background music (Muted)');
         this.stopBackgroundMusicWithFade();
       }
     } else {
@@ -1425,7 +1425,7 @@ class DigitalKulturaVerseny {
         // Ha nincs zene, de kéne, indítsuk el (ha van aktív grade)
         const currentGrade = this.stateManager.getStateValue('currentGrade');
         if (currentGrade) {
-          console.log('[DEBUG] Restarting background music (Unmuted)');
+          if (this.logger) this.logger.info('[DEBUG] Restarting background music (Unmuted)');
           this.playBackgroundMusic(currentGrade);
         }
       }
@@ -1519,7 +1519,7 @@ class DigitalKulturaVerseny {
 
     // Hiba esetén is feloldunk (Fallback), hogy ne ragadjon be a játék
     audio.addEventListener('error', (e) => {
-      console.warn(`Audio playback failed for: ${src}`, e);
+      if (this.logger) this.logger.warn(`Audio playback failed for: ${src}`, { error: e.message });
       handleEnd();
     });
 
@@ -1528,7 +1528,7 @@ class DigitalKulturaVerseny {
     const tryPlay = () => {
       if (this.currentAudio !== audio) return;
       audio.play().catch(err => {
-        console.warn('Audio autoplay blocked or failed:', err);
+        if (this.logger) this.logger.warn('Audio autoplay blocked or failed:', { error: err.message });
         handleEnd();
       });
     };
@@ -1549,7 +1549,7 @@ class DigitalKulturaVerseny {
   playBackgroundMusic(grade) {
     // Debug Mute Check
     if (this.debugManager && this.debugManager.shouldMuteMusic()) {
-      console.log('[DEBUG] Background music muted by config');
+      if (this.logger) this.logger.info('[DEBUG] Background music muted by config');
       return;
     }
 
@@ -1560,11 +1560,11 @@ class DigitalKulturaVerseny {
       this.backgroundMusic.loop = true;
       this.backgroundMusic.volume = this.musicVolume;
       this.backgroundMusic.play().catch(e => {
-        console.warn("Background music autoplay blocked", e);
+        if (this.logger) this.logger.warn("Background music autoplay blocked", { error: e.message });
         this.backgroundMusic = null;
       });
     } catch (err) {
-      console.warn("Error starting background music", err);
+      if (this.logger) this.logger.warn("Error starting background music", { error: err.message });
     }
   }
 
@@ -1643,7 +1643,7 @@ class DigitalKulturaVerseny {
         osc.stop(this.audioContext.currentTime + 0.1);
       }
     } catch (e) {
-      console.warn('System sound error', e);
+      if (this.logger) this.logger.warn('System sound error', { error: e.message });
     }
   }
 
@@ -1688,7 +1688,7 @@ class DigitalKulturaVerseny {
         }
       }
     } catch (err) {
-      console.warn('[Leaderboard] Failed to save result:', err);
+      if (this.logger) this.logger.warn('[Leaderboard] Failed to save result:', { error: err.message });
     } finally {
       this.isSaving = false;
     }
@@ -1710,7 +1710,7 @@ class DigitalKulturaVerseny {
     const isSound = section === 'station_5' || (slide.id && slide.id.toString().startsWith('st5_'));
     const isFinalChallenge = slide.id === 'final_2';
 
-    console.log(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}`);
+    if (this.logger) this.logger.info(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}`);
 
     // --- Feladat típus és megnevezés leképezése ---
     const taskTypeMap = {
