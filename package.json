@@ -1,6 +1,6 @@
 {
   "name": "digitalis-kultura-verseny",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Interaktív digitális kultúra verseny alkalmazás",
   "main": "src/index.js",
   "scripts": {
@@ -23,15 +23,19 @@
   "author": "Digitális Kultúra Verseny Team",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.2",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/test-utils": "^2.4.0",
     "autoprefixer": "^10.4.23",
+    "babel-jest": "^30.3.0",
     "cssnano": "^7.1.2",
     "cypress": "^13.6.0",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vue": "^9.19.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.3.0",
     "postcss": "^8.5.6",
     "postcss-preset-env": "^10.5.0",
     "prettier": "^3.1.0",

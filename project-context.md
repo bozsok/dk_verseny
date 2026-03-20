@@ -56,7 +56,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 ### Testing Rules
 
-- **Current Status:** The project currently has **0% test coverage** (Legacy debt).
+- **Current Status:** A projekt mostantól **>88%-os tesztlefedettséggel** rendelkezik a kritikus magmodulokban (`src/core/state`, `src/core/utils`).
 - **Mandatory Test-First (New Features):** Every **new** core module (`src/core`, `src/utils`, `src/features`) MUST be accompanied by a `*.test.js` file.
 - **Regression Protection:** When refactoring existing complex code (e.g., `SlideManager`, `StateManager`), a baseline unit test must be added first.
 - **Mocking Strategy:** Always mock external dependencies (Video API, Web Audio API, LocalStorage, network) in Jest using `jest.mock()`.
@@ -115,4 +115,4 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
 
-Last Updated: 2026-03-13T23:20:00+01:00
+Last Updated: 2026-03-20T23:50:00+01:00

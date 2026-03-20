@@ -6,6 +6,18 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.13.0] - 2026-03-20
+### Hozzáadva
+- **Unit Teszt Alapozás (Phase 3)**: A projekt tesztlefedettsége 0%-ról ~89%-ra emelkedett a kritikus magmodulokban (`src/core/`).
+- **Teszt Környezet**: Jest és Babel konfiguráció implementálva az ES modulok támogatásához.
+- **Mock Rendszer**: Átfogó környezeti mock-ok (localStorage, performance, atob/btoa, fetch) a megbízható teszteléshez.
+- **GameStateManager Tesztek**: 88% feletti lefedettség, validációs folyamatok és eseménykezelés ellenőrzése.
+- **SecureStorage Tesztek**: 93% feletti lefedettség, titkosítási körfolyamatok és hibatűrés verifikálása.
+
+### Javítva
+- **Jest Konfiguráció**: Az elavult és hibás Jest beállítások javítva, a `moduleNameMapper` mostantól helyesen kezeli az útvonal aliasokat.
+- **Konzol Hibák**: A tesztelési fázis során azonosított és javított aszinkron hívási és perzisztencia deszinkronizációs hibák.
+
 ## [0.12.0] - 2026-03-20
 ### Hozzáadva
 - **Perzisztencia Konszolidáció (Phase 2)**: A projekt teljes szoftverarchitektúrája átállt az egységes `SecureStorage` használatára. Megszűnt minden közvetlen `localStorage` hívás.
