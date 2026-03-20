@@ -58,7 +58,11 @@ class VideoPlayer {
 
         this.videoElement.addEventListener('seeking', () => {
             // Ha előre próbál tekerni és még nem látta a videót
-            if (!this.hasWatched && this.videoElement.currentTime > this.lastTime + 1) {
+            if (!this.hasWatched && this.videoElement.currentTime > this.lastTime + 1.5) {
+                if (this.logger) this.logger.info('[VideoPlayer] Seeking prevented', { 
+                    from: this.lastTime, 
+                    to: this.videoElement.currentTime 
+                });
                 // Visszadobjuk oda, ahol tartott
                 this.videoElement.currentTime = this.lastTime;
             }
@@ -66,9 +70,18 @@ class VideoPlayer {
 
         // Ha vége a videónak
         this.videoElement.addEventListener('ended', () => {
+            if (this.logger) this.logger.info(`[VideoPlayer] Completed: ${this.src}`);
             this.hasWatched = true;
             this.onComplete();
             this.element.classList.add('dkv-video-completed');
+        });
+
+        // Hiba kezelés
+        this.videoElement.addEventListener('error', (e) => {
+            if (this.logger) this.logger.error('[VideoPlayer] Video error', { 
+                src: this.src, 
+                error: this.videoElement.error ? this.videoElement.error.message : 'Unknown error' 
+            });
         });
     }
 
@@ -77,15 +90,25 @@ class VideoPlayer {
      */
     play() {
         if (this.videoElement) {
-            if (this.logger) this.logger.info(`[VideoPlayer] Starting playback for: ${this.src}`);
-            if (this.videoElement.paused) {
+            if (this.logger) this.logger.info(`[VideoPlayer] play() call: ${this.src}`);
+            
+            // Csak akkor töltünk újra, ha nincs readyState vagy hiba van
+            if (this.videoElement.readyState === 0) {
                 this.videoElement.load();
             }
-            this.videoElement.play().catch(e => {
-                if (this.logger) this.logger.warn('Autoplay prevented or failed', { error: e.message });
-            });
+
+            const playPromise = this.videoElement.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(e => {
+                    if (this.logger) this.logger.warn('[VideoPlayer] Playback failed/prevented', { 
+                        error: e.name, 
+                        msg: e.message 
+                    });
+                });
+            }
         } else {
-            if (this.logger) this.logger.warn('[VideoPlayer] Cannot play: videoElement is null');
+            if (this.logger) this.logger.error('[VideoPlayer] Cannot play: videoElement is null');
         }
     }
 

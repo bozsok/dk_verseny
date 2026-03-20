@@ -6,6 +6,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.15.1] - 2026-03-22
+### Javítva
+- `Card.js`: Animációs időzítő hiba javítva (leálláskor fellépő null pointer hiba).
+
+## [0.15.0] - 2026-03-22
+### Hozzáadva
+- `VideoPlayer` és `VideoSlide` teljes körű `GameLogger` integrációja.
+
+### Javítva
+- `main.js`: Összes maradvány `console.log` és `console.warn` lecserélve a központosított naplózóra.
+- Tartalom konfigurációk: Debug hívások és felesleges TODO-k eltávolítva.
+- Videó lejátszás: Stabilabb hibakezelés és tekerés-gátlás (seeking prevention) naplózás.
+
 ## [0.14.3] - 2026-03-22
 ### Eltávolítva
 - Hub UI: Az "Előrehaladás" (progress bar) funkció eltávolítva a kártyákról (versenyhelyzetben felesleges).

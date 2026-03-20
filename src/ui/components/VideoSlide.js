@@ -6,8 +6,10 @@ import VideoPlayer from './VideoPlayer.js';
 class VideoSlide {
     constructor(slideData, options = {}) {
         this.slideData = slideData;
+        this.options = options;
         this.onComplete = options.onComplete || (() => { });
         this.onNext = options.onNext || (() => { });
+        this.logger = options.logger;
 
         this.element = null;
         this.nextButton = null;
@@ -33,8 +35,10 @@ class VideoSlide {
         // Videó lejátszó
         this.videoPlayer = new VideoPlayer({
             src: this.slideData.content.videoUrl,
+            poster: this.slideData.content.posterUrl || '',
             isPreview: this.options.isPreview,
-            onComplete: () => this.handleVideoComplete()
+            onComplete: () => this.handleVideoComplete(),
+            logger: this.logger
         });
 
         this.element.appendChild(this.videoPlayer.createElement());

@@ -5,7 +5,7 @@ import { Point, Segment } from './puzzleGeometry.js';
 
 // Local debug flag for geometry/piece operations
 const DEBUG_PIECES = false;
-const dlog = (...args) => { if (DEBUG_PIECES) console.log(...args); };
+const dlog = (...args) => { /* No-op in production */ };
 
 // Side class representing one edge of a puzzle piece
 export class Side {

@@ -415,7 +415,7 @@ class DigitalKulturaVerseny {
           const audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
           this.sfxBuffers[key] = audioBuffer;
         } catch (e) {
-          console.warn(`Failed to load SFX: ${url}`, e);
+          if (this.logger) this.logger.warn(`Failed to load SFX: ${url}`, { error: e.message });
         }
       };
 
@@ -467,7 +467,7 @@ class DigitalKulturaVerseny {
       });
 
     } catch (err) {
-      console.warn('Web Audio API not supported or failed', err);
+      if (this.logger) this.logger.warn('Web Audio API not supported or failed', { error: err.message });
     }
   }
 
@@ -839,7 +839,7 @@ class DigitalKulturaVerseny {
           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
           return;
         }
-        console.warn(`[DKV CALLBACK] Audio vége: slide.id=${slide.id}`);
+        if (this.logger) this.logger.info(`[Audio] End: slide.id=${slide.id}`);
         setBtnState(true, btnOptions);
         if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
 
@@ -957,8 +957,8 @@ class DigitalKulturaVerseny {
       case SLIDE_TYPES.TASK: newComponent = new TaskSlide(slide, commonOptions); break;
       case SLIDE_TYPES.INFO: newComponent = new SummarySlide(slide, commonOptions); break;
       default:
-        console.warn('Unknown slide type:', slide.type);
-        newComponent = new VideoSlide(slide, commonOptions);
+        if (this.logger) this.logger.warn('Unknown slide type:', { type: slide.type });
+        newComponent = new VideoSlide(slide, commonOptions); // Fallback to VideoSlide
     }
     return { newComponent, commonOptions };
   }
@@ -1118,19 +1118,19 @@ class DigitalKulturaVerseny {
             hexToRgb('#005180'), hexToRgb('#005180'),
             hexToRgb('#005180'), hexToRgb('#002033')
           ],
-          station_3: [ // Tudás Torony #TODO
+          station_3: [ // Tudás Torony
             hexToRgb('#306169'), hexToRgb('#306169'),
             hexToRgb('#306169'), hexToRgb('#134d57')
           ],
-          station_4: [ // Pixel Palota #TODO
+          station_4: [ // Pixel Palota
             hexToRgb('#122a36'), hexToRgb('#122a36'),
             hexToRgb('#122a36'), hexToRgb('#1f3642')
           ],
-          station_5: [ // Hangerdő #TODO
+          station_5: [ // Hangerdő
             hexToRgb('#1d320b'), hexToRgb('#1d320b'),
             hexToRgb('#1d320b'), hexToRgb('#214603')
           ],
-          final: [ // Finálé #TODO
+          final: [ // Finálé
             hexToRgb('#0e2e47'), hexToRgb('#0e2e47'),
             hexToRgb('#0e2e47'), hexToRgb('#162c37')
           ]
@@ -1359,7 +1359,7 @@ class DigitalKulturaVerseny {
    */
   openDebugPanel() {
     if (!this.debugManager || !DebugPanel) {
-      console.warn('[DEBUG] Debug system not available');
+      if (this.logger) this.logger.warn('[DEBUG] Debug system not available');
       return;
     }
 
@@ -1899,7 +1899,7 @@ async function startApp() {
 
   // Debug információk elérhetővé tétele
   if (__DEV__) {
-    window.DKV_DEBUG = () => console.log(window.DKV_APP.getDebugInfo());
+    window.DKV_DEBUG = () => window.DKV_APP.logger ? window.DKV_APP.logger.info('Debug Info:', window.DKV_APP.getDebugInfo()) : console.log(window.DKV_APP.getDebugInfo());
   }
 }
 

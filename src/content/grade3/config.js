@@ -141,7 +141,7 @@ export const createConfig = () => {
     // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===
     const stationIndices = [0, 1, 2, 3, 4];
     shuffleArray(stationIndices);
-    console.log("[DKV] Station Order:", stationIndices);
+    // Random sorrend naplózása opcionális, de ne console.log-gal
 
     for (let slot = 0; slot < 5; slot++) {
         const originalStationIdx = stationIndices[slot];

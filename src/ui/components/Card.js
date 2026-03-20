@@ -299,10 +299,18 @@ class Card {
    * Animáció indítása
    */
   animate(animationType = 'pulse') {
+    if (!this.element) return;
+    
     this.element.classList.add(`dkv-card-animate-${animationType}`);
     
-    setTimeout(() => {
-      this.element.classList.remove(`dkv-card-animate-${animationType}`);
+    // Elmentjük az időzítőt, hogy a destroy() törölhesse
+    if (this._animationTimer) clearTimeout(this._animationTimer);
+    
+    this._animationTimer = setTimeout(() => {
+      if (this.element) {
+        this.element.classList.remove(`dkv-card-animate-${animationType}`);
+      }
+      this._animationTimer = null;
     }, 600);
   }
 
@@ -310,6 +318,12 @@ class Card {
    * Komponens eltávolítása
    */
   destroy() {
+    // Animációs időzítő törlése
+    if (this._animationTimer) {
+      clearTimeout(this._animationTimer);
+      this._animationTimer = null;
+    }
+
     // Eseménykezelők eltávolítása
     this.eventListeners.forEach((event, handler) => {
       this.element.removeEventListener(event, handler);
