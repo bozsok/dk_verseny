@@ -6,7 +6,9 @@
  * - LocalStorage és console output-ot kezel
  * - Performance optimalizált
  * - Időbélyegek és context információkat tartalmaz
- */
++ */
+import SecureStorage from '../utils/SecureStorage.js';
+
 class GameLogger {
     constructor(options = {}) {
         this.levels = {
@@ -43,10 +45,10 @@ class GameLogger {
      */
     checkUserConsent() {
         try {
-            const consent = localStorage.getItem('dkv-logging-consent');
-            return consent === 'true';
+            const consent = SecureStorage.getItem('dkv-logging-consent');
+            return consent === true || consent === 'true';
         } catch (error) {
-            // Ha localStorage nem elérhető, alapértelmezetten engedélyezzük a console logolást
+            // Ha storage nem elérhető, alapértelmezetten engedélyezzük a console logolást
             return this.config.enableConsole;
         }
     }
@@ -57,9 +59,9 @@ class GameLogger {
     setUserConsent(granted) {
         this.userConsent = Boolean(granted);
         try {
-            localStorage.setItem('dkv-logging-consent', String(granted));
+            SecureStorage.setItem('dkv-logging-consent', String(granted));
         } catch (error) {
-            // localStorage hiba esetén továbbra is működik console-ban
+            // Storage hiba esetén továbbra is működik console-ban
         }
     }
 
@@ -241,9 +243,9 @@ class GameLogger {
                 existingLogs.splice(0, existingLogs.length - this.config.maxStorageEntries);
             }
 
-            localStorage.setItem(storageKey, JSON.stringify(existingLogs));
+            SecureStorage.setItem(storageKey, existingLogs);
         } catch (error) {
-            // LocalStorage hiba esetén továbbra is működik a console
+            // Storage hiba esetén továbbra is működik a console
             console.warn('Failed to save log to storage:', error.message);
         }
     }
@@ -254,8 +256,8 @@ class GameLogger {
     getStorageLogs() {
         try {
             const storageKey = 'dkv-game-logs';
-            const logs = localStorage.getItem(storageKey);
-            return logs ? JSON.parse(logs) : [];
+            const logs = SecureStorage.getItem(storageKey);
+            return Array.isArray(logs) ? logs : [];
         } catch (error) {
             return [];
         }
@@ -358,7 +360,7 @@ class GameLogger {
     clearLogs() {
         this.logHistory = [];
         try {
-            localStorage.removeItem('dkv-game-logs');
+            SecureStorage.removeItem('dkv-game-logs');
         } catch (error) {
             console.warn('Failed to clear logs from storage:', error.message);
         }

@@ -7,6 +7,14 @@
 class SecureStorage {
     constructor(secretKey = 'dkv-secret-2025') {
         this.secretKey = secretKey;
+        this.logger = null;
+    }
+
+    /**
+     * Logger beállítása
+     */
+    setLogger(logger) {
+        this.logger = logger;
     }
 
     /**
@@ -19,7 +27,7 @@ class SecureStorage {
             localStorage.setItem(key, encrypted);
             return true;
         } catch (error) {
-            console.error('SecureStorage save failed:', error);
+            this._logError('SecureStorage save failed', { key, error: error.message });
             return false;
         }
     }
@@ -32,11 +40,32 @@ class SecureStorage {
             const encrypted = localStorage.getItem(key);
             if (!encrypted) return null;
 
-            const decrypted = this.decrypt(encrypted);
-            return JSON.parse(decrypted);
+            // Ellenőrizzük, hogy az új formátumban van-e
+            if (encrypted.startsWith('DKV_SECURE_v1:')) {
+                const decrypted = this.decrypt(encrypted);
+                return JSON.parse(decrypted);
+            }
+
+            // Fallback: Régi formátum (sima JSON vagy string)
+            try {
+                return JSON.parse(encrypted);
+            } catch (e) {
+                return encrypted; // Ha nem JSON, akkor sima string
+            }
         } catch (error) {
-            console.error('SecureStorage load failed (potential manipulation detected):', error);
+            this._logError('SecureStorage load failed', { key, error: error.message });
             return null;
+        }
+    }
+
+    /**
+     * Belső hibakezelő hiba naplózáshoz
+     */
+    _logError(message, context = {}) {
+        if (this.logger && typeof this.logger.error === 'function') {
+            this.logger.error(message, context);
+        } else {
+            console.error(`[SecureStorage] ${message}`, context);
         }
     }
 

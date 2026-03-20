@@ -6,6 +6,16 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.12.0] - 2026-03-20
+### Hozzáadva
+- **Perzisztencia Konszolidáció (Phase 2)**: A projekt teljes szoftverarchitektúrája átállt az egységes `SecureStorage` használatára. Megszűnt minden közvetlen `localStorage` hívás.
+- **Rendszer Flag-ek**: A `GameStateManager` mostantól központilag kezeli a rendszer-szintű beállításokat (pl. GDPR logging consent, Master Mode).
+- **Debug Persistence**: A `DebugManager` és `DebugPanel` beállításai mostantól titkosítva tárolódnak.
+
+### Javítva
+- **SecureStorage Kompatibilitás**: Kijavítva a korábbi, titkosítatlan adatok betöltésekor fellépő hiba. A rendszer mostantól zökkenőmentesen kezeli a régi formátumú adatokat is.
+- **Kód Tisztítás**: Az elárvult és backup fájlok (pl. `logging/Game`) eltávolításra kerültek.
+
 ## [0.11.0] - 2026-03-20
 ### Hozzáadva
 - **Strukturált Naplózás (Phase 1)**: Az összes közvetlen `console.log`, `console.warn` és `console.error` hívás kivezetése a kritikus modulokból. Mostantól a `GameLogger` biztosítja a perzisztens, kategóriákra bontott és formázott naplózást az egész alkalmazásban.

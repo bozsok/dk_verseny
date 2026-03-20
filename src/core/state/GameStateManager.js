@@ -79,6 +79,7 @@ class GameStateManager {
    */
   setLogger(logger) {
     this.logger = logger;
+    SecureStorage.setLogger(logger);
   }
 
   /**
@@ -447,7 +448,7 @@ class GameStateManager {
    */
   resetState() {
     this.state = this.getInitialState();
-    localStorage.removeItem('digitális-kultúra-verseny-state');
+    SecureStorage.removeItem('digitális-kultúra-verseny-state');
 
     if (this.eventBus) {
       this.eventBus.emit('state:reset');
@@ -455,6 +456,32 @@ class GameStateManager {
 
     if (this.logger) {
       this.logger.info('Game state reset');
+    }
+  }
+
+  /**
+   * Rendszer-szintű flag lekérése (pl. GDPR, Master Mode)
+   * 
+   * @param {string} key - A keresett kulcs
+   * @param {*} defaultValue - Alapértelmezett érték
+   * @returns {*}
+   */
+  getSystemFlag(key, defaultValue = null) {
+    const value = SecureStorage.getItem(`dkv-sys-${key}`);
+    return value !== null ? value : defaultValue;
+  }
+
+  /**
+   * Rendszer-szintű flag mentése
+   * 
+   * @param {string} key - A mentendő kulcs
+   * @param {*} value - A mentendő érték
+   */
+  setSystemFlag(key, value) {
+    SecureStorage.setItem(`dkv-sys-${key}`, value);
+    
+    if (this.logger) {
+      this.logger.debug(`System flag set: ${key}`, { value });
     }
   }
 

@@ -11,6 +11,7 @@
  * - Hot reload (Save után azonnal érvényesül)
  * - Stats display
  */
+import SecureStorage from '../utils/SecureStorage.js';
 
 class DebugPanel {
     constructor(options = {}) {
@@ -679,26 +680,26 @@ class DebugPanel {
         const grade = this.debugManager.currentGrade;
         const lsKey = `dkv-video-config-grade${grade}`;
 
-        // 1. localStorage-ból tölt
+        // 1. Storage-ból tölt
         try {
-            const stored = localStorage.getItem(lsKey);
+            const stored = SecureStorage.getItem(lsKey);
             if (stored) {
-                this.videoConfig = JSON.parse(stored);
-                if (this.logger) this.logger.info('[DebugPanel] Video config loaded from localStorage');
+                this.videoConfig = stored;
+                if (this.logger) this.logger.info('[DebugPanel] Video config loaded from SecureStorage');
             }
         } catch (e) {
             this.videoConfig = { slides: {} };
         }
 
-        // 2. API (csak fejlesztői környezetben érhető el - felülírja a localStorage-t)
+        // 2. API (csak fejlesztői környezetben érhető el - felülírja a storage-ot)
         try {
             const response = await fetch(`/__api/video-config/${grade}`, { signal: AbortSignal.timeout(1000) });
             if (response.ok) {
                 const apiConfig = await response.json();
-                // Merge: API-ban lévő értékek felülírják a localStorage-t
+                // Merge: API-ban lévő értékek felülírják a storage-ot
                 this.videoConfig = apiConfig;
                 // Szinkronizálás visszafelé is
-                localStorage.setItem(lsKey, JSON.stringify(this.videoConfig));
+                SecureStorage.setItem(lsKey, this.videoConfig);
                 if (this.logger) this.logger.info('[DebugPanel] Video config loaded from API (dev mode)');
             }
         } catch {
@@ -712,19 +713,19 @@ class DebugPanel {
 
     /**
      * Video beállítások mentése
-     * Mindig localStorage-ba ment (éles szerveren is működik),
+     * Mindig storage-ba ment (éles szerveren is működik),
      * ezenfelül megpróbálja az API-t is (csak fejlesztői környezetben sikeres)
      */
     async _saveVideoConfig() {
         const grade = this.debugManager.currentGrade;
         const lsKey = `dkv-video-config-grade${grade}`;
 
-        // 1. localStorage mentés (mindig működik)
+        // 1. Storage mentés (mindig működik)
         try {
-            localStorage.setItem(lsKey, JSON.stringify(this.videoConfig));
-            if (this.logger) this.logger.info('[DebugPanel] Video config saved to localStorage');
+            SecureStorage.setItem(lsKey, this.videoConfig);
+            if (this.logger) this.logger.info('[DebugPanel] Video config saved to SecureStorage');
         } catch (e) {
-            if (this.logger) this.logger.error('[DebugPanel] localStorage save failed:', { error: e.message });
+            if (this.logger) this.logger.error('[DebugPanel] SecureStorage save failed:', { error: e.message });
         }
 
         // 2. API mentés (csak fejlesztői - ha nem érhető el, csendesen sikertelen)

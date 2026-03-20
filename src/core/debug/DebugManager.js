@@ -5,11 +5,13 @@
  * - Skip config management (LocalStorage)
  * - Slide skip ellenőrzés
  * - Dummy data alkalmazás
+ * - State override-ok kezelése
  * - Section mapping a shuffle-olt állomásokhoz
  */
 
 import { buildSectionMap, findSectionBySlideIndex } from './DebugConfig.js';
 import { DUMMY_PROFILE, ONBOARDING_SIMULATION_TIME } from './DebugDummyData.js';
+import SecureStorage from '../utils/SecureStorage.js';
 
 class DebugManager {
     constructor(options = {}) {
@@ -38,8 +40,8 @@ class DebugManager {
      * Fejlesztői módban: localStorage van élnyomásban.
      */
     async _loadBuildConfigIfNeeded() {
-        const stored = localStorage.getItem('dkv-debug-config');
-        if (stored) return; // localStorage prioritás
+        const stored = SecureStorage.getItem('dkv-debug-config');
+        if (stored) return; // Storage prioritás
 
         try {
             const response = await fetch('./build-config.json', { signal: AbortSignal.timeout(2000) });
@@ -90,13 +92,12 @@ class DebugManager {
      */
     loadSkipConfig() {
         try {
-            const stored = localStorage.getItem('dkv-debug-config');
+            const stored = SecureStorage.getItem('dkv-debug-config');
             if (stored) {
-                const parsed = JSON.parse(stored);
                 if (this.logger) {
-                    this.logger.info('[DEBUG] Config loaded from storage', parsed);
+                    this.logger.info('[DEBUG] Config loaded from storage', stored);
                 }
-                return parsed;
+                return stored;
             }
         } catch (e) {
             console.warn('[DEBUG] Failed to load config', e);
@@ -123,7 +124,7 @@ class DebugManager {
         this.isEnabled = config.enabled;
 
         try {
-            localStorage.setItem('dkv-debug-config', JSON.stringify(config));
+            SecureStorage.setItem('dkv-debug-config', config);
             if (this.logger) {
                 this.logger.info('[DEBUG] Config saved', config);
             }
@@ -272,7 +273,9 @@ class DebugManager {
         this.skipConfig.enabled = false;
         this.saveConfig(this.skipConfig);
 
-        console.warn('[DEBUG] Debug mode DISABLED (safety fallback)');
+        if (this.logger) {
+            this.logger.warn('[DEBUG] Debug mode DISABLED (safety fallback)');
+        }
 
         if (this.logger) {
             this.logger.warn('[DEBUG] Debug mode force-disabled');

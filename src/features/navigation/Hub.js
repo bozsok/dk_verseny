@@ -21,7 +21,12 @@ class Hub {
     this.eventListeners = new Map();
     this.clickCount = 0;
     this.lastClickTime = 0;
-    this.isMasterMode = localStorage.getItem('dkv_master_mode') === 'true';
+    
+    // Master Mode lekérése a StateManager-en keresztül
+    this.isMasterMode = this.options.stateManager 
+        ? this.options.stateManager.getSystemFlag('master_mode', false)
+        : false;
+
     this.init();
   }
 
@@ -77,7 +82,11 @@ class Hub {
 
         if (this.clickCount === 5) {
             this.isMasterMode = !this.isMasterMode;
-            localStorage.setItem('dkv_master_mode', this.isMasterMode);
+            
+            if (this.options.stateManager) {
+                this.options.stateManager.setSystemFlag('master_mode', this.isMasterMode);
+            }
+
             this.clickCount = 0;
             
             if (this.options.logger) {
