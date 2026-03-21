@@ -106,15 +106,21 @@ class FinaleGame {
         const wordSection = document.createElement('div');
         wordSection.className = 'finale-word-section';
         const tooltipText = "Írd be a Küldetésnaplóba a kulcsokon található betűcsoportokat. Például az első kulcson azt olvasod: '<b>tó</b>', a másodikon azt olvasod: '<b>au</b>' stb. Ezután ezekből állíts össze értelmes szöveget, például '<b>autó</b>'.<br><br>Amelyik betűcsoporttal kezdődik a szöveg ('au'), az a kulcs lesz az első kulcshelyen, ezt követi a második betűcsoport kulcsa ('tó') a második kulcshelyen és így tovább.";
-        
-        wordSection.innerHTML = `
-            <div class="finale-input-wrapper">
-                <input type="text" id="finale-word-input" placeholder="A varázsszó..." autocomplete="off">
-                <span class="finale-tooltip-icon" data-tooltip="${tooltipText}">?</span>
-            </div>
-        `;
-        const tooltipIcon = wordSection.querySelector('.finale-tooltip-icon');
-        this.setupTooltip(tooltipIcon);
+
+        const inputWrapper = document.createElement('div');
+        inputWrapper.className = 'finale-input-wrapper';
+
+        const wordInput = document.createElement('input');
+        wordInput.type = 'text';
+        wordInput.id = 'finale-word-input';
+        wordInput.placeholder = 'A varázsszó...';
+        wordInput.autocomplete = 'off';
+        inputWrapper.appendChild(wordInput);
+
+        // Floating tooltip ikon (globális rendszer)
+        inputWrapper.appendChild(this._createFloatingTooltipTrigger(tooltipText));
+
+        wordSection.appendChild(inputWrapper);
 
         wrapper.appendChild(wordSection);
 
@@ -295,29 +301,60 @@ class FinaleGame {
         });
     }
 
-    setupTooltip(icon) {
-        if (!icon) return;
-        
-        const tooltipBox = document.createElement('div');
-        tooltipBox.className = 'finale-custom-tooltip';
-        tooltipBox.style.display = 'none';
-        tooltipBox.innerHTML = icon.dataset.tooltip;
-        document.body.appendChild(tooltipBox);
+    /**
+     * Floating tooltip trigger létrehozása (globális rendszer – document.body-ban renderelt panel)
+     * @param {string} html - A tooltip HTML tartalma
+     * @returns {HTMLElement}
+     */
+    _createFloatingTooltipTrigger(html) {
+        const container = document.createElement('div');
+        container.className = 'dkv-tooltip-container';
+        container.innerHTML = `
+            <div class="dkv-tooltip-trigger">
+                <svg class="dkv-tooltip-svg" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+        `;
 
-        icon.addEventListener('mouseenter', () => {
-            tooltipBox.style.display = 'block';
+        const panel = document.createElement('div');
+        panel.className = 'dkv-tooltip-floating-panel';
+        panel.innerHTML = html;
+        document.body.appendChild(panel);
+
+        const trigger = container.querySelector('.dkv-tooltip-trigger');
+
+        const showPanel = () => {
+            const rect = trigger.getBoundingClientRect();
+            panel.style.display = 'block';
+            const panelWidth = panel.offsetWidth;
+            let left = rect.left + rect.width / 2 - panelWidth / 2;
+            if (left < 8) left = 8;
+            if (left + panelWidth > window.innerWidth - 8) left = window.innerWidth - panelWidth - 8;
+            panel.style.top = (rect.bottom + 10) + 'px';
+            panel.style.left = left + 'px';
+            panel.style.opacity = '1';
+        };
+
+        const hidePanel = () => {
+            panel.style.opacity = '0';
+            panel.style.display = 'none';
+        };
+
+        trigger.addEventListener('mouseenter', showPanel);
+        trigger.addEventListener('mouseleave', hidePanel);
+
+        const observer = new MutationObserver(() => {
+            if (!document.body.contains(container)) {
+                panel.remove();
+                observer.disconnect();
+            }
         });
+        observer.observe(document.body, { childList: true, subtree: true });
 
-        icon.addEventListener('mousemove', (e) => {
-            tooltipBox.style.left = (e.pageX + 15) + 'px';
-            tooltipBox.style.top = (e.pageY + 15) + 'px';
-        });
-
-        icon.addEventListener('mouseleave', () => {
-            tooltipBox.style.display = 'none';
-        });
-
-        this.tooltipBox = tooltipBox;
+        return container;
     }
 
     destroy() {

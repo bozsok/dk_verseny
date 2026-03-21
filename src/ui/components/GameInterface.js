@@ -591,9 +591,19 @@ class GameInterface {
                         header.appendChild(h2);
                     }
                     if (options.subtitle) {
+                        const subWrapper = document.createElement('div');
+                        subWrapper.className = 'dkv-subtitle-wrapper';
+                        
                         const sub = document.createElement('p');
                         sub.textContent = options.subtitle;
-                        header.appendChild(sub);
+                        subWrapper.appendChild(sub);
+                        
+                        // Súgó tooltip hozzáadása a felirat MELLÉ a wrapperbe
+                        if (options.helpContent) {
+                            const helpContainer = this._createHelpTooltip(options.helpContent);
+                            subWrapper.appendChild(helpContainer);
+                        }
+                        header.appendChild(subWrapper);
                     }
                 } else {
                     // Visszaállítás az alapértékre
@@ -724,6 +734,69 @@ class GameInterface {
             };
             btn.addEventListener('click', clearAnimations, { once: true });
         }
+    }
+    
+    /**
+     * Súgó tooltip létrehozása
+     * A tartalom panel a document.body-ba kerül, hogy kikerülje a modal stacking context-jét.
+     * @param {string} helpHTML - A tooltipben megjelenő HTML tartalom
+     * @returns {HTMLElement} - A tooltip konténer eleme (csak az ikon)
+     * @private
+     */
+    _createHelpTooltip(helpHTML) {
+        const container = document.createElement('div');
+        container.className = 'dkv-tooltip-container';
+
+        container.innerHTML = `
+            <div class="dkv-tooltip-trigger">
+                <svg class="dkv-tooltip-svg" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+        `;
+
+        // Floating panel: a document.body-ba kerül, nem a modal DOM-fájába
+        const panel = document.createElement('div');
+        panel.className = 'dkv-tooltip-floating-panel';
+        panel.innerHTML = helpHTML;
+        document.body.appendChild(panel);
+
+        const trigger = container.querySelector('.dkv-tooltip-trigger');
+
+        const showPanel = () => {
+            const rect = trigger.getBoundingClientRect();
+            // Az ikon alá, vízszintesen középre igazítva
+            panel.style.display = 'block';
+            const panelWidth = panel.offsetWidth;
+            let left = rect.left + rect.width / 2 - panelWidth / 2;
+            // Képernyőn belül tartás
+            if (left < 8) left = 8;
+            if (left + panelWidth > window.innerWidth - 8) left = window.innerWidth - panelWidth - 8;
+            panel.style.top = (rect.bottom + 10) + 'px';
+            panel.style.left = left + 'px';
+            panel.style.opacity = '1';
+        };
+
+        const hidePanel = () => {
+            panel.style.opacity = '0';
+            panel.style.display = 'none';
+        };
+
+        trigger.addEventListener('mouseenter', showPanel);
+        trigger.addEventListener('mouseleave', hidePanel);
+
+        // Takarítás: ha a container kikerül a DOM-ból, a panelt is töröljük
+        const observer = new MutationObserver(() => {
+            if (!document.body.contains(container)) {
+                panel.remove();
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        return container;
     }
 }
 

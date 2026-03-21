@@ -224,19 +224,61 @@ export class SoundGame {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
-    getTooltipHTML(text) {
-        return `
-            <div class="dkv-tooltip-container">
-                <div class="dkv-tooltip-trigger">
-                    <svg class="dkv-tooltip-svg" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                </div>
-                <div class="dkv-tooltip-content">${text}</div>
+    /**
+     * Floating tooltip trigger létrehozása (floating panel a document.body-ban)
+     * @param {string} text - A tooltip szövege
+     * @returns {HTMLElement} - Az ikon elem
+     */
+    _createFloatingTooltipTrigger(text) {
+        const container = document.createElement('div');
+        container.className = 'dkv-tooltip-container';
+        container.innerHTML = `
+            <div class="dkv-tooltip-trigger">
+                <svg class="dkv-tooltip-svg" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
             </div>
         `;
+
+        const panel = document.createElement('div');
+        panel.className = 'dkv-tooltip-floating-panel';
+        panel.textContent = text;
+        document.body.appendChild(panel);
+
+        const trigger = container.querySelector('.dkv-tooltip-trigger');
+
+        const showPanel = () => {
+            const rect = trigger.getBoundingClientRect();
+            panel.style.display = 'block';
+            const panelWidth = panel.offsetWidth;
+            let left = rect.left + rect.width / 2 - panelWidth / 2;
+            if (left < 8) left = 8;
+            if (left + panelWidth > window.innerWidth - 8) left = window.innerWidth - panelWidth - 8;
+            panel.style.top = (rect.bottom + 10) + 'px';
+            panel.style.left = left + 'px';
+            panel.style.opacity = '1';
+        };
+
+        const hidePanel = () => {
+            panel.style.opacity = '0';
+            panel.style.display = 'none';
+        };
+
+        trigger.addEventListener('mouseenter', showPanel);
+        trigger.addEventListener('mouseleave', hidePanel);
+
+        // Takarítás: ha a container kikerül a DOM-ból, a panelt is töröljük
+        const observer = new MutationObserver(() => {
+            if (!document.body.contains(container)) {
+                panel.remove();
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        return container;
     }
 
     startGame() {
@@ -254,28 +296,43 @@ export class SoundGame {
 
     revealTasks() {
         this.taskPartsWrapper.style.display = 'flex';
+        this.taskPartsWrapper.innerHTML = '';
 
-        let html = '';
         this.taskParts.forEach((part, index) => {
-            html += `
-                <div class="sound-task-part" style="animation: slideUp 0.4s ease forwards; animation-delay: ${index * 0.15}s; opacity: 0; transform: translateY(10px);">
-                    <div class="sound-task-question">
-                        ${part.question}
-                        ${part.tooltip ? this.getTooltipHTML(part.tooltip) : (part.isCommon ? this.getTooltipHTML('Sonora üzenetének sebessége ingadozik. Használd a lejátszó sebességállítását!') : '')}
-                    </div>
-                    <div class="sound-task-fields">
-                        ${part.fields.map(f => `
-                            <div class="sound-field-item">
-                                <label for="${f.id}">${f.label}</label>
-                                <input type="${f.type}" id="${f.id}" class="sound-input" autocomplete="off" ${f.type === 'number' ? 'min="0"' : ''}>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
+            const partEl = document.createElement('div');
+            partEl.className = 'sound-task-part';
+            partEl.style.cssText = `animation: slideUp 0.4s ease forwards; animation-delay: ${index * 0.15}s; opacity: 0; transform: translateY(10px);`;
+
+            // Kérdés sor tooltip ikonnal
+            const questionEl = document.createElement('div');
+            questionEl.className = 'sound-task-question';
+            questionEl.textContent = part.question;
+
+            // Floating tooltip hozzáadása (csak ha van tooltip szöveg)
+            const tooltipText = part.tooltip ||
+                (part.isCommon ? 'Sonora üzenetének sebessége ingadozik. Használd a lejátszó sebességállítását!' : null);
+            if (tooltipText) {
+                questionEl.appendChild(this._createFloatingTooltipTrigger(tooltipText));
+            }
+
+            partEl.appendChild(questionEl);
+
+            // Mezők
+            const fieldsEl = document.createElement('div');
+            fieldsEl.className = 'sound-task-fields';
+            part.fields.forEach(f => {
+                const fieldItem = document.createElement('div');
+                fieldItem.className = 'sound-field-item';
+                fieldItem.innerHTML = `
+                    <label for="${f.id}">${f.label}</label>
+                    <input type="${f.type}" id="${f.id}" class="sound-input" autocomplete="off" ${f.type === 'number' ? 'min="0"' : ''}>
+                `;
+                fieldsEl.appendChild(fieldItem);
+            });
+            partEl.appendChild(fieldsEl);
+            this.taskPartsWrapper.appendChild(partEl);
         });
 
-        this.taskPartsWrapper.innerHTML = html;
         this.evaluateWrapper.style.display = 'block';
 
         // Add listeners for empty check

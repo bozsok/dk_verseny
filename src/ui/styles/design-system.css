@@ -3,6 +3,9 @@
  * DARK FANTASY THEME
  */
 
+/* Z-index Hierarchia Térkép – CSS Custom Properties */
+@import './z-index.css';
+
 :root {
   /* === SZÍNPALETTA (DARK THEME) === */
 
@@ -77,7 +80,7 @@ body::before {
   height: 100%;
   background: radial-gradient(circle at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%);
   pointer-events: none;
-  z-index: -1;
+  z-index: var(--z-background);
 }
 
 /* ============================================
@@ -318,7 +321,7 @@ h3 {
   font-family: var(--dkv-font-sans);
   font-weight: 700;
   font-size: 1.25rem;
-  z-index: 1000;
+  z-index: var(--z-ui-controls);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
 }
@@ -444,7 +447,7 @@ h3 {
   /* Fix pozíció, hogy biztosan full screen legyen */
   top: 0;
   left: 0;
-  z-index: 100;
+  z-index: var(--z-content);
   /* Legyen a hub felett */
   display: flex;
   align-items: center;
@@ -514,7 +517,7 @@ h3 {
   background: transparent;
   /* Removed #000 to allow Content Layer visibility */
   color: white;
-  z-index: 2500;
+  z-index: var(--z-ui-layer);
   display: flex;
   flex-direction: column;
   pointer-events: none;
@@ -533,7 +536,7 @@ h3 {
   /* Top padding to push content down inline with Timer */
   background: rgba(0, 0, 0, 0.5);
   /* Base bg */
-  z-index: 1100;
+  z-index: var(--z-panel);
   flex-shrink: 0;
   pointer-events: none;
   /* Allow clicks to pass through gaps */
@@ -637,7 +640,7 @@ h3 {
   flex-direction: column;
   gap: 1rem;
   gap: 1rem;
-  z-index: 1100;
+  z-index: var(--z-panel);
   pointer-events: auto;
   /* Re-enable clicks */
 }
@@ -655,7 +658,7 @@ h3 {
   flex: 1;
   width: 100%;
   position: relative;
-  z-index: 100;
+  z-index: var(--z-content);
   pointer-events: none;
   /* Allow clicks to pass through to actual Content Layer */
 }
@@ -669,7 +672,7 @@ h3 {
   align-items: center;
   /* Fontos: Grid-szerű elosztás */
   position: relative;
-  z-index: 1100;
+  z-index: var(--z-panel);
   pointer-events: none;
   /* Allow clicks to pass through to SummarySlide buttons */
 }
@@ -738,7 +741,7 @@ h3 {
 
 /* === TIMER DISPLAY (Global) - Ensure it's on top === */
 .dkv-timer-display {
-  z-index: 2000 !important;
+  z-index: var(--z-onboarding-modal) !important;
   /* Force on top of game interface */
 }
 
@@ -756,7 +759,7 @@ h3 {
   height: 100vh;
   background: #1a1a1a;
   border-right: 2px solid #444;
-  z-index: 1500;
+  z-index: var(--z-float-animation);
   transition: left 0.3s ease-in-out;
   padding: 80px 2rem 2rem 2rem;
   /* Top padding for HUD */
@@ -788,7 +791,7 @@ h3 {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   font-family: 'Georgia', serif;
   /* Book-like font */
-  z-index: 1400;
+  z-index: var(--z-portal-mask-bg);
   pointer-events: auto;
   /* Enable interaction */
   display: none;
@@ -842,7 +845,7 @@ h3 {
   /* controlled by JS */
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: var(--z-onboarding-modal);
   backdrop-filter: blur(5px);
 }
 
@@ -872,7 +875,7 @@ h3 {
   pointer-events: auto;
   /* Enable interaction */
   max-height: 80vh;
-  z-index: 2000;
+  z-index: var(--z-onboarding-modal);
   transition: right 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   background: rgba(0, 0, 0, 0.9);
   color: white;
@@ -900,7 +903,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3000;
+  z-index: var(--z-task-modal-overlay);
   backdrop-filter: blur(10px);
   opacity: 0;
   visibility: hidden;
@@ -947,9 +950,9 @@ h3 {
   padding: 0 50px;
   border-bottom: 2px solid rgba(0, 234, 255, 0.3);
   align-self: start;
-  z-index: 2;
+  z-index: var(--z-task-modal-header) !important;
   position: relative;
-  /* Abszolút pozicionált elemekhez (pl. óra) */
+  overflow: visible !important;
 }
 
 .dkv-task-modal-header h2 {
@@ -1000,6 +1003,8 @@ h3 {
   line-height: 1.8;
   overflow: hidden;
   display: grid;
+  z-index: var(--z-inner-base);
+  position: relative;
 }
 
 /* dkv-task-modal-footer törölve a DOM-ból is */
@@ -1027,7 +1032,7 @@ h3 {
   padding: 0 30px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  z-index: 10;
+  z-index: var(--z-inner-ui);
 }
 
 .dkv-task-modal-overlay.open .dkv-task-ok-btn.visible {
@@ -1081,7 +1086,7 @@ h3 {
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  z-index: 5000;
+  z-index: var(--z-lightbox);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1223,7 +1228,7 @@ h3 {
   line-height: 1.4;
   white-space: normal;
   width: 260px;
-  z-index: 5000;
+  z-index: var(--z-lightbox);
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1280,7 +1285,7 @@ h3 {
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.82);
-  z-index: 9999;
+  z-index: var(--z-result-modal);
   backdrop-filter: blur(12px);
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -1467,48 +1472,78 @@ h3 {
 
 .dkv-tooltip-content {
   position: absolute;
-  bottom: 125%;
+  top: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(10px);
-  width: 220px;
-  padding: 12px 15px;
-  background: rgba(0, 40, 50, 0.95);
+  width: max-content;
+  max-width: 400px;
+  min-width: 150px;
+  padding: 15px 20px;
+  background: rgba(0, 30, 40, 0.98);
   border: 1px solid #00eaff;
-  border-radius: 8px;
+  border-radius: 12px;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: normal;
-  line-height: 1.4;
-  text-align: center;
+  line-height: 1.5;
+  text-align: left;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 234, 255, 0.2);
-  z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 234, 255, 0.3);
+  z-index: 10002 !important;
   font-family: 'Source Code Pro', monospace;
+  background: #001e28 !important;
+  border: 2px solid #00eaff !important;
+}
+
+/* Tooltip Rich Media Support */
+.dkv-tooltip-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(0, 234, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.dkv-tooltip-content b,
+.dkv-tooltip-content strong {
+  color: #00eaff;
+  font-weight: 700;
+}
+
+.dkv-tooltip-content p {
+  margin-bottom: 8px;
+}
+
+.dkv-tooltip-content p:last-child {
+  margin-bottom: 0;
 }
 
 .dkv-tooltip-content::after {
   content: '';
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   left: 50%;
   margin-left: -8px;
   border-width: 8px;
   border-style: solid;
-  border-color: #00eaff transparent transparent transparent;
+  border-color: transparent transparent #00eaff transparent;
 }
 
 .dkv-tooltip-container:hover .dkv-tooltip-content {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%) translateY(15px);
 }
 
 @media (max-width: 768px) {
   .dkv-tooltip-content {
-    width: 180px;
+    width: calc(100vw - 40px);
+    max-width: 280px;
     left: auto;
     right: -20px;
     transform: translateY(10px);
@@ -1518,4 +1553,66 @@ h3 {
     left: auto;
     right: 24px;
   }
+}
+/* Modal Header Tooltip Alignment & Subtitle Wrapper */
+.dkv-subtitle-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.dkv-task-modal-header .dkv-tooltip-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-tooltip-legacy);
+  flex-shrink: 0;
+}
+
+/* Tooltip Floating Panel - document.body-ban renderelt, minden felett */
+.dkv-tooltip-floating-panel {
+  display: none;
+  position: fixed;
+  z-index: var(--z-tooltip-floating);
+  background: #001e28;
+  border: 2px solid #00eaff;
+  border-radius: 12px;
+  padding: 15px 20px;
+  color: #fff;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.95rem;
+  font-weight: normal;
+  line-height: 1.5;
+  text-align: left;
+  max-width: 400px;
+  min-width: 200px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 234, 255, 0.3);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.dkv-tooltip-floating-panel b,
+.dkv-tooltip-floating-panel strong {
+  color: #00eaff;
+  font-weight: 700;
+}
+
+.dkv-tooltip-floating-panel p {
+  margin-bottom: 8px;
+}
+
+.dkv-tooltip-floating-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.dkv-tooltip-floating-panel img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 234, 255, 0.3);
 }

@@ -5,6 +5,24 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.16.2] - 2026-03-21
+
+### Hozzáadva
+- **Globális Súgó Floating Panel rendszer**: A tooltip tartalom panel mostantól a `document.body`-ba kerül JS-sel és `getBoundingClientRect()`-tel pozícionálódik az ikon alá (`position: fixed; z-index: 99999`). Ezzel teljesen kikerüli a modal stacking context korlátait, így a puzzle darabok és egyéb játékelemek sem takarhatják el.
+- **Egységesített tooltip a Sound feladatban**: A `SoundGame.js`-ben az elavult, HTML-string alapú `getTooltipHTML()` metódus lecserélve `_createFloatingTooltipTrigger()`-re. A `revealTasks()` metódus DOM-manipulációra állt át, hogy az eseménykezelők helyesen kötődhessenek a dinamikusan generált ikonokhoz.
+- **Egységesített tooltip a Finale feladatban**: A beviteli mező melletti régi kérdőjeles (`?`) CSS-tooltip helyett az SVG-ikonos globális floating panel rendszer kerül alkalmazásra. Új `_createFloatingTooltipTrigger()` metódus implementálva a `FinaleGame` osztályban.
+- **`.dkv-tooltip-floating-panel` CSS osztály**: Új stílusdefiníció a `design-system.css`-ben a floating panel számára.
+
+### Javítva
+- **Puzzle Súgó ikon pozícionálása**: A Súgó ikon az instruktív mondat (alcím `p` tag) melletti `dkv-subtitle-wrapper` flex-konténerbe kerül, garantálva a szöveg és az ikon egy sorban maradását, függetlenül a fejléc elrendezésétől.
+- **Modal fejléc z-index hierarchia**: A `.dkv-task-modal-header` kap `z-index: 10001 !important` értéket, a `.dkv-task-modal-body` pedig explicit `z-index: 1`-et, így a fejléc elemei (pl. Súgó ikon) soha nem bújnak a játéktér alá.
+
+### Módosítva
+- **Sound feladat fejléc**: A `helpContent` eltávolítva a `config.js`-ben a `station_5` bejegyzésből – a feladat saját in-game tooltipjei tartalmazzák a szükséges útmutatót.
+- **Finale feladat fejléc**: A `helpContent` eltávolítva a `config.js`-ben a `final_2` bejegyzésből – az útmutatás a beviteli mező melletti Súgó ikonba került.
+- **Puzzle feladat Súgó szövege frissítve**: Rövidebb, célzottabb instrukcióra cserélve (`config.js`, `station_4`).
+- **Z-index centralizálás**: Létrehozva a `src/ui/styles/z-index.css` fájl az összes z-index érték CSS custom property-ként (`--z-...`). A `design-system.css` importálja ezt a fájlt, és minden korábbi hardkódolt `z-index: <szám>` értéket `var(--z-...)` hivatkozással vált ki. Dokumentáció: `docs/z-index-map.md` (táblázat + Mermaid diagram).
+
 ## [0.16.1] - 2026-03-21
 ### Hozzáadva
 - **Globális Súgó (Tooltip) rendszer**: Új, interaktív tooltip rendszer implementálása a feladatokhoz. Tartalmazza a neon stílusú lebegő ablakot, az egyedi SVG ikont és a Sound feladat (Grade 3) specifikus súgó szövegeit.

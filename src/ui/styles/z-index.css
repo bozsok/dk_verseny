@@ -1,0 +1,95 @@
+/**
+ * Z-index Hierarchia Térkép
+ * =============================
+ * Ez a fájl a projekt EGYETLEN forrása az összes z-index értéknek.
+ * Importáld a design-system.css-be, és hivatkozz a változókra: var(--z-...)
+ *
+ * Rétegek növekvő sorrendben (alsóbb = hátrébb, felsőbb = előrébb):
+ *
+ *  Negatív / Háttér           -1
+ *  Belső rétegek              1 – 10
+ *  Tartalom / Content        100
+ *  UI vezérlők              1000
+ *  Panelek (napló, beáll.) 1100
+ *  Portál maszk/kép        1400
+ *  Animációk (key, float)  1500
+ *  Onboarding modal        2000
+ *  Portál háttér           2200 – 2201
+ *  Portál shader           2300
+ *  Portál részecskék       2400
+ *  UI layer (HUD felett)   2500
+ *  Feladat modal overlay   3000
+ *  Finale sidebar/journal  3100 – 3201
+ *  Lightbox (kulcs nagyít) 4000, 5000
+ *  Eredmény modal          9999
+ *  Debug panel            10000
+ *  Feladat modal header   10001
+ *  Tooltip konténer       10002
+ *  Floating panel (Súgó)  99999
+ */
+
+:root {
+  /* === Háttér === */
+  --z-background:           -1;    /* Háttér blur/overlay mögöttes réteg */
+
+  /* === Belső tartalom rétegek (komponensen belül) === */
+  --z-inner-base:            1;    /* Task modal body (grid réteg) */
+  --z-inner-secondary:       2;    /* Memory card back-face, grade main.css overlay */
+  --z-inner-elements:        5;    /* Summary belső elem */
+  --z-inner-top:             6;    /* Summary legfelső belső elem */
+  --z-inner-ui:             10;    /* Timer bar-ok (puzzle, sound, memory), summary gomb */
+  --z-dragging:           1000;    /* Húzott puzzle darab (!important-tal) */
+
+  /* === Tartalom réteg === */
+  --z-content:             100;    /* Content Layer (main.js), inventory slot, lightbox overlay háttér */
+
+  /* === UI kontroller réteg === */
+  --z-ui-controls:        1000;    /* UI Layer (main.js), keyboard megjelenítő */
+
+  /* === Panelek (Napló, Beállítások, Narráció) === */
+  --z-panel:              1100;    /* Journal, Settings, Narrator panelek */
+
+  /* === Portál maszk / háttérkép === */
+  --z-portal-mask-bg:     1400;    /* Portal maskContainer háttér */
+
+  /* === Lebegő animációk === */
+  --z-float-animation:    1500;    /* KeyCollectionAnimation, floating points */
+
+  /* === Onboarding modal (Regisztráció, Karakterválasztás) === */
+  --z-onboarding-modal:   2000;    /* Registration, Character preview modal */
+
+  /* === Portál rétegek (Three.js / WebGL) === */
+  --z-portal-bg:          2200;    /* Portal canvas alap */
+  --z-portal-vortex:      2201;    /* Portal vortex/örvény réteg */
+  --z-portal-shader:      2300;    /* Portal shader layer */
+  --z-portal-particles:   2400;    /* Portal részecske réteg */
+
+  /* === Felső UI réteg (HUD fölött) === */
+  --z-ui-layer:           2500;    /* #dkv-layer-ui – HUD, navigációs nyilak */
+
+  /* === Feladat modal === */
+  --z-task-modal-overlay: 3000;    /* .dkv-task-modal-overlay */
+  --z-finale-sidebar:     3100;    /* Finale: sidebar kiemelés */
+  --z-finale-journal:     3200;    /* Finale: journal panel */
+  --z-finale-journal-btn: 3201;    /* Finale: journal gomb */
+
+  /* === Lightbox (kulcs nagyítás) === */
+  --z-lightbox-overlay:   4000;    /* Inventory kulcs nagyítás overlay */
+  --z-lightbox:           5000;    /* Inventory kulcs nagyítás panel */
+
+  /* === Eredmény összegzők === */
+  --z-result-modal:       9999;    /* Maze/Sound/stb. result modal */
+
+  /* === Debug panel === */
+  --z-debug:             10000;    /* Debug Panel (csak DEV módban) */
+
+  /* === Feladat modal fejléc és tooltip (fejlécen belül) === */
+  --z-task-modal-header: 10001;    /* .dkv-task-modal-header (tooltip szülője) */
+  --z-tooltip-legacy:    10002;    /* .dkv-tooltip-content (régi, CSS-alapú) */
+
+  /* === Quiz pont animáció (feladat közbeni animáció) === */
+  --z-quiz-floating-pt:  99999;    /* Quiz +pont lebegő animáció */
+
+  /* === Floating Tooltip Panel (document.body-ban) === */
+  --z-tooltip-floating:  99999;    /* .dkv-tooltip-floating-panel – minden felett */
+}

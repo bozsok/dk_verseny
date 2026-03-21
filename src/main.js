@@ -1734,7 +1734,8 @@ class DigitalKulturaVerseny {
         title: taskConfig.modalTitle ?? slide.title,
         subtitle: taskConfig.modalSubtitle ?? slide.description,
         hideHeader: taskConfig.type === 'maze',
-        modalClass: taskConfig.type === 'finale' ? 'finale-modal' : ''
+        modalClass: taskConfig.type === 'finale' ? 'finale-modal' : '',
+        helpContent: taskConfig.helpContent
       };
       this.activeGameInterface.showTaskModal(taskContainer, null, modalOptions);
 

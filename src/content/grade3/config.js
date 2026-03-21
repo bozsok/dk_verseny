@@ -297,7 +297,8 @@ const taskRegistry = {
             difficultyKey: 'puzzleDifficulty',
             defaultDifficulty: 16,
             imagePath: 'assets/images/grade3/puzzle/puzzle.jpg'
-        }
+        },
+        helpContent: `Keresd az egyenes szélű darabokat! Ezeken a darabokon egy fehér csík jelzi, hogy ez a legszélső puzzle darabka lesz.<br><br><img src="assets/images/grade3/puzzle/puzzle_help.png" class="dkv-tooltip-img">`
     },
     station_5: {
         type: 'sound',
@@ -306,7 +307,8 @@ const taskRegistry = {
         modalSubtitle: 'Indítsd el a hangfájlt, és hallgasd meg többször figyelmesen!',
         options: {
             taskData: null
-        }
+        },
+        helpContent: null
     },
     final_2: {
         type: 'finale',
@@ -315,7 +317,8 @@ const taskRegistry = {
         modalSubtitle: 'Add meg a helyes sorrendet és a varázsszót!',
         options: {
             isFinal: true
-        }
+        },
+        helpContent: null
     }
 };
 
