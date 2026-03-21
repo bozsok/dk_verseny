@@ -1435,6 +1435,11 @@ class DigitalKulturaVerseny {
     if (this.currentAudio) {
       this.currentAudio.pause();
       this.currentAudio.currentTime = 0;
+      // Tisztítjuk az előző UI-t, ha megszakítjuk a lejátszást
+      document.querySelectorAll('.dkv-btn-narrator').forEach(btn => {
+        btn.classList.remove('audio-playing');
+        btn.classList.remove('audio-ended');
+      });
     }
 
     const audio = new Audio(src);
@@ -1446,6 +1451,14 @@ class DigitalKulturaVerseny {
       if (callbackFired) return;
       callbackFired = true;
       this.currentAudio = null;
+      
+      // UI visszaállítása befejezéskor
+      document.querySelectorAll('.dkv-btn-narrator').forEach(btn => {
+        btn.classList.remove('audio-playing');
+        btn.classList.add('audio-ended');
+        btn.style.setProperty('--audio-progress', '100%');
+      });
+
       if (onComplete) onComplete();
     };
 
@@ -1455,6 +1468,24 @@ class DigitalKulturaVerseny {
     audio.addEventListener('error', (e) => {
       if (this.logger) this.logger.warn(`Audio playback failed for: ${src}`, { error: e.message });
       handleEnd();
+    });
+
+    // Audio UI Progress bindolás a Narrátor gombokra
+    audio.addEventListener('play', () => {
+      document.querySelectorAll('.dkv-btn-narrator').forEach(btn => {
+        btn.classList.add('audio-playing');
+        btn.classList.remove('audio-ended');
+        btn.style.setProperty('--audio-progress', '0%');
+      });
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const progress = (audio.currentTime / audio.duration) * 100;
+      if (!isNaN(progress)) {
+        document.querySelectorAll('.dkv-btn-narrator').forEach(btn => {
+          btn.style.setProperty('--audio-progress', `${progress}%`);
+        });
+      }
     });
 
     // Biztosítjuk, hogy a lejátszás mindig megindul:

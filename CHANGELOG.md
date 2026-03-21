@@ -5,6 +5,15 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.16.4] - 2026-03-21
+
+### Hozzáadva
+- **Narrátor gomb körkörös folyamatjelző (Progress Bar)**: A narráció indításakor (`main.js` -> `playAudio()`) a Narrátor gomb káváján egy neon-ciánkék, óramutató járásával megegyező sáv jeleníti meg az eltelt hangidőt. A megvalósítás letisztult z-index rétegzést és trükkös `background-clip: padding-box` CSS formázást használ, ami stabilan kezeli a gombok alakját (border-radius).
+- **Kvíz Játék pontfüggő egyedi értékelései**: A Kvíz játék feladatának `endGame` metódusába beépítésre kerültek a pontszám-alapú egyedi üzenetek, így az eredménytől függően (10 kérdés esetén: 8-10, 4-7, 1-3, 0 pont) motiváló és tematikus visszacsatolást ad a Kód Királyság kontextusában.
+
+### Javítva
+- **Kvíz Játék 0 pontos befejezése (success bug)**: Javítva a korábbi állapot, ahol 0 pont megszerzése estén (esetleges gyors végigkattintáskor) a `success: true` flaggel zárult a játék és hamisan jelent meg a 'Gratulálunk...' felirat. Mostantól ez az állapot automatikusan sikertelen (`success: false`).
+
 ## [0.16.3] - 2026-03-21
 
 ### Javítva
@@ -38,7 +47,7 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 - **Navigáció**: A "VÉGE" gomb aktiválva az utolsó dián, így a felhasználó visszatérhet a Hub-ba.
 - **Stíluskezelés**: BEM struktúra megerősítése és a felesleges `!important` szabályok eltávolítása a `design-system.css` fájlból.
 
-## [0.16.0] - 2026-03-22
+## [0.16.0] - 2026-03-21
 ### Hozzáadva
 - **Clean Engine architektúra (Phase 6 & 7)**: A `main.js` teljes refaktorálása. A tartalom és a logika szétválasztásra került, így az alkalmazás mérete nem nő az új évfolyamok hozzáadásával.
 - **Dinamikus feladat betöltés (Lazy Loading)**: A játékmodulok (Maze, Quiz, Memory stb.) mostantól csak akkor töltődnek be, amikor a játékos elér hozzájuk.
@@ -51,11 +60,11 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 - `config.js`: Generikus "Teljesítsétek a kihívást..." placeholder szövegek eltávolítva minden évfolyamból.
 - Stíluskezelés: A feladat-specifikus CSS fájlok mostantól dinamikusan töltődnek be a JS modulokkal együtt.
 
-## [0.15.1] - 2026-03-22
+## [0.15.1] - 2026-03-21
 ### Javítva
 - `Card.js`: Animációs időzítő hiba javítva (leálláskor fellépő null pointer hiba).
 
-## [0.15.0] - 2026-03-22
+## [0.15.0] - 2026-03-21
 ### Hozzáadva
 - `VideoPlayer` és `VideoSlide` teljes körű `GameLogger` integrációja.
 
@@ -64,24 +73,24 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 - Tartalom konfigurációk: Debug hívások és felesleges TODO-k eltávolítva.
 - Videó lejátszás: Stabilabb hibakezelés és tekerés-gátlás (seeking prevention) naplózás.
 
-## [0.14.3] - 2026-03-22
+## [0.14.3] - 2026-03-21
 ### Eltávolítva
 - Hub UI: Az "Előrehaladás" (progress bar) funkció eltávolítva a kártyákról (versenyhelyzetben felesleges).
 
 ### Javítva
 - `Card.js`: Szintaktikai hiba javítva az Előrehaladás sáv eltávolítása után.
 
-## [0.14.2] - 2026-03-22
+## [0.14.2] - 2026-03-21
 ### Javítva
 - Hub UI: Eredeti évfolyam feliratok visszaállítva ("kőbe vésett" állapot).
 
-## [0.14.1] - 2026-03-22
+## [0.14.1] - 2026-03-21
 ### Javítva
 - Hub UI: Kettős 'x. osztály' felirat eltávolítva a kártyákról.
 - Hub UI: A 0%-os előrehaladás jelzés elrejtve a letisztultabb felület érdekében.
 - Hub UI: Tematikusabb leírások az évfolyam kártyákhoz.
 
-## [0.14.0] - 2026-03-22
+## [0.14.0] - 2026-03-21
 ### Hozzáadva
 - Átfogó unit tesztek a Core modulokhoz (`EventBus`, `GameLogger`, `TimeManager`).
 - `DocumentFragment` alapú hatékony renderelés a `Hub` komponensben.

@@ -398,9 +398,8 @@ class QuizGame {
         // A pontokat már folyamatosan adtuk hozzá (evaluateCurrentPage)
         // Befejezés, minimum 0 pont, ha végigment. 
         // score == max pontszám. 1 pont minden jó válaszért. (Már kiszámoltuk: this.currentScore)
-        // A feladat success=true lesz, ha végigment időn belül, függetlenül a ponttól (vagy lehet kritérium).
-        // Jelenleg úgy tekintjük, hogy success=true ha beküldte, és a score a pontszám.
-        this.endGame(true, this.currentScore);
+        // Ha 0 pontot szerzett (mindent elrontott), akkor a feladat sikertelen (success = false)
+        this.endGame(this.currentScore > 0, this.currentScore);
     }
 
     endGame(success, points) {
@@ -408,11 +407,23 @@ class QuizGame {
         this.gameState = success ? 'won' : 'lost';
         clearInterval(this.timerInterval);
 
+        let customTitle = '';
+        if (points >= 8) {
+            customTitle = 'Gratulálunk, kiváló eredmény! Sikeresen teljesítetted a kvízt, tudásod egy igazi Kódmesteréhez méltó!';
+        } else if (points >= 4) {
+            customTitle = 'Szép próbálkozás! Sok kérdésre tudtad a helyes választ, de egy kis gyakorlással még jobb lehetsz!';
+        } else if (points >= 1) {
+            customTitle = 'Ez most egy kicsit nehéz volt. Csak néhány választ találtál el, de ne csüggedj, a Kód Királyságban a kitartás a legfontosabb!';
+        } else {
+            customTitle = 'Sajnos egyetlen kérdésre sem sikerült helyesen válaszolnod. Kicsit jobban oda kell figyelned a részletekre, ha meg akarod állítani a vírust!';
+        }
+
         const result = {
             success,
             timeElapsed: this.timeElapsed,
             points: points,
-            maxPoints: this.questions.length
+            maxPoints: this.questions.length,
+            title: customTitle
         };
 
         this.onComplete(result);
