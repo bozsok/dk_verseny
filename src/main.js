@@ -863,7 +863,7 @@ class DigitalKulturaVerseny {
           <span class="maze-result-stat-value points">${result.points} pont</span>
         </div>
       </div>
-      <button class="dkv-btn--result-modal dkv-btn dkv-btn-primary">Tovább</button>
+      <button class="dkv-button dkv-grade-3-button dkv-btn--result-modal">Tovább</button>
     `;
 
 

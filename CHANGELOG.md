@@ -5,6 +5,12 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.16.3] - 2026-03-21
+
+### Javítva
+- **Összegző modal „Tovább" gomb vizuális egységesítése**: A feladat teljesítése utáni eredmény modal „Tovább" gombjának osztályai megváltoztak (`dkv-btn--result-modal dkv-btn dkv-btn-primary` → `dkv-button dkv-grade-3-button dkv-btn--result-modal`), így a gomb vizuálisan pontosan egyezik az Onboarding-on látható gombokkal (Impact font, türkiz háttér, neon keret, box-shadow).
+- **`.dkv-btn--result-modal` CSS cleanup**: Az osztályból eltávolításra kerültek az összes duplikált vizuális tulajdonságok (font, background, border, box-shadow, hover). Csak a pozicionálás-specifikus értékek (`margin-top: 25px`, `min-width: 180px`) maradtak.
+
 ## [0.16.2] - 2026-03-21
 
 ### Hozzáadva
