@@ -24,18 +24,6 @@ import GameInterface from './ui/components/GameInterface.js';
 import { PortalTransition } from './ui/components/PortalTransition.js';
 import KeyCollectionAnimation from './ui/components/KeyCollectionAnimation.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
-import MazeGame from './content/grade3/tasks/maze/MazeGame.js';
-import MemoryGame from './content/grade3/tasks/memory/MemoryGame.js';
-import QuizGame from './content/grade3/tasks/quiz/QuizGame.js';
-import { PuzzleGame } from './content/grade3/tasks/puzzle/PuzzleGame.js';
-import { SoundGame } from './content/grade3/tasks/sound/SoundGame.js';
-import FinaleGame from './content/grade3/tasks/finale/FinaleGame.js';
-import './content/grade3/tasks/maze/Maze.css';
-import './content/grade3/tasks/memory/Memory.css';
-import './content/grade3/tasks/quiz/Quiz.css';
-import './content/grade3/tasks/puzzle/Puzzle.css';
-import './content/grade3/tasks/sound/Sound.css';
-import './content/grade3/tasks/finale/FinaleGame.css';
 import './ui/styles/design-system.css';
 import './ui/styles/Portal.css';
 import './ui/styles/Summary.css';
@@ -1103,40 +1091,18 @@ class DigitalKulturaVerseny {
 
       // Várjuk meg (ha volt) a kulcs animációt, majd indulhat a Portal
       keyAnimationPromise.then(() => {
-        // Állomás-függő portál színek (4 színű paletta per állomás)
+        // Állomás-függő portál színek (Hex -> RGB konverzió)
         const hexToRgb = (hex) => {
+          if (!hex) return [0, 0.5, 1]; // Fallback kék
           const n = parseInt(hex.replace('#', ''), 16);
           return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255];
         };
 
-        const portalColorMap = {
-          station_1: [ // Labirintuskert (4 db egyedi szín)
-            hexToRgb('#1c4708'), hexToRgb('#1c4708'),
-            hexToRgb('#1c4708'), hexToRgb('#063819')
-          ],
-          station_2: [ // Adat-tenger (jelenleg egy szín megadva, 4x klónozzuk)
-            hexToRgb('#005180'), hexToRgb('#005180'),
-            hexToRgb('#005180'), hexToRgb('#002033')
-          ],
-          station_3: [ // Tudás Torony
-            hexToRgb('#306169'), hexToRgb('#306169'),
-            hexToRgb('#306169'), hexToRgb('#134d57')
-          ],
-          station_4: [ // Pixel Palota
-            hexToRgb('#122a36'), hexToRgb('#122a36'),
-            hexToRgb('#122a36'), hexToRgb('#1f3642')
-          ],
-          station_5: [ // Hangerdő
-            hexToRgb('#1d320b'), hexToRgb('#1d320b'),
-            hexToRgb('#1d320b'), hexToRgb('#214603')
-          ],
-          final: [ // Finálé
-            hexToRgb('#0e2e47'), hexToRgb('#0e2e47'),
-            hexToRgb('#0e2e47'), hexToRgb('#162c37')
-          ]
-        };
-        // Ha nincs megadva, a PortalTransition class default kékjét használja
-        const activeColors = portalColorMap[nextSlide?.metadata?.section] || null;
+        const portalColors = this.slideManager.portalColors || {};
+        const stationColors = portalColors[nextSlide?.metadata?.section] || portalColors['final'] || null;
+        
+        // Ha vannak színek az állomáshoz, konvertáljuk őket RGB-re a PortalTransition számára
+        const activeColors = stationColors ? stationColors.map(hex => hexToRgb(hex)) : null;
 
         const portal = new PortalTransition({
           newSlideHtml: nextSlideDOM,
@@ -1698,31 +1664,29 @@ class DigitalKulturaVerseny {
    * Feladat automatikus meghívása és inicializálása
    * A renderSlide-ban került leválasztásra az audió eseménykezelésből
    */
-  _launchTask(slide) {
+  async _launchTask(slide) {
     const isCompleted = this.stateManager?.isSlideCompleted(slide.id);
     if (!this.activeGameInterface || isCompleted) return;
 
     const section = slide.metadata?.section || 'unknown';
-    const isMaze = section === 'station_1';
-    const isMemory = section === 'station_2' || (slide.id && slide.id.toString().startsWith('st2_'));
-    const isQuiz = section === 'station_3' || (slide.id && slide.id.toString().startsWith('st3_'));
-    const isPuzzle = section === 'station_4' || (slide.id && slide.id.toString().startsWith('st4_'));
-    const isSound = section === 'station_5' || (slide.id && slide.id.toString().startsWith('st5_'));
-    const isFinalChallenge = slide.id === 'final_2';
+    const registry = this.slideManager.taskRegistry || {};
+    // Keresünk a registry-ben slide.id vagy section alapján
+    const taskConfig = registry[slide.id] || registry[section];
 
-    if (this.logger) this.logger.info(`[DKV] TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}`);
+    if (!taskConfig) {
+      if (this.logger) this.logger.warn(`[DKV] No task configuration found for slide ${slide.id} / section ${section}`);
+      const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
+      this.activeGameInterface.showTaskModal(taskContent, () => {
+        this.stateManager?.markSlideCompleted(slide.id);
+        this.handleNext();
+      });
+      return;
+    }
 
-    // --- Feladat típus és megnevezés leképezése ---
-    const taskTypeMap = {
-      station_1: { label: 'Labirintuskert – Labirintus' },
-      station_2: { label: 'Adat-tenger – Memóriajáték' },
-      station_3: { label: 'Tudás torony – Kvíz' },
-      station_4: { label: 'Pixel Palota – Kirakós (Puzzle)' },
-      station_5: { label: 'Hangerdő – Hangfájl feladat' }
-    };
-    const taskLabel = slide.id === 'final_2'
-      ? 'Nagy Zár – Végjáték'
-      : (taskTypeMap[section]?.label || slide.title || slide.id);
+    if (this.logger) this.logger.info(`[DKV] Dynamic TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}, Type: ${taskConfig.type}`);
+
+    // --- Feladat megnevezése ---
+    const taskLabel = slide.id === 'final_2' ? 'Nagy Zár – Végjáték' : (slide.title || slide.id);
 
     const onTaskComplete = (result) => {
       const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
@@ -1732,7 +1696,6 @@ class DigitalKulturaVerseny {
         this.activeGameInterface?.updateHUD(this.stateManager?.getState());
         this.stateManager?.markSlideCompleted(slide.id);
 
-        // --- Feladat részletei rögzítése a dashboardhoz ---
         this.taskResults.push({
           slideId: slide.id,
           label: taskLabel,
@@ -1740,149 +1703,87 @@ class DigitalKulturaVerseny {
           points: result.points ?? 0,
           maxPoints: result.maxPoints ?? null,
           timeElapsed: result.timeElapsed ?? null,
-          // Felatattípus-specifikus extra adatok:
-          attempts: result.attempts ?? null,    // MemoryGame: összpróbálkozás
-          stepCount: result.stepCount ?? null,  // MazeGame: lépésszám
-          wordCorrect: result.wordCorrect ?? null,   // FinaleGame
-          orderCorrect: result.orderCorrect ?? null   // FinaleGame
+          attempts: result.attempts ?? null,
+          stepCount: result.stepCount ?? null,
+          wordCorrect: result.wordCorrect ?? null,
+          orderCorrect: result.orderCorrect ?? null
         });
 
-        // --- A Finale után megállítjuk az időzítőt, hogy a mentett idő fix maradjon ---
-        if (isFinalChallenge && this.timeManager) {
-          if (this.logger) this.logger.info('[Leaderboard] Final challenge completed, stopping timer before save.');
+        if (taskConfig.type === 'finale' && this.timeManager) {
           this.timeManager.stopCompetition();
         }
 
-        // --- CHECKPOINT MENTÉS MINDEN FELADAT UTÁN ---
         this.saveResultToLeaderboard();
       }
 
       const modalTitle = result.success ? 'Gratulálunk, sikeresen teljesítetted!' : 'Sajnos lejárt az idő vagy nem volt sikeres!';
       this.showMazeResultModal(
         { ...result, title: result.title || modalTitle },
-        () => this.handleNext(),                           // 1. Azonnal: dia váltás
-        () => this.activeGameInterface.hideTaskModal()     // 2. 300ms múlva: task modal el
-        // 3. összegző overlay fade-outol utoljára automatikusan
+        () => this.handleNext(),
+        () => this.activeGameInterface.hideTaskModal()
       );
-    };
-
-    const hideOkBtn = () => {
-      setTimeout(() => {
-        const okBtn = document.querySelector('.dkv-task-ok-btn');
-        if (okBtn) okBtn.style.display = 'none';
-      }, 50);
     };
 
     const globalTimeLimit = this.debugManager?.tasksConfig?.globalTimeLimit
       ?? this.buildConfig?.tasksConfig?.globalTimeLimit
       ?? 900;
 
-    if (isMaze) {
+    try {
+      // Dinamikus modul betöltés
+      const module = await taskConfig.module();
+      const GameClass = module.default || (Object.values(module)[0]); // Handle both default and named exports
+
       const taskContainer = document.createElement('div');
-      taskContainer.className = 'maze-task-container';
+      taskContainer.className = `${taskConfig.type}-task-container`;
       taskContainer.style.width = '100%';
       taskContainer.style.height = '100%';
-      this.activeGameInterface.showTaskModal(taskContainer, null, { hideHeader: true });
 
-      new MazeGame(taskContainer, {
-        difficulty: this.debugManager?.tasksConfig?.mazeDifficulty ?? this.buildConfig?.tasksConfig?.mazeDifficulty ?? 16,
+      // Modal megjelenítése (prioritás a registry beli címeknek)
+      const modalOptions = {
+        title: taskConfig.modalTitle ?? slide.title,
+        subtitle: taskConfig.modalSubtitle ?? slide.description,
+        hideHeader: taskConfig.type === 'maze',
+        modalClass: taskConfig.type === 'finale' ? 'finale-modal' : ''
+      };
+      this.activeGameInterface.showTaskModal(taskContainer, null, modalOptions);
+
+      // Opciók összeállítása
+      const gameOptions = {
+        ...taskConfig.options,
         timeLimit: globalTimeLimit,
-        onComplete: onTaskComplete
-      });
-      hideOkBtn();
-    } else if (isMemory) {
-      const taskContainer = document.createElement('div');
-      taskContainer.className = 'memory-task-container';
-      taskContainer.style.width = '100%';
-      taskContainer.style.height = '100%';
-      this.activeGameInterface.showTaskModal(taskContainer, null, { title: 'Keresd meg a szimbólumok párját!', subtitle: 'Fordítsd fel a kártyákat és találd meg a párokat!' });
+        onComplete: onTaskComplete,
+        gameInterface: this.activeGameInterface // FinaleGame-nek kell
+      };
 
-      new MemoryGame(taskContainer, {
-        difficulty: this.debugManager?.tasksConfig?.memoryDifficulty ?? this.buildConfig?.tasksConfig?.memoryDifficulty ?? 16,
-        timeLimit: globalTimeLimit,
-        onComplete: onTaskComplete
-      });
-      hideOkBtn();
-    } else if (isQuiz) {
-      const taskContainer = document.createElement('div');
-      taskContainer.className = 'quiz-task-container';
-      taskContainer.style.width = '100%';
-      taskContainer.style.height = '100%';
-      this.activeGameInterface.showTaskModal(taskContainer, null, { title: 'Válaszold meg a kvíz kérdéseket!', subtitle: 'Minden kérdés esetén csak egyetlen helyes megoldás van!' });
+      // Nehézség felülírása ha szükséges
+      if (taskConfig.options?.difficultyKey) {
+        gameOptions.difficulty = this.debugManager?.tasksConfig?.[taskConfig.options.difficultyKey]
+          ?? this.buildConfig?.tasksConfig?.[taskConfig.options.difficultyKey]
+          ?? taskConfig.options.defaultDifficulty
+          ?? 16;
+      }
 
-      new QuizGame(taskContainer, {
-        quizFile: 'assets/data/grade3/quiz/3.txt',
-        timeLimit: globalTimeLimit,
-        onComplete: onTaskComplete
-      });
-      hideOkBtn();
-    } else if (isPuzzle) {
-      const taskContainer = document.createElement('div');
-      taskContainer.className = 'puzzle-task-container';
-      taskContainer.style.width = '100%';
-      taskContainer.style.height = '100%';
-      this.activeGameInterface.showTaskModal(taskContainer, null, { title: 'Rakd ki a képet!', subtitle: 'Húzd a darabokat az egérrel a megfelelő helyre! Kezdjed a fehér szélű darabokkal!' });
+      const gameInstance = new GameClass(taskContainer, gameOptions);
 
-      new PuzzleGame(taskContainer, {
-        numPieces: this.debugManager?.tasksConfig?.puzzleDifficulty ?? this.buildConfig?.tasksConfig?.puzzleDifficulty ?? 16,
-        timeLimit: globalTimeLimit,
-        imagePath: 'assets/images/grade3/puzzle/puzzle.jpg',
-        onComplete: onTaskComplete
-      });
-      hideOkBtn();
-    } else if (isSound) {
-      const taskContainer = document.createElement('div');
-      taskContainer.className = 'sound-task-container';
-      taskContainer.style.width = '100%';
-      taskContainer.style.height = '100%';
-      this.activeGameInterface.showTaskModal(taskContainer, null, { title: 'Hallgasd meg az erdő üzenetét!', subtitle: 'Indítsd el a hangfájlt, és hallgasd meg többször figyelmesen!' });
-
-      new SoundGame(taskContainer, {
-        timeLimit: globalTimeLimit,
-        taskData: null,
-        onComplete: onTaskComplete
-      });
-      hideOkBtn();
-    } else if (isFinalChallenge) {
-      const taskContainer = document.createElement('div');
-      taskContainer.className = 'finale-task-container';
-      taskContainer.style.width = '100%';
-      taskContainer.style.height = '100%';
-      this.activeGameInterface.showTaskModal(taskContainer, null, {
-        title: 'Eljutottál az utolsó próbához!',
-        subtitle: 'Add meg a helyes sorrendet és a varázsszót!',
-        modalClass: 'finale-modal'
-      });
-
-      const finale = new FinaleGame(taskContainer, {
-        gameInterface: this.activeGameInterface,
-        onComplete: (result) => {
-          // Takarítás: finale-active osztályok eltávolítása (pointer-events helyreállítása!)
-          finale.destroy();
-          // A standard onTaskComplete-et hívjuk a végén
-          onTaskComplete(result);
-          
-          // --- A Finale után is lefut a mentés az onTaskComplete hívása miatt ---
-        }
-      });
-      // Az OK gombot a FinaleGame updateButtonState-je fogja engedélyezni
+      // Speciális kezelés gombokhoz (FinaleGame OK gomb)
       const okBtn = document.querySelector('.dkv-task-ok-btn');
       if (okBtn) {
-        okBtn.style.display = 'block';
-        okBtn.disabled = true;
-        // Átkötjük a gombot az evaluate hívására
-        okBtn.onclick = () => {
-          const result = finale.evaluate();
-          finale.destroy(); // Takarítás itt is, ha közvetlenül OK-val fejezik be
-          onTaskComplete(result);
-        };
+        if (taskConfig.type === 'finale') {
+          okBtn.style.display = 'block';
+          okBtn.disabled = true;
+          okBtn.onclick = () => {
+            const result = gameInstance.evaluate();
+            gameInstance.destroy();
+            onTaskComplete(result);
+          };
+        } else {
+          okBtn.style.display = 'none';
+        }
       }
-    } else {
-      const taskContent = slide.description || "Hajtsd végre a feladatot a továbblépéshez!";
-      this.activeGameInterface.showTaskModal(taskContent, () => {
-        this.stateManager?.markSlideCompleted(slide.id);
-        this.handleNext();
-      });
+
+    } catch (err) {
+      if (this.logger) this.logger.error(`Failed to launch task ${taskConfig.type}:`, { error: err.message });
+      alert("Hiba történt a feladat indításakor.");
     }
   }
 }

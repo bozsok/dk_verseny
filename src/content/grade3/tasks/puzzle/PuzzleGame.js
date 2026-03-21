@@ -1,6 +1,7 @@
 import { PuzzleGenerator } from './puzzleGenerator.js';
 import { PolyPiece } from './PolyPiece.js';
 import { mmax, mmin } from './puzzleGeometry.js';
+import './Puzzle.css';
 
 export class PuzzleGame {
     constructor(container, options) {

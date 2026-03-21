@@ -1,3 +1,5 @@
+import './Memory.css';
+
 /**
  * Adat-tenger - Memória Játék (Grade 3)
  */

@@ -26,7 +26,21 @@ class SlideManager {
         try {
             // Dinamikus import a megfelelő mappából
             const module = await import(`../../content/grade${grade}/config.js`);
-            this.slides = module.createConfig();
+            const config = module.default || module;
+
+            // Új struktúra kezelése
+            if (config.getSlides && typeof config.getSlides === 'function') {
+                this.slides = config.getSlides();
+                this.portalColors = config.portalColors || {};
+                this.taskRegistry = config.taskRegistry || {};
+            } else if (typeof module.createConfig === 'function') {
+                // Retro-kompatibilitás
+                this.slides = module.createConfig();
+                this.portalColors = {};
+                this.taskRegistry = {};
+            } else {
+                throw new Error(`Invalid config format for grade ${grade}`);
+            }
 
             // Auto-detect videók: végigiterálunk a diákon és megnézzük, hogy az adott slideId-vel létezik-e .mp4
             const fetchPromises = this.slides.map(async (slide, idx) => {

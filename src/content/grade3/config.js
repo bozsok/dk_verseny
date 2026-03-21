@@ -210,7 +210,9 @@ export const createConfig = () => {
             applyVideoConfig(slideConfig, `slide_${fileNumStr}`);
 
             const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
-            addSlide(SLIDE_TYPES.STORY, title, 'Teljesítsétek a kihívást...', slideConfig, { section: `station_${originalStationIdx + 1}`, step }, slideId);
+            const stepDescription = step === 2 ? 'Oldjátok meg a feladatot!' : 'Kövessétek a történetet!';
+            
+            addSlide(SLIDE_TYPES.STORY, title, stepDescription, slideConfig, { section: `station_${originalStationIdx + 1}`, step }, slideId);
         }
     }
 
@@ -236,11 +238,90 @@ export const createConfig = () => {
         if (i === 28) {
              addSlide(SLIDE_TYPES.INFO, title, 'Gratulálunk a verseny teljesítéséhez!', { showStats: true }, { section: 'final', step: 3 }, 'summary');
         } else {
-             addSlide(SLIDE_TYPES.STORY, title, 'A végső megmérettetés...', slideConfig, { section: 'final', step: i - 25 }, `final_${i - 24}`);
+             const finalDescription = (i === 26) ? 'A végső feladat vár rád!' : 'Kövessétek a történetet!';
+             addSlide(SLIDE_TYPES.STORY, title, finalDescription, slideConfig, { section: 'final', step: i - 25 }, `final_${i - 24}`);
         }
     }
 
     // === 2. FELADATOK (Később) ===
-
     return slides;
+};
+
+// --- Állomás-függő portál színek (Hex formátumban, a motor konvertálja) ---
+const portalColors = {
+    station_1: ['#1c4708', '#1c4708', '#1c4708', '#063819'], // Labirintuskert
+    station_2: ['#005180', '#005180', '#005180', '#002033'], // Adat-tenger
+    station_3: ['#306169', '#306169', '#306169', '#134d57'], // Tudás Torony
+    station_4: ['#122a36', '#122a36', '#122a36', '#1f3642'], // Pixel Palota
+    station_5: ['#1d320b', '#1d320b', '#1d320b', '#214603'], // Hangerdő
+    final: ['#0e2e47', '#0e2e47', '#0e2e47', '#162c37']      // Finálé
+};
+
+// --- Feladat regiszter (Dinamikus importokhoz) ---
+const taskRegistry = {
+    station_1: {
+        type: 'maze',
+        module: () => import('./tasks/maze/MazeGame.js'),
+        modalTitle: '', // Maze-nél hideHeader: true volt
+        modalSubtitle: '',
+        options: {
+            difficultyKey: 'mazeDifficulty',
+            defaultDifficulty: 16
+        }
+    },
+    station_2: {
+        type: 'memory',
+        module: () => import('./tasks/memory/MemoryGame.js'),
+        modalTitle: 'Keresd meg a szimbólumok párját!',
+        modalSubtitle: 'Fordítsd fel a kártyákat és találd meg a párokat!',
+        options: {
+            difficultyKey: 'memoryDifficulty',
+            defaultDifficulty: 16
+        }
+    },
+    station_3: {
+        type: 'quiz',
+        module: () => import('./tasks/quiz/QuizGame.js'),
+        modalTitle: 'Válaszold meg a kvíz kérdéseket!',
+        modalSubtitle: 'Minden kérdés esetén csak egyetlen helyes megoldás van!',
+        options: {
+            quizFile: 'assets/data/grade3/quiz/3.txt'
+        }
+    },
+    station_4: {
+        type: 'puzzle',
+        module: () => import('./tasks/puzzle/PuzzleGame.js'),
+        modalTitle: 'Rakd ki a képet!',
+        modalSubtitle: 'Húzd a darabokat az egérrel a megfelelő helyre! Kezdjed a fehér szélű darabokkal!',
+        options: {
+            difficultyKey: 'puzzleDifficulty',
+            defaultDifficulty: 16,
+            imagePath: 'assets/images/grade3/puzzle/puzzle.jpg'
+        }
+    },
+    station_5: {
+        type: 'sound',
+        module: () => import('./tasks/sound/SoundGame.js'),
+        modalTitle: 'Hallgasd meg az erdő üzenetét!',
+        modalSubtitle: 'Indítsd el a hangfájlt, és hallgasd meg többször figyelmesen!',
+        options: {
+            taskData: null
+        }
+    },
+    final_2: {
+        type: 'finale',
+        module: () => import('./tasks/finale/FinaleGame.js'),
+        modalTitle: 'Eljutottál az utolsó próbához!',
+        modalSubtitle: 'Add meg a helyes sorrendet és a varázsszót!',
+        options: {
+            isFinal: true
+        }
+    }
+};
+
+// Globális konfiguráció exportálása
+export default {
+    getSlides: createConfig,
+    portalColors,
+    taskRegistry
 };

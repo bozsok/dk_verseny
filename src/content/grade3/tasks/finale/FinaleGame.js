@@ -1,3 +1,5 @@
+import './FinaleGame.css';
+
 /**
  * FinaleGame - Nagy Zár Feladat (Grade 3)
  * 5 kulcs sorrendbe rakása + Varázsszó megadása

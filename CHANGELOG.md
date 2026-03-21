@@ -6,6 +6,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.16.0] - 2026-03-22
+### Hozzáadva
+- **Clean Engine architektúra (Phase 6 & 7)**: A `main.js` teljes refaktorálása. A tartalom és a logika szétválasztásra került, így az alkalmazás mérete nem nő az új évfolyamok hozzáadásával.
+- **Dinamikus feladat betöltés (Lazy Loading)**: A játékmodulok (Maze, Quiz, Memory stb.) mostantól csak akkor töltődnek be, amikor a játékos elér hozzájuk.
+- **Multi-Grade shell**: Egységesített konfigurációs struktúra az összes évfolyamnak (Grade 3-6) `taskRegistry` és `portalColors` támogatással.
+- **Kontextus-függő diaszövegek**: Automatikus, intelligens leírások a történet diákhoz a hurokban generált szakaszoknál.
+
+### Javítva
+- `main.js`: Duplikált importok és hiányzó lezáró kapcsos zárójelek javítva a refaktorálás után.
+- `Card.js`: Animációs hiba javítva (null pointer check hozzáadva a `classList` eléréséhez).
+- `config.js`: Generikus "Teljesítsétek a kihívást..." placeholder szövegek eltávolítva minden évfolyamból.
+- Stíluskezelés: A feladat-specifikus CSS fájlok mostantól dinamikusan töltődnek be a JS modulokkal együtt.
+
 ## [0.15.1] - 2026-03-22
 ### Javítva
 - `Card.js`: Animációs időzítő hiba javítva (leálláskor fellépő null pointer hiba).

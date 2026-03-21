@@ -1,3 +1,5 @@
+import './Sound.css';
+
 /**
  * SoundGame osztály a Hangerdő (5. állomás) logikájának megvalósítására.
  */

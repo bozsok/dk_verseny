@@ -1,3 +1,5 @@
+import './Quiz.css';
+
 /**
  * Adat-tenger - Tudás Torony (Kvíz Feladat - Grade 3)
  */

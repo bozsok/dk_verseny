@@ -134,11 +134,14 @@ export const createConfig = () => {
             let storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti Grade 4 #${originalNum}. diához.`;
             let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1})</span>`;
 
-            addSlide(SLIDE_TYPES.STORY, title, 'Teljesítsétek a kihívást...', {
+            const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
+            const stepDescription = step === 2 ? 'Oldjátok meg a feladatot!' : 'Kövessétek a történetet!';
+
+            addSlide(SLIDE_TYPES.STORY, title, stepDescription, {
                 imageUrl: `assets/images/grade4/slides/slide_${fileNumStr}.jpg`,
                 narration: narrationText,
                 audioSrc: `assets/audio/grade4/slide_${fileNumStr}.mp3`
-            }, { section: `station_${originalStationIdx + 1}`, step });
+            }, { section: `station_${originalStationIdx + 1}`, step }, slideId);
         }
     }
 
@@ -146,14 +149,37 @@ export const createConfig = () => {
     for (let i = 25; i <= 28; i++) {
         const slideNum = String(i).padStart(2, '0');
         const title = "Finálé (Lovagrend)";
-        const narrationText = `<b>${title}</b><br><br>Helyőrző szöveg az Grade 4 fináléjához (${i}. dia).`;
+        const narrationText = `<b>${title}</b><br><br>Itt olvasható majd a kaland története.<br>Jelenleg ez egy helyőrző szöveg az Grade 4 fináléjához (${i}. dia).`;
+        const finalDescription = (i === 27) ? 'A végső feladat vár rád!' : 'Kövessétek a történetet!';
 
-        addSlide(SLIDE_TYPES.STORY, title, 'A végső megmérettetés...', {
+        addSlide(SLIDE_TYPES.STORY, title, finalDescription, {
             imageUrl: `assets/images/grade4/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade4/slide_${slideNum}.mp3`
-        }, { section: 'final', step: i - 25 });
+        }, { section: 'final', step: i - 25 }, `final_${i - 24}`);
     }
 
     return slides;
+};
+
+// --- Állomás-függő portál színek (Grade 4 - Placeholder) ---
+const portalColors = {
+    station_1: ['#3e2723', '#3e2723', '#3e2723', '#1b0000'],
+    station_2: ['#1a237e', '#1a237e', '#1a237e', '#000051'],
+    station_3: ['#1b5e20', '#1b5e20', '#1b5e20', '#003308'],
+    station_4: ['#4a148c', '#4a148c', '#4a148c', '#12005e'],
+    station_5: ['#b71c1c', '#b71c1c', '#b71c1c', '#7f0000'],
+    final: ['#212121', '#212121', '#212121', '#000000']
+};
+
+// --- Feladat regiszter (Grade 4 - Placeholder) ---
+const taskRegistry = {
+    // A Grade 4 feladatok itt lesznek definiálva
+};
+
+// Globális konfiguráció exportálása
+export default {
+    getSlides: createConfig,
+    portalColors,
+    taskRegistry
 };

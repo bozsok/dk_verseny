@@ -1,3 +1,5 @@
+import './Maze.css';
+
 /**
  * MazeGame - Labirintus feladat logika (Vanilla JS port)
  * 

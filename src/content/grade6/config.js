@@ -132,11 +132,14 @@ export const createConfig = () => {
             let storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti Grade 6 #${originalNum}. diához.`;
             let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1})</span>`;
 
-            addSlide(SLIDE_TYPES.STORY, title, 'Szenzorok adatgyűjtése...', {
+            const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
+            const stepDescription = step === 2 ? 'Landolás a bolygón!' : 'Szenzoros adatgyűjtés...';
+
+            addSlide(SLIDE_TYPES.STORY, title, stepDescription, {
                 imageUrl: `assets/images/grade6/slides/slide_${fileNumStr}.jpg`,
                 narration: narrationText,
                 audioSrc: `assets/audio/grade6/slide_${fileNumStr}.mp3`
-            }, { section: `station_${originalStationIdx + 1}`, step });
+            }, { section: `station_${originalStationIdx + 1}`, step }, slideId);
         }
     }
 
@@ -144,14 +147,37 @@ export const createConfig = () => {
     for (let i = 25; i <= 28; i++) {
         const slideNum = String(i).padStart(2, '0');
         const title = "Küldetés Teljesítve";
-        const narrationText = `<b>${title}</b><br><br>Helyőrző szöveg az Grade 6 fináléjához (${i}. dia).`;
+        const narrationText = `<b>${title}</b><br><br>Itt olvasható majd a kaland története.<br>Jelenleg ez egy helyőrző szöveg az Grade 6 fináléjához (${i}. dia).`;
+        const finalDescription = (i === 27) ? 'A végső ugrás vár rád!' : 'Űrutazás folytatása...';
 
-        addSlide(SLIDE_TYPES.STORY, title, 'Hazatérés...', {
+        addSlide(SLIDE_TYPES.STORY, title, finalDescription, {
             imageUrl: `assets/images/grade6/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade6/slide_${slideNum}.mp3`
-        }, { section: 'final', step: i - 25 });
+        }, { section: 'final', step: i - 25 }, `final_${i - 24}`);
     }
 
     return slides;
+};
+
+// --- Állomás-függő portál színek (Grade 6 - Placeholder) ---
+const portalColors = {
+    station_1: ['#424242', '#424242', '#424242', '#1b1b1b'],
+    station_2: ['#0d47a1', '#0d47a1', '#0d47a1', '#002171'],
+    station_3: ['#4527a0', '#4527a0', '#4527a0', '#000070'],
+    station_4: ['#006064', '#006064', '#006064', '#00363a'],
+    station_5: ['#2e7d32', '#2e7d32', '#2e7d32', '#005005'],
+    final: ['#212121', '#212121', '#212121', '#000000']
+};
+
+// --- Feladat regiszter (Grade 6 - Placeholder) ---
+const taskRegistry = {
+    // A Grade 6 feladatok itt lesznek definiálva
+};
+
+// Globális konfiguráció exportálása
+export default {
+    getSlides: createConfig,
+    portalColors,
+    taskRegistry
 };
