@@ -57,22 +57,10 @@ export class SummarySlide {
                     <div id="summary-date" class="cert-text">${dateStr}</div>
                 </div>
             </div>
-            <div class="summary-actions">
-                <button class="btn-continue">Befejezés</button>
-            </div>
         `;
 
         this.scalerElement = this.element.querySelector('.certificate-scaler');
         this.contentElement = this.element.querySelector('.certificate-content');
-
-        const continueBtn = this.element.querySelector('.btn-continue');
-        continueBtn.onclick = () => {
-            if (this.options.onAction) {
-                this.options.onAction({ type: 'finish' });
-            } else if (this.options.onNext) {
-                this.options.onNext();
-            }
-        };
 
         // Skálázás indítása
         this._handleResizeBound = this._handleResize.bind(this);

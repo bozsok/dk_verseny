@@ -560,22 +560,19 @@ class DigitalKulturaVerseny {
   /**
    * Slide megjelenítése
    */
-  /**
-   * Slide megjelenítése (App Shell Architecture)
-   * 
-   * @param {Object} slide - Slide objektum
-   * @param {number} skipDepth - Recursion depth tracking (infinite loop protection)
-   * @param {string} direction - Skip direction: 'forward' or 'backward' (default: 'forward')
-   */
   renderSlide(slide, skipDepth = 0, direction = 'forward', prebuiltComponent = null, prebuiltDOM = null) {
     if (!slide) return;
 
-    const MAX_SKIP_DEPTH = 50; // Safety limit
+    // --- Változók inicializálása a függvény elején (Standard SEL mintát követve) ---
+    const slides = this.slideManager.slides;
+    const totalSlides = slides.length;
+    const slideIndex = slides.findIndex(s => s.id === slide.id);
+    // Ha a slide nem található a listában (pl. dinamikus), a manager aktuális indexét használjuk
+    const currentIndex = slideIndex !== -1 ? slideIndex : this.slideManager.currentIndex;
+    const isLastSlide = (currentIndex >= totalSlides - 1);
+    const audioSrc = slide.content ? slide.content.audioSrc : null;
 
-    // === DEBUG SKIP CHECK (PHASE 4.2 - BIDIRECTIONAL) ===
-    // FONTOS: Ne a currentIndex-et használjuk, mert az már módosult a prev/nextSlide() hívással!
-    // Helyette a slide objektumból keressük meg az indexet.
-    const slideIndex = this.slideManager.slides.findIndex(s => s.id === slide.id);
+    const MAX_SKIP_DEPTH = 50; // Safety limit
 
     // === SKIP CHECK (DEV: debugManager, PROD: buildConfig) ===
     const shouldSkip = slideIndex !== -1 && (
@@ -596,14 +593,13 @@ class DigitalKulturaVerseny {
           if (this.debugManager) {
             this.debugManager.applyDummyData();
           } else if (this.buildConfig?.useDummyData) {
-            // PROD mód: dummy adatok alkalmazása (onboarding kihagyva)
             this.stateManager?.updateState({
               userProfile: { name: 'Tanuló', nickname: 'Player', classId: '3.a' },
               characterSelected: true
             });
           }
-        if (this.logger) this.logger.info('[Skip] Onboarding skipped, dummy data applied');
-      }
+          if (this.logger) this.logger.info('[Skip] Onboarding skipped, dummy data applied');
+        }
 
         // --- AUTOMATIC KEY COLLECTION FOR SKIPPED SECTIONS ---
         if (direction === 'forward' && slide.metadata?.section?.startsWith('station_')) {
@@ -611,8 +607,7 @@ class DigitalKulturaVerseny {
           if (this.stateManager && !this.stateManager.hasKey(stationId)) {
             if (this.logger) this.logger.info(`[Skip] Adding key for skipped station: ${stationId}`);
             this.stateManager.addKey(stationId);
-            
-            // HUD frissítése, hogy azonnal látszódjon (ha már létezik az interfész)
+
             if (this.activeGameInterface) {
               this.activeGameInterface.updateHUD(this.stateManager.getState());
             }
@@ -641,8 +636,6 @@ class DigitalKulturaVerseny {
     }
 
     // --- App Shell Check ---
-    // Javítás: Ellenőrizzük, hogy a rétegek a DOM-ban vannak-e (.isConnected).
-    // A Hub megjelenítése (showHub) törölheti őket az app.innerHTML = '' hívással.
     if (!this.layerContent || !this.layerUI || !this.layerContent.isConnected || !this.layerUI.isConnected) {
       if (this.logger) this.logger.warn('App Shell detached or missing, rebuilding...');
       this.setupAppShell();
@@ -680,9 +673,6 @@ class DigitalKulturaVerseny {
     ].includes(slide.type);
 
     // --- Background Music Logic ---
-    const totalSlides = this.slideManager.slides.length;
-    const currentIndex = this.slideManager.currentIndex;
-
     if (!isFullscreen && !this.backgroundMusic) {
       if (currentIndex < totalSlides - 1 && currentGrade) {
         this.playBackgroundMusic(currentGrade);
@@ -694,21 +684,18 @@ class DigitalKulturaVerseny {
       this.stopBackgroundMusicWithFade();
     }
 
-    // --- Component Creation & Rendering (Protected) ---
+    // --- Component Creation & Rendering ---
     try {
       let newComponent = prebuiltComponent;
       let newContent = prebuiltDOM;
 
       if (!newComponent || !newContent) {
-        // Ha nincs előre gyártva, hozzuk létre most
         const { newComponent: instComponent } = this._instantiateSlideComponent(slide, false);
         newComponent = instComponent;
         newContent = this._createSlideDOMElement(newComponent, slide, isFullscreen, gradeClass);
       }
 
-      // --- RENDER STRATEGY (Non-Destructive) ---
-
-      // 1. Cleanup Old Content (Content Layer Only)
+      // 1. Cleanup Old Content
       if (this.currentSlideComponent && this.currentSlideComponent !== newComponent) {
         if (typeof this.currentSlideComponent.destroy === 'function') {
           this.currentSlideComponent.destroy();
@@ -719,7 +706,6 @@ class DigitalKulturaVerseny {
 
       // 2. Render New Content TO DOM
       if (newComponent && newContent) {
-        // --- IDŐZÍTŐ MEGÁLLÍTÁSA (Biztonsági tartalék) ---
         if (slide.id === 'summary' && this.timeManager && this.timeManager.globalTimer.isRunning) {
           if (this.logger) this.logger.info('Summary slide reached, stopping timer...');
           this.timeManager.stopCompetition();
@@ -729,11 +715,9 @@ class DigitalKulturaVerseny {
         this.currentSlideComponent = newComponent;
       }
 
-      // 3. UI Layer Management (Persistent GameInterface)
+      // 3. UI Layer Management
       if (!isFullscreen) {
-        // JÁTÉK FÁZIS: Mutasd a HUD-ot
         if (!this.activeGameInterface) {
-          // Ha nincs, hozd létre (Perzisztens)
           this.activeGameInterface = new GameInterface({
             onNext: () => this.handleNext(),
             onPrev: () => this.handlePrev(),
@@ -747,7 +731,7 @@ class DigitalKulturaVerseny {
             narrationVolume: this.narrationVolume,
             sfxVolume: this.sfxVolume,
             stateManager: this.stateManager,
-            totalSlides: totalSlides - 1  // Exclude Welcome slide - GameInterface adds +1 offset, need base of 29 for 100%
+            totalSlides: totalSlides - 1
           });
           const uiEl = this.activeGameInterface.createElement();
           if (gradeClass) uiEl.classList.add(gradeClass);
@@ -756,27 +740,25 @@ class DigitalKulturaVerseny {
 
         this.layerUI.style.display = 'block';
 
-        // Frissítések
         this.activeGameInterface.updateHUD(this.stateManager.getState());
-        this.activeGameInterface.updateTimeline(currentIndex + 1); // Convert 0-based to 1-based
+        this.activeGameInterface.updateTimeline(currentIndex + 1);
+        this.activeGameInterface.setNextButtonFinal(isLastSlide);
 
         const narrationText = (slide.content && slide.content.narration) || slide.description || "Nincs elérhető történet ehhez a diához.";
         this.activeGameInterface.setNarration(narrationText);
 
-        // --- KULCS ANIMÁCIÓ FÁZIS A (KÉSLELTETETT INDÍTÁS) ---
+        // --- KULCS ANIMÁCIÓ FÁZIS ---
         const isStationEnd = slide.metadata?.step === 3 && slide.metadata?.section?.startsWith('station_');
         if (isStationEnd) {
           const stationId = slide.metadata.section;
           const hasKey = this.stateManager && this.stateManager.hasKey(stationId);
 
           if (!hasKey) {
-            // Animáció objektum létrehozása
             this.currentKeyAnimation = new KeyCollectionAnimation({
               stationId: stationId,
               targetSlot: null
             });
 
-            // Késleltetett indítás (6mp) narráció miatt
             this._keyAnimationTimer = setTimeout(() => {
               if (this.currentKeyAnimation) {
                 this.currentKeyAnimation.playPhaseA();
@@ -786,27 +768,18 @@ class DigitalKulturaVerseny {
         }
 
       } else {
-        // FULLSCREEN FÁZIS: Rejtsd el a HUD-ot
         this.layerUI.style.display = 'none';
       }
     } catch (renderError) {
       if (this.logger) this.logger.error("CRITICAL RENDER ERROR:", { error: renderError.message, stack: renderError.stack });
-      // Fallback: Ha a UI létezik, próbáljuk megmutatni a hibaüzenetet benne, vagy alert
-      alert("Hiba történt a megjelenítéskor: " + renderError.message + ". Próbáld frissíteni az oldalt.");
+      alert("Hiba történt a megjelenítéskor: " + renderError.message);
     }
 
     // 4. Audio & Buttons
-    const audioSrc = slide.content ? slide.content.audioSrc : null;
-    const isLastSlide = (currentIndex >= totalSlides - 1);
-
-    // === DIAGNOSZTIKA ===
     if (slide.metadata && slide.metadata.step === 2) {
-      if (this.logger) this.logger.info(`[DKV DIAG] Feladat dia betöltés: ID=${slide.id}, step=${slide.metadata.step}, section=${slide.metadata.section}, audioSrc=${audioSrc}, isFullscreen=${isFullscreen}, activeGI=${!!this.activeGameInterface}`);
-      const isCompleted_diag = this.stateManager?.isSlideCompleted(slide.id);
-      if (this.logger) this.logger.info(`[DKV DIAG] isCompleted=${isCompleted_diag}`);
+      if (this.logger) this.logger.info(`[DKV DIAG] Feladat dia betöltés: ID=${slide.id}, currentIndex=${currentIndex}`);
     }
-    // === VEGE DIAGNOSZTIKA ===
-    // Helper to set button state in whichever interface is active
+
     const setBtnState = (enabled, extraOptions = {}) => {
       if (!isFullscreen && this.activeGameInterface) {
         this.activeGameInterface.setNextButtonState(enabled, extraOptions);
@@ -820,35 +793,29 @@ class DigitalKulturaVerseny {
       const isTaskSlide = slide.metadata && slide.metadata.step === 2 && slide.metadata.section?.startsWith('station_');
       const isCompleted = this.stateManager?.isSlideCompleted(slide.id);
       const btnOptions = isTaskSlide ? { suppressOrange: true } : {};
-      const enableButton = !isLastSlide && alreadyPlayed && (!isTaskSlide || isCompleted);
+      const enableButton = isLastSlide || (alreadyPlayed && (!isTaskSlide || isCompleted));
+
       setBtnState(enableButton, btnOptions);
       this.playAudio(audioSrc, () => {
         if (isLastSlide) {
           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
           return;
         }
-        if (this.logger) this.logger.info(`[Audio] End: slide.id=${slide.id}`);
         setBtnState(true, btnOptions);
         if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
-
-        // Automatikus feladat indítás KISZEDVE a konzisztencia miatt!
-        // A felhasználónak a "Tovább" nyílra kell kattintania.
       });
     } else {
       const isTaskSlide = slide.metadata && slide.metadata.step === 2 && slide.metadata.section?.startsWith('station_');
       const isFinalTask = slide.id === 'final_2';
       const btnOptions = (isTaskSlide || isFinalTask) ? { suppressOrange: true } : {};
-      const shouldEnable = !isLastSlide;
+      const shouldEnable = true;
       setBtnState(shouldEnable, btnOptions);
-
-      // Automatikus feladat indítás KISZEDVE!
     }
-    // A feladat modal-t KISZEDTÜK INNEN! Nem indul el magától 1500ms után!
-    // A felhasználónak kell a felvillanó "Tovább" nyílra kattintania!
 
     // 5. Preloading
     this.preloadNextSlide(currentIndex);
   }
+
 
   /**
    * Maze eredmény modal megjelenítése
@@ -856,8 +823,9 @@ class DigitalKulturaVerseny {
    * @param {Function} onContinue - Callback a Tovább gomb megnyomásakor
    */
   showMazeResultModal(result, onContinue, onAfterFade) {
-    const mins = Math.floor(result.timeElapsed / 60).toString().padStart(2, '0');
-    const secs = (result.timeElapsed % 60).toString().padStart(2, '0');
+    const elapsed = result.timeElapsed || 0;
+    const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+    const secs = Math.floor(elapsed % 60).toString().padStart(2, '0');
     const timeStr = `${mins}:${secs}`;
 
     const overlay = document.createElement('div');
@@ -895,7 +863,7 @@ class DigitalKulturaVerseny {
           <span class="maze-result-stat-value points">${result.points} pont</span>
         </div>
       </div>
-      <button class="maze-result-btn">Tovább</button>
+      <button class="dkv-btn--result-modal dkv-btn dkv-btn-primary">Tovább</button>
     `;
 
 
@@ -906,7 +874,7 @@ class DigitalKulturaVerseny {
     requestAnimationFrame(() => overlay.classList.add('open'));
 
     // Tovább gomb
-    modal.querySelector('.maze-result-btn').addEventListener('click', () => {
+    modal.querySelector('.dkv-btn--result-modal').addEventListener('click', () => {
       // 1. Azonnal: dia váltás (siker/öröm dia megjelenik a háttérben)
       if (onContinue) onContinue();
 
@@ -1100,7 +1068,7 @@ class DigitalKulturaVerseny {
 
         const portalColors = this.slideManager.portalColors || {};
         const stationColors = portalColors[nextSlide?.metadata?.section] || portalColors['final'] || null;
-        
+
         // Ha vannak színek az állomáshoz, konvertáljuk őket RGB-re a PortalTransition számára
         const activeColors = stationColors ? stationColors.map(hex => hexToRgb(hex)) : null;
 
@@ -1221,14 +1189,14 @@ class DigitalKulturaVerseny {
       // 3. Konténer ürítése és Hub hozzáadása
       app.innerHTML = '';
       app.appendChild(this.hub.getElement());
-      
+
       // 4. Kártyák újra-renderelése (Biztosítjuk, hogy láthatóak legyenek)
       if (typeof this.hub.renderGradeCards === 'function') {
         this.hub.renderGradeCards();
       }
-      
+
       this.hub.show();
-      
+
       if (this.logger) {
         this.logger.info('Hub displayed (re-initialized and fresh render)');
       }
@@ -1645,7 +1613,7 @@ class DigitalKulturaVerseny {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      
+
       if (response.ok) {
         const result = await response.json();
         if (result.status === 'success' && result.id) {
@@ -1717,8 +1685,31 @@ class DigitalKulturaVerseny {
       }
 
       const modalTitle = result.success ? 'Gratulálunk, sikeresen teljesítetted!' : 'Sajnos lejárt az idő vagy nem volt sikeres!';
+
+      // Dinamikus üzenet generálása
+      let customTitle = result.title || modalTitle;
+
+      if (taskConfig.type === 'sound' && result.resultsByPart) {
+          const { mainMessages, whisperedWords, hiddenNumbers } = result.resultsByPart;
+          const correctCount = [mainMessages, whisperedWords, hiddenNumbers].filter(v => v).length;
+          
+          if (correctCount === 3) {
+              customTitle = "Micsoda hallás! Minden feladatot hibátlanul megoldottál, igazi Kódmester vagy!";
+          } else if (correctCount === 2) {
+              customTitle = "Majdnem tökéletes! Két rejtélyt már megfejtettél, de egy még kifogott rajtad. Legközelebb sikerülni fog!";
+              if (whisperedWords) customTitle += " A suttogást már remekül érted!";
+              else if (mainMessages) customTitle += " A sebességkülönbségeket már jól hallod!";
+              else if (hiddenNumbers) customTitle += " A hangjelzések számolása már jól megy!";
+          } else if (correctCount === 1) {
+              customTitle = "Ügyesen figyeltél, egy feladatot már kipipáltál! A többihez fülelj még jobban!";
+              if (whisperedWords) customTitle += " A suttogás már nem titok előtted!";
+          } else {
+              customTitle = "Ez most nehéz volt, de ne add fel! Figyelj jól a hangokra, és próbáld meg újra!";
+          }
+      }
+
       this.showMazeResultModal(
-        { ...result, title: result.title || modalTitle },
+        { ...result, title: customTitle },
         () => this.handleNext(),
         () => this.activeGameInterface.hideTaskModal()
       );

@@ -163,53 +163,6 @@ input[type=range]#audio-progress::-webkit-slider-thumb {
     gap: 10px;
 }
 
-.sound-tooltip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid var(--neon-cyan, #00ffff);
-    color: var(--neon-cyan, #00ffff);
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: help;
-    box-shadow: 0 0 4px var(--neon-cyan, #00ffff);
-    position: relative;
-    margin-left: 8px;
-}
-
-/* Custom CSS Tooltip Hover effekt */
-.sound-tooltip::after {
-    content: attr(data-title);
-    position: absolute;
-    bottom: 130%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 25, 40, 0.95);
-    border: 1px solid var(--neon-cyan, #00ffff);
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: normal;
-    white-space: pre-wrap;
-    width: 250px;
-    text-align: center;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-    pointer-events: none;
-    z-index: 100;
-}
-
-.sound-tooltip:hover::after {
-    opacity: 1;
-    visibility: visible;
-}
 
 .sound-task-fields {
     display: flex;

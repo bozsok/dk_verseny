@@ -26,6 +26,7 @@ export class SoundGame {
                 {
                     id: "hiddenNumbers_3",
                     question: "Kettő furcsa hangjelzés kettő számot rejtett. Melyek voltak azok?",
+                    tooltip: "Gondolj olyan hangjelzésekre, mint a pittyenés vagy a kongatás!",
                     fields: [
                         { id: "hiddenNum1_3", label: "1. rejtett szám:", type: "number", correctAnswer: 1, points: 1 },
                         { id: "hiddenNum2_3", label: "2. rejtett szám:", type: "number", correctAnswer: 2, points: 1 }
@@ -223,6 +224,21 @@ export class SoundGame {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
+    getTooltipHTML(text) {
+        return `
+            <div class="dkv-tooltip-container">
+                <div class="dkv-tooltip-trigger">
+                    <svg class="dkv-tooltip-svg" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+                <div class="dkv-tooltip-content">${text}</div>
+            </div>
+        `;
+    }
+
     startGame() {
         this.gameStarted = true;
         this.timerInterval = setInterval(() => {
@@ -245,7 +261,7 @@ export class SoundGame {
                 <div class="sound-task-part" style="animation: slideUp 0.4s ease forwards; animation-delay: ${index * 0.15}s; opacity: 0; transform: translateY(10px);">
                     <div class="sound-task-question">
                         ${part.question}
-                        ${part.isCommon ? '<span class="sound-tooltip" data-title="Sonora üzenetének sebessége ingadozik. Használd a lejátszó sebességállítását!">?</span>' : ''}
+                        ${part.tooltip ? this.getTooltipHTML(part.tooltip) : (part.isCommon ? this.getTooltipHTML('Sonora üzenetének sebessége ingadozik. Használd a lejátszó sebességállítását!') : '')}
                     </div>
                     <div class="sound-task-fields">
                         ${part.fields.map(f => `
@@ -286,7 +302,14 @@ export class SoundGame {
         let totalCorrect = 0;
         let isPerfect = true;
 
+        const resultsByPart = {
+            mainMessages: true,
+            whisperedWords: true,
+            hiddenNumbers: true
+        };
+
         this.taskParts.forEach(part => {
+            let partCorrect = true;
             if (part.id.startsWith("whisperedWords") || part.id.startsWith("hiddenNumbers")) {
                 // Sorrendfüggetlen ellenőrzés
                 const userValues = part.fields.map(f => {
@@ -306,8 +329,12 @@ export class SoundGame {
                         correctValuesPool.splice(idx, 1);
                     } else {
                         isPerfect = false;
+                        partCorrect = false;
                     }
                 });
+                
+                // Ha maradt a poolban valami, akkor sem tökéletes az a rész
+                if (correctValuesPool.length > 0) partCorrect = false;
 
             } else {
                 // Sorrendfüggő ellenőrzés (mainMessages)
@@ -318,9 +345,15 @@ export class SoundGame {
                         totalCorrect++;
                     } else {
                         isPerfect = false;
+                        partCorrect = false;
                     }
                 });
             }
+
+            // Eredmény mentése részfeladatonként
+            if (part.id.startsWith("whisperedWords")) resultsByPart.whisperedWords = partCorrect;
+            else if (part.id.startsWith("hiddenNumbers")) resultsByPart.hiddenNumbers = partCorrect;
+            else resultsByPart.mainMessages = partCorrect;
         });
 
         // Pontszámítás - Minden helyes válaszért 1 pont, maximum 6.
@@ -333,7 +366,8 @@ export class SoundGame {
                 success: success,
                 points: totalCorrect, // Valós pontszám: ahány jó válasz (max. 6)
                 maxPoints: 6,         // Beállítjuk a helyes max pontot a modalnak
-                timeElapsed: this.timer
+                timeElapsed: this.timer,
+                resultsByPart: resultsByPart
             });
         }
     }

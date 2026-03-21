@@ -1,10 +1,18 @@
-```
 # Changelog
 
 Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
+
+## [0.16.1] - 2026-03-21
+### Hozzáadva
+- **Globális Súgó (Tooltip) rendszer**: Új, interaktív tooltip rendszer implementálása a feladatokhoz. Tartalmazza a neon stílusú lebegő ablakot, az egyedi SVG ikont és a Sound feladat (Grade 3) specifikus súgó szövegeit.
+- **Dinamikus visszajelzés (Sound feladat)**: Részletes, sikeresség-függő üzenetek implementálása a három részfeladat (üzenetek, suttogás, hangjelzések) alapján.
+
+### Javítva
+- **Navigáció**: A "VÉGE" gomb aktiválva az utolsó dián, így a felhasználó visszatérhet a Hub-ba.
+- **Stíluskezelés**: BEM struktúra megerősítése és a felesleges `!important` szabályok eltávolítása a `design-system.css` fájlból.
 
 ## [0.16.0] - 2026-03-22
 ### Hozzáadva

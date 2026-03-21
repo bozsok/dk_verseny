@@ -565,7 +565,7 @@ class GameInterface {
         // Fejléc kezelése
         const header = this.taskModalOverlay.querySelector('.dkv-task-modal-header');
         const modal = this.taskModalOverlay.querySelector('.dkv-task-modal');
-        
+
         // Modal osztályok tisztítása és beállítása
         if (modal) {
             // Megtartjuk az alap osztályt
@@ -642,6 +642,21 @@ class GameInterface {
             this.taskOkBtn.disabled = !enabled;
             this.taskOkBtn.style.opacity = enabled ? '1' : '0.5';
             this.taskOkBtn.style.cursor = enabled ? 'pointer' : 'default';
+        }
+    }
+
+    /**
+     * Átváltja a következő gombot 'Vége' módba vagy vissza.
+     * @param {boolean} isFinal 
+     */
+    setNextButtonFinal(isFinal) {
+        const btn = this.element.querySelector('.dkv-btn-next');
+        if (!btn) return;
+
+        if (isFinal) {
+            btn.classList.add('dkv-btn-next--final');
+        } else {
+            btn.classList.remove('dkv-btn-next--final');
         }
     }
 

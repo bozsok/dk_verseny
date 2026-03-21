@@ -1,12 +1,12 @@
 # generated: 2026-03-13T23:45:00+01:00
-# last_updated: 2026-03-15T01:01:00+01:00
+# last_updated: 2026-03-21T17:05:00+01:00
 # project: dk_verseny
 # project_key: NOKEY
 # tracking_system: file-system
 # story_location: _bmad-output/implementation-artifacts
 
 generated: 2026-03-13T23:45:00+01:00
-last_updated: 2026-03-15T01:01:00+01:00
+last_updated: 2026-03-21T17:05:00+01:00
 project: dk_verseny
 project_key: NOKEY
 tracking_system: file-system
@@ -18,6 +18,9 @@ development_status:
   epic-2: done
   epic-3: done
   epic-4: done
+  epic-5: done
+  epic-6: done
+  epic-7: in-progress
 
   # Stories
   3-1-maze: done
@@ -28,10 +31,12 @@ development_status:
 
   4-1-final-story-conclusion: done
   4-2-finale-interaction: done
-  4-3-portal-sfx-integration: in-progress
+  4-3-portal-sfx-integration: done
+
+  7-1-grade3-tooltip-and-ux: done
 
   # Retrospectives
   epic-1-retrospective: done
   epic-2-retrospective: done
   epic-3-retrospective: done
-  epic-4-retrospective: in-progress
+  epic-4-retrospective: done

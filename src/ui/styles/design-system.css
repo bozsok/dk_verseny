@@ -379,7 +379,8 @@ h3 {
   margin-bottom: 2rem;
 }
 
-.dkv-button {
+.dkv-button,
+.dkv-btn {
   padding: 1rem 2rem;
   font-size: 1.25rem;
   font-weight: 700;
@@ -389,14 +390,34 @@ h3 {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-family: var(--dkv-font-sans);
 }
 
-.dkv-button:hover {
+.dkv-btn-primary {
+  background: #00636e;
+  color: white;
+  border: 1px solid #00eaff;
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+}
+
+.dkv-btn-primary:hover {
+  background: #007582;
+  box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.dkv-button:hover,
+.dkv-btn:hover {
   background: var(--dkv-primary-500);
   transform: translateY(-2px);
 }
 
-.dkv-button:disabled {
+.dkv-button:disabled,
+.dkv-btn:disabled {
   background: #334155;
   cursor: not-allowed;
   opacity: 0.5;
@@ -514,11 +535,15 @@ h3 {
   /* Base bg */
   z-index: 1100;
   flex-shrink: 0;
-  pointer-events: none; /* Allow clicks to pass through gaps */
+  pointer-events: none;
+  /* Allow clicks to pass through gaps */
 }
 
-.dkv-hud-left-group, .dkv-hud-timeline, .dkv-hud-right-group {
-  pointer-events: auto; /* Re-enable for content groups */
+.dkv-hud-left-group,
+.dkv-hud-timeline,
+.dkv-hud-right-group {
+  pointer-events: auto;
+  /* Re-enable for content groups */
 }
 
 .dkv-hud-left-group {
@@ -645,11 +670,14 @@ h3 {
   /* Fontos: Grid-szerű elosztás */
   position: relative;
   z-index: 1100;
-  pointer-events: none; /* Allow clicks to pass through to SummarySlide buttons */
+  pointer-events: none;
+  /* Allow clicks to pass through to SummarySlide buttons */
 }
 
-.dkv-func-buttons, .dkv-nav-controls {
-  pointer-events: auto; /* Re-enable for controls */
+.dkv-func-buttons,
+.dkv-nav-controls {
+  pointer-events: auto;
+  /* Re-enable for controls */
 }
 
 .dkv-func-buttons {
@@ -658,11 +686,13 @@ h3 {
   bottom: 2rem;
   display: flex;
   gap: 1rem;
-  pointer-events: none; /* Only children buttons should be clickable */
+  pointer-events: none;
+  /* Only children buttons should be clickable */
 }
 
 .dkv-func-btn {
-  pointer-events: auto; /* Re-enable for buttons */
+  pointer-events: auto;
+  /* Re-enable for buttons */
 }
 
 .dkv-func-btn {
@@ -688,11 +718,13 @@ h3 {
   display: flex;
   gap: 400px;
   /* "Elegendő eltartás" */
-  pointer-events: none; /* Only children arrows should be clickable */
+  pointer-events: none;
+  /* Only children arrows should be clickable */
 }
 
 .dkv-nav-arrow {
-  pointer-events: auto; /* Re-enable for arrows */
+  pointer-events: auto;
+  /* Re-enable for arrows */
 }
 
 .dkv-nav-arrow:hover {
@@ -873,13 +905,15 @@ h3 {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s ease, visibility 0.4s ease;
-  pointer-events: none; /* Rejtett állapotban ne blokkolja a navigációt! */
+  pointer-events: none;
+  /* Rejtett állapotban ne blokkolja a navigációt! */
 }
 
 .dkv-task-modal-overlay.open {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto; /* Csak nyitva lehet kattintani */
+  pointer-events: auto;
+  /* Csak nyitva lehet kattintani */
 }
 
 .dkv-task-modal {
@@ -1059,7 +1093,8 @@ h3 {
 
 .dkv-lightbox-overlay.open {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.4); /* Enyhe sötétítés is */
+  background: rgba(0, 0, 0, 0.4);
+  /* Enyhe sötétítés is */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   pointer-events: auto;
@@ -1094,6 +1129,7 @@ h3 {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -1104,6 +1140,7 @@ h3 {
     opacity: 0;
     transform: scale(0.5);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -1150,4 +1187,335 @@ h3 {
 
 .dkv-btn-admin:active {
   transform: translateY(-1px) scale(0.98);
-}
+}
+
+/* ============================================
+   TOOLTIP SYSTEM
+   ============================================ */
+
+.dkv-tooltip-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.dkv-tooltip-trigger {
+  cursor: help;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dkv-tooltip-content {
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.95);
+  /* Deep slate */
+  backdrop-filter: blur(8px);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: normal;
+  width: 260px;
+  z-index: 5000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--dkv-primary-400);
+  pointer-events: none;
+  text-align: left;
+  font-weight: 400;
+}
+
+.dkv-tooltip-container:hover .dkv-tooltip-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+/* Arrow */
+.dkv-tooltip-content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--dkv-primary-400) transparent transparent transparent;
+}
+
+.dkv-tooltip-svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--dkv-text-highlight);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 5px rgba(96, 165, 250, 0.4));
+  transition: all 0.2s ease;
+}
+
+.dkv-tooltip-trigger:hover .dkv-tooltip-svg {
+  stroke: var(--dkv-primary-glow);
+  transform: scale(1.1);
+}
+
+/* =============================================
+   TASK RESULT MODAL (GLOBAL)
+   ============================================= */
+
+.maze-result-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 9999;
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.maze-result-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.maze-result-modal {
+  background: rgba(0, 21, 30, 0.98);
+  /* Deep turquoise/teal background */
+  border-radius: 20px;
+  padding: 40px 50px;
+  min-width: 450px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: 'Source Code Pro', monospace;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(0, 234, 255, 0.2);
+}
+
+.maze-result-overlay.open .maze-result-modal {
+  transform: scale(1);
+}
+
+.maze-result-modal.success {
+  border: 2px solid #00eaff;
+  box-shadow: 0 0 40px rgba(0, 234, 255, 0.4), inset 0 0 25px rgba(0, 234, 255, 0.1);
+}
+
+.maze-result-modal.failure {
+  border: 2px solid #ff4d4d;
+  box-shadow: 0 0 40px rgba(255, 77, 77, 0.4), inset 0 0 25px rgba(255, 77, 77, 0.1);
+}
+
+.maze-result-icon {
+  font-size: 4.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 15px rgba(0, 234, 255, 0.3));
+}
+
+.maze-result-modal.failure .maze-result-icon {
+  filter: drop-shadow(0 0 15px rgba(255, 77, 77, 0.3));
+}
+
+.maze-result-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.3;
+  text-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
+}
+
+.maze-result-modal.success .maze-result-title {
+  color: #00eaff;
+}
+
+.maze-result-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.maze-result-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background: rgba(0, 234, 255, 0.05);
+  /* Turquoise accent bg */
+  border-radius: 12px;
+  border: 1px solid rgba(0, 234, 255, 0.15);
+}
+
+.maze-result-stat-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+}
+
+.maze-result-stat-value {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.maze-result-stat-value.points {
+  color: #ffd700;
+  /* Gold for points */
+  font-size: 1.25rem;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.dkv-btn--result-modal {
+  margin-top: 25px;
+  width: auto;
+  min-width: 180px;
+  padding: 12px 30px;
+  font-family: 'Impact', sans-serif;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: #00636e;
+  color: white;
+  border: 2px solid #00eaff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dkv-btn--result-modal:hover {
+  background: #00818f;
+  box-shadow: 0 0 30px rgba(0, 234, 255, 0.8);
+  transform: scale(1.05);
+}
+
+/* Navigációs gomb 'VÉGE' állapota */
+.dkv-btn-next--final {
+  width: auto;
+  min-width: 160px;
+  padding: 10px 35px;
+  border-radius: 12px;
+  background: #00636e;
+  border: 2px solid #00eaff;
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.5);
+}
+
+.dkv-btn-next--final svg {
+  display: none;
+  /* Nyíl elrejtése */
+}
+
+.dkv-btn-next--final::after {
+  content: 'VÉGE';
+  display: block;
+  font-family: 'Impact', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  color: white;
+}
+
+/* Globális Tooltip Rendszer */
+.dkv-tooltip-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.dkv-tooltip-trigger {
+  cursor: help;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.dkv-tooltip-trigger:hover {
+  transform: scale(1.2);
+}
+
+.dkv-tooltip-svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: #00eaff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 5px rgba(0, 234, 255, 0.6));
+}
+
+.dkv-tooltip-content {
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  width: 220px;
+  padding: 12px 15px;
+  background: rgba(0, 40, 50, 0.95);
+  border: 1px solid #00eaff;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: normal;
+  line-height: 1.4;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 234, 255, 0.2);
+  z-index: 1000;
+  font-family: 'Source Code Pro', monospace;
+}
+
+.dkv-tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: #00eaff transparent transparent transparent;
+}
+
+.dkv-tooltip-container:hover .dkv-tooltip-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 768px) {
+  .dkv-tooltip-content {
+    width: 180px;
+    left: auto;
+    right: -20px;
+    transform: translateY(10px);
+  }
+
+  .dkv-tooltip-content::after {
+    left: auto;
+    right: 24px;
+  }
+}
