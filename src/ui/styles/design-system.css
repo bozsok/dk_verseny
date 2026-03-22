@@ -37,6 +37,35 @@
   /* Ha lenne díszesebb */
 }
 
+/* === THEME VARIABLES (GRADE 3 - Kód Királyság) === */
+.dkv-grade-3 {
+  /* Tipográfia */
+  --th-font-display: 'Impact', sans-serif;
+  --th-font-main: 'Source Code Pro', monospace;
+  --th-font-display-weight: normal;
+  --th-font-display-spacing: 1px;
+  --th-font-color: #ffffff;
+  
+  /* Panelek / Ablakok */
+  --th-panel-bg: rgba(0, 0, 0, 0.4);
+  --th-panel-bg-dark: rgba(0, 0, 0, 0.6);
+  --th-panel-border: 2px solid #00d2d3;
+  --th-panel-radius: 10px;
+  --th-panel-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  
+  /* Gombok */
+  --th-btn-bg: #00636e;
+  --th-btn-bg-hover: #007582;
+  --th-btn-border: 2px solid #00eaff;
+  --th-btn-radius: 10px;
+  --th-btn-color: #ffffff;
+  
+  /* Akcentusok és Glow effektek */
+  --th-accent-color: #00eaff;
+  --th-shadow-glow: 0 0 15px rgba(0, 234, 255, 0.3);
+  --th-shadow-glow-hover: 0 0 25px rgba(0, 234, 255, 0.6);
+}
+
 /* ============================================
    GLOBAL RESET & BASE
    ============================================ */
@@ -57,7 +86,7 @@ body {
 }
 
 body {
-  font-family: var(--dkv-font-sans);
+  font-family: var(--th-font-main, var(--dkv-font-sans));
   background-color: var(--dkv-bg-dark);
   color: var(--dkv-text-main);
   line-height: 1.6;
@@ -90,9 +119,11 @@ body::before {
 h1,
 h2,
 h3 {
-  color: var(--dkv-text-main);
-  font-weight: 800;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  color: var(--th-btn-color, var(--dkv-text-main));
+  font-family: var(--th-font-display, var(--dkv-font-display));
+  font-weight: var(--th-font-display-weight, 800);
+  text-shadow: var(--th-shadow-glow, 0 2px 10px rgba(0, 0, 0, 0.5));
+  letter-spacing: var(--th-font-display-spacing, normal);
 }
 
 .dkv-hub-title {
@@ -371,9 +402,10 @@ h3 {
 }
 
 .dkv-slide-title {
-  font-size: 2.5rem;
+  font-size: var(--th-slide-title-size, 3.5rem);
   margin-bottom: 0.5rem;
-  color: var(--dkv-text-highlight);
+  color: var(--th-btn-color, var(--dkv-text-highlight));
+  text-shadow: var(--th-shadow-glow, 0 2px 10px rgba(0, 0, 0, 0.5));
 }
 
 .dkv-slide-description {
@@ -387,35 +419,35 @@ h3 {
   padding: 1rem 2rem;
   font-size: 1.25rem;
   font-weight: 700;
-  background: var(--dkv-primary-600);
-  color: white;
-  border: none;
-  border-radius: 8px;
+  background: var(--th-btn-bg, var(--dkv-primary-600));
+  color: var(--th-btn-color, white);
+  border: var(--th-btn-border, none);
+  border-radius: var(--th-btn-radius, 8px);
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  font-family: var(--dkv-font-sans);
+  font-family: var(--th-font-display, var(--dkv-font-sans));
 }
 
 .dkv-btn-primary {
-  background: #00636e;
-  color: white;
-  border: 1px solid #00eaff;
-  box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+  background: var(--th-btn-bg, #00636e);
+  color: var(--th-btn-color, white);
+  border: var(--th-btn-border, 1px solid #00eaff);
+  box-shadow: var(--th-shadow-glow, 0 0 15px rgba(0, 234, 255, 0.3));
 }
 
 .dkv-btn-primary:hover {
-  background: #007582;
-  box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
+  background: var(--th-btn-bg-hover, #007582);
+  box-shadow: var(--th-shadow-glow-hover, 0 0 25px rgba(0, 234, 255, 0.6));
   transform: translateY(-2px);
 }
 
 .dkv-button:hover,
 .dkv-btn:hover {
-  background: var(--dkv-primary-500);
+  background: var(--th-btn-bg-hover, var(--dkv-primary-500));
   transform: translateY(-2px);
 }
 
@@ -571,7 +603,8 @@ h3 {
 }
 
 .dkv-username {
-  font-weight: 700;
+  font-family: var(--th-font-display, inherit);
+  font-weight: var(--th-font-display-weight, 700);
   font-size: 1.6rem;
   line-height: 1.6;
 }
@@ -579,7 +612,7 @@ h3 {
 .dkv-points {
   font-size: 1.3rem;
   color: var(--dkv-text-highlight);
-  font-family: "Source Code Pro", monospace;
+  font-family: var(--th-font-main, "Source Code Pro", monospace);
 }
 
 .dkv-hud-timeline {
@@ -701,18 +734,20 @@ h3 {
 .dkv-func-btn {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
-  border: none;
-  background: #333;
-  color: white;
+  border-radius: var(--th-btn-radius, 50%);
+  border: var(--th-btn-border, none);
+  background: var(--th-btn-bg, #333);
+  color: var(--th-btn-color, white);
   font-size: 1.5rem;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  box-shadow: var(--th-shadow-glow, none);
 }
 
 .dkv-func-btn:hover {
-  transform: scale(1.1);
-  background: #555;
+  transform: var(--th-btn-hover-transform, scale(1.1));
+  background: var(--th-btn-bg-hover, #555);
+  box-shadow: var(--th-shadow-glow-hover, none);
 }
 
 .dkv-nav-controls {
@@ -728,11 +763,24 @@ h3 {
 .dkv-nav-arrow {
   pointer-events: auto;
   /* Re-enable for arrows */
+  width: 50px;
+  height: 50px;
+  border-radius: var(--th-btn-radius, 50%);
+  border: var(--th-btn-border, none);
+  background: var(--th-btn-bg, transparent);
+  color: var(--th-btn-color, white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--th-shadow-glow, none);
 }
 
 .dkv-nav-arrow:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
+  background: var(--th-btn-bg-hover, rgba(255, 255, 255, 0.3));
+  transform: var(--th-btn-hover-transform, scale(1.1));
+  box-shadow: var(--th-shadow-glow-hover, none);
 }
 
 .dkv-nav-arrow:active {
@@ -757,14 +805,19 @@ h3 {
   /* Start hidden */
   width: 400px;
   height: 100vh;
-  background: #1a1a1a;
-  border-right: 2px solid #444;
+  background: var(--th-panel-bg, #1a1a1a);
+  border-right: var(--th-panel-border, 2px solid #444);
+  border-radius: var(--th-panel-radius, 0); /* Right side can be straight, but if theme wants rounded corners... actually journal usually sticks to the left */
   z-index: var(--z-float-animation);
   transition: left 0.3s ease-in-out;
   padding: 80px 2rem 2rem 2rem;
   /* Top padding for HUD */
   display: flex;
-  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--th-panel-shadow, 10px 0 30px rgba(0, 0, 0, 0.5));
+  color: var(--dkv-text-main);
+  font-family: var(--th-font-main, var(--dkv-font-sans));
+  backdrop-filter: var(--th-backdrop-blur, none);
+  -webkit-backdrop-filter: var(--th-backdrop-blur, none);
   pointer-events: auto;
   /* Enable interaction */
 }
@@ -782,23 +835,21 @@ h3 {
   /* Above the buttons */
   width: 300px;
   height: 500px;
-  background: #fdf6e3;
-  /* Paper color */
-  color: #2c1a0b;
-  /* Ink color */
+  background: var(--th-panel-bg-dark, #fdf6e3);
+  color: var(--th-font-color, #2c1a0b);
   padding: 2rem;
-  border-radius: 4px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  font-family: 'Georgia', serif;
-  /* Book-like font */
+  border-radius: var(--th-panel-radius, 4px);
+  border: var(--th-panel-border, 10px solid #5d4037);
+  box-shadow: var(--th-panel-shadow, 0 10px 40px rgba(0, 0, 0, 0.5));
+  font-family: var(--th-font-main, 'Georgia', serif);
+  backdrop-filter: var(--th-backdrop-blur, none);
+  -webkit-backdrop-filter: var(--th-backdrop-blur, none);
   z-index: var(--z-portal-mask-bg);
   pointer-events: auto;
   /* Enable interaction */
   display: none;
   /* Toggled by JS */
   overflow-y: auto;
-  border: 10px solid #5d4037;
-  /* Leather binding look */
 }
 
 .dkv-narrator-box.open {
@@ -850,15 +901,17 @@ h3 {
 }
 
 .dkv-modal-content {
-  background: var(--dkv-bg-card);
-  backdrop-filter: blur(20px);
+  background: var(--th-panel-bg, var(--dkv-bg-card));
+  backdrop-filter: var(--th-backdrop-blur, blur(20px));
+  -webkit-backdrop-filter: var(--th-backdrop-blur, blur(20px));
   padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid var(--dkv-primary-500);
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  border-radius: var(--th-panel-radius, 16px);
+  border: var(--th-panel-border, 1px solid var(--dkv-primary-500));
+  box-shadow: var(--th-panel-shadow, 0 0 50px rgba(0, 0, 0, 0.5));
+  font-family: var(--th-font-main, var(--dkv-font-sans));
   max-width: 500px;
   width: 90%;
-  color: white;
+  color: var(--th-font-color, white);
   text-align: center;
 }
 
@@ -877,9 +930,14 @@ h3 {
   max-height: 80vh;
   z-index: var(--z-onboarding-modal);
   transition: right 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  background: rgba(0, 0, 0, 0.9);
-  color: white;
-  border-radius: 10px;
+  background: var(--th-panel-bg-dark, rgba(0, 0, 0, 0.9));
+  border: var(--th-panel-border, none);
+  border-radius: var(--th-panel-radius, 10px);
+  box-shadow: var(--th-panel-shadow, none);
+  font-family: var(--th-font-main, var(--dkv-font-sans));
+  backdrop-filter: var(--th-backdrop-blur, none);
+  -webkit-backdrop-filter: var(--th-backdrop-blur, none);
+  color: var(--th-font-color, white);
   display: flex;
   flex-direction: column;
 }
@@ -1342,7 +1400,7 @@ h3 {
 
 .maze-result-title {
   font-size: 1.6rem;
-  font-weight: 700;
+  /* font-weight: 700; */
   color: #fff;
   margin: 0;
   line-height: 1.3;
@@ -1392,6 +1450,12 @@ h3 {
 .dkv-btn--result-modal {
   margin-top: 25px;
   min-width: 180px;
+  /* Onboarding gombokkal azonos nagyság (Grade 3 elvárása alapján) */
+  font-size: 1.5rem;
+  font-weight: normal;
+  letter-spacing: 1px;
+  padding: 12px 40px;
+  text-shadow: none;
 }
 
 /* Navigációs gomb 'VÉGE' állapota */

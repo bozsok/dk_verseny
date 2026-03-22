@@ -36,10 +36,7 @@
 .dkv-welcome-slide,
 .dkv-registration-slide,
 .dkv-character-slide {
-    margin: 0;
-    padding: 0;
-    /* Alapértelmezett tipográfia Grade 3-hoz */
-    font-family: 'Source Code Pro', monospace;
+    /* A betűtípust (font-family) a design-system.css változója adja meg! */
     font-size: 1rem;
     font-weight: 200;
     line-height: 1.6;
@@ -65,46 +62,11 @@
     font-weight: normal;
 }
 
-/* === 2. KÖZÖS KOMPONENSEK === */
-
-/* === Gombok (Unified Button System) === */
-/* Közös alapok: Szín, Keret, Árnyék, Tranzíció */
-.dkv-grade-3-button,
-.dkv-welcome-slide .dkv-button,
-.dkv-registration-slide .dkv-button,
-.dkv-character-slide .dkv-button,
-.dkv-grade-3 .dkv-func-btn,
-.dkv-grade-3 .dkv-nav-arrow,
-.dkv-grade-3 .dkv-panel-footer .dkv-button {
-    background: #00636e;
-    /* Sötét türkiz */
-    border: 2px solid #00eaff;
-    /* Neon cián keret */
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* Közös Hover Állapot */
-.dkv-grade-3-button:hover,
-.dkv-welcome-slide .dkv-button:hover,
-.dkv-registration-slide .dkv-button:hover,
-.dkv-character-slide .dkv-button:hover,
-.dkv-grade-3 .dkv-func-btn:hover,
-.dkv-grade-3 .dkv-nav-arrow:hover,
-.dkv-grade-3 .dkv-panel-footer .dkv-button:hover {
-    background: #007582;
-    box-shadow: 0 0 25px rgba(0, 234, 255, 0.6);
-}
-
-/* --- Variáció 1: Nagy Fő Gombok (Onboarding) --- */
-.dkv-grade-3-button,
+/* === Gombok Strukturális Felülírásai (Onboarding) === */
+/* Színek a globális változóból jönnek, de a méret egyedi! */
 .dkv-welcome-slide .dkv-button,
 .dkv-registration-slide .dkv-button,
 .dkv-character-slide .dkv-button {
-    font-family: 'Impact', sans-serif;
     font-size: 1.5rem;
     font-weight: normal;
     letter-spacing: 1px;
@@ -112,7 +74,6 @@
     text-shadow: none;
 }
 
-.dkv-grade-3-button:hover,
 .dkv-welcome-slide .dkv-button:hover,
 .dkv-registration-slide .dkv-button:hover,
 .dkv-character-slide .dkv-button:hover {
@@ -120,23 +81,31 @@
     /* Letiltja a globális elmozdulást */
 }
 
-/* === 3. GAME INTERFACE (Unified) - Grade 3 Override === */
-
-/* -- Typography -- */
-.dkv-grade-3 .dkv-game-interface {
-    font-family: 'Source Code Pro', monospace;
-    font-weight: 200;
-}
-
-.dkv-grade-3 .dkv-game-interface h1,
-.dkv-grade-3 .dkv-game-interface h2,
-.dkv-grade-3 .dkv-game-interface h3,
-.dkv-grade-3 .dkv-username {
-    font-family: 'Impact', sans-serif !important;
-    letter-spacing: 1px;
+/* Címsorok resetelése */
+.dkv-welcome-slide h1,
+.dkv-welcome-slide h2,
+.dkv-welcome-slide h3,
+.dkv-registration-slide h1,
+.dkv-registration-slide h2,
+.dkv-registration-slide h3,
+.dkv-character-slide h1,
+.dkv-character-slide h2,
+.dkv-character-slide h3 {
+    margin: 0;
+    padding: 0;
     font-weight: normal;
 }
 
+/* === 2. KÖZÖS KOMPONENSEK === */
+
+/* === Gombok (Unified Button System) === */
+/* A gombok színét, keretét és hátterét mostantól a design-system.css 
+   kezeli a --th-btn-* változókon keresztül! Nincs hardkódolt érték. */
+
+/* === 3. GAME INTERFACE (Unified) - Grade 3 Override === */
+
+/* -- Typography -- */
+/* A tipográfiai beállítások (font-family, weight) a design-system CSS változóin keresztül öröklődnek. */
 /* -- Buttons (Function & Nav) - Specifics -- */
 .dkv-grade-3 .dkv-func-btn,
 .dkv-grade-3 .dkv-nav-arrow {
@@ -151,50 +120,27 @@
 }
 
 /* -- Panels Structure & Layout (Unified) -- */
-/* 1. Base Panel Styles (Shared Geometry & Effects) */
+/* Színek, hátterek, keretek és árnyékok a design-system CSS változói alá kerültek! */
+/* Itt kizárólag a Grade 3 specifikus doboz-fizika és animáció maradt meg. */
+
+/* 1. Structural Overrides for Grade 3 Panels */
 .dkv-grade-3 .dkv-journal-panel,
 .dkv-grade-3 .dkv-modal-content,
 .dkv-grade-3 .dkv-settings-panel,
 .dkv-grade-3 .dkv-narrator-box {
-    display: flex;
-    flex-direction: column;
-    /* Glass Effect Base */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    /* Borders & Shadows */
-    border: 2px solid #00d2d3;
-    border-radius: 10px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    /* Typography & Layout */
-    color: #ffffff;
-    font-family: 'Source Code Pro', monospace;
     padding: 0;
     overflow: hidden;
-}
-
-/* 2. Panel Backgrounds (Specific) */
-.dkv-grade-3 .dkv-journal-panel,
-.dkv-grade-3 .dkv-modal-content {
-    background-color: rgba(255, 255, 255, 0.1);
-    /* Light Glass */
-}
-
-.dkv-grade-3 .dkv-settings-panel {
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Darker Glass */
+    display: flex;
+    flex-direction: column;
 }
 
 /* 3. Narrator Box Specifics (Layout & Animation) */
 .dkv-grade-3 .dkv-narrator-box {
-    /* Fixed Dimensions */
+    /* Fixed Dimensions for Grade 3 */
     width: 600px;
     height: 400px;
 
-    /* Specific Appearance */
-    background-color: rgba(0, 0, 0, 0.3);
-    /* Dark Glass */
-
-    /* Animation State */
+    /* Smooth Fade Animation (Overriding design-system block display) */
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
@@ -251,8 +197,8 @@
 /* -- Headings -- */
 .dkv-grade-3 .dkv-panel-header h2,
 .dkv-grade-3 .dkv-panel-header h3 {
-    color: #fff;
-    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+    color: var(--th-btn-color, #fff);
+    text-shadow: var(--th-shadow-glow, none);
     margin: 0;
 }
 
@@ -260,7 +206,7 @@
 .dkv-grade-3 .dkv-panel-body textarea {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
     color: #fff;
     font-family: 'Source Code Pro', monospace;
     border-radius: 10px;

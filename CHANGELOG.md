@@ -5,6 +5,22 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.16.5] - 2026-03-22
+
+### Hozzáadva
+- **Központi Téma Változók (CSS Theming)**: A `design-system.css` elején vagy egy külön CSS fájlban definiálásra kerültek a `.dkv-grade-3` témához (és a jövőbeni témákhoz) tartozó globális CSS változók (pl. `--th-panel-bg`, `--th-btn-bg`, `--th-font-display`, `--th-btn-radius`).
+- **Dinamikus JS Téma Aktiválás**: A `main.js` induláskor automatikusan applikálja a megfelelő témaosztályt (pl. `.dkv-grade-3`) a `document.body` elemen. Így a JS által dinamikusan fűzött (injektált) komponensek – mint pl. a Modálok, Eredmény ablakok és Tooltipek – szintén megöröklik az aktuális CSS változókat, elkerülve a téma-kontextus elvesztését.
+
+### Módosítva
+- **CSS Architektúra Döntés (Syllabus)**: Létrejött az "Igazság Alapja", a `css_architecture_syllabus.md`, ami dokumentálja a struktúra-dizájn leválasztásának szabályait.
+- **A `design-system.css` "lecsupaszítása"**: A fájl immáron valóban csak a strukturális "csontvázat" adja (Flexbox, Grid, pozíciók, animációs logika), a korábbi hardkódolt színeket, kerekítéseket és betűtípusokat kicseréltük a `--th-*` változókra. A felület arculata egyetlen CSS paraméter-blokkal testreszabható.
+- **`grade3/styles/main.css` tisztítása**: Az összes lokális dizájn-felülírás (Specificity War) törlésre került a fájlból (pl. gombok színének agresszív megváltoztatása). Kizárólag az évfolyamspecifikus dobozszerkezetek és egyedi elrendezések (pl. `.dkv-narrator-box` flex szerkezete, animációi) maradtak meg.
+
+### Javítva
+- **Onboarding (Welcome, Character, Registration) gombok méretezése**: Az Onboarding diák gombjainak és alcímeinek lokális, felülírt vizuális paraméterei (pl. `1.5rem` formázások) elvesztek a korábbi gomb-takarításnál, ezek maradéktalanul helyreállításra kerültek.
+- **Feladat Összegző Modal `Tovább` gombja**: A `.dkv-btn--result-modal` a közös Theming örökségeként vizuálisan megkapta azokat a dimenziókat (1.5rem betű, 12px 40px padding), amitől egységes és felismerhető a teljes játékon belül az alapgombokkal („harmonizáció”).
+- **Tipográfiai törések (Headings, Username)**: Impact és monospace font-weight (`normal` vs `700`) konfliktusok elhárítása a változókon át úgy, hogy a grade 3 egyedi vizuális esztétikája (`Source Code Pro`) ne sérüljön.
+
 ## [0.16.4] - 2026-03-21
 
 ### Hozzáadva
