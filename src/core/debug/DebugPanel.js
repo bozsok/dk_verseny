@@ -631,7 +631,7 @@ class DebugPanel {
 
         const resetBtn = document.createElement('button');
         resetBtn.className = 'dkv-debug-btn';
-        resetBtn.style.cssText = 'background: rgba(255,60,60,0.2); border-color: #ff6b6b; color: #ff6b6b; width: 100%;';
+        resetBtn.style.cssText = 'background: rgba(255,60,60,0.2); border-color: #ff6b6b; color: #ff6b6b; width: 100%; margin-bottom: 10px;';
         resetBtn.textContent = '🗑️ Feladatok reset';
         resetBtn.addEventListener('click', () => {
             if (!this.stateManager) {

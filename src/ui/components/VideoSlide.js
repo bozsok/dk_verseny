@@ -43,8 +43,8 @@ class VideoSlide {
 
         this.element.appendChild(this.videoPlayer.createElement());
 
-        // Ha nem előnézet, indítjuk (VideoPlayer.play kezeli a belső logikát)
-        if (!this.options.isPreview) {
+        // Ha nem előnézet ÉS nem fut a tutorial, indítjuk
+        if (!this.options.isPreview && !this.options.isTutorialActive) {
             this.videoPlayer.play();
         }
 

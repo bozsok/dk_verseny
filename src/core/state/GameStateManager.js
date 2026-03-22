@@ -315,6 +315,7 @@ class GameStateManager {
       validated.userProfile = updates.userProfile;
     }
 
+
     // Avatar
     if (updates.avatar !== undefined) {
       validated.avatar = updates.avatar;

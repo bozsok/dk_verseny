@@ -23,8 +23,10 @@ import SummarySlide from './ui/components/SummarySlide.js';
 import GameInterface from './ui/components/GameInterface.js';
 import { PortalTransition } from './ui/components/PortalTransition.js';
 import KeyCollectionAnimation from './ui/components/KeyCollectionAnimation.js';
+import TutorialManager from './features/tutorial/TutorialManager.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import './ui/styles/design-system.css';
+import './ui/styles/Tutorial.css';
 import './ui/styles/Portal.css';
 import './ui/styles/Summary.css';
 
@@ -69,6 +71,10 @@ class DigitalKulturaVerseny {
     this.debugPanel = null;
     this.debugBadge = null;
     this.buildConfig = null; // build-config.json tartalma (DEV és PROD módban egyaránt)
+
+    // Tutorial System
+    this.tutorialManager = new TutorialManager(this);
+    this.tutorialCompletedInSession = false;
 
     // Leaderboard Tracking
     this.leaderboardId = null;
@@ -673,7 +679,10 @@ class DigitalKulturaVerseny {
     ].includes(slide.type);
 
     // --- Background Music Logic ---
-    if (!isFullscreen && !this.backgroundMusic) {
+    const isTutorialPending = !this.tutorialCompletedInSession && !isFullscreen;
+    if (this.logger) this.logger.info(`[TUTORIAL-DEBUG] renderSlide - isActive: ${this.tutorialManager.isActive}, isPending: ${isTutorialPending}`);
+
+    if (!isFullscreen && !this.backgroundMusic && !this.tutorialManager.isActive && !isTutorialPending) {
       if (currentIndex < totalSlides - 1 && currentGrade) {
         this.playBackgroundMusic(currentGrade);
       }
@@ -770,6 +779,14 @@ class DigitalKulturaVerseny {
       } else {
         this.layerUI.style.display = 'none';
       }
+
+      // --- TUTORIAL TRIGGER ---
+      // Csak ha nem fullscreen (onboarding után), és még nincs kész
+      const isTutorialNeeded = !isFullscreen && !this.tutorialCompletedInSession;
+      if (isTutorialNeeded && !this.tutorialManager.isActive) {
+        if (this.logger) this.logger.info('Tutorial trigger conditions met, starting...');
+        setTimeout(() => this.tutorialManager.start(), 1000); // Kicsi várakozás a render után
+      }
     } catch (renderError) {
       if (this.logger) this.logger.error("CRITICAL RENDER ERROR:", { error: renderError.message, stack: renderError.stack });
       alert("Hiba történt a megjelenítéskor: " + renderError.message);
@@ -788,7 +805,7 @@ class DigitalKulturaVerseny {
       }
     };
 
-    if (audioSrc) {
+    if (audioSrc && !this.tutorialManager.isActive && !isTutorialPending) {
       const alreadyPlayed = this.playedAudioSlides && this.playedAudioSlides.has(slide.id);
       const isTaskSlide = slide.metadata && slide.metadata.step === 2 && slide.metadata.section?.startsWith('station_');
       const isCompleted = this.stateManager?.isSlideCompleted(slide.id);
@@ -808,8 +825,10 @@ class DigitalKulturaVerseny {
       const isTaskSlide = slide.metadata && slide.metadata.step === 2 && slide.metadata.section?.startsWith('station_');
       const isFinalTask = slide.id === 'final_2';
       const btnOptions = (isTaskSlide || isFinalTask) ? { suppressOrange: true } : {};
-      const shouldEnable = true;
-      setBtnState(shouldEnable, btnOptions);
+      
+      // HA TUTORIAL VAN, MINDIG DISABLE!
+      const shouldDisable = this.tutorialManager.isActive || isTutorialPending;
+      setBtnState(!shouldDisable, btnOptions);
     }
 
     // 5. Preloading
@@ -891,6 +910,15 @@ class DigitalKulturaVerseny {
 
   // --- DOM GENERÁLÓ SEGÉDFÜGGVÉNYEK A PORTÁLHOZ ---
   _instantiateSlideComponent(slide, isPreview = false) {
+    const isFullscreenType = [
+      SLIDE_TYPES.WELCOME,
+      SLIDE_TYPES.REGISTRATION,
+      SLIDE_TYPES.CHARACTER
+    ].includes(slide.type);
+
+    const isTutorialActive = this.tutorialManager.isActive;
+    const isTutorialPending = !this.tutorialCompletedInSession && !isFullscreenType;
+
     const commonOptions = {
       logger: this.logger,
       slideManager: this.slideManager,
@@ -900,8 +928,10 @@ class DigitalKulturaVerseny {
       onNext: () => this.handleNext(),
       onPrev: () => this.handlePrev(),
       onComplete: () => this.slideManager.completeCurrentSlide(),
-      isPreview
+      isPreview,
+      isTutorialActive: (this.tutorialManager.isActive || isTutorialPending) && !isFullscreenType
     };
+    if (this.logger) this.logger.info(`[TUTORIAL-DEBUG] _instantiateSlideComponent - type: ${slide.type}, isTutorialActive: ${commonOptions.isTutorialActive}`);
     let newComponent;
     switch (slide.type) {
       case SLIDE_TYPES.WELCOME: newComponent = new WelcomeSlide(slide, commonOptions); break;
@@ -1139,6 +1169,44 @@ class DigitalKulturaVerseny {
   async ensureAudioFeedback() {
     // Növelt biztonsági késleltetés (100ms), hogy a hang biztosan elinduljon
     return new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  /**
+   * Tutorial befejezésekor hívódik meg
+   */
+  onTutorialFinished() {
+    this.tutorialCompletedInSession = true;
+    if (this.logger) this.logger.info('Tutorial finished callback in App');
+    
+    // 1. Zene indítása (ha eddig tiltottuk a tutorial miatt)
+    const currentIndex = this.slideManager.getCurrentIndex();
+    const slides = this.slideManager.getSlides();
+    const currentGrade = this.stateManager.getStateValue('currentGrade');
+    if (currentIndex < slides.length - 1 && currentGrade && !this.backgroundMusic) {
+      this.playBackgroundMusic(currentGrade);
+    }
+
+    // 2. Narráció indítása (ha el lett fojtva) ÉS gomb engedélyezése a végén
+    const slide = slides[currentIndex];
+    const audioSrc = slide.content?.audioSrc;
+    if (audioSrc) {
+       this.playAudio(audioSrc, () => {
+         // Csak ha még mindig ezen a dián vagyunk
+         if (this.slideManager.getCurrentIndex() === currentIndex) {
+           this.activeGameInterface?.setNextButtonState(true);
+           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
+         }
+       });
+    } else {
+       // Ha nincs audio, akkor engedélyezzük azonnal
+       this.activeGameInterface?.setNextButtonState(true);
+    }
+
+    // 3. Videó indítása (ha van)
+    if (this.currentSlideComponent && typeof this.currentSlideComponent.playVideo === 'function') {
+      if (this.logger) this.logger.info('Starting video after tutorial completion');
+      this.currentSlideComponent.playVideo();
+    }
   }
 
   /**

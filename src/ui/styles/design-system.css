@@ -787,10 +787,9 @@ h3 {
   transform: scale(0.95);
 }
 
-/* === TIMER DISPLAY (Global) - Ensure it's on top === */
+/* === TIMER DISPLAY (Global) - Ensure it's on top of game interface === */
 .dkv-timer-display {
-  z-index: var(--z-onboarding-modal) !important;
-  /* Force on top of game interface */
+  z-index: var(--z-ui-controls);
 }
 
 /* ============================================

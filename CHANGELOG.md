@@ -5,6 +5,28 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.16.6] - 2026-03-22
+
+### Hozzáadva
+- **Interaktív Tutorial rendszer – teljes újraírás** (`TutorialManager.js`): A tutorial kiemelési mechanizmusa teljesen átdolgozásra került. Az új megközelítés `cloneNode(true)` alapú: az éppen bemutatott elem mélységi klónját a `document.body`-ba fűzi `position: fixed` és `z-index: 2601` értékekkel, pontosan az eredeti elem képernyőpozícióján. Ez a megoldás stacking-context-független, nem igényel z-index manipulációt az eredeti elemeken, és nem töri a DOM layoutot.
+- **Tutorial lépések helyes sorrendje**: A lépések átrendezésre kerültek a megadott sorrend szerint: Karakterkép → Becenév → Pontszám → Idővonal → Hanglejátszó → Eltelt idő → Küldetésnapló → Narráció gomb → Inventory slotok → Tovább (jobbra nyíl) gomb.
+- **Animált megjelenés és eltűnés**: A klón `dkv-tutorial-clone` CSS osztállyal animáltan (fade-in + scale) jelenik meg, és `dkv-tutorial-clone--out` osztállyal animáltan tűnik el lépésváltáskor. A tooltip szintén animáltan jelenik meg és tűnik el lépések között (`opacity` transition, y-irányú mozgás nélkül).
+- **Tutorial lépések z-index hierarchia**: `--z-tutorial-overlay: 2600`, `--z-tutorial-highlight: 2601`, `--z-tutorial-tooltip: 2602` értékek kerültek a `z-index.css`-be.
+
+### Módosítva
+- **`TutorialManager.js` – klón pozíció javítás**: A `createClone()` metódus explicit módon nullázza az öröklött CSS-ből eredő konfliktusos tulajdonságokat: `transform: none` (sidebar `translateY(-50%)` dupla alkalmazásának megakadályozására), `right: auto`, `bottom: auto`. A `display` értéket `getComputedStyle`-ból olvassa, így `display: none` alapértelmezés estén is helyesen jelenik meg a klón.
+- **`TutorialManager.js` – tooltip pozícionálás**: A `positionTooltip()` hívás a `dkv-is-visible` osztály hozzáadása **előtt** fut, így a tooltip rögtön a helyes koordinátákon jelenik meg, nem villan fel az előző lépés pozícióján.
+- **`TutorialManager.js` – lépésváltás animáció**: A `showStep()` metódus most először fade-out-olja a tooltipet (280ms késleltetés), majd az új klónt és tooltipet fade-in-nel jeleníti meg.
+- **`Tutorial.css` – hover és animáció**: A tooltip gombjain eltávolítva a `transform: translateY(-2px)` hover effekt. A `Kihagyás` / `Bezárás` gomb mérete egységesítve a többi gombbal (`font-size: 0.9rem`).
+- **`SlideManager.js`**: A hiányzó `getCurrentIndex()` és `getSlides()` metódusok implementálva – ezek hiánya `TypeError`-t okozott a tutorial befejezésekor és megelőzte a post-tutorial narráció/videó elindítását.
+
+### Javítva
+- **`design-system.css` – tiltott `!important` eltávolítása**: A `.dkv-timer-display` blokkon szereplő `z-index: var(--z-onboarding-modal) !important` (2000) szabály felváltva a helyes `z-index: var(--z-ui-controls)` (1000) értékkel. A `!important` felülírta a klón `inline z-index: 2601` értékét, megakadályozva a timer kiemelését.
+- **Tutorial overlay klón konfliktusos stílus**: Az inventory sidebar klónja korábban felfelé csúszott a `transform: translateY(-50%)` dupla alkalmazása miatt. Javítva a `transform: none` inline reset hozzáadásával.
+- **`Tutorial.css` – tiltott `!important` eltávolítása**: Az összes korábban bevezetett `!important` flag eltávolításra került a tutorial CSS-ből.
+- **Tutorial ismétlés / összeomlás a befejezéskor**: A `SlideManager` hiányzó metódusainak pótlásával megoldódott a tutorial ismétlésének és a befejezéskori összeomlásnak a hibája.
+- **Post-tutorial narráció és videó**: A tutorial befejezése után az `onTutorialFinished()` callback helyesen indítja el a bevezető narrációt és videót.
+
 ## [0.16.5] - 2026-03-22
 
 ### Hozzáadva

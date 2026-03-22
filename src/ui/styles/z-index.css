@@ -90,6 +90,11 @@
   /* === Quiz pont animáció (feladat közbeni animáció) === */
   --z-quiz-floating-pt:  99999;    /* Quiz +pont lebegő animáció */
 
+  /* === Tutorial Réteg === */
+  --z-tutorial-overlay:    2600;   /* Tutorial sötétítő háttér */
+  --z-tutorial-highlight:  2601;   /* Kiemelt elem a tutorial alatt */
+  --z-tutorial-tooltip:    2602;   /* Tutorial buborék (szöveg + gombok) */
+
   /* === Floating Tooltip Panel (document.body-ban) === */
   --z-tooltip-floating:  99999;    /* .dkv-tooltip-floating-panel – minden felett */
 }

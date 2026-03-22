@@ -98,7 +98,7 @@ class StorySlide {
         }
 
         // 3. LOGIKA (Seamless Transition with canplaythrough)
-        if (videoUrl && !this.options.isPreview) {
+        if (videoUrl && !this.options.isPreview && !this.options.isTutorialActive) {
             this._startVideoLogic(videoUrl, imgUrl, videoDelay);
         }
 

@@ -111,6 +111,20 @@ class SlideManager {
     }
 
     /**
+     * Jelenlegi index lekérése
+     */
+    getCurrentIndex() {
+        return this.currentIndex;
+    }
+
+    /**
+     * Összes dia lekérése
+     */
+    getSlides() {
+        return this.slides;
+    }
+
+    /**
      * Visszalépés az előző diára
      */
     prevSlide() {
