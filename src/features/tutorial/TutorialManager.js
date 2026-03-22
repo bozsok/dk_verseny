@@ -20,8 +20,8 @@ class TutorialManager {
         this.isLoading = false;
 
         // DOM elemek
-        this.overlay     = null;
-        this.tooltip     = null;
+        this.overlay = null;
+        this.tooltip = null;
         this.currentClone = null; // Aktuálisan megjelenített elem-klón
         this.currentAudio = null;
 
@@ -48,7 +48,7 @@ class TutorialManager {
             },
             {
                 element: '.dkv-hud-timeline',
-                text: 'Ez az idővonal mutatja a haladásodat. A főállomásokat a számuk, a részállomásokat a kis fehér négyzetek jelzik.',
+                text: 'Ez az idővonal mutatja a haladásodat.',
                 position: 'bottom',
                 audio: 'assets/audio/tutorial/tut_04.mp3'
             },
@@ -84,7 +84,7 @@ class TutorialManager {
             },
             {
                 element: '.dkv-btn-next',
-                text: 'Használd mindig ezt a gombot a játék során. Ez fogja kiértékelni a feladatokra adott válaszaidat és ez biztosítja a továbbhaladásodat is. Kalandra fel!',
+                text: 'Használd mindig ezt a gombot a játék során. Ez biztosítja a továbbhaladásodat. Kalandra fel!',
                 position: 'top-right',
                 audio: 'assets/audio/tutorial/tut_10.mp3'
             }
@@ -186,20 +186,20 @@ class TutorialManager {
         // de a getBoundingClientRect() már a transform utáni vizuális pozíciót adja,
         // így ha a transform újra alkalmazódik, dupla eltolás keletkezik.
         Object.assign(clone.style, {
-            position:      'fixed',
-            top:           `${rect.top}px`,
-            left:          `${rect.left}px`,
-            width:         `${rect.width}px`,
-            height:        `${rect.height}px`,
-            margin:        '0',
-            zIndex:        '2601',
+            position: 'fixed',
+            top: `${rect.top}px`,
+            left: `${rect.left}px`,
+            width: `${rect.width}px`,
+            height: `${rect.height}px`,
+            margin: '0',
+            zIndex: '2601',
             pointerEvents: 'none',
-            boxSizing:     'border-box',
+            boxSizing: 'border-box',
             // Konfliktusos örökölt CSS tulajdonságok nullázása
-            transform:     'none',
-            right:         'auto',
-            bottom:        'auto',
-            display:       window.getComputedStyle(el).display
+            transform: 'none',
+            right: 'auto',
+            bottom: 'auto',
+            display: window.getComputedStyle(el).display
         });
 
         // Türkiz border szín kényszerítése – a timer és az inventory slotok
@@ -243,7 +243,7 @@ class TutorialManager {
      */
     updateTooltip(step, targetEl) {
         const isFirst = this.currentStepIndex === 0;
-        const isLast  = this.currentStepIndex === this.steps.length - 1;
+        const isLast = this.currentStepIndex === this.steps.length - 1;
 
         this.tooltip.innerHTML = `
             <div class="dkv-tutorial__text">${step.text}</div>
@@ -280,30 +280,30 @@ class TutorialManager {
      * @param {string} position
      */
     positionTooltip(targetEl, position) {
-        const r  = targetEl.getBoundingClientRect();
-        const tw = this.tooltip.offsetWidth  || 450;
+        const r = targetEl.getBoundingClientRect();
+        const tw = this.tooltip.offsetWidth || 450;
         const th = this.tooltip.offsetHeight || 150;
-        const m  = 20;
+        const m = 20;
 
         let top, left;
 
         switch (position) {
-            case 'bottom':       top = r.bottom + m;                   left = r.left + r.width / 2 - tw / 2; break;
-            case 'top':          top = r.top - th - m;                 left = r.left + r.width / 2 - tw / 2; break;
-            case 'left':         top = r.top + r.height / 2 - th / 2; left = r.left - tw - m;                break;
-            case 'right':        top = r.top + r.height / 2 - th / 2; left = r.right + m;                    break;
-            case 'bottom-right': top = r.bottom + m;                   left = r.right - tw;                   break;
-            case 'top-left':     top = r.top - th - m;                 left = r.left;                         break;
-            case 'top-right':    top = r.top - th - m;                 left = r.right - tw;                   break;
-            default:             top = r.bottom + m;                   left = r.left;
+            case 'bottom': top = r.bottom + m; left = r.left + r.width / 2 - tw / 2; break;
+            case 'top': top = r.top - th - m; left = r.left + r.width / 2 - tw / 2; break;
+            case 'left': top = r.top + r.height / 2 - th / 2; left = r.left - tw - m; break;
+            case 'right': top = r.top + r.height / 2 - th / 2; left = r.right + m; break;
+            case 'bottom-right': top = r.bottom + m; left = r.right - tw; break;
+            case 'top-left': top = r.top - th - m; left = r.left; break;
+            case 'top-right': top = r.top - th - m; left = r.right - tw; break;
+            default: top = r.bottom + m; left = r.left;
         }
 
         const vw = window.innerWidth;
         const vh = window.innerHeight;
         left = Math.max(12, Math.min(left, vw - tw - 12));
-        top  = Math.max(12, Math.min(top,  vh - th - 12));
+        top = Math.max(12, Math.min(top, vh - th - 12));
 
-        this.tooltip.style.top  = `${top}px`;
+        this.tooltip.style.top = `${top}px`;
         this.tooltip.style.left = `${left}px`;
     }
 
