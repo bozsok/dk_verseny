@@ -83,28 +83,28 @@
 
 /* Gratuláció stílus (Krisztián kérése alapján) */
 #summary-name {
-    top: 770px;
+    top: 763px;
     width: 100%;
     text-align: center;
     font-size: 150px;
 }
 
 #summary-class {
-    top: 1107px;
+    top: 1100px;
     left: 1444px;
     font-size: 50px;
     font-weight: bold;
 }
 
 #summary-score {
-    top: 1354px;
+    top: 1347px;
     left: 2170px;
     font-size: 65px;
     font-weight: bold;
 }
 
 #summary-time {
-    top: 1435px;
+    top: 1428px;
     left: 1734px;
     font-size: 60px;
     font-variant: small-caps;

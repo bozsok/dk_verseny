@@ -61,8 +61,12 @@
   max-width: 90vw;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+  transition: opacity 0.3s ease, visibility 0s linear 0s;
   pointer-events: auto;
+}
+
+.dkv-tutorial__tooltip:not(.dkv-is-visible) {
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
 }
 
 .dkv-tutorial__tooltip.dkv-is-visible {

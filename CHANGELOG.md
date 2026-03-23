@@ -5,6 +5,17 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.16.7] - 2026-03-23
+
+### Hozzáadva
+- **Teljes képernyő mód (Hub)**: Az évfolyam választásakor az alkalmazás mostantól automatikusan megkísérli a teljes képernyős módba váltást a jobb felhasználói élmény érdekében.
+
+### Javítva
+- **Összegző képernyő (Summary) – Osztály adat**: Kijavítva a mezőnév eltérés (`classId` vs `playerClass`), így a versenyző osztálya már helyesen megjelenik az összegző dián.
+- **Összegző képernyő (Summary) – Karakter és Keret**: Javítva a `CharacterSlide.js` adatmentési logikája, így a választott karakter azonosítója bekerül a profilba. Az `oklevel_keret_fekvo.png` elérhetővé tétele az univerzális `assets/images` útvonalon.
+- **Összegző képernyő (Summary) – Pozicionálás**: A név, pontszám és idő mezők `top` értéke korrigálva (-7px), biztosítva a tökéletes illeszkedést a háttérgrafikához.
+- **Ranglista képalkotás**: Az admin felületen (ranglista) javításra került az oklevél keret HTML attribútuma (`id` helyett `class`), így a generált gratulációs képeken már konzisztensen megjelenik a keret a karakteren.
+
 ## [0.16.6] - 2026-03-22
 
 ### Hozzáadva

@@ -268,6 +268,16 @@ class Hub {
 
     // Visual feedback
     this.animateGradeSelection(grade);
+
+    // Enter fullscreen mode on user interaction
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen()
+        .catch(err => {
+          if (this.options.logger) {
+            this.options.logger.warn(`Fullscreen error: ${err.message}`);
+          }
+        });
+    }
   }
 
   /**

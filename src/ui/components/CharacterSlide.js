@@ -594,7 +594,13 @@ class CharacterSlide {
       // Pontszám a configból (vagy fallback 1)
       const selectionPoints = (this.slideData.content && this.slideData.content.scoring && this.slideData.content.scoring.selection) || 1;
 
+      const userProfile = this.stateManager.getStateValue('userProfile') || {};
+      
       this.stateManager.updateState({
+        userProfile: {
+          ...userProfile,
+          selectedCharacterId: `${gender}_${index + 1}`
+        },
         avatar: avatarUrl, // Ez most már a "small" képre mutat, ha van icon
         score: currentScore + selectionPoints
       });

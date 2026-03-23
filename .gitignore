@@ -45,6 +45,8 @@ out/
 logs/
 *.log
 public/
+coverage/
+*.txt
 
 #Egyéb
 Source

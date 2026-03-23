@@ -51,7 +51,7 @@ export class SummarySlide {
                     </div>
 
                     <div id="summary-name" class="cert-text">${userProfile.name || 'Hős'}</div>
-                    <div id="summary-class" class="cert-text">${userProfile.playerClass || '-'}</div>
+                    <div id="summary-class" class="cert-text">${userProfile.classId || '-'}</div>
                     <div id="summary-score" class="cert-text">${score}</div>
                     <div id="summary-time" class="cert-text">${this._formatTime(timeMs)}</div>
                     <div id="summary-date" class="cert-text">${dateStr}</div>

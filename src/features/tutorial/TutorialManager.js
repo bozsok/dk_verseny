@@ -24,6 +24,8 @@ class TutorialManager {
         this.tooltip = null;
         this.currentClone = null; // Aktuálisan megjelenített elem-klón
         this.currentAudio = null;
+        this.activeStepTimeout = null; // Aktív lépésváltási időzítő
+        this.activeAudioPromise = null; // Aktív audió lejátszási Promise
 
         // Tutorial lépések konfigurációja (sorrend: karakterkép, becenév, pont, idővonal,
         // hanglejátszó, eltelt idő, küldetésnapló, narráció, inventory, jobbra nyíl)
@@ -134,6 +136,12 @@ class TutorialManager {
     showStep(index) {
         if (index < 0 || index >= this.steps.length) return;
 
+        // Korábbi időzítő törlése ha maradt (gyors kattintás védelem)
+        if (this.activeStepTimeout) {
+            clearTimeout(this.activeStepTimeout);
+            this.activeStepTimeout = null;
+        }
+
         // Ha a tooltip már látható, előbb fade-out, majd az új tartalom fade-in
         const isFirstStep = !this.tooltip.classList.contains('dkv-is-visible');
         const transitionDelay = isFirstStep ? 0 : 280;
@@ -141,7 +149,9 @@ class TutorialManager {
         // Tooltip fade-out indítása
         this.tooltip.classList.remove('dkv-is-visible');
 
-        setTimeout(() => {
+        this.activeStepTimeout = setTimeout(() => {
+            this.activeStepTimeout = null;
+
             // Előző klón animált eltávolítása
             this.removeClone();
 
@@ -197,6 +207,7 @@ class TutorialManager {
             boxSizing: 'border-box',
             // Konfliktusos örökölt CSS tulajdonságok nullázása
             transform: 'none',
+            transition: 'none', // Ne animáljon az eredeti helyére ha volt transition
             right: 'auto',
             bottom: 'auto',
             display: window.getComputedStyle(el).display
@@ -323,8 +334,12 @@ class TutorialManager {
             this.isLoading = true;
             this.currentAudio = new Audio(src);
             this.currentAudio.volume = this.app.narrationVolume || 1.0;
-            await this.currentAudio.play();
-        } catch {
+            
+            // Promise mentése a tisztításhoz
+            this.activeAudioPromise = this.currentAudio.play();
+            await this.activeAudioPromise;
+            this.activeAudioPromise = null;
+        } catch (e) {
             if (this.app.logger) {
                 this.app.logger.warn(`Tutorial audio lejátszás sikertelen: ${src}`);
             }
@@ -346,7 +361,13 @@ class TutorialManager {
 
         if (this.currentAudio) {
             this.currentAudio.pause();
+            this.currentAudio.src = ''; // Force cleanup
             this.currentAudio = null;
+        }
+        
+        if (this.activeStepTimeout) {
+            clearTimeout(this.activeStepTimeout);
+            this.activeStepTimeout = null;
         }
 
         this.app.onTutorialFinished();
