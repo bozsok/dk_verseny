@@ -49,7 +49,7 @@ class SlideManager {
                 const urlMatch = slide.content?.imageUrl?.match(/slide_(\d+)/);
                 if (urlMatch) {
                     slideKey = `slide_${urlMatch[1]}`;
-                } else if (slide.id?.split('_')[0] === 'station') {
+                } else if (String(slide.id)?.split('_')[0] === 'station') {
                     slideKey = slide.id;
                 }
 
@@ -71,16 +71,15 @@ class SlideManager {
                             this.logger && this.logger.info(`Auto-detected video for ${slideKey}`);
                         }
                     }
-                } catch {
-                    // Csendesen elnyomjuk, ha nincs videó
+                } catch (fetchErr) {
+                    this.logger && this.logger.debug(`Auto-detect: nincs videó ehhez: ${slideKey}`, { message: fetchErr?.message });
                 }
             });
             await Promise.all(fetchPromises);
 
             this.logger && this.logger.info(`Loaded config for grade ${grade}`, { slides: this.slides.length });
         } catch (error) {
-            console.error(`Failed to load config for grade ${grade}:`, error);
-            alert(`Hiba: A ${grade}. osztály anyaga még nem elérhető!`);
+            this.logger && this.logger.error(`Failed to load config for grade ${grade}`, { error: error.message, stack: error.stack });
             throw error;
         }
 

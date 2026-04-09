@@ -21,6 +21,7 @@ import CharacterSlide from './ui/components/CharacterSlide.js';
 import StorySlide from './ui/components/StorySlide.js';
 import SummarySlide from './ui/components/SummarySlide.js';
 import GameInterface from './ui/components/GameInterface.js';
+import GameInterfaceGrade4 from './ui/components/GameInterfaceGrade4.js';
 import { PortalTransition } from './ui/components/PortalTransition.js';
 import KeyCollectionAnimation from './ui/components/KeyCollectionAnimation.js';
 import TutorialManager from './features/tutorial/TutorialManager.js';
@@ -727,7 +728,10 @@ class DigitalKulturaVerseny {
       // 3. UI Layer Management
       if (!isFullscreen) {
         if (!this.activeGameInterface) {
-          this.activeGameInterface = new GameInterface({
+          const isGrade4 = (String(currentGrade) === '4');
+          const InterfaceClass = isGrade4 ? GameInterfaceGrade4 : GameInterface;
+
+          this.activeGameInterface = new InterfaceClass({
             onNext: () => this.handleNext(),
             onPrev: () => this.handlePrev(),
             onOpenSettings: () => this.activeGameInterface.toggleSettings(),
@@ -740,6 +744,8 @@ class DigitalKulturaVerseny {
             narrationVolume: this.narrationVolume,
             sfxVolume: this.sfxVolume,
             stateManager: this.stateManager,
+            eventBus: this.eventBus,
+            timeManager: this.timeManager,
             totalSlides: totalSlides - 1
           });
           const uiEl = this.activeGameInterface.createElement();
@@ -755,6 +761,14 @@ class DigitalKulturaVerseny {
 
         const narrationText = (slide.content && slide.content.narration) || slide.description || "Nincs elérhető történet ehhez a diához.";
         this.activeGameInterface.setNarration(narrationText);
+
+        // --- GRADE 4 SPECIFIKUS: Háttérkép frissítése ---
+        if (this.activeGameInterface.setBackgroundImage) {
+          const bgImage = (slide.type === 'story' || slide.type === 'video')
+            ? (slide.content?.imageUrl || slide.content?.backgroundUrl || null)
+            : null;
+          this.activeGameInterface.setBackgroundImage(bgImage);
+        }
 
         // --- KULCS ANIMÁCIÓ FÁZIS ---
         const isStationEnd = slide.metadata?.step === 3 && slide.metadata?.section?.startsWith('station_');

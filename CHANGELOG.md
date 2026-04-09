@@ -5,6 +5,33 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.18.0] - 2026-04-10
+
+### Hozzáadva
+- **Grade 4 "Quantum Terminal" Polírozás**:
+  - Kontrasztosabb modális ablak elemek: Sötét háttér a 'Kiválasztom' gombhoz és a bezáró 'x' ikonhoz a jobb láthatóságért.
+  - Hover/Active állapotok: Jitter-mentes, Quantum stílusú gombvisszajelzések (glow és border-color).
+  - Tipográfiai egységesítés: Új standard betűméret (1.4rem) a Manrope és Space Grotesk betűtípusokhoz a teljes onboarding során.
+
+### Módosítva
+- **Dinamikus Placeholder**: A regisztrációs íven az osztály példa már az évfolyamhoz igazodik (3. osztály -> 3.b, 4. osztály -> 4.b).
+- **Szelektor Architektúra**: A modális ablakok CSS szelektorai már nem függenek a slide konténertől, így stabilabb a stílusöröklődés.
+
+### Javítva
+- **Grade 3 Vizuális Regresszió**: Az OK gombok olvashatatlanságát okozó korábbi CSS konfliktusok feloldva, a Grade 3 stílusok érintetlenek maradnak.
+- **Szintaktikai hibák**: Javítva a Character.css fájlban maradt zárójel és formázási hibák.
+
+## [0.17.0] - 2026-04-09
+
+### Hozzáadva
+- **Grade 4 "Quantum Terminal" interfész**: Teljes körű vizuális harmonizáció a 3. osztályos elrendezéssel.
+- **Brutalista Design**: Technikai vágások (clip-path), türkiz neon effektek és Space Grotesk/Manrope tipográfia bevezetése.
+
+### Javítva
+- **CSS Tisztítás**: Az összes tiltott `!important` szabály eltávolítása a Grade 4 stíluslapokról.
+- **Hover stabilitás**: A gombok és kártyák Y irányú elmozdulásának megszüntetése a globális design-system felülbírálásával.
+- **Nyelvi harmonizáció**: Minden Grade 4 CSS komment és dokumentáció magyarosítása a projekt szabályai szerint.
+
 ## [0.16.7] - 2026-03-23
 
 ### Hozzáadva

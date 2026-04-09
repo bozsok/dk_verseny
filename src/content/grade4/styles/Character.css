@@ -1,39 +1,60 @@
-/* Character Slide Styles - Grade 4 */
+/* === GRADE 4 KARAKTERVÁLASZTÓ STÍLUSOK (Quantum Terminál) === */
 
-/* Layout Fix: Flex Column */
+/* Elrendezés: Igazítás a 3. osztályos struktúrához */
 .dkv-grade-4 .dkv-character-slide .dkv-onboarding-container {
-    display: flex !important;
+    display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-top: 60px;
     align-items: flex-start;
     width: 100%;
-    /* TEXT COLOR INHERITANCE FIX */
-    color: #ffd700;
-    /* Arany */
+    height: 100%;
 }
 
-/* Header */
-.dkv-grade-4 .dkv-character-slide .dkv-character-header {
+/* Elrendezés fejléce */
+.dkv-character-slide .dkv-character-header {
     text-align: left;
     margin-bottom: 25px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    flex: 0 0 auto;
     width: 100%;
 }
 
-.dkv-grade-4 .dkv-character-slide .dkv-slide-title,
-.dkv-grade-4 .dkv-character-slide p {
-    text-align: left;
-    color: #ffd700;
-    /* Arany */
-    font-family: 'Outfit', sans-serif;
+/* Cím */
+.dkv-character-slide .dkv-character-header h2.dkv-slide-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #c1fffe;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 
-/* === Toggle Block === */
-.dkv-grade-4 .dkv-toggle-block {
+/* További címsorok (P) */
+.dkv-character-slide .dkv-character-header p.dkv-slide-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: #f1f4fa;
+    margin: 0;
+}
+
+/* Leírás (Alcím) */
+.dkv-character-slide p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: #f1f4fa;
+    text-align: left;
+    line-height: 1.6;
+}
+
+/* === Nézetváltó kapcsoló blokk === */
+.dkv-toggle-block {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -42,8 +63,17 @@
     width: 100%;
 }
 
-/* Toggle Switch Styles (Checkbox elrejtése + Slider) */
-.dkv-grade-4 .dkv-character-slide .dkv-switch {
+.dkv-toggle-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #c1fffe;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* === Nézetváltó kapcsoló (Quantum Stílus) === */
+.dkv-character-slide .dkv-switch {
     position: relative;
     display: inline-block;
     width: 50px;
@@ -51,51 +81,50 @@
     flex-shrink: 0;
 }
 
-.dkv-grade-4 .dkv-character-slide .dkv-switch input {
+.dkv-character-slide .dkv-switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.dkv-grade-4 .dkv-character-slide .dkv-slider {
+.dkv-character-slide .dkv-slider {
     position: absolute;
     cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #3d0e0e;
-    /* Sötétvörös */
+    background-color: rgba(255, 255, 255, 0.1);
     transition: .4s;
     border-radius: 4px;
-    /* Szögletesebb */
-    border: 1px solid #ffd700;
+    border: 1px solid rgba(193, 255, 254, 0.3);
 }
 
-.dkv-grade-4 .dkv-character-slide .dkv-slider:before {
+.dkv-character-slide .dkv-slider:before {
     position: absolute;
     content: "";
     height: 18px;
     width: 18px;
     left: 4px;
     bottom: 3px;
-    background-color: #ffd700;
-    /* Arany gomb */
+    background-color: #c1fffe;
     transition: .4s;
     border-radius: 2px;
-    /* Szögletes */
 }
 
-.dkv-grade-4 .dkv-character-slide input:checked+.dkv-slider {
-    background-color: #7a2020;
+.dkv-character-slide input:checked+.dkv-slider {
+    background-color: rgba(0, 255, 255, 0.2);
+    border-color: #00ffff;
 }
 
-.dkv-grade-4 .dkv-character-slide input:checked+.dkv-slider:before {
+.dkv-character-slide input:checked+.dkv-slider:before {
     transform: translateX(24px);
+    background-color: #fff;
+    box-shadow: 0 0 10px #00ffff;
 }
 
-/* === Cards Container === */
-.dkv-grade-4 .dkv-cards-container {
+/* === Kártyák konténere === */
+.dkv-cards-container {
     display: flex;
     justify-content: flex-start;
     gap: 30px;
@@ -103,93 +132,203 @@
     width: 100%;
 }
 
-.dkv-grade-4 .dkv-char-card {
+/* === Karakter Kártyák (Character Cards) === */
+.dkv-char-card {
     width: 130px;
     height: 290px;
-    background: rgba(61, 14, 14, 0.8);
-    border: 3px solid #8b4513;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(193, 255, 254, 0.3);
     border-radius: 4px;
     cursor: pointer;
-    transition: transform 0.3s ease, border-color 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
-.dkv-grade-4 .dkv-char-card img {
+.dkv-grade-4 .dkv-character-slide .dkv-char-card:hover {
+    transform: scale(1.05);
+    /* Szigorúan csak nagyítás, nincs translateY elmozdulás */
+    border-color: #c1fffe;
+    background: rgba(0, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dkv-char-card.selected {
+    border-color: #00ffff;
+    background: rgba(0, 255, 255, 0.15);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.3), inset 0 0 15px rgba(0, 255, 255, 0.1);
+}
+
+.dkv-char-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 2px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
 }
 
-.dkv-grade-4 .dkv-char-card:hover {
-    transform: scale(1.05);
-    border-color: #ffd700;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+.dkv-char-card:hover img,
+.dkv-char-card.selected img {
+    opacity: 1;
 }
 
-.dkv-grade-4 .dkv-char-card.selected {
-    border-color: #ffd700;
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
-    background: rgba(255, 215, 0, 0.1);
+/* === Lábléc szöveg === */
+.dkv-footer-text {
+    text-align: left;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1rem;
+    color: #f1f4fa;
+    max-width: 800px;
+    margin-top: 10px;
+    opacity: 0.8;
 }
 
-/* === PREVIEW MODAL (Grade 4) === */
-.dkv-grade-4.dkv-preview-modal-overlay {
-    /* Scoped class on body element */
+/* === MODÁL STÍLUSOK === */
+.dkv-preview-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.9);
-    z-index: 2000;
-    display: flex;
-    /* Flex, nem none (JS switch) */
+    display: none;
+    /* A megjelenítést a JS vezérli */
     align-items: center;
     justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(15px);
 }
 
-.dkv-grade-4 .dkv-preview-modal-content {
+.dkv-preview-modal-content {
     position: relative;
     width: 700px;
     height: 700px;
-    background: #3d0e0e;
-    border: 4px solid #ffd700;
+    max-width: 95vw;
+    max-height: 95vh;
+    background: rgba(10, 20, 30, 0.98);
+    border: 1px solid #c1fffe;
     border-radius: 4px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.9);
 }
 
-.dkv-grade-4 .dkv-preview-image-placeholder img {
-    border: 2px solid #ffd700;
+.dkv-preview-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dkv-preview-image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 1px solid rgba(193, 255, 254, 0.4);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
     border-radius: 4px;
-    max-width: 100%;
-    max-height: 100%;
 }
 
-.dkv-grade-4 .dkv-preview-close {
+.dkv-preview-close {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 24px;
-    color: #ffd700;
+    top: 25px;
+    right: 25px;
     cursor: pointer;
+    font-size: 28px;
+    color: #c1fffe;
+    line-height: 1;
+    transition: all 0.2s ease;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    /* Sötétebb háttér a láthatóságért */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 10;
 }
 
-.dkv-grade-4 .dkv-preview-select-btn {
+.dkv-preview-close:hover {
+    transform: rotate(90deg) scale(1.2);
+    color: #fff;
+    background: rgba(0, 40, 60, 0.8);
+    /* Továbbra is sötét, de türkizbe hajló háttér */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+}
+
+/* Hibaablak a karakterválasztásnál */
+.dkv-error-modal-overlay {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: #5c1818;
-    color: #ffd700;
-    border: 2px solid #ffd700;
-    padding: 10px 30px;
-    font-family: 'Outfit', sans-serif;
-    font-weight: bold;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.dkv-error-modal-content {
+    background: rgba(20, 10, 10, 0.98);
+    border: 1px solid #ef4444;
+    padding: 30px;
+    border-radius: 4px;
+    max-width: 400px;
+    text-align: center;
+    color: #f1f4fa;
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.2);
+}
+
+.dkv-error-message {
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    font-family: 'Space Grotesk', sans-serif;
+    white-space: pre-line;
+    line-height: 1.6;
+}
+
+/* === Előnézeti Kiválasztó Gomb - Grade 4 stílus, Grade 3 pozíció === */
+.dkv-preview-select-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    padding: 12px 40px;
+    background: rgba(0, 40, 60, 0.95);
+    /* Sötétebb, kontrasztosabb háttér */
+    border: 1px solid #c1fffe;
+    border-radius: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    color: #c1fffe;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Space Grotesk', sans-serif;
     text-transform: uppercase;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #3d0e0e;
+    font-weight: bold;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+}
+
+/* Grade 4 specifikus hover a modálon belül */
+.dkv-grade-4 .dkv-preview-select-btn:hover {
+    transform: none;
+    background: rgba(1, 26, 39, 0.95);
+    /* Marad a sötét alap, de kap egy türkiz tónust */
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+    color: #fff;
+    border-color: #00ffff;
+}
+
+.dkv-grade-4 .dkv-preview-select-btn:active {
+    transform: scale(0.98);
+    background: rgba(0, 162, 255, 0.2);
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }

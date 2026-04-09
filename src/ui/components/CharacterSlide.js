@@ -404,7 +404,11 @@ class CharacterSlide {
     this.closePreviewBtn.onkeydown = (e) => { if (e.key === 'Enter') this._closePreviewModal(); };
 
     this.selectPreviewBtn = document.createElement('button');
-    this.selectPreviewBtn.className = 'dkv-preview-select-btn';
+    let currentGrade = 3;
+    if (this.stateManager) {
+      currentGrade = this.stateManager.getStateValue('currentGrade') || 3;
+    }
+    this.selectPreviewBtn.className = currentGrade === 4 ? 'dkv-grade-4-button dkv-preview-select-btn' : 'dkv-preview-select-btn';
     this.selectPreviewBtn.textContent = 'Kiválasztom';
     this.selectPreviewBtn.onclick = () => this._confirmSelection();
 
@@ -457,6 +461,15 @@ class CharacterSlide {
   _createErrorModal() {
     this.errorModal = document.createElement('div');
     this.errorModal.className = 'dkv-error-modal-overlay';
+
+    // Grade scope hozzáadása a hiba modálhoz is!
+    if (this.stateManager) {
+        const currentGrade = this.stateManager.getStateValue('currentGrade');
+        if (currentGrade) {
+            this.errorModal.classList.add(`dkv-grade-${currentGrade}`);
+        }
+    }
+
     this.errorModal.style.display = 'none'; // Inicializálás
     this.errorModal.setAttribute('role', 'dialog');
     this.errorModal.setAttribute('aria-modal', 'true');
@@ -470,7 +483,11 @@ class CharacterSlide {
     this.errorMsg.className = 'dkv-error-message';
 
     this.errorOkBtn = document.createElement('button');
-    this.errorOkBtn.className = 'dkv-button';
+    let errorGrade = 3;
+    if (this.stateManager) {
+        errorGrade = this.stateManager.getStateValue('currentGrade') || 3;
+    }
+    this.errorOkBtn.className = errorGrade === 4 ? 'dkv-grade-4-button' : 'dkv-button';
     this.errorOkBtn.textContent = 'OK';
     this.errorOkBtn.onclick = () => this._closeErrorModal();
 
@@ -478,7 +495,7 @@ class CharacterSlide {
     content.appendChild(this.errorOkBtn);
     this.errorModal.appendChild(content);
 
-    this.element.appendChild(this.errorModal);
+    document.body.appendChild(this.errorModal);
   }
 
   _showError(msg) {

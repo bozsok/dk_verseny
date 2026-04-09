@@ -1,0 +1,609 @@
+/* src/content/grade4/styles/Interface.css */
+
+/* DESIGN SYSTEM TOKENS */
+.dkv-g4-interface {
+    --g4-primary: #c1fffe;
+    --g4-primary-container: #00ffff;
+    --g4-secondary: #ff51fa;
+    --g4-secondary-dim: #ff51fa;
+    --g4-tertiary: #9cff93;
+    --g4-on-surface: #f1f4fa;
+    --g4-on-surface-variant: #a8abb1;
+    --g4-surface-container-low: #0f1418;
+    --g4-surface: #0a0f13;
+    --g4-surface-container-highest: #21262c;
+    --g4-outline-variant: #44484d;
+    --g4-bg-black: #000000;
+}
+
+/* BASE CONTAINER */
+.dkv-g4-interface {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--g4-bg-black);
+    color: var(--g4-on-surface);
+    font-family: 'Manrope', sans-serif;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    pointer-events: none;
+    /* Átvezet a content layerre – mint Grade 3 */
+}
+
+/* Material Symbols Outlined alapbeállítás – nélküle szövegként jelenik meg */
+.dkv-g4-interface .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: inherit;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+.dkv-g4-interface *::selection {
+    background-color: var(--g4-primary-container);
+    color: #005d5d;
+}
+
+/* BACKGROUND & LAYERS */
+.dkv-g4-bg-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.dkv-g4-scanline {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    opacity: 0.3;
+    pointer-events: none;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 3px, 3px 100%;
+}
+
+.dkv-g4-bg-container {
+    position: absolute;
+    inset: 0;
+}
+
+.dkv-g4-bg-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* A sötétítő overlay szűrők eltávolítva */
+}
+
+.dkv-g4-bg-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    background-image: radial-gradient(circle, #72767b 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+/* TOP HUD */
+.dkv-g4-top-hud {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 2rem;
+    box-sizing: border-box;
+    pointer-events: none;
+    /* Csak a gyerekei kapják vissza */
+}
+
+/* A HUD aktív csoportjai kattinthatók */
+.dkv-g4-hud-left,
+.dkv-g4-hud-right {
+    pointer-events: auto;
+}
+
+.dkv-g4-hud-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dkv-g4-avatar-wrapper {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid rgba(255, 81, 250, 0.5);
+    /* secondary/50 */
+    padding: 0.125rem;
+    transition: border-color 0.3s;
+}
+
+.dkv-g4-avatar-wrapper:hover {
+    border-color: var(--g4-secondary);
+}
+
+.dkv-g4-avatar-border {
+    width: 100%;
+    height: 100%;
+}
+
+.dkv-g4-avatar-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+    /* Mélyített képernyő hatás */
+}
+
+.dkv-g4-avatar-dot {
+    position: absolute;
+    top: -0.125rem;
+    right: -0.125rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: var(--g4-tertiary);
+}
+
+.dkv-g4-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.dkv-g4-username {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    color: var(--g4-primary);
+    letter-spacing: 0.2em;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.dkv-g4-points-container {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.625rem;
+    color: rgba(241, 244, 250, 0.6);
+    /* on-surface/60 */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.dkv-g4-points-label {
+    color: rgba(255, 81, 250, 0.8);
+}
+
+.dkv-g4-hud-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.dkv-g4-timer-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(193, 255, 254, 0.2);
+}
+
+.dkv-g4-timer-icon {
+    color: var(--g4-primary);
+    font-size: 1.125rem;
+}
+
+.dkv-g4-timer-value {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--g4-primary);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.dkv-g4-btn-settings {
+    background: none;
+    border: none;
+    color: var(--g4-on-surface-variant);
+    cursor: pointer;
+    transition: color 0.3s;
+    font-size: 1.25rem;
+    padding: 0;
+}
+
+.dkv-g4-btn-settings:hover {
+    color: var(--g4-primary);
+}
+
+/* SIDE NAV */
+.dkv-g4-side-nav {
+    position: absolute;
+    left: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    pointer-events: none;
+    /* Csak a gombok kapják vissza */
+}
+
+.dkv-g4-nav-item {
+    padding: 0.5rem;
+    background: none;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    color: rgba(0, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+    pointer-events: auto;
+    /* Kattintható */
+}
+
+.dkv-g4-nav-item:hover {
+    border-color: rgba(0, 255, 255, 0.5);
+    color: var(--g4-primary-container);
+}
+
+/* BOTTOM HUD */
+.dkv-g4-bottom-hud {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    box-sizing: border-box;
+    pointer-events: none;
+    /* Csak az interaktív gyerekek kapják vissza */
+}
+
+/* Az inventory sloták kattinthatók */
+.dkv-g4-inventory-area,
+.dkv-g4-slot.active {
+    pointer-events: auto;
+}
+
+.dkv-g4-station-info {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.dkv-g4-station-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.625rem;
+    color: var(--g4-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.dkv-g4-station-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 900;
+    color: var(--g4-primary);
+    letter-spacing: -0.05em;
+}
+
+.dkv-g4-station-total {
+    color: var(--g4-outline-variant);
+    font-size: 0.75rem;
+}
+
+.dkv-g4-timeline {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dkv-g4-timeline-segment {
+    width: 4rem;
+    height: 0.125rem;
+    background-color: var(--g4-surface-container-highest);
+    transition: all 0.3s;
+}
+
+.dkv-g4-timeline-segment.filled {
+    background-color: var(--g4-primary-container);
+    box-shadow: 0 0 8px var(--g4-primary-container);
+}
+
+.dkv-g4-inventory-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dkv-g4-inventory-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.5625rem;
+    color: rgba(255, 81, 250, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.dkv-g4-inventory-slots {
+    display: flex;
+    gap: 0.375rem;
+}
+
+.dkv-g4-slot {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid rgba(68, 72, 77, 0.3);
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dkv-g4-slot-icon {
+    color: var(--g4-outline-variant);
+    font-size: 0.875rem;
+    display: flex;
+}
+
+.dkv-g4-slot-icon.active-item {
+    color: var(--g4-primary);
+    background-color: rgba(193, 255, 254, 0.1);
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(193, 255, 254, 0.3);
+}
+
+/* NAVIGATION CONTROLS */
+.dkv-g4-nav-controls {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    pointer-events: none;
+    /* Csak a gombok kapják vissza */
+}
+
+.dkv-g4-btn-prev {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: none;
+    border: 1px solid rgba(193, 255, 254, 0.1);
+    color: rgba(193, 255, 254, 0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+    pointer-events: auto;
+    /* Kattintható */
+}
+
+.dkv-g4-btn-prev:hover {
+    border-color: rgba(193, 255, 254, 0.5);
+    color: var(--g4-primary);
+}
+
+.dkv-g4-btn-next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 3.5rem;
+    background-color: rgba(0, 255, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    color: var(--g4-primary-container);
+    cursor: pointer;
+    transition: all 0.3s;
+    overflow: hidden;
+    border-radius: 0 0 0.5rem 0;
+    pointer-events: auto;
+    /* Kattintható */
+}
+
+.dkv-g4-btn-next:hover,
+.dkv-g4-btn-next.dkv-g4-btn-active {
+    background-color: rgba(0, 255, 255, 0.2);
+}
+
+.dkv-g4-btn-next span {
+    font-family: 'Material Symbols Outlined';
+    font-weight: 400;
+    font-size: 1.875rem;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    transition: transform 0.3s;
+}
+
+.dkv-g4-btn-next:hover span {
+    transform: translateX(4px);
+}
+
+/* DECORATIVE CORNERS */
+.dkv-g4-decorative-corners {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.dkv-g4-corner {
+    position: absolute;
+    width: 4rem;
+    height: 4rem;
+    opacity: 0.2;
+}
+
+.dkv-g4-corner-tl {
+    top: 3rem;
+    left: 3rem;
+    border-top: 1px solid var(--g4-primary);
+    border-left: 1px solid var(--g4-primary);
+}
+
+.dkv-g4-corner-tr {
+    top: 3rem;
+    right: 3rem;
+    border-top: 1px solid var(--g4-primary);
+    border-right: 1px solid var(--g4-primary);
+}
+
+.dkv-g4-corner-bl {
+    bottom: 3rem;
+    left: 3rem;
+    border-bottom: 1px solid var(--g4-primary);
+    border-left: 1px solid var(--g4-primary);
+}
+
+.dkv-g4-corner-br {
+    bottom: 3rem;
+    right: 3rem;
+    border-bottom: 1px solid var(--g4-primary);
+    border-right: 1px solid var(--g4-primary);
+}
+
+/* CONTENT AREA & PANELS */
+.dkv-g4-content-area {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+}
+
+/* MODALS AND PANELS (Narrator, Journal, Settings, Task) */
+.dkv-g4-task-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    /* Modal megjelenésekor kattintható */
+}
+
+.dkv-g4-task-modal-overlay.open {
+    display: flex;
+}
+
+.dkv-g4-task-modal,
+.dkv-g4-journal-panel,
+.dkv-g4-narrator-panel,
+.dkv-g4-settings-panel {
+    background: var(--g4-surface-container-low);
+    border-top: 2px solid var(--g4-primary);
+    border-bottom: 2px solid var(--g4-primary);
+    min-width: 400px;
+    padding: 2rem;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+    color: var(--g4-on-surface);
+}
+
+.dkv-g4-narrator-panel,
+.dkv-g4-journal-panel,
+.dkv-g4-settings-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 900;
+    display: none;
+    pointer-events: auto;
+    /* Panel kattintható */
+}
+
+.dkv-g4-narrator-panel.open,
+.dkv-g4-journal-panel.open,
+.dkv-g4-settings-panel.open {
+    display: block;
+}
+
+.dkv-g4-panel-header h2,
+.dkv-g4-task-modal-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--g4-primary);
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+    margin: 0 0 1rem 0;
+}
+
+.dkv-g4-panel-body,
+.dkv-g4-task-modal-body {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+}
+
+.dkv-g4-task-ok-btn,
+.dkv-g4-btn-close {
+    background-color: rgba(0, 255, 255, 0.1);
+    color: var(--g4-primary);
+    border: 1px solid var(--g4-primary);
+    padding: 0.75rem 2rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+    transition: all 0.3s;
+}
+
+.dkv-g4-task-ok-btn:hover,
+.dkv-g4-btn-close:hover {
+    background-color: var(--g4-primary);
+    color: var(--g4-bg-black);
+}
+
+.dkv-g4-close-icon {
+    color: var(--g4-outline-variant);
+    font-size: 1.5rem;
+}
+
+.dkv-g4-close-icon:hover {
+    color: var(--g4-primary);
+}
+
+.dkv-g4-setting-row {
+    margin-bottom: 1rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.875rem;
+    color: var(--g4-primary-container);
+}
+
+.dkv-g4-setting-row input[type="range"] {
+    width: 100%;
+    accent-color: var(--g4-primary);
+}

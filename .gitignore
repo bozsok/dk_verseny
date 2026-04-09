@@ -75,3 +75,8 @@ _bmad
 public/assets/
 others/
 .agents/
+
+# UNQA Swarm
+.unqa-swarm_workspace/
+! .agents/
+! .agent/

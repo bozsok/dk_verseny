@@ -3,6 +3,7 @@ import './styles/main.css';
 import './styles/Registration.css';
 import './styles/Welcome.css';
 import './styles/Character.css';
+import './styles/Interface.css';
 import videoConfig from './video-config.json';
 
 const TYPING_SPEED = 2;
@@ -24,17 +25,17 @@ const applyVideoConfig = (slideConfig, slideKey) => {
     }
 };
 
-export const createConfig = () => {
+const createConfig = () => {
     const slides = [];
     let idCounter = 1;
 
-    const addSlide = (type, title, description, content = {}, metadata = {}) => {
+    const addSlide = (type, title, description, content = {}, metadata = {}, id = null) => {
         const enrichedContent = {
             ...content,
             typingSpeed: TYPING_SPEED
         };
         slides.push({
-            id: idCounter++,
+            id: id || idCounter++,
             type,
             title,
             description,
@@ -45,6 +46,12 @@ export const createConfig = () => {
         });
     };
 
+    /**
+     * Fisher-Yates in-place keverés.
+     * Megjegyzés: minden createConfig() híváskor új véletlenszerű sorrendet ad —
+     * ez szándékos (új játékmenet = új állomáspálya). Ha reprodukálható sorrend
+     * szükséges, a seed értéket a StateManager-ből kell venni.
+     */
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -54,13 +61,13 @@ export const createConfig = () => {
 
     const bgImage = 'assets/images/grade4/onboarding_bg.jpg';
 
-    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözöllek, bátor Lovag!', 'Te lettél az egyik <b>Kiválasztott</b>, aki egy izgalmas és kalandokkal teli utazáson vesz részt.\nAz lesz a feladatod, hogy felfedezd a varázslatos <b>Lovagrendet</b> és megállíts egy veszélyes fenyegetést. A rend helyreállításához különböző <b>Ereklyéket</b> kell összegyűjtened.\nA többi kiválasztottal együtt indulsz útnak, de remélhetőleg <b>Te</b> leszel az, aki sikerrel fejezi be a küldetését.', {
+    addSlide(SLIDE_TYPES.WELCOME, 'Üdvözlet a Kód Királyságban!', 'Üdvözlünk, Kódmester, a Kód Királyság legbelső védelmi zónájában.\nEz a digitális birodalom az adatok és algoritmusok tökéletes szimfóniájára épült, ahol minden szektor a stabilitást szolgálja. Jelenléted kritikus fontosságú, ugyanis a rendszermag szokatlan jeleket sugároz.\nFelkészültél arra, hogy belépj a hálózat mélyére, és szembenézz az ismeretlen kihívásokkal? A Királyság sorsa mostantól a te kezedben van', {
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
         audioSrc: 'assets/audio/grade4/welcome.mp3'
-    }, { section: 'onboarding', step: 0 });
+    }, { section: 'onboarding', step: 0 }, 'welcome');
 
-    addSlide(SLIDE_TYPES.REGISTRATION, 'Első feladatként írd be a teljes nevedet az alábbi beviteli mezőbe! A teljes nevedre van szükség.\nEzt követően add meg a becenevedet maximum 10 betűből, majd utána az osztályodat!', '', {
+    addSlide(SLIDE_TYPES.REGISTRATION, 'Mielőtt megkezdenénk a műveletet, a biztonsági protokoll megköveteli az azonosításodat. Kérjük, add meg a hálózati nevedet, becenevedet és az aktuális egységedet a terminálon.\nEz az információ elengedhetetlen a hozzáférési jogosultságok kiosztásához és a haladásod rögzítéséhez. A rendszer minden adatpontot titkosítva tárol, biztosítva a küldetésed integritását.', '', {
         fields: ['name', 'nickname', 'classId'],
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
@@ -73,9 +80,9 @@ export const createConfig = () => {
             classId: 1
         },
         audioSrc: 'assets/audio/grade4/registration.mp3'
-    }, { section: 'onboarding', step: 1 });
+    }, { section: 'onboarding', step: 1 }, 'registration');
 
-    addSlide(SLIDE_TYPES.CHARACTER, 'Következő feladatként válassz egy karaktert az alábbiak közül!\nA karakterek kattintással nagyíthatók!', '', {
+    addSlide(SLIDE_TYPES.CHARACTER, 'A virtuális térve való belépéshez szükséged van egy digitális reprezentációra, egy Avatárra.\nAz Avatár lesz a kapcsolatod a Kód Királyság fizikai és digitális rétegei között.', '', {
         characters: {
             boy: [
                 { id: 'b1', card: 'assets/images/grade4/karakter/boy_1.jpg', zoom: 'assets/images/grade4/karakter/large/boy_1_n.jpg', icon: 'assets/images/grade4/karakter/small/boy_1_k.jpg' },
@@ -96,21 +103,24 @@ export const createConfig = () => {
             selection: 1
         },
         audioSrc: 'assets/audio/grade4/character.mp3'
-    }, { section: 'onboarding', step: 2 });
+    }, { section: 'onboarding', step: 2 }, 'character');
 
     // === 1. BEVEZETÉS (FIX 1-4) ===
     for (let i = 1; i <= 4; i++) {
         const slideNum = String(i).padStart(2, '0');
         const title = `Bevezetés ${i}. (Lovagrend)`;
 
-        // Placeholder szövegek (A User majd kicseréli)
+        // TODO: Placeholder szövegek – tartalom véglegesítése szükséges
         const narrationText = `<b>${title}</b><br><br>Itt olvasható majd a kaland története.<br>Jelenleg ez egy helyőrző szöveg a Grade 4 (${i}.) diánál.`;
 
-        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', {
+        const introContent = {
             imageUrl: `assets/images/grade4/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade4/slide_${slideNum}.mp3`
-        }, { section: 'intro', step: i - 1 });
+        };
+        applyVideoConfig(introContent, `slide_${slideNum}`);
+
+        addSlide(SLIDE_TYPES.STORY, title, 'Kövessétek az utasításokat...', introContent, { section: 'intro', step: i - 1 }, `intro_${i}`);
     }
 
     // === 2. ÁLLOMÁSOK (KEVERT 5-24) ===
@@ -137,11 +147,15 @@ export const createConfig = () => {
             const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
             const stepDescription = step === 2 ? 'Oldjátok meg a feladatot!' : 'Kövessétek a történetet!';
 
-            addSlide(SLIDE_TYPES.STORY, title, stepDescription, {
+            // TODO: Placeholder szövegek – tartalom véglegesítése szükséges
+            const stationContent = {
                 imageUrl: `assets/images/grade4/slides/slide_${fileNumStr}.jpg`,
                 narration: narrationText,
                 audioSrc: `assets/audio/grade4/slide_${fileNumStr}.mp3`
-            }, { section: `station_${originalStationIdx + 1}`, step }, slideId);
+            };
+            applyVideoConfig(stationContent, `slide_${fileNumStr}`);
+
+            addSlide(SLIDE_TYPES.STORY, title, stepDescription, stationContent, { section: `station_${originalStationIdx + 1}`, step }, slideId);
         }
     }
 
@@ -152,11 +166,15 @@ export const createConfig = () => {
         const narrationText = `<b>${title}</b><br><br>Itt olvasható majd a kaland története.<br>Jelenleg ez egy helyőrző szöveg az Grade 4 fináléjához (${i}. dia).`;
         const finalDescription = (i === 27) ? 'A végső feladat vár rád!' : 'Kövessétek a történetet!';
 
-        addSlide(SLIDE_TYPES.STORY, title, finalDescription, {
+        // TODO: Placeholder szövegek – tartalom véglegesítése szükséges
+        const finaleContent = {
             imageUrl: `assets/images/grade4/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
             audioSrc: `assets/audio/grade4/slide_${slideNum}.mp3`
-        }, { section: 'final', step: i - 25 }, `final_${i - 24}`);
+        };
+        applyVideoConfig(finaleContent, `slide_${slideNum}`);
+
+        addSlide(SLIDE_TYPES.STORY, title, finalDescription, finaleContent, { section: 'final', step: i - 25 }, `final_${i - 24}`);
     }
 
     return slides;

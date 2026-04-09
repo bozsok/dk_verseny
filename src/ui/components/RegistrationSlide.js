@@ -99,9 +99,15 @@ class RegistrationSlide {
         form.className = 'dkv-form-container';
 
         // Inputok létrehozása (validációs callbackkel)
+        let classPlaceholder = '4.b';
+        if (this.stateManager) {
+            const currentGrade = this.stateManager.getStateValue('currentGrade');
+            if (currentGrade === 3) classPlaceholder = '3.b';
+        }
+
         this.nameInput = this._createInput('Mi a teljes neved?', 'Kiss Pál', 'name');
         this.nickInput = this._createInput('Hogyan szólíthatunk?', 'Zseni', 'nick');
-        this.classIdInput = this._createInput('Melyik osztályba jársz?', '4.b', 'classId');
+        this.classIdInput = this._createInput('Melyik osztályba jársz?', classPlaceholder, 'classId');
 
         // Tovább Gomb
         this.nextBtn = document.createElement('button');
@@ -421,7 +427,12 @@ class RegistrationSlide {
         this.modalMsg.className = 'dkv-registration-modal-message';
 
         this.okBtn = document.createElement('button');
-        this.okBtn.className = 'dkv-grade-3-button';
+        // Gombosztály dinamikus meghatározása az évfolyam alapján
+        let currentGrade = 3;
+        if (this.stateManager) {
+            currentGrade = this.stateManager.getStateValue('currentGrade') || 3;
+        }
+        this.okBtn.className = currentGrade === 4 ? 'dkv-grade-4-button' : 'dkv-button';
         this.okBtn.textContent = 'OK';
 
         this.okBtn.onclick = () => {

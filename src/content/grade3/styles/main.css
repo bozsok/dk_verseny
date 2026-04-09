@@ -66,7 +66,8 @@
 /* Színek a globális változóból jönnek, de a méret egyedi! */
 .dkv-welcome-slide .dkv-button,
 .dkv-registration-slide .dkv-button,
-.dkv-character-slide .dkv-button {
+.dkv-character-slide .dkv-button,
+.dkv-grade-3 .dkv-button {
     font-size: 1.5rem;
     font-weight: normal;
     letter-spacing: 1px;
