@@ -1,38 +1,42 @@
-# 📐 Strategic Proposal: Grade 4 Avatar Fix
+# 📐 Strategiai Javaslat: Grade 4 CSS Feliratozás (Quantum Terminál)
 
-I am **Architect-Petrel**. This proposal outlines the "Absolute Perfect Path" to resolve the character avatar display bug in the 4th-grade "Quantum Terminal" interface, following the UNQA Swarm protocols.
+**Készítette:** Architect-Steamer
+**Küldetés:** UI elem azonosíthatóság javítása magyar nyelvű kommentekkel.
 
-## 🏗️ Architectural Analysis
+## 🏛️ Architecturális Analízis (Az "Abszolút Tökéletes Út")
 
-The current failure in avatar rendering stems from a fundamental mismatch between the UI element's role and its styling:
-1.  **Element Type Mismatch:** The `.dkv-g4-avatar-image` is a `div` element receiving a `background-image` via JS. However, the CSS currently applies `object-fit: cover`, which is exclusively for `<img>` or `<video>` elements.
-2.  **Missing Scaling Logic:** Without `background-size: cover`, even if the image loads, it will likely be misaligned or pixelated.
-3.  **State Synchronization:** We must verify that the `state.avatar` URL generated in `CharacterSlide.js` is reaching the `GameInterfaceGrade4.js` component during the regular state update cycle.
+A projekt BEM módszertant és `.dkv-` prefixet használ. A Grade 4 (Quantum Terminál) stílusai több fájlban szétosztva jelennek meg, és gyakran mélyen egymásba ágyazott (nested) szelektorokat tartalmaznak (pl. `.dkv-grade-4 .dkv-welcome-slide .dkv-start-button`). 
 
-## 🎯 The Perfect Path
+A legtisztább megoldás az, ha a kommenteket közvetlenül a szelektorok fölé helyezzük el, egyértelműen megjelölve a gomb funkcióját és (ahol releváns) a felhasználói felületen elfoglalt helyét. Ezzel elkerülhető, hogy a CSS-ben járatlanabb fejlesztők vagy a későbbi módosítások során összezavarodjanak az elemek.
 
-To ensure a premium, stable, and high-tech look, we will treat the avatar slot as a dynamic viewport.
+## 🛡️ Kockázatelemzés és Technikai Adósság
 
-### 1. Style Remediation (CSS)
-We will move away from `object-fit` and implement a robust background-layer strategy in `Interface.css`:
-- **File:** `src/content/grade4/styles/Interface.css`
-- **Change:** Remove `object-fit: cover`. Add `background-size: cover`, `background-position: center`, and `background-repeat: no-repeat`.
-- **Aesthetic Add-on:** Add a subtle `box-shadow` (inner) to the border to give the avatar a "recessed screen" look.
+- **Kockázat:** A túlzott kommentezés növelheti a fájlméretet, de mivel a build folyamat (PostCSS, CSSnano) ezeket eltávolítja a produkciós változatból, ez nem jelent valós veszélyt.
+- **Konzisztencia:** Ügyelnünk kell rá, hogy ugyanazt a gombot minden fájlban azonos névvel illessük (pl. "Tovább gomb").
+- **Egymásba ágyazottság:** A kommenteket a legspecifikusabb szelektorhoz közel kell elhelyezni, hogy látható legyen, pontosan melyik állapotra (pl. `:hover`) vonatkoznak.
 
-### 2. Logic Audit & Pathing
-We will ensure the `assets/` to `public/assets/` mapping is solid for the small icon paths:
-- **File:** `src/content/grade4/config.js` (Verify paths again)
-- **File:** `src/ui/components/GameInterfaceGrade4.js` (Check if `updateHUD` needs an initial call on creation).
+## 📋 Logikai Vázlat (Implementációs Lépések)
 
-## ⚠️ Risk Assessment
-- **Zero Impact on other grades:** All changes are scoped to Grade 4 specific classes or files.
-- **Dependency check:** This relies on the `GameStateManager` providing the correct `state.avatar` value, which is already established in the `CharacterSlide`.
+### 1. `Interface.css` Feliratozása
+- HUD elemek (Profil, Beállítások) jelölése.
+- Navigációs nyilak (Előző/Következő) kiemelése.
+- Funkciógombok (Napló, Terminál) azonosítása.
+- Modál gombok (OK, Bezárás) leírása.
 
----
+### 2. `Character.css` Feliratozása
+- Karakter kártyák és az előnézeti modál interaktív elemeinek jelölése.
 
-## 🏁 Next Steps
-1.  Review this proposal.
-2.  If approved, type `proceed`, `go`, or `swarm freeze` to lock this architecture.
-3.  **Note:** I will then enter a **Zero-Action Lock**. You must open a new chat with `manage` to begin phase 2.
+### 3. `Registration.css` Feliratozása
+- A regisztrációs folyamat "Tovább" gombjának és beviteli mezőinek azonosítása.
 
-**Broker Handoff: STRATEGIC PROPOSAL COMPLETE**
+### 4. `main.css` Feliratozása
+- Globális Grade 4 gombalapok és közös hover állapotok magyarázata.
+
+### 5. `Welcome.css` Feliratozása
+- A "Kezdés" gomb egyértelmű azonosítása.
+
+## 🏁 Záró Megjegyzés
+
+A javaslat elfogadása után a küldetés átkerül a **Manager** szakaszba, ahol az egyes feladatok (router.json) kiosztásra kerülnek a **Worker** számára.
+
+**Következő lépés:** Amennyiben a terv megfelel, írd be: `proceed` vagy `go`.

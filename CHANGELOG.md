@@ -5,6 +5,35 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.18.3] - 2026-04-10
+
+### Javítva
+- **Grade 4 Narráció**: Megoldottam a sortörés karakterek (`\n`) megjelenítési hibáját és helyreállítottam a hiányzó narratív leírásokat a regisztrációs dián.
+- **Scoring Rendszer**: Helyreállítottam a Grade 4-ben elromlott `+1` (floating point) animációt az `Interface.css`-ben fellépő osztálynév-eltérés javításával.
+- **Vizuális**: Visszaállítottam a pontozás arany színét a jobb láthatóság érdekében.
+
+## [0.18.2] - 2026-04-10
+
+### Hozzáadva
+- **Modál Interakciók**: A Beállítások ablak is megkapta a bezáró 'X' ikont.
+- **UX**: A Terminál (Narráció) ablak mostantól külső kattintásra is bezáródik.
+
+### Javítva
+- **Onboarding Időzítő**: Helyreállítottam és szinkronizáltam az időzítő vizuális megjelenését az Onboarding szakasz alatt, hogy megegyezzen a játék többi részével.
+
+## [0.18.1] - 2026-04-10
+
+### Módosítva
+- **Grade 4 "Quantum Terminal" Finomhangolás**:
+  - **Beállítások Panel**: A technikai label-ek magyarítása (HÁTTÉRZENE, NARRÁTOR, EGÉRKATTINTÁS) a jobb érthetőségért.
+  - **Vizuális Egységesítés**: A navigációs gombok, az oldalmenü és a beállítások gomb alap háttérszínének egységesítése (`rgba(0, 0, 0, 0.5)`).
+  - **Ikon Stabilitás**: A HUD ikonok CSS szelektorainak megerősítése (specificity), biztosítva a méretezési szabályok helyes érvényesülését.
+  - **Karakter Előnézet**: A "Kiválasztás" gomb vizuális finomítása és Grade 4-specifikus stílusizolációja a Character.css-ben.
+
+### Javítva
+- **Szerkezeti inkonzisztencia**: Az inventory slotok kezdeti HTML osztályának (`bg-active` -> `active-item`) szinkronizálása a CSS-sel.
+- **Hover állapotok**: A navigációs nyilak és a beállítások gomb hover effektjeinek konzisztensebbé tétele.
+
 ## [0.18.0] - 2026-04-10
 
 ### Hozzáadva

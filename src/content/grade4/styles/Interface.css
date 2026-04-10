@@ -1,5 +1,14 @@
 /* src/content/grade4/styles/Interface.css */
 
+/* 1. RESET & INITIALIZATION (Grade 4 specific) */
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* DESIGN SYSTEM TOKENS */
 .dkv-g4-interface {
     --g4-primary: #c1fffe;
@@ -106,11 +115,12 @@
     padding: 2rem;
     box-sizing: border-box;
     pointer-events: none;
-    /* Csak a gyerekei kapják vissza */
 }
 
 /* A HUD aktív csoportjai kattinthatók */
+/* HUD bal oldali egység: Profil avatar és felhasználói adatok */
 .dkv-g4-hud-left,
+/* HUD jobb oldali egység: Időzítő és beállítások */
 .dkv-g4-hud-right {
     pointer-events: auto;
 }
@@ -118,16 +128,17 @@
 .dkv-g4-hud-left {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
+/* Karakter avatar keret */
 .dkv-g4-avatar-wrapper {
     position: relative;
-    width: 3rem;
-    height: 3rem;
+    width: 4.5rem;
+    height: 4.5rem;
     border: 1px solid rgba(255, 81, 250, 0.5);
     /* secondary/50 */
-    padding: 0.125rem;
+    padding: 0.2rem;
     transition: border-color 0.3s;
 }
 
@@ -140,6 +151,7 @@
     height: 100%;
 }
 
+/* Karakter kis képe az avatar körben */
 .dkv-g4-avatar-image {
     width: 100%;
     height: 100%;
@@ -152,10 +164,10 @@
 
 .dkv-g4-avatar-dot {
     position: absolute;
-    top: -0.125rem;
-    right: -0.125rem;
-    width: 0.5rem;
-    height: 0.5rem;
+    top: -0.25rem;
+    right: -0.25rem;
+    width: 0.75rem;
+    height: 0.75rem;
     background-color: var(--g4-tertiary);
 }
 
@@ -169,13 +181,13 @@
     font-weight: 700;
     color: var(--g4-primary);
     letter-spacing: 0.2em;
-    font-size: 0.875rem;
+    font-size: 1.3rem;
     text-transform: uppercase;
 }
 
 .dkv-g4-points-container {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.625rem;
+    font-size: 0.9rem;
     color: rgba(241, 244, 250, 0.6);
     /* on-surface/60 */
     text-transform: uppercase;
@@ -192,42 +204,35 @@
     gap: 1.5rem;
 }
 
-.dkv-g4-timer-container {
+
+/* Beállítások (fogaskerék) gomb alapstílusa */
+.dkv-g4-btn-settings {
+    height: 40px;
+    width: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(193, 255, 254, 0.2);
+    box-sizing: border-box;
+    color: rgba(193, 255, 254, 0.6);
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(12px);
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(193, 255, 254, 0.2);
-}
-
-.dkv-g4-timer-icon {
-    color: var(--g4-primary);
-    font-size: 1.125rem;
-}
-
-.dkv-g4-timer-value {
-    font-family: 'Space Grotesk', sans-serif;
-    color: var(--g4-primary);
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    font-size: 1rem;
-    font-variant-numeric: tabular-nums;
-}
-
-.dkv-g4-btn-settings {
-    background: none;
-    border: none;
-    color: var(--g4-on-surface-variant);
-    cursor: pointer;
-    transition: color 0.3s;
-    font-size: 1.25rem;
+    justify-content: center;
     padding: 0;
+    /* Padding eltávolítva a pontos 40px magasság érdekében */
+    transition: all 0.3s ease;
+    pointer-events: auto;
 }
 
+.dkv-g4-btn-settings .material-symbols-outlined {
+    font-size: 1.25rem;
+    /* Megnövelt méret a jobb láthatóságért */
+}
+
+/* Beállítások (fogaskerék) gomb hover állapota */
 .dkv-g4-btn-settings:hover {
+    border-color: rgba(193, 255, 254, 0.5);
     color: var(--g4-primary);
+    background: rgba(193, 255, 254, 0.1);
 }
 
 /* SIDE NAV */
@@ -245,15 +250,20 @@
     /* Csak a gombok kapják vissza */
 }
 
+/* Oldalsó navigációs sáv elemei (pl. Napló, Terminál ikonok) */
 .dkv-g4-nav-item {
     padding: 0.5rem;
-    background: none;
-    border: 1px solid rgba(0, 255, 255, 0.1);
-    color: rgba(0, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    color: rgba(193, 255, 254, 0.6);
     cursor: pointer;
     transition: all 0.3s;
     pointer-events: auto;
     /* Kattintható */
+}
+
+.dkv-g4-nav-item .material-symbols-outlined {
+    font-size: 1.25rem;
 }
 
 .dkv-g4-nav-item:hover {
@@ -304,11 +314,6 @@
     letter-spacing: -0.05em;
 }
 
-.dkv-g4-station-total {
-    color: var(--g4-outline-variant);
-    font-size: 0.75rem;
-}
-
 .dkv-g4-timeline {
     display: flex;
     gap: 0.5rem;
@@ -334,7 +339,7 @@
 
 .dkv-g4-inventory-label {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.5625rem;
+    font-size: 0.625rem;
     color: rgba(255, 81, 250, 0.6);
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -346,18 +351,19 @@
 }
 
 .dkv-g4-slot {
-    width: 1.5rem;
-    height: 1.5rem;
-    border: 1px solid rgba(68, 72, 77, 0.3);
-    background-color: rgba(0, 0, 0, 0.4);
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid rgba(68, 72, 77, 0.4);
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
 }
 
 .dkv-g4-slot-icon {
     color: var(--g4-outline-variant);
-    font-size: 0.875rem;
+    font-size: 1.25rem;
     display: flex;
 }
 
@@ -385,68 +391,71 @@
     /* Csak a gombok kapják vissza */
 }
 
+/* Navigációs gomb: Vissza az előző slide-ra */
 .dkv-g4-btn-prev {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    background: none;
-    border: 1px solid rgba(193, 255, 254, 0.1);
-    color: rgba(193, 255, 254, 0.4);
+    width: 64px;
+    height: 56px;
+    background: rgba(0, 0, 0, 0.5);
+    /* Megduplázott opacitás a láthatóságért */
+    border: 1px solid #c1fffe;
+    color: rgba(193, 255, 254, 0.6);
     cursor: pointer;
-    transition: all 0.3s;
     pointer-events: auto;
-    /* Kattintható */
+    border-radius: 0;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    /* Erősebb ragyogás */
+    margin: 0;
+    padding: 0;
+    transition: all 0.2s ease;
 }
 
-.dkv-g4-btn-prev:hover {
-    border-color: rgba(193, 255, 254, 0.5);
-    color: var(--g4-primary);
-}
-
+/* Navigációs gomb: Tovább a következő slide-ra */
 .dkv-g4-btn-next {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 4rem;
-    height: 3.5rem;
-    background-color: rgba(0, 255, 255, 0.1);
-    border: 1px solid rgba(0, 255, 255, 0.3);
-    color: var(--g4-primary-container);
+    width: 72px;
+    height: 56px;
+    background: rgba(0, 0, 0, 0.5);
+    /* Megduplázott opacitás a láthatóságért */
+    border: 2px solid #fde3c2;
+    color: #c1fffe;
     cursor: pointer;
-    transition: all 0.3s;
     overflow: hidden;
-    border-radius: 0 0 0.5rem 0;
+    border-radius: 0 0 1rem 0;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    /* Erősebb ragyogás */
     pointer-events: auto;
-    /* Kattintható */
+    margin: 0;
+    padding: 0;
+    transition: all 0.2s ease;
 }
 
-.dkv-g4-btn-next:hover,
-.dkv-g4-btn-next.dkv-g4-btn-active {
-    background-color: rgba(0, 255, 255, 0.2);
-}
-
-.dkv-g4-btn-next span {
+.dkv-g4-btn-prev .material-symbols-outlined,
+.dkv-g4-btn-next .material-symbols-outlined {
     font-family: 'Material Symbols Outlined';
+    font-size: 32px;
     font-weight: 400;
-    font-size: 1.875rem;
     font-style: normal;
     line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
     display: inline-block;
-    white-space: nowrap;
+    text-transform: none;
+    letter-spacing: normal;
     word-wrap: normal;
+    white-space: nowrap;
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-    transition: transform 0.3s;
 }
 
-.dkv-g4-btn-next:hover span {
-    transform: translateX(4px);
+.dkv-g4-btn-next:hover span,
+.dkv-g4-btn-prev:hover span {
+    border-color: rgba(0, 255, 255, 0.5);
+    color: var(--g4-primary-container);
 }
 
 /* DECORATIVE CORNERS */
@@ -461,33 +470,33 @@
     position: absolute;
     width: 4rem;
     height: 4rem;
-    opacity: 0.2;
+    opacity: 0.4;
 }
 
 .dkv-g4-corner-tl {
-    top: 3rem;
-    left: 3rem;
+    top: 1rem;
+    left: 1rem;
     border-top: 1px solid var(--g4-primary);
     border-left: 1px solid var(--g4-primary);
 }
 
 .dkv-g4-corner-tr {
-    top: 3rem;
-    right: 3rem;
+    top: 1rem;
+    right: 1rem;
     border-top: 1px solid var(--g4-primary);
     border-right: 1px solid var(--g4-primary);
 }
 
 .dkv-g4-corner-bl {
-    bottom: 3rem;
-    left: 3rem;
+    bottom: 1rem;
+    left: 1rem;
     border-bottom: 1px solid var(--g4-primary);
     border-left: 1px solid var(--g4-primary);
 }
 
 .dkv-g4-corner-br {
-    bottom: 3rem;
-    right: 3rem;
+    bottom: 1rem;
+    right: 1rem;
     border-bottom: 1px solid var(--g4-primary);
     border-right: 1px solid var(--g4-primary);
 }
@@ -517,21 +526,6 @@
     display: flex;
 }
 
-.dkv-g4-task-modal,
-.dkv-g4-journal-panel,
-.dkv-g4-narrator-panel,
-.dkv-g4-settings-panel {
-    background: var(--g4-surface-container-low);
-    border-top: 2px solid var(--g4-primary);
-    border-bottom: 2px solid var(--g4-primary);
-    min-width: 400px;
-    padding: 2rem;
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
-    color: var(--g4-on-surface);
-}
-
-.dkv-g4-narrator-panel,
-.dkv-g4-journal-panel,
 .dkv-g4-settings-panel {
     position: absolute;
     top: 50%;
@@ -541,12 +535,59 @@
     display: none;
     pointer-events: auto;
     /* Panel kattintható */
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+    /* Sötétkék/Fekete Quantum háttér */
+    border: 1px solid rgba(193, 255, 254, 0.2);
+    box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(15px);
 }
 
-.dkv-g4-narrator-panel.open,
-.dkv-g4-journal-panel.open,
 .dkv-g4-settings-panel.open {
     display: block;
+}
+
+.dkv-g4-journal-panel.open,
+.dkv-g4-narrator-panel.open {
+    transform: translate(0, -50%);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Rendszernapló és Terminál közös elhelyezkedése (Bal szél) */
+.dkv-g4-journal-panel,
+.dkv-g4-narrator-panel {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-100%, -50%);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(193, 255, 254, 0.2);
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    /* box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5); */
+    backdrop-filter: blur(15px);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.dkv-g4-journal-panel {
+    width: 500px;
+}
+
+.dkv-g4-narrator-panel {
+    width: 500px;
+}
+
+.dkv-g4-panel-header {
+    padding: 1.5rem 2rem 1rem 2rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(193, 255, 254, 0.2);
 }
 
 .dkv-g4-panel-header h2,
@@ -556,18 +597,52 @@
     text-transform: uppercase;
     font-size: 1.25rem;
     letter-spacing: 0.1em;
-    margin: 0 0 1rem 0;
+    margin: 0;
 }
 
 .dkv-g4-panel-body,
 .dkv-g4-task-modal-body {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     font-family: 'Manrope', sans-serif;
     font-size: 1.4rem;
     font-weight: 300;
-    margin-bottom: 1.5rem;
 }
 
+.dkv-g4-panel-body textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--g4-on-surface);
+    font-family: 'Manrope', sans-serif;
+    border: 1px solid rgba(193, 255, 254, 0.3);
+    border-radius: 4px;
+    resize: none;
+    padding: 1rem;
+}
+
+.dkv-g4-panel-body textarea:focus {
+    outline: none;
+    border-color: var(--g4-primary);
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.dkv-g4-panel-footer {
+    padding: 1.5rem 2rem;
+    flex-shrink: 0;
+    margin-top: auto;
+    border-top: 1px solid rgba(193, 255, 254, 0.2);
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Modál ablak "OK" (elfogadás) gombja */
 .dkv-g4-task-ok-btn,
+/* Modál ablak bezárása (X vagy Szöveges) gomb */
 .dkv-g4-btn-close {
     background-color: rgba(0, 255, 255, 0.1);
     color: var(--g4-primary);
@@ -577,7 +652,8 @@
     font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
-    clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+    border-radius: 0;
+    /* Square per user request */
     transition: all 0.3s;
 }
 
@@ -588,7 +664,7 @@
 }
 
 .dkv-g4-close-icon {
-    color: var(--g4-outline-variant);
+    color: var(--g4-on-surface-variant);
     font-size: 1.5rem;
 }
 
@@ -603,7 +679,85 @@
     color: var(--g4-primary-container);
 }
 
-.dkv-g4-setting-row input[type="range"] {
+.dkv-g4-setting-row input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
     width: 100%;
-    accent-color: var(--g4-primary);
+    background: transparent;
+    margin: 10px 0;
+}
+
+.dkv-g4-setting-row input[type=range]:focus {
+    outline: none;
+}
+
+/* Csúszka sáv (Quantum) */
+.dkv-g4-setting-row input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: rgba(193, 255, 254, 0.1);
+    border: 1px solid rgba(193, 255, 254, 0.3);
+    border-radius: 2px;
+}
+
+/* Csúszka gomb (Quantum) */
+.dkv-g4-setting-row input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 18px;
+    width: 18px;
+    background: #c1fffe;
+    border: 1px solid #00ffff;
+    border-radius: 0;
+    /* Brutalista négyzet */
+    cursor: pointer;
+    margin-top: -7px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* --- HUD DECORATIONS (Moved from main.css) --- */
+
+/* Karakter avatar keret polírozása */
+.dkv-g4-avatar-circle {
+    border: 2px solid var(--g4-primary);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+/* Felhasználó pontszámának kijelzése a HUD-on */
+.dkv-g4-points-container {
+    color: var(--g4-primary);
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+    font-weight: bold;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Lebegő pont (Floating Point) animáció */
+.dkv-floating-point {
+    position: absolute;
+    color: #ffd700;
+    /* Arany szín a láthatóságért */
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.2rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 100;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    animation: g4FloatUp 1.2s ease-out forwards;
+}
+
+@keyframes g4FloatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(1);
+    }
 }

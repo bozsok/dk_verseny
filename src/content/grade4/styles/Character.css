@@ -63,6 +63,7 @@
     width: 100%;
 }
 
+/* Nézetváltó kapcsoló (Lista/Kártya) címkéje */
 .dkv-toggle-label {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.1rem;
@@ -128,11 +129,12 @@
     display: flex;
     justify-content: flex-start;
     gap: 30px;
-    margin-bottom: 35px;
+    margin-bottom: 20px;
     width: 100%;
 }
 
 /* === Karakter Kártyák (Character Cards) === */
+/* Karakter választó kártya alapstílusa */
 .dkv-char-card {
     width: 130px;
     height: 290px;
@@ -224,6 +226,7 @@
     justify-content: center;
 }
 
+/* Előnézeti kép konténere a modálban */
 .dkv-preview-image-placeholder img {
     width: 100%;
     height: 100%;
@@ -233,6 +236,7 @@
     border-radius: 4px;
 }
 
+/* Előnézeti modál bezárása (X) gomb */
 .dkv-preview-close {
     position: absolute;
     top: 25px;
@@ -296,23 +300,18 @@
 }
 
 /* === Előnézeti Kiválasztó Gomb - Grade 4 stílus, Grade 3 pozíció === */
-.dkv-preview-select-btn {
+/* Előnézeti modál "Kiválasztás" gombja */
+.dkv-grade-4 .dkv-preview-select-btn {
     position: absolute;
     bottom: 30px;
     right: 30px;
     padding: 12px 40px;
-    background: rgba(0, 40, 60, 0.95);
-    /* Sötétebb, kontrasztosabb háttér */
+    background: rgba(10, 20, 30, 0.75);
+    /* Visszaállítva a sötét háttér */
     border: 1px solid #c1fffe;
-    border-radius: 0;
-    clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    border-radius: 0 0 1rem 0;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
     color: #c1fffe;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: 'Space Grotesk', sans-serif;
-    text-transform: uppercase;
-    font-weight: bold;
     font-size: 1.4rem;
     letter-spacing: 2px;
 }
@@ -320,7 +319,7 @@
 /* Grade 4 specifikus hover a modálon belül */
 .dkv-grade-4 .dkv-preview-select-btn:hover {
     transform: none;
-    background: rgba(1, 26, 39, 0.95);
+    background: rgba(1, 26, 39, 0.85);
     /* Marad a sötét alap, de kap egy türkiz tónust */
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
     color: #fff;

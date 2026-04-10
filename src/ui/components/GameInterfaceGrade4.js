@@ -1,3 +1,5 @@
+import { animate, stagger } from 'animejs';
+
 export default class GameInterfaceGrade4 {
     constructor(options = {}) {
         this.options = options;
@@ -24,7 +26,7 @@ export default class GameInterfaceGrade4 {
         this.element = null;
         this.contentContainer = null;
         this.currentNarration = "Transmission Incoming // Decrypting...";
-        
+
         this.eventBus = options.eventBus || null;
         this.timeManager = options.timeManager || null;
         this.timerTickHandler = null;
@@ -66,7 +68,7 @@ export default class GameInterfaceGrade4 {
             </div>
             <div class="dkv-g4-user-info">
                 <span class="dkv-g4-username">PLAYER</span>
-                <span class="dkv-g4-points-container"><span class="dkv-g4-points-label">PTS:</span> <span class="dkv-g4-points-value">0</span></span>
+                <span class="dkv-g4-points-container"><span class="dkv-g4-points-label">PONTJAID:</span> <span class="dkv-g4-points-value">0</span></span>
             </div>
         `;
         this.avatarEl = hudLeft.querySelector('.dkv-g4-avatar-image');
@@ -76,21 +78,11 @@ export default class GameInterfaceGrade4 {
         const hudRight = document.createElement('div');
         hudRight.className = 'dkv-g4-hud-right';
 
-        const timerContainer = document.createElement('div');
-        timerContainer.className = 'dkv-g4-timer-container';
-        timerContainer.style.display = 'none';
-        this.timerContainerEl = timerContainer;
-        timerContainer.innerHTML = `
-            <span class="material-symbols-outlined dkv-g4-timer-icon">timer</span>
-            <span class="dkv-g4-timer-value">00:00:00</span>
-        `;
-
         const settingsBtn = document.createElement('button');
         settingsBtn.className = 'dkv-g4-btn-settings';
         settingsBtn.innerHTML = `<span class="material-symbols-outlined">settings</span>`;
         settingsBtn.onclick = () => this.onOpenSettings();
 
-        hudRight.appendChild(timerContainer);
         hudRight.appendChild(settingsBtn);
         header.appendChild(hudLeft);
         header.appendChild(hudRight);
@@ -101,17 +93,17 @@ export default class GameInterfaceGrade4 {
         sideNav.className = 'dkv-g4-side-nav';
 
         const narratorBtn = document.createElement('button');
-        narratorBtn.className = 'dkv-g4-nav-item';
+        narratorBtn.className = 'dkv-g4-nav-item dkv-g4-btn-narrator';
         narratorBtn.innerHTML = `<span class="material-symbols-outlined">terminal</span>`;
         narratorBtn.onclick = () => this.onOpenNarrator();
 
         const journalBtn = document.createElement('button');
-        journalBtn.className = 'dkv-g4-nav-item';
+        journalBtn.className = 'dkv-g4-nav-item dkv-g4-btn-journal';
         journalBtn.innerHTML = `<span class="material-symbols-outlined">history_edu</span>`;
         journalBtn.onclick = () => this.onOpenJournal();
 
-        sideNav.appendChild(narratorBtn);
         sideNav.appendChild(journalBtn);
+        sideNav.appendChild(narratorBtn);
         this.element.appendChild(sideNav);
 
         // 4. MAIN CONTENT AREA
@@ -155,7 +147,7 @@ export default class GameInterfaceGrade4 {
         stationInfo.className = 'dkv-g4-station-info';
         stationInfo.innerHTML = `
             <span class="dkv-g4-station-label">Sector</span>
-            <span class="dkv-g4-station-value">STATION_00 <span class="dkv-g4-station-total">/ ${this.totalSlides}</span></span>
+            <span class="dkv-g4-station-value">STATION_00</span>
         `;
 
         const timeline = document.createElement('div');
@@ -167,7 +159,7 @@ export default class GameInterfaceGrade4 {
         inventoryArea.innerHTML = `
             <span class="dkv-g4-inventory-label">Updates</span>
             <div class="dkv-g4-inventory-slots">
-                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon bg-active"><span class="material-symbols-outlined">extension</span></div></div>
+                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon active-item"><span class="material-symbols-outlined">extension</span></div></div>
                 <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div></div>
                 <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div></div>
                 <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div></div>
@@ -180,6 +172,7 @@ export default class GameInterfaceGrade4 {
         footer.appendChild(timeline);
         footer.appendChild(inventoryArea);
         this.element.appendChild(footer);
+        this.stationLabelEl = stationInfo.querySelector('.dkv-g4-station-label');
         this.stationTextEl = stationInfo.querySelector('.dkv-g4-station-value');
 
         // 8. DECORATIVE CORNERS
@@ -199,7 +192,7 @@ export default class GameInterfaceGrade4 {
         this.taskModalOverlay.innerHTML = `
             <div class="dkv-g4-task-modal">
                 <div class="dkv-g4-task-modal-header">
-                    <h2>SYSTEM_OVERRIDE: TASK REQUIRED</h2>
+                    <h2>FINÁLÉ FELADAT</h2>
                 </div>
                 <div class="dkv-g4-task-modal-body"></div>
                 <button class="dkv-g4-task-ok-btn">EXECUTE</button>
@@ -213,24 +206,24 @@ export default class GameInterfaceGrade4 {
         // 9. TASK MODAL (már előzőleg konfigurálva)
         // Note: the taskModal logic is mapped similarly to GameInterface
 
-        // Időmérő megjelenítés eseményfigyelőjének beállítása
+        // Időmérő megjelenítés eseményfigyelőjének beállítása (globális elem vezérlése)
         if (this.eventBus) {
             this.timerStartHandler = () => {
-                if (this.timerContainerEl) this.timerContainerEl.style.display = 'flex';
+                const globalTimer = document.getElementById('dkv-timer-display');
+                if (globalTimer) globalTimer.style.display = 'flex';
             };
             this.timerTickHandler = (data) => {
-                if (this.timerContainerEl) this.timerContainerEl.style.display = 'flex';
-                this.updateTimer(data.elapsed);
+                const globalTimer = document.getElementById('dkv-timer-display');
+                if (globalTimer) globalTimer.style.display = 'flex';
             };
             this.eventBus.on('timer:competition-started', this.timerStartHandler);
             this.eventBus.on('timer:tick', this.timerTickHandler);
         }
 
-        // Kezdeti megjelenítés, ha az időmérő már fut (pl. Onboarding skip / Debug override esetén)
-        // Kezdeti megjelenítés, ha az időmérő már fut (pl. Onboarding skip / Debug override esetén)
+        // Kezdeti megjelenítés, ha az időmérő már fut
         if (this.timeManager && this.timeManager.globalTimer.isRunning) {
-            if (this.timerContainerEl) this.timerContainerEl.style.display = 'flex';
-            this.updateTimer(this.timeManager.getElapsedTime());
+            const globalTimer = document.getElementById('dkv-timer-display');
+            if (globalTimer) globalTimer.style.display = 'flex';
         }
 
         // Kezdeti HUD frissítés, ha van StateManager
@@ -242,20 +235,31 @@ export default class GameInterfaceGrade4 {
     }
 
     /**
-     * Időmérő felület frissítése a Grade 4 UI-n
-     * @param {number} ms - Eltelt idő milliszekundumban
+     * HUD Adatok (Avatar, Név, Pont) frissítése
      */
-    updateTimer(ms) {
-        if (!this.element) return;
-        const timerValueEl = this.element.querySelector('.dkv-g4-timer-value');
-        if (!timerValueEl) return;
+    updateHUD(state = {}) {
+        if (!state) return;
 
-        const totalSeconds = Math.floor(ms / 1000);
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        
-        const pad = (num) => num.toString().padStart(2, '0');
-        timerValueEl.textContent = `${pad(minutes)}:${pad(seconds)}`;
+        if (this.avatarEl && state.avatar) {
+            this.avatarEl.style.backgroundImage = `url('${state.avatar}')`;
+        }
+
+        if (this.usernameEl) {
+            const nick = (state.userProfile && state.userProfile.nickname) || state.nickname || 'PLAYER';
+            this.usernameEl.textContent = nick;
+        }
+
+        if (this.pointsEl) {
+            const targetScore = (state.score !== undefined) ? state.score : 0;
+            if (targetScore !== this.currentDisplayedScore || this.pointsEl.textContent === '0') {
+                this._animateScore(this.currentDisplayedScore, targetScore);
+                this.currentDisplayedScore = targetScore;
+            }
+        }
+
+        if (state.progress && Array.isArray(state.progress.inventory)) {
+            this.updateInventory(state.progress.inventory);
+        }
     }
 
     /**
@@ -307,8 +311,18 @@ export default class GameInterfaceGrade4 {
         if (!this.timelineContainerEl) return;
         this.timelineContainerEl.innerHTML = '';
 
+        const isIntro = currentSlide <= 4;
+
+        if (this.stationLabelEl) {
+            this.stationLabelEl.textContent = isIntro ? 'INTRO' : 'Sector';
+        }
+
         if (this.stationTextEl) {
-            this.stationTextEl.innerHTML = `STATION_${String(currentSlide).padStart(2, '0')} <span class="dkv-g4-station-total">/ ${this.totalSlides}</span>`;
+            if (isIntro) {
+                this.stationTextEl.innerHTML = `FELTÖLTÉS`;
+            } else {
+                this.stationTextEl.innerHTML = `STATION_${String(currentSlide).padStart(2, '0')}`;
+            }
         }
 
         const segments = 10;
@@ -440,13 +454,13 @@ export default class GameInterfaceGrade4 {
             journalPanel.className = 'dkv-g4-journal-panel';
             journalPanel.innerHTML = `
                 <div class="dkv-g4-panel-header">
-                    <h2>SYSTEM LOG</h2>
+                    <h2>RENDSZER NAPLÓ</h2>
                 </div>
                 <div class="dkv-g4-panel-body">
                     <textarea placeholder="Encrypting notes..."></textarea>
                 </div>
                 <div class="dkv-g4-panel-footer">
-                    <button class="dkv-g4-btn-close">DISCONNECT</button>
+                    <button class="dkv-g4-btn-close">SZÉTKAPCSOLÁS</button>
                 </div>
             `;
 
@@ -468,7 +482,7 @@ export default class GameInterfaceGrade4 {
             narratorBox.className = 'dkv-g4-narrator-panel';
             narratorBox.innerHTML = `
                 <div class="dkv-g4-panel-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <h2>TERMINAL_FEED</h2>
+                    <h2>TERMINÁL BEJEGYZÉSEK</h2>
                     <div class="dkv-g4-close-icon" style="cursor: pointer;">✕</div>
                 </div>
                 <div class="dkv-g4-panel-body">
@@ -505,26 +519,35 @@ export default class GameInterfaceGrade4 {
             settingsPanel.className = 'dkv-g4-settings-panel';
 
             settingsPanel.innerHTML = `
-                <div class="dkv-g4-panel-header">
-                    <h2>SYSTEM_CONFIG</h2>
+                <div class="dkv-g4-panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>HANGBEÁLLÍTÁSOK</h2>
+                    <div class="dkv-g4-close-icon" style="cursor: pointer;">✕</div>
                 </div>
                 <div class="dkv-g4-panel-body">
                     <div class="dkv-g4-setting-row">
-                        <label>AUDIO_FREQ</label>
+                        <label>HÁTTÉRZENE</label>
                         <input type="range" min="0" max="100" value="50">
                     </div>
                     <div class="dkv-g4-setting-row">
-                        <label>VOCAL_FEED</label>
+                        <label>NARRÁTOR</label>
                         <input type="range" min="0" max="100" value="80">
                     </div>
                     <div class="dkv-g4-setting-row">
-                        <label>HAPTIC_FB</label>
+                        <label>EGÉRKATTINTÁS</label>
                         <input type="range" min="0" max="100" value="40">
                     </div>
                 </div>
             `;
 
             this.element.appendChild(settingsPanel);
+
+            const closeIcon = settingsPanel.querySelector('.dkv-g4-close-icon');
+            if (closeIcon) {
+                closeIcon.onclick = (e) => {
+                    e.stopPropagation();
+                    settingsPanel.classList.remove('open');
+                };
+            }
 
             const inputs = settingsPanel.querySelectorAll('input[type="range"]');
             const musicInput = inputs[0];
@@ -706,6 +729,7 @@ export default class GameInterfaceGrade4 {
         this.taskOkBtn = null;
         this.taskModalBody = null;
         this.timelineContainerEl = null;
+        this.stationLabelEl = null;
         this.stationTextEl = null;
         this.inventorySlotsEl = null;
         this.usernameEl = null;

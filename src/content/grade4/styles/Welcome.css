@@ -11,6 +11,7 @@
 }
 
 /* Cím - Quantum Frissítés */
+/* Az üdvözlő slide (kezdőképernyő) főcíme */
 .dkv-welcome-slide h1.dkv-slide-title {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: bold;
@@ -48,6 +49,7 @@
 }
 
 /* Gomb - Az alapstílusokat a main.css-ből örökli, követve a 3. osztályos átmeneteket */
+/* "Kezdés" gomb hover (lebegés) állapotbeli elmozdulásának tiltása */
 .dkv-grade-4 .dkv-welcome-slide .dkv-start-button:hover {
     transform: none;
     /* Elmozdulás letiltva */

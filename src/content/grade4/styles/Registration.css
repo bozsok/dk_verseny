@@ -54,6 +54,7 @@
 }
 
 /* Címke */
+/* Beviteli mező (input) felirata/címkéje */
 .dkv-registration-slide .dkv-input-label {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.1rem;
@@ -67,6 +68,7 @@
 }
 
 /* Beviteli mező */
+/* Beviteli mező alapstílusa */
 .dkv-registration-slide .dkv-input-field {
     width: 100%;
     padding: 14px 18px;
@@ -91,17 +93,20 @@
     background: rgba(0, 0, 0, 0.7);
 }
 
+/* Hibás bevitelt jelző állapot */
 .dkv-registration-slide .dkv-input-field.dkv-input-error {
     border-color: #ef4444;
     box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
     background: rgba(40, 0, 0, 0.4);
 }
 
+/* Sikeres bevitelt jelző állapot */
 .dkv-registration-slide .dkv-input-field.dkv-input-success {
     border-color: #4ade80;
     box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
 }
 
+/* Regisztrációs folyamat "Tovább" gombja (hover állapot felülíratlanul) */
 .dkv-grade-4 .dkv-registration-slide .dkv-onboarding-next-btn:hover {
     transform: none;
     /* Elmozdulás letiltva */
@@ -138,6 +143,12 @@
     text-align: center;
     color: #f1f4fa;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 255, 255, 0.1);
+    
+    /* Középre igazítás kényszerítése */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .dkv-registration-modal-message {

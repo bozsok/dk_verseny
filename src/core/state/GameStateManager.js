@@ -60,7 +60,7 @@ class GameStateManager {
       // Rendszer adatok
       metadata: {
         lastSaved: null,
-        version: '0.16.7',
+        version: '0.18.3',
         totalPlayTime: 0,
         sessionsPlayed: 0
       }
