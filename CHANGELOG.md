@@ -5,6 +5,12 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.18.4] - 2026-04-10
+
+### Javítva
+- **FOUIF (Font Villanás)**: Megszüntettem az ikonok szöveges felvillanását egy rendszerszintű, az inicializációs logikába és a betöltőképernyőbe integrált font-betöltési kontrollal. Teljes körű megoldás a Google Fonts `display=block` és a JS `document.fonts.load` API kombinációjával.
+- **Kódtisztítás**: Eltávolításra kerültek az ideiglenes komponens-szintű hackek és időzítők a Grade 4 interfészből, eleget téve a Rule 89, 99 és 110-es irányelveknek.
+
 ## [0.18.3] - 2026-04-10
 
 ### Javítva

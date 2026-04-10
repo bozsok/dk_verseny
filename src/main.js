@@ -106,6 +106,9 @@ class DigitalKulturaVerseny {
         }
       }
 
+      // Betűtípusok betöltése (FOUIF megelőzése)
+      await this.loadCriticalFonts();
+
       // UI komponensek inicializálása
       await this.initUIComponents();
 
@@ -204,6 +207,32 @@ class DigitalKulturaVerseny {
 
     if (this.logger) {
       this.logger.info('Core components initialized');
+    }
+  }
+
+  /**
+   * Kritikus betűtípusok betöltése a FOUIF elkerülése érdekében.
+   * Szabványos DKV aszinkron boilerplate (Rule 39).
+   */
+  async loadCriticalFonts() {
+    let loading = true;
+    try {
+      if (this.logger) this.logger.info('Betűtípusok betöltése folyamatban...');
+
+      // A Material Symbols Outlined az elsődleges FOUIF forrás
+      // Google Fonts ?display=swap nélkül vagy document.fonts API-val kezelve
+      if (document.fonts && document.fonts.load) {
+        // Megvárjuk a konkrét ikonkészletet
+        await document.fonts.load('1em "Material Symbols Outlined"');
+        // Megvárjuk az összes többi készenlétet is (Inter, Orbitron, stb.)
+        await document.fonts.ready;
+      }
+    } catch (error) {
+      if (this.logger) {
+        this.logger.error('Sikertelen betűtípus betöltés:', { error: error.message });
+      }
+    } finally {
+      loading = false;
     }
   }
 
@@ -756,7 +785,7 @@ class DigitalKulturaVerseny {
         this.layerUI.style.display = 'block';
 
         this.activeGameInterface.updateHUD(this.stateManager.getState());
-        this.activeGameInterface.updateTimeline(currentIndex + 1);
+        this.activeGameInterface.updateTimeline(currentIndex + 1, slide);
         this.activeGameInterface.setNextButtonFinal(isLastSlide);
 
         const narrationText = (slide.content && slide.content.narration) || slide.description || "Nincs elérhető történet ehhez a diához.";

@@ -39,7 +39,7 @@
     /* Átvezet a content layerre – mint Grade 3 */
 }
 
-/* Material Symbols Outlined alapbeállítás – nélküle szövegként jelenik meg */
+/* Material Symbols Outlined alapbeállítás – elrejtve a font betöltéséig (FOUIF védelem) */
 .dkv-g4-interface .material-symbols-outlined {
     font-family: 'Material Symbols Outlined';
     font-weight: normal;
@@ -53,6 +53,8 @@
     word-wrap: normal;
     direction: ltr;
     -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    
     font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
 }
 

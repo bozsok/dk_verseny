@@ -1,4 +1,4 @@
-import { animate, stagger } from 'animejs';
+// import { animate, stagger } from 'animejs';
 
 export default class GameInterfaceGrade4 {
     constructor(options = {}) {
@@ -226,11 +226,6 @@ export default class GameInterfaceGrade4 {
             if (globalTimer) globalTimer.style.display = 'flex';
         }
 
-        // Kezdeti HUD frissítés, ha van StateManager
-        if (this.options.stateManager) {
-            this.updateHUD(this.options.stateManager.getState());
-        }
-
         return this.element;
     }
 
@@ -307,11 +302,13 @@ export default class GameInterfaceGrade4 {
      * Idővonal (haladásjelző szegmensek) és állomásszámláló frissítése.
      * @param {number} currentSlide - Az aktuális dia sorszáma (1-alapú)
      */
-    updateTimeline(currentSlide) {
+    updateTimeline(currentSlide, slide = null) {
         if (!this.timelineContainerEl) return;
         this.timelineContainerEl.innerHTML = '';
 
-        const isIntro = currentSlide <= 4;
+        // Az INTRO fázis detektálása a metaadatok alapján (pontosabb, mint a sorszám)
+        const section = slide?.metadata?.section || 'unknown';
+        const isIntro = section === 'onboarding' || section === 'intro';
 
         if (this.stationLabelEl) {
             this.stationLabelEl.textContent = isIntro ? 'INTRO' : 'Sector';
@@ -335,39 +332,6 @@ export default class GameInterfaceGrade4 {
             const seg = document.createElement('div');
             seg.className = i < filledSegments ? 'dkv-g4-timeline-segment filled' : 'dkv-g4-timeline-segment';
             this.timelineContainerEl.appendChild(seg);
-        }
-    }
-
-    /**
-     * HUD elemek frissítése: avatar, felhasználónév, pontszám, leltár.
-     * @param {Object} [state={}] - GameStateManager állapotobjektum
-     * @param {string} [state.avatar] - Avatar kép URL
-     * @param {Object} [state.userProfile] - Felhasználói profil ({ nickname })
-     * @param {number} [state.score] - Aktuális pontszám
-     * @param {Object} [state.progress] - Haladás adatok ({ inventory: string[] })
-     */
-    updateHUD(state = {}) {
-        if (!state) return;
-
-        if (this.avatarEl && state.avatar) {
-            this.avatarEl.style.backgroundImage = `url('${state.avatar}')`;
-        }
-
-        if (this.usernameEl) {
-            const nick = (state.userProfile && state.userProfile.nickname) || state.nickname || 'PLAYER';
-            this.usernameEl.textContent = nick;
-        }
-
-        if (this.pointsEl) {
-            const targetScore = (state.score !== undefined) ? state.score : 0;
-            if (targetScore !== this.currentDisplayedScore || this.pointsEl.textContent === '0') {
-                this._animateScore(this.currentDisplayedScore, targetScore);
-                this.currentDisplayedScore = targetScore;
-            }
-        }
-
-        if (state.progress && Array.isArray(state.progress.inventory)) {
-            this.updateInventory(state.progress.inventory);
         }
     }
 
@@ -457,7 +421,7 @@ export default class GameInterfaceGrade4 {
                     <h2>RENDSZER NAPLÓ</h2>
                 </div>
                 <div class="dkv-g4-panel-body">
-                    <textarea placeholder="Encrypting notes..."></textarea>
+                    <textarea placeholder="Jegyzetek titkosítása..."></textarea>
                 </div>
                 <div class="dkv-g4-panel-footer">
                     <button class="dkv-g4-btn-close">SZÉTKAPCSOLÁS</button>
