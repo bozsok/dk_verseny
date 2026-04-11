@@ -273,7 +273,10 @@ export class PuzzleGame {
 
                 initialList.forEach(pp => { pp.position = { x: pp.position.x + sdx, y: pp.position.y + sdy }; });
             }
-        } catch (e) { console.warn(e); }
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn(e);
+        }
 
         const shuffled = PuzzleGenerator.shuffleArray(initialList);
 
@@ -417,11 +420,15 @@ export class PuzzleGame {
         };
 
         let workingList = others;
-        let toDestroy = [];
+        const toDestroy = [];
 
-        while (true) {
+        let continues = true;
+        while (continues) {
             const res = tryOnePass(workingList, mergedPieces, movedPosition, mergedZ);
-            if (!res) break;
+            if (!res) {
+                continues = false;
+                break;
+            }
             mergedPieces = res.newGroup.pieces;
             movedPosition = res.newGroup.position;
             mergedZ = res.newGroup.zIndex;

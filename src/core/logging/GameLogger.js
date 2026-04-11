@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * GameLogger - Strukturált naplózási rendszer
  * 

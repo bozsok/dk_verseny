@@ -184,7 +184,7 @@ class TutorialManager {
      * @param {HTMLElement} el - A kiemelendő elem
      * @param {Object} step - Az aktuális lépés konfig (türkiz border miatt)
      */
-    createClone(el, step) {
+    createClone(el) {
         const rect = el.getBoundingClientRect();
 
         // Mélységi klón – minden gyermekelem is klónozódik

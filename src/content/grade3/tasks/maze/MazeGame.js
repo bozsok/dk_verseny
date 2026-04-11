@@ -137,7 +137,7 @@ class MazeGame {
 
         while (cellsVisited < numCells) {
             this.mazeMap[pos.y][pos.x].visited = true;
-            let neighbors = [];
+            const neighbors = [];
 
             for (const d of dirs) {
                 const nx = pos.x + modDir[d].x;

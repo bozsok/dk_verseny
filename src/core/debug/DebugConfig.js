@@ -15,7 +15,7 @@
  * @param {number} grade - Aktuális évfolyam (3-6)
  * @returns {Array} Section configuration objektumok
  */
-export const buildSectionMap = (slides, grade = 3) => {
+export const buildSectionMap = (slides) => {
     const sections = [];
 
     // Helper függvény szekciók kinyeréséhez metadata alapján

@@ -40,6 +40,7 @@ class QuizGame {
             this.startTimer();
             this.gameState = 'playing';
         } catch (error) {
+            // eslint-disable-next-line no-console
             console.error('Kvíz betöltési hiba:', error);
             this.container.innerHTML = '<div class="quiz-error">Hiba történt a kvíz betöltésekor. Próbálja újra!</div>';
         }

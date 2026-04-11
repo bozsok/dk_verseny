@@ -357,7 +357,6 @@ export class SoundGame {
         this.audioElement.pause();
 
         let totalCorrect = 0;
-        let isPerfect = true;
 
         const resultsByPart = {
             mainMessages: true,
@@ -385,7 +384,6 @@ export class SoundGame {
                         totalCorrect++;
                         correctValuesPool.splice(idx, 1);
                     } else {
-                        isPerfect = false;
                         partCorrect = false;
                     }
                 });
@@ -401,7 +399,6 @@ export class SoundGame {
                     if (uVal === cVal) {
                         totalCorrect++;
                     } else {
-                        isPerfect = false;
                         partCorrect = false;
                     }
                 });

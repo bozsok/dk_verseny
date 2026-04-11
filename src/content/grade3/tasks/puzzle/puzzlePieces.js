@@ -1,11 +1,8 @@
 // Puzzle piece classes for classic jigsaw puzzle
 // Extracted and adapted from original implementation
 
-import { Point, Segment } from './puzzleGeometry.js';
-
 // Local debug flag for geometry/piece operations
-const DEBUG_PIECES = false;
-const dlog = (...args) => { /* No-op in production */ };
+const dlog = () => { /* No-op in production */ };
 
 // Side class representing one edge of a puzzle piece
 export class Side {

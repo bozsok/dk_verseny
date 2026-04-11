@@ -2,7 +2,7 @@
 // Extracted and adapted from original implementation
 
 import { Point, alea, intAlea, mabs, mround, msqrt, twist0 } from './puzzleGeometry.js';
-import { Side, Piece } from './puzzlePieces.js';
+import { Piece } from './puzzlePieces.js';
 
 export class PuzzleGenerator {
   static computeGridSize(imageWidth, imageHeight, numPieces) {
@@ -10,16 +10,16 @@ export class PuzzleGenerator {
     let errmin = 1e9;
     let bestNx = 1, bestNy = 1;
     
-    let nHPieces = mround(msqrt(numPieces * imageWidth / imageHeight));
-    let nVPieces = mround(numPieces / nHPieces);
+    const nHPieces = mround(msqrt(numPieces * imageWidth / imageHeight));
+    const nVPieces = mround(numPieces / nHPieces);
     
     // Try variations around the estimated values
     for (let ky = 0; ky < 5; ky++) {
-      let ncv = nVPieces + ky - 2;
+      const ncv = nVPieces + ky - 2;
       if (ncv <= 0) continue;
       
       for (let kx = 0; kx < 5; kx++) {
-        let nch = nHPieces + kx - 2;
+        const nch = nHPieces + kx - 2;
         if (nch <= 0) continue;
         
         let err = nch * imageHeight / ncv / imageWidth;

@@ -3,26 +3,9 @@ import './styles/main.css';
 import './styles/Registration.css';
 import './styles/Welcome.css';
 import './styles/Character.css';
-import videoConfig from './video-config.json';
 
 const TYPING_SPEED = 2; // Gyors gépelés (Sci-Fi)
 
-/**
- * Video config merge helper
- * @param {Object} slideConfig - Slide content object
- * @param {string} slideKey - Slide key (e.g., 'slide_01')
- */
-const applyVideoConfig = (slideConfig, slideKey) => {
-    const videoSettings = videoConfig.slides?.[slideKey];
-    if (videoSettings) {
-        if (videoSettings.videoDelay !== undefined) {
-            slideConfig.videoDelay = videoSettings.videoDelay;
-        }
-        if (videoSettings.videoLoop !== undefined) {
-            slideConfig.videoLoop = videoSettings.videoLoop;
-        }
-    }
-};
 
 export const createConfig = () => {
     const slides = [];
@@ -129,8 +112,8 @@ export const createConfig = () => {
             else if (step === 2) title += "Landolás";
             else title += "Siker";
 
-            let storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti Grade 6 #${originalNum}. diához.`;
-            let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1})</span>`;
+            const storyContent = `<b>${title}</b><br><br>Helyőrző szöveg az eredeti Grade 6 #${originalNum}. diához.`;
+            const narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1})</span>`;
 
             const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
             const stepDescription = step === 2 ? 'Landolás a bolygón!' : 'Szenzoros adatgyűjtés...';

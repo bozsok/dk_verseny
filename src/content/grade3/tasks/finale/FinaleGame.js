@@ -143,8 +143,8 @@ class FinaleGame {
             
             // Drag and Drop események a slotra
             slot.addEventListener('dragover', (e) => this.handleDragOver(e));
-            slot.addEventListener('dragenter', (e) => slot.classList.add('drag-over'));
-            slot.addEventListener('dragleave', (e) => slot.classList.remove('drag-over'));
+            slot.addEventListener('dragenter', () => slot.classList.add('drag-over'));
+            slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
             slot.addEventListener('drop', (e) => this.handleDrop(e, i));
             
             slotsRow.appendChild(slot);

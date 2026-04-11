@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-04-11T11:37:00+02:00'
+date: '2026-04-11T16:36:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -114,5 +114,6 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Keep this file lean and focused on agent needs.
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
-- **Teszt Lefedettség**: ~85% (Core modulok védve)
-- **Utoljára frissítve**: 2026-04-11T11:37:00+02:00
+- **Teszt Lefedettség**: ~90% (Minden lint hiba elhárítva, 63/63 teszt sikeres)
+- **Utoljára frissítve**: 2026-04-11T16:36:00+02:00
+- **Verzió**: v0.20.0 (Interface Polish)

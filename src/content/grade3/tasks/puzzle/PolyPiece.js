@@ -169,6 +169,7 @@ export class PolyPiece {
                 try { 
                     ctx.drawImage(this.puzzle.gameCanvas, srcx, srcy, srcw, srch, 0, 0, srcw, srch); 
                 } catch (e) { 
+                    // eslint-disable-next-line no-console
                     console.error('Canvas draw error', e); 
                 }
             } else {
@@ -322,7 +323,7 @@ export class PolyPiece {
         if (this.onMove) this.onMove(this.id, np);
     }
 
-    handleWindowMouseUp(ev) {
+    handleWindowMouseUp() {
         if (!this.isDragging) return;
         this.isDragging = false;
         this.element.classList.remove('dragging');
@@ -358,6 +359,7 @@ export class PolyPiece {
             
             if (this.onDragEnd) this.onDragEnd(this.id, { x: fx, y: fy });
         } catch (err) { 
+            // eslint-disable-next-line no-console
             console.warn('onDragEnd error', err); 
         }
         

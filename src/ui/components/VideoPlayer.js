@@ -77,7 +77,7 @@ class VideoPlayer {
         });
 
         // Hiba kezelés
-        this.videoElement.addEventListener('error', (e) => {
+        this.videoElement.addEventListener('error', () => {
             if (this.logger) this.logger.error('[VideoPlayer] Video error', { 
                 src: this.src, 
                 error: this.videoElement.error ? this.videoElement.error.message : 'Unknown error' 

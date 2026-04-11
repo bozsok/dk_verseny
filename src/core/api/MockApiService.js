@@ -46,7 +46,7 @@ class MockApiService {
      * Fontos: A szerver mindig a szerver oldali időt tekinti hivatalosnak
      */
     async submitScore(payload) {
-        const { taskId, score, totalTimeSpent, integrityHash } = payload;
+        const { taskId, score, totalTimeSpent } = payload;
 
         await this._simulateNetworkDelay();
 
@@ -71,7 +71,7 @@ class MockApiService {
     /**
      * Verseny befejezése (Final submit)
      */
-    async finishCompetition(finalData) {
+    async finishCompetition() {
         await this._simulateNetworkDelay();
 
         this.logger.info(`[API] Competition FINISHED. Final Data received. Student: ${this.studentId}`);

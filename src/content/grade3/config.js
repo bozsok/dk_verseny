@@ -198,7 +198,7 @@ export const createConfig = () => {
             else if (originalNum === 23) { storyContent = `Amint belépsz a Hangerdő mélyére, finom zümmögés tölti be a levegőt, mintha az egész erdő ébredezne a jelenlétedre. A fák finom rezgésekkel adják tudtodra, hogy készen állnak egy különleges üzenetet átadni. Ez az üzenet több szinten rejt információkat: ritmusa, tónusa és a háttérben húzódó finom szimbólumok mind elengedhetetlenek a teljes dekódoláshoz.`; }
             else if (originalNum === 24) { storyContent = `Miután megfejtetted a hangüzenetet, az erdő megváltozik. Ahogy közelebb lépsz a hatalmas fa gyökereihez, érzed, hogy a levegő megtelik különös energiával. A fa törzsén szövevényes mintázatot alkotó, ragyogó fénycsíkok jelennek meg. A mintázat közepén lassan kibontakozik az újabb varázskulcs. Amint a kulcs a kezedbe kerül, az erdő környezete ismét megváltozik. A hatalmas fa gyökerei lassan visszahúzódnak, utat engedve a törzsében kialakuló ragyogó kapunak, amely a Hangerdőből való kijárathoz és egyben a következő helyszínre való érkezéshez vezet.`; }
 
-            let narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1} | Order: ${stationIndices.map(n => n + 1).join('-')})</span>`;
+            const narrationText = `${storyContent}<br><br><span style="font-size:0.8em; opacity:0.7;">(Debug: Eredeti Dia #${originalNum} | Hely #${slot + 1} | Order: ${stationIndices.map(n => n + 1).join('-')})</span>`;
 
             const slideConfig = {
                 imageUrl: `assets/images/grade3/slides/slide_${fileNumStr}.jpg`,
@@ -225,7 +225,7 @@ export const createConfig = () => {
         else if (i === 27) title += "Amint helyesen megoldottad a rejtvényt, az öt varázskulcs, amelyeket annyi kihívás során gyűjtöttél össze, a zár belsejébe hatolnak. A Zár életre kel, és nagy méltósággal kinyílik. Mögötte feltárul a Kód Királyság szíve: egy hatalmas, kristályból álló tér. A kristály mérete lenyűgöző, szinte az egész teret betölti, belsejéből tiszta, erőteljes fény árad. Amint a kristály fénye az Árnyprogramot megérinti, az elkezd széthullani. A sötét kódszálak, amelyek egykor fenyegették a Királyságot, most lassan feloldódnak a kristály által kibocsátott ragyogásban. Az Árnyprogram hatalmas ereje végleg eltűnik, és a kristály tiszta fénye helyreállítja a Királyság minden sérült részét. Érzed, hogy a Királyság mostantól biztonságban van, készen arra, hogy újra virágozzon.";
         else title += "Gratulálunk!";
 
-        let narrationText = `<b>${title}</b><br><br>Itt olvasható majd a kaland története.<br>Jelenleg ez egy helyőrző szöveg a ${i}. diánál.`;
+        const narrationText = `<b>${title}</b><br><br>Itt olvasható majd a kaland története.<br>Jelenleg ez egy helyőrző szöveg a ${i}. diánál.`;
 
         const slideConfig = {
             imageUrl: `assets/images/grade3/slides/slide_${slideNum}.jpg`,

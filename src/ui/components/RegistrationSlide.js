@@ -231,7 +231,7 @@ class RegistrationSlide {
         // onInput - Karakterek szűrése gépelés közben
         inp.oninput = () => {
             const start = inp.selectionStart;
-            let originalValue = inp.value;
+            const originalValue = inp.value;
             let filteredValue = originalValue;
 
             if (type === 'name') {
@@ -317,7 +317,7 @@ class RegistrationSlide {
 
     _validateName(raw) {
         // Több szóköz összevonása egyre, majd formázás
-        let formatted = raw.trim().replace(/\s+/g, ' ').toLowerCase().replace(/(?:^|\s|-)\S/g, function (a) { return a.toUpperCase(); });
+        const formatted = raw.trim().replace(/\s+/g, ' ').toLowerCase().replace(/(?:^|\s|-)\S/g, function (a) { return a.toUpperCase(); });
 
         if (formatted.length === 0) return { valid: false, error: 'Kérlek add meg a teljes nevedet!' };
 
@@ -384,7 +384,7 @@ class RegistrationSlide {
     }
 
     _validateClass(raw) {
-        let formatted = raw.replace(/\s+/g, '').toLowerCase();
+        const formatted = raw.replace(/\s+/g, '').toLowerCase();
 
         if (formatted.length === 0) return { valid: false, error: 'Kérlek add meg az osztályodat!' };
 

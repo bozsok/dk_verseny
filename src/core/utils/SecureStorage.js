@@ -65,6 +65,7 @@ class SecureStorage {
         if (this.logger && typeof this.logger.error === 'function') {
             this.logger.error(message, context);
         } else {
+            // eslint-disable-next-line no-console
             console.error(`[SecureStorage] ${message}`, context);
         }
     }

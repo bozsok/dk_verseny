@@ -100,6 +100,7 @@ class DebugManager {
                 return stored;
             }
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.warn('[DEBUG] Failed to load config', e);
         }
 
@@ -129,6 +130,7 @@ class DebugManager {
                 this.logger.info('[DEBUG] Config saved', config);
             }
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.error('[DEBUG] Failed to save config', e);
         }
     }

@@ -66,8 +66,7 @@ class GameInterface {
 
         // Ha van már adat a State-ben, töltsük be (opcionális inicializálás)
         if (this.options.stateManager) {
-            const state = this.options.stateManager.getState();
-            // Kicsit késleltetve vagy manuálisan hívjuk, de itt még lehet üres.
+            // HUD initialization from state (if needed in constructor)
         }
 
         // Közép: Idővonal (Timeline)

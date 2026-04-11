@@ -212,7 +212,7 @@ export default class GameInterfaceGrade4 {
                 const globalTimer = document.getElementById('dkv-timer-display');
                 if (globalTimer) globalTimer.style.display = 'flex';
             };
-            this.timerTickHandler = (data) => {
+            this.timerTickHandler = () => {
                 const globalTimer = document.getElementById('dkv-timer-display');
                 if (globalTimer) globalTimer.style.display = 'flex';
             };
@@ -398,7 +398,7 @@ export default class GameInterfaceGrade4 {
     setNarration(text) {
         this.currentNarration = text || "Nincs elérhető adatfolyam.";
 
-        let narratorBox = this.element ? this.element.querySelector('.dkv-g4-narrator-panel') : null;
+        const narratorBox = this.element ? this.element.querySelector('.dkv-g4-narrator-panel') : null;
         if (narratorBox) {
             const body = narratorBox.querySelector('.dkv-g4-panel-body');
             if (body) {
@@ -417,8 +417,9 @@ export default class GameInterfaceGrade4 {
             journalPanel = document.createElement('div');
             journalPanel.className = 'dkv-g4-journal-panel';
             journalPanel.innerHTML = `
-                <div class="dkv-g4-panel-header">
+                <div class="dkv-g4-panel-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h2>RENDSZER NAPLÓ</h2>
+                    <div class="dkv-g4-close-icon" style="cursor: pointer;">✕</div>
                 </div>
                 <div class="dkv-g4-panel-body">
                     <textarea placeholder="Jegyzetek titkosítása..."></textarea>
@@ -428,7 +429,19 @@ export default class GameInterfaceGrade4 {
                 </div>
             `;
 
-            journalPanel.querySelector('.dkv-g4-btn-close').onclick = () => journalPanel.classList.remove('open');
+            const closeBtn = journalPanel.querySelector('.dkv-g4-btn-close');
+            if (closeBtn) {
+                closeBtn.onclick = () => journalPanel.classList.remove('open');
+            }
+
+            const closeIcon = journalPanel.querySelector('.dkv-g4-close-icon');
+            if (closeIcon) {
+                closeIcon.onclick = (e) => {
+                    e.stopPropagation();
+                    journalPanel.classList.remove('open');
+                };
+            }
+
             this.element.appendChild(journalPanel);
             void journalPanel.offsetWidth;
         }
@@ -546,15 +559,6 @@ export default class GameInterfaceGrade4 {
                 });
             }
 
-            this._settingsMousedownHandler = (e) => {
-                if (settingsPanel.classList.contains('open') &&
-                    !settingsPanel.contains(e.target) &&
-                    !e.target.closest('.dkv-g4-btn-settings')) {
-                    settingsPanel.classList.remove('open');
-                }
-            };
-            document.addEventListener('mousedown', this._settingsMousedownHandler);
-
             void settingsPanel.offsetWidth;
         }
         settingsPanel.classList.toggle('open');
@@ -573,7 +577,6 @@ export default class GameInterfaceGrade4 {
         if (!this.taskModalOverlay) return;
 
         const header = this.taskModalOverlay.querySelector('.dkv-g4-task-modal-header');
-        const modal = this.taskModalOverlay.querySelector('.dkv-g4-task-modal');
 
         if (header) {
             if (options.hideHeader) {
@@ -656,7 +659,7 @@ export default class GameInterfaceGrade4 {
      * @param {boolean} enabled - true: aktív (kattintható), false: letiltott
      * @param {Object} [options={}] - Extra opciók (jövőbeli bővítésre fenntartva)
      */
-    setNextButtonState(enabled, options = {}) {
+    setNextButtonState(enabled) {
         const btn = this.element.querySelector('.dkv-g4-btn-next');
         if (!btn) return;
 
@@ -680,10 +683,7 @@ export default class GameInterfaceGrade4 {
             if (this.timerTickHandler) this.eventBus.off('timer:tick', this.timerTickHandler);
             if (this.timerStartHandler) this.eventBus.off('timer:competition-started', this.timerStartHandler);
         }
-        if (this._settingsMousedownHandler) {
-            document.removeEventListener('mousedown', this._settingsMousedownHandler);
-            this._settingsMousedownHandler = null;
-        }
+
         if (this.element && this.element.parentNode) {
             this.element.parentNode.removeChild(this.element);
         }

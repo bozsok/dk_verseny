@@ -431,6 +431,7 @@ export class PortalTransition {
             this.audio = new Audio(this.audioSrc);
             // Ha van megadva hangerő az opciókban, használjuk azt, egyébként 0.5
             this.audio.volume = this.options.volume !== undefined ? this.options.volume : 0.5;
+            // eslint-disable-next-line no-console
             this.audio.play().catch(e => console.warn('Portal audio play blocked', e));
         }
 
@@ -442,7 +443,7 @@ export class PortalTransition {
             const elapsed = timestamp - startTime;
 
             // === FÁZISLOGIKA ===
-            let phase = 0, uFlash = 0, uOpen = 0;
+            let phase = 0, uOpen = 0;
 
             if (elapsed <= 4000) {
                 // 1. FÁZIS: Anticipáció (0–4 mp) – részecskék keringenek

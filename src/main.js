@@ -215,7 +215,6 @@ class DigitalKulturaVerseny {
    * Szabványos DKV aszinkron boilerplate (Rule 39).
    */
   async loadCriticalFonts() {
-    let loading = true;
     try {
       if (this.logger) this.logger.info('Betűtípusok betöltése folyamatban...');
 
@@ -231,8 +230,6 @@ class DigitalKulturaVerseny {
       if (this.logger) {
         this.logger.error('Sikertelen betűtípus betöltés:', { error: error.message });
       }
-    } finally {
-      loading = false;
     }
   }
 
@@ -895,7 +892,7 @@ class DigitalKulturaVerseny {
     const overlay = document.createElement('div');
     overlay.className = 'maze-result-overlay';
 
-    const isMaze = result.hasOwnProperty('stepCount') && result.stepCount !== undefined;
+    const isMaze = Object.prototype.hasOwnProperty.call(result, 'stepCount') && result.stepCount !== undefined;
 
     const modal = document.createElement('div');
     modal.className = `maze-result-modal ${result.success ? 'success' : 'failure'}`;
@@ -961,7 +958,6 @@ class DigitalKulturaVerseny {
       SLIDE_TYPES.CHARACTER
     ].includes(slide.type);
 
-    const isTutorialActive = this.tutorialManager.isActive;
     const isTutorialPending = !this.tutorialCompletedInSession && !isFullscreenType;
 
     const commonOptions = {
@@ -1941,7 +1937,11 @@ async function startApp() {
 
   // Debug információk elérhetővé tétele
   if (__DEV__) {
-    window.DKV_DEBUG = () => window.DKV_APP.logger ? window.DKV_APP.logger.info('Debug Info:', window.DKV_APP.getDebugInfo()) : console.log(window.DKV_APP.getDebugInfo());
+    window.DKV_DEBUG = () => {
+      if (window.DKV_APP.logger) {
+        window.DKV_APP.logger.info('Debug Info:', window.DKV_APP.getDebugInfo());
+      }
+    };
   }
 }
 

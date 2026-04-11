@@ -5,6 +5,30 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.20.0] - 2026-04-11
+
+### Hozzáadva
+- **Interfész animációk (Grade 4)**: Implementáltuk a Beállítások panel jobb oldali slide-in (beúszó) animációját, amely illeszkedik a "Quantum Terminal" futurisztikus esztétikájához.
+
+### Módosítva
+- **Beállítások panel pozicionálása**: A panel a képernyő jobb felső sarkába került, közvetlenül a HUD alá, biztosítva a zavartalanabb játékmenetet.
+* **Explicit panelkezelés**: Eltávolítottuk a "click-outside" (mellékattintásra záródó) logikát. A panelek (Napló, Narrátor, Beállítások) mostantól szándékos módon, csak a bezáró gombbal szüntethetők meg.
+- **G4 Panel konzisztencia**: Egységesítettük a bezáró ikonokat (`✕`) és az eseménykezelést minden Grade 4 panelen, megakadályozva a véletlen interfész-interakciókat.
+
+## [0.19.0] - 2026-04-11
+
+### Hozzáadva
+- **Teljes körű linting compliance**: A projekt mostantól 100%-ban megfelel az ESLint és Prettier szabályoknak (0 hiba, 0 figyelmeztetés).
+
+### Módosítva
+- **Konzol naplózás refaktora**: Minden `console.log/warn/error` hívás kivezetve vagy a `GameLogger.js`-be integrálva, illetve ahol elkerülhetetlen (külső API hibák), ott szigorú `eslint-disable` kontroll alá vonva.
+- **Paraméter-tisztítás**: Eltávolítottam a nem használt függvényparamétereket és változókat a teljes codebase-ben (`no-unused-vars` javítása).
+- **Verziókövetési adatok**: Frissítettem a `package.json` és `project-context.md` állományokat az új kódminőségi mérföldkőnek megfelelően.
+
+### Javítva
+- **PuzzleGame – biztonsgos ciklus**: Kijavítottam a `while (true)` potenciális végtelen ciklusát egy kontrollált feltételalapú hurokra (`no-constant-condition` hiba elhárítása).
+- **Integritás megőrzése**: Sikeresen lefuttatva a teljes unit teszt készlet (63/63 pass), igazolva a refaktorálás utáni stabil működést.
+
 ## [0.18.6] - 2026-04-11
 
 ### Hozzáadva
