@@ -91,6 +91,26 @@ class TimeManager {
     }
 
     /**
+     * Teljes alaphelyzetbe állítás
+     */
+    reset() {
+        this._stopGlobalTicker();
+        this.globalTimer.startTime = null;
+        this.globalTimer.elapsed = 0;
+        this.globalTimer.isRunning = false;
+
+        this._updateStateTime(0);
+
+        if (this.eventBus) {
+            this.eventBus.emit('timer:reset', { timestamp: Date.now() });
+        }
+
+        if (this.logger) {
+            this.logger.info('TimeManager reset - all internal state cleared');
+        }
+    }
+
+    /**
      * Visszaadja az eltelt időt (ms)
      */
     getElapsedTime() {
@@ -143,6 +163,30 @@ class TimeManager {
             // StateManager hiányában is frissítjük a belső értéket
             this.globalTimer.elapsed = elapsedMs;
         }
+    }
+
+    /**
+     * Szimulált idő hozzáadása az eltelt időhöz
+     * 
+     * @param {number} ms - Hozzáadandó idő milliszekundumban
+     */
+    addSimulationOffset(ms) {
+        if (this.globalTimer.isRunning) {
+            // Ha fut a timer, "visszadátumozzuk" a kezdőpontot
+            this.globalTimer.startTime -= ms;
+        } else {
+            // Ha áll, egyszerűen hozzáadjuk az eltelt időhöz
+            this.globalTimer.elapsed += ms;
+        }
+
+        if (this.logger) {
+            this.logger.info(`Simulation offset added: ${ms}ms`, {
+                newTotalElapsed: this.getElapsedTime()
+            });
+        }
+
+        // Kényszerített állapot-frissítés
+        this._updateStateTime(this.getElapsedTime());
     }
 
     _saveState() {

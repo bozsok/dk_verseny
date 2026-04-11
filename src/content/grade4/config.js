@@ -152,12 +152,12 @@ const createConfig = () => {
     const slides = [];
     let idCounter = 1;
 
-    const addSlide = (type, title, description, content = {}, metadata = {}, id = null) => {
+    const addSlide = (type, title, description, content = {}, metadata = {}, id = null, simulatedState = null) => {
         const enrichedContent = {
             ...content,
             typingSpeed: TYPING_SPEED
         };
-        slides.push({
+        const slide = {
             id: id || idCounter++,
             type,
             title,
@@ -166,7 +166,11 @@ const createConfig = () => {
             metadata, // Metadata debug célokra
             isLocked: true,
             completed: false
-        });
+        };
+        if (simulatedState) {
+            slide.simulatedState = simulatedState;
+        }
+        slides.push(slide);
     };
 
     /**
@@ -188,7 +192,9 @@ const createConfig = () => {
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
         audioSrc: 'assets/audio/grade4/welcome.mp3'
-    }, { section: 'onboarding', step: 0 }, 'welcome');
+    }, { section: 'onboarding', step: 0 }, 'welcome', {
+        addSimulationOffset: 5000
+    });
 
     addSlide(SLIDE_TYPES.REGISTRATION, `${NARRATIVE_DATA.DIA_2.title}\n${NARRATIVE_DATA.DIA_2.text}`, '', {
         fields: ['name', 'nickname', 'classId'],
@@ -203,7 +209,11 @@ const createConfig = () => {
             classId: 1
         },
         audioSrc: 'assets/audio/grade4/registration.mp3'
-    }, { section: 'onboarding', step: 1 }, 'registration');
+    }, { section: 'onboarding', step: 1 }, 'registration', {
+        userProfile: { name: 'Kód Mester', nickname: 'DebugPlayer', classId: '4.a' },
+        score: 3, // Regisztrációért járó pontok
+        addSimulationOffset: 25000 // 25 másodperc szimulált idő
+    });
 
     addSlide(SLIDE_TYPES.CHARACTER, NARRATIVE_DATA.DIA_3.title, NARRATIVE_DATA.DIA_3.text, {
         characters: {
@@ -226,7 +236,10 @@ const createConfig = () => {
             selection: 1
         },
         audioSrc: 'assets/audio/grade4/character.mp3'
-    }, { section: 'onboarding', step: 2 }, 'character');
+    }, { section: 'onboarding', step: 2 }, 'character', {
+        avatar: 'assets/images/grade4/karakter/small/boy_1_k.jpg',
+        score: 1 // Karakter választásért járó pont
+    });
 
     // === 1. BEVEZETÉS (FIX 1-4) ===
     for (let i = 1; i <= 4; i++) {
@@ -263,6 +276,7 @@ const createConfig = () => {
 
             const slideId = `st${originalStationIdx + 1}_s${step + 1}`;
             const stepDescription = step === 2 ? 'Oldjátok meg a feladatot!' : 'Kövessétek a történetet!';
+            const type = step === 2 ? SLIDE_TYPES.TASK : SLIDE_TYPES.STORY;
 
             const stationContent = {
                 imageUrl: `assets/images/grade4/slides/slide_${fileNumStr}.jpg`,
@@ -271,7 +285,24 @@ const createConfig = () => {
             };
             applyVideoConfig(stationContent, `slide_${fileNumStr}`);
 
-            addSlide(SLIDE_TYPES.STORY, title, stepDescription, stationContent, { section: `station_${originalStationIdx + 1}`, step }, slideId);
+            let simulatedState = null;
+            if (step === 2) {
+                simulatedState = {
+                    score: 10,
+                    addKey: `station_${originalStationIdx + 1}`,
+                    addSimulationOffset: 45000,
+                    addTaskResult: {
+                        id: slideId,
+                        title: title,
+                        score: 10,
+                        maxScore: 10,
+                        timeInSeconds: 45,
+                        completed: true
+                    }
+                };
+            }
+
+            addSlide(type, title, stepDescription, stationContent, { section: `station_${originalStationIdx + 1}`, step }, slideId, simulatedState);
         }
     }
 

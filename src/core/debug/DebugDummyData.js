@@ -39,9 +39,21 @@ export const DUMMY_PROFILE = {
 export const ONBOARDING_SIMULATION_TIME = 38000; // 38 sec (ms)
 
 /**
+ * Állomás (feladat) szimulált ideje (ms)
+ */
+export const STATION_SKIP_TIME = 45000; // 45 sec
+
+/**
+ * Történet (STORY) dia szimulált ideje (ms)
+ */
+export const STORY_SKIP_TIME = 5000; // 5 sec
+
+/**
  * Default export az egyszerűbb import-ért
  */
 export default {
   DUMMY_PROFILE,
-  ONBOARDING_SIMULATION_TIME
+  ONBOARDING_SIMULATION_TIME,
+  STATION_SKIP_TIME,
+  STORY_SKIP_TIME
 };

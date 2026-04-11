@@ -28,14 +28,34 @@ export class SummarySlide {
         const userProfile = this.stateManager.getStateValue('userProfile') || {};
         const score = this.stateManager.getStateValue('score') || 0;
         const timeMs = this.timeManager.getElapsedTime();
-        const grade = userProfile.playerClass ? userProfile.playerClass.charAt(0) : '3';
-        
-        // Karakter kép meghatározása
+        const avatar = this.stateManager.getStateValue('avatar');
+        const currentGrade = this.stateManager.getStateValue('currentGrade');
+
+        // Évfolyam meghatározása (classId alapján, pl. '4.a' -> '4')
+        const grade = (userProfile.classId && userProfile.classId.charAt(0)) || (currentGrade ? currentGrade.toString() : '3');
+
+        // Karakter kép meghatározása (Grade 4 esetén teljes elérési út, Grade 3 esetén ID)
         let charSrc = '';
-        if (userProfile.selectedCharacterId) {
-            const charIdMatch = userProfile.selectedCharacterId.match(/(boy_\d|girl_\d)/);
-            const charId = charIdMatch ? charIdMatch[0] : 'boy_1';
-            charSrc = `assets/images/grade${grade}/karakter/large/${charId}_n.jpg`;
+
+        if (avatar && typeof avatar === 'string') {
+            if (avatar.includes('/') || avatar.includes('\\')) {
+                // Ha teljes útvonal (Grade 4), konvertáljuk large-ra és _n.jpg-re
+                charSrc = avatar.replace('/small/', '/large/').replace('_k.jpg', '_n.jpg');
+            } else {
+                // Eredeti ID-alapú logika (pl. "b1" -> "boy_1")
+                let charId = 'boy_1';
+                if (avatar.startsWith('b')) {
+                    charId = `boy_${avatar.substring(1)}`;
+                } else if (avatar.startsWith('g')) {
+                    charId = `girl_${avatar.substring(1)}`;
+                } else if (avatar.includes('_')) {
+                    charId = avatar;
+                }
+                charSrc = `assets/images/grade${grade}/karakter/large/${charId}_n.jpg`;
+            }
+        } else {
+            // Fallback alapértelmezett karakterre
+            charSrc = `assets/images/grade${grade}/karakter/large/boy_1_n.jpg`;
         }
 
         const dateStr = new Date().toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -43,7 +63,7 @@ export class SummarySlide {
         this.element.innerHTML = `
             <div class="certificate-scaler">
                 <div class="certificate-content">
-                    <img src="assets/images/grade3/slides/gratulaciol_alap_fekvo.jpg" class="certificate-bg" alt="Hátteér">
+                    <img src="assets/images/grade3/slides/gratulaciol_alap_fekvo.jpg" class="certificate-bg" alt="Háttér">
                     
                     <div class="cert-character-container">
                         <img id="cert-img-summary" src="${charSrc}" alt="Karakter">

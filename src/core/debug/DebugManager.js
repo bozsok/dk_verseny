@@ -10,7 +10,7 @@
  */
 
 import { buildSectionMap, findSectionBySlideIndex } from './DebugConfig.js';
-import { DUMMY_PROFILE, ONBOARDING_SIMULATION_TIME } from './DebugDummyData.js';
+import { DUMMY_PROFILE, ONBOARDING_SIMULATION_TIME, STATION_SKIP_TIME, STORY_SKIP_TIME } from './DebugDummyData.js';
 import SecureStorage from '../utils/SecureStorage.js';
 
 class DebugManager {
@@ -222,7 +222,162 @@ class DebugManager {
     }
 
     /**
-     * Dummy adatok alkalmazása (Onboarding skip esetén)
+     * Egyedi slide skip kezelése és állapot szimulációja
+     * 
+     * @param {Object} slide - Az átugrott slide objektum
+     */
+    handleSlideSkip(slide) {
+        if (!this.stateManager) return;
+
+        // Idempotencia ellenőrzés: ha már skippeltük/teljesítettük, nem futtatjuk újra
+        if (this.stateManager.isSlideCompleted(slide.id)) {
+            if (this.logger) {
+                this.logger.debug(`[DEBUG] Slide ${slide.id} already completed, skipping simulation`);
+            }
+            return;
+        }
+
+        const section = slide.metadata?.section;
+        const type = slide.type;
+
+        // Verseny időzítő indítása az első skippelésnél, ha még nem fut
+        if (this.timeManager && !this.timeManager.globalTimer.isRunning) {
+            this.timeManager.startCompetition();
+            if (this.logger) {
+                this.logger.info('[DEBUG] Competition timer autostarted on skip');
+            }
+        }
+
+        if (this.logger) {
+            this.logger.debug(`[DEBUG] Simulating skip for ${slide.id} (${type})`);
+        }
+
+        // 0. DEKLARATÍV SZIMULÁCIÓ (simulatedState mező a configból)
+        if (slide.simulatedState) {
+            const sim = slide.simulatedState;
+
+            // Állapot frissítése (pl. profil, avatar, pont)
+            const stateUpdate = {};
+            if (sim.userProfile) stateUpdate.userProfile = sim.userProfile;
+            if (sim.avatar) stateUpdate.avatar = sim.avatar;
+            if (sim.score !== undefined) {
+                stateUpdate.score = (this.stateManager.getStateValue('score') || 0) + sim.score;
+            }
+            
+            if (Object.keys(stateUpdate).length > 0) {
+                this.stateManager.updateState(stateUpdate);
+            }
+
+            // Kulcs hozzáadása
+            if (sim.addKey) {
+                this.stateManager.addKey(sim.addKey);
+            }
+
+            // Statisztikai bejegyzés (taskResult)
+            if (sim.addTaskResult) {
+                const results = this.stateManager.getStateValue('taskResults') || [];
+                if (!results.find(r => r.id === sim.addTaskResult.id)) {
+                    this.stateManager.updateState({
+                        taskResults: [...results, {
+                            ...sim.addTaskResult,
+                            timestamp: Date.now()
+                        }]
+                    });
+                }
+            }
+
+            // Idő offset
+            if (sim.addSimulationOffset && this.timeManager) {
+                this.timeManager.addSimulationOffset(sim.addSimulationOffset);
+            }
+
+            // Ha van deklaratív szimuláció, a legacy ágat kihagyjuk
+            this._ensureDebugFlag();
+            this.stateManager.markSlideCompleted(slide.id);
+            return;
+        }
+
+        // 1. ONBOARDING SZIMULÁCIÓ (LEGACY FALLBACK)
+        if (section === 'onboarding') {
+            if (type === 'registration') {
+                // Profil adatok injektálása (3 pont)
+                this.stateManager.updateState({
+                    userProfile: DUMMY_PROFILE.userProfile,
+                    score: (this.stateManager.getStateValue('score') || 0) + 3
+                });
+            } else if (type === 'character') {
+                // Avatar + 1 pont
+                this.stateManager.updateState({
+                    avatar: DUMMY_PROFILE.avatar,
+                    score: (this.stateManager.getStateValue('score') || 0) + 1
+                });
+            }
+            
+            // Onboarding idő offset (csak egyszer, pl. a welcome vagy regisztrációnál)
+            // Itt a regisztrációnál adjuk hozzá a nagy részét, a többit porlasztva
+            if (type === 'registration' && this.timeManager) {
+                this.timeManager.addSimulationOffset(ONBOARDING_SIMULATION_TIME);
+            }
+        }
+
+        // 2. ÁLLOMÁS (STATION) SZIMULÁCIÓ
+        if (section?.startsWith('station_')) {
+            const stationId = section; // pl. "station_1"
+            
+            // Kulcs megszerzése (ha még nincs meg)
+            if (this.stateManager && !this.stateManager.hasKey(stationId)) {
+                this.stateManager.addKey(stationId);
+            }
+
+            // Pontszám és Idő szimuláció (ha történet vagy feladat dia)
+            if (type === 'story') {
+                if (this.timeManager) this.timeManager.addSimulationOffset(STORY_SKIP_TIME);
+            } else if (type === 'task') {
+                // Feladat szimuláció (10 pont + eredmény bejegyzés)
+                const currentScore = this.stateManager.getStateValue('score') || 0;
+                this.stateManager.updateState({
+                    score: currentScore + 10
+                });
+
+                // Statisztikai bejegyzés injektálása (hogy a summaryRealistic legyen)
+                const taskResults = this.stateManager.getStateValue('taskResults') || [];
+                const taskResult = {
+                    id: slide.id,
+                    title: slide.title,
+                    score: 10,
+                    maxScore: 10,
+                    timeInSeconds: 45,
+                    completed: true,
+                    timestamp: Date.now()
+                };
+                
+                // Csak akkor adjuk hozzá, ha még nincs benne (duplikáció elleni védelem)
+                if (!taskResults.find(r => r.id === slide.id)) {
+                    this.stateManager.updateState({
+                        taskResults: [...taskResults, taskResult]
+                    });
+                }
+
+                if (this.timeManager) this.timeManager.addSimulationOffset(STATION_SKIP_TIME);
+            }
+        }
+
+        this._ensureDebugFlag();
+        this.stateManager.markSlideCompleted(slide.id);
+    }
+
+    /**
+     * Biztosítja, hogy az isDebugSession flag be legyen állítva
+     * @private
+     */
+    _ensureDebugFlag() {
+        if (this.stateManager && !this.stateManager.getStateValue('isDebugSession')) {
+            this.stateManager.updateState({ isDebugSession: true });
+        }
+    }
+
+    /**
+     * Dummy adatok alkalmazása (LEGACY - Onboarding skip esetén)
      * 
      * Automatikusan:
      * - Betölti a dummy profilt

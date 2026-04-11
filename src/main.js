@@ -537,6 +537,11 @@ class DigitalKulturaVerseny {
         achievements: []
       }
     });
+    
+    // Verseny időzítő alaphelyzetbe állítása minden új játék előtt
+    if (this.timeManager) {
+      this.timeManager.reset();
+    }
 
     // Reset played audios
     if (this.playedAudioSlides) this.playedAudioSlides.clear();
@@ -625,27 +630,24 @@ class DigitalKulturaVerseny {
         if (this.debugManager) this.debugManager.disable();
         // Tovább a normál renderelőssel (fallback)
       } else {
-        if (direction === 'forward' && slide.metadata?.section === 'onboarding' && !this.stateManager.getStateValue('userProfile')) {
+        // --- GRAUNLÁRIS ATOMI SZIMULÁCIÓ (PONTOK, KULCSOK, IDŐ) ---
+        if (direction === 'forward') {
           if (this.debugManager) {
-            this.debugManager.applyDummyData();
-          } else if (this.buildConfig?.useDummyData) {
-            this.stateManager?.updateState({
-              userProfile: { name: 'Tanuló', nickname: 'Player', classId: '3.a' },
-              characterSelected: true
-            });
-          }
-          if (this.logger) this.logger.info('[Skip] Onboarding skipped, dummy data applied');
-        }
-
-        // --- AUTOMATIC KEY COLLECTION FOR SKIPPED SECTIONS ---
-        if (direction === 'forward' && slide.metadata?.section?.startsWith('station_')) {
-          const stationId = slide.metadata.section;
-          if (this.stateManager && !this.stateManager.hasKey(stationId)) {
-            if (this.logger) this.logger.info(`[Skip] Adding key for skipped station: ${stationId}`);
-            this.stateManager.addKey(stationId);
-
-            if (this.activeGameInterface) {
-              this.activeGameInterface.updateHUD(this.stateManager.getState());
+            // Fejlesztői módban az intelligens szimulátort használjuk
+            this.debugManager.handleSlideSkip(slide);
+          } else if (this.buildConfig?.enabled) {
+            // PROD skip fallback (alapszintű szimuláció ha a debugManager nincs jelen)
+            if (slide.metadata?.section === 'onboarding' && !this.stateManager.getStateValue('userProfile')) {
+              this.stateManager?.updateState({
+                userProfile: { name: 'Tanuló', nickname: 'Player', classId: '4.a' },
+                characterSelected: true
+              });
+            }
+            if (slide.metadata?.section?.startsWith('station_')) {
+              const stId = slide.metadata.section;
+              if (this.stateManager && !this.stateManager.hasKey(stId)) {
+                this.stateManager.addKey(stId);
+              }
             }
           }
         }
@@ -1307,6 +1309,11 @@ class DigitalKulturaVerseny {
       }
 
       this.hub.show();
+      
+      // Időzítő elrejtése a Hub-ban
+      if (this.timerDisplay) {
+        this.timerDisplay.hide();
+      }
 
       if (this.logger) {
         this.logger.info('Hub displayed (re-initialized and fresh render)');

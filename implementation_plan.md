@@ -1,42 +1,41 @@
-# 📐 Strategiai Javaslat: Grade 4 CSS Feliratozás (Quantum Terminál)
+# 📐 Implementációs Terv: Granuláris Skip és Pontozás Javítása
 
-**Készítette:** Architect-Steamer
-**Küldetés:** UI elem azonosíthatóság javítása magyar nyelvű kommentekkel.
+**Készítette:** Architect-Pampa
+**Küldetés:** A "Quantum Terminal" (Grade 4) pontozási és skippelési anomáliák végleges felszámolása.
 
 ## 🏛️ Architecturális Analízis (Az "Abszolút Tökéletes Út")
 
-A projekt BEM módszertant és `.dkv-` prefixet használ. A Grade 4 (Quantum Terminál) stílusai több fájlban szétosztva jelennek meg, és gyakran mélyen egymásba ágyazott (nested) szelektorokat tartalmaznak (pl. `.dkv-grade-4 .dkv-welcome-slide .dkv-start-button`). 
-
-A legtisztább megoldás az, ha a kommenteket közvetlenül a szelektorok fölé helyezzük el, egyértelműen megjelölve a gomb funkcióját és (ahol releváns) a felhasználói felületen elfoglalt helyét. Ezzel elkerülhető, hogy a CSS-ben járatlanabb fejlesztők vagy a későbbi módosítások során összezavarodjanak az elemek.
+A projekt jelenlegi debug-skippelési mechanizmusa ("mindent vagy semmit") inkonzisztenciát szül a pontos haladás és a megszerzett pontok között. A megoldás egy **atomic (atomivá tett) feladat-szimuláció** bevezetése a hurokban. Ez azt jelenti, hogy skippeléskor a rendszer nem egyszerűen átugorja a diát, hanem a háttérben "lejátssza" a sikeres teljesítést: injektálja a statisztikákat, hozzáadja a pontokat és kulcsokat, valamint kényszeríti az állapotmentést.
 
 ## 🛡️ Kockázatelemzés és Technikai Adósság
 
-- **Kockázat:** A túlzott kommentezés növelheti a fájlméretet, de mivel a build folyamat (PostCSS, CSSnano) ezeket eltávolítja a produkciós változatból, ez nem jelent valós veszélyt.
-- **Konzisztencia:** Ügyelnünk kell rá, hogy ugyanazt a gombot minden fájlban azonos névvel illessük (pl. "Tovább gomb").
-- **Egymásba ágyazottság:** A kommenteket a legspecifikusabb szelektorhoz közel kell elhelyezni, hogy látható legyen, pontosan melyik állapotra (pl. `:hover`) vonatkoznak.
+| Kockázat | Megoldási stratégia |
+| :--- | :--- |
+| **Ranglista túlterhelés** | A skip-lánc alatt blokkoljuk a hálózati kéréseket, és csak a folyamat végén indítunk egyetlen szinkron mentést. |
+| **Időmérő anomáliák** | Skippelt feladatonként szimulált időt (offset) adunk a globális időhöz, elkerülve a 0 másodperces rekordokat. |
+| **Dupla pontozás** | A navigációs `forward/backward` logic és a `stateManager` meglévő kulcs-ellenőrzésének szigorúbb integrációja. |
 
 ## 📋 Logikai Vázlat (Implementációs Lépések)
 
-### 1. `Interface.css` Feliratozása
-- HUD elemek (Profil, Beállítások) jelölése.
-- Navigációs nyilak (Előző/Következő) kiemelése.
-- Funkciógombok (Napló, Terminál) azonosítása.
-- Modál gombok (OK, Bezárás) leírása.
+### 1. `DebugManager.js` & `DebugDummyData.js`
+- Új `handleSlideSkip(slide)` metódus implementálása.
+- Diatípus specifikus logikák:
+    - **Registration**: Profilnév + 3 pont injektálása.
+    - **Character**: Avatar + 1 pont injektálása.
+    - **Station Task**: Kulcs, 10 pont és statisztikai bejegyzés (`taskResults`) generálása.
 
-### 2. `Character.css` Feliratozása
-- Karakter kártyák és az előnézeti modál interaktív elemeinek jelölése.
+### 2. `TimeManager.js`
+- `addSimulationOffset(ms)` metódus hozzáadása, amely módosítja a `globalTimer` kezdőpontját.
 
-### 3. `Registration.css` Feliratozása
-- A regisztrációs folyamat "Tovább" gombjának és beviteli mezőinek azonosítása.
+### 3. `main.js` refaktor
+- A `renderSlide()` navigációs loopba történő beavatkozás a skip-ágon.
+- Lánc végi mentési logika (`saveResultToLeaderboard`) optimalizálása.
 
-### 4. `main.css` Feliratozása
-- Globális Grade 4 gombalapok és közös hover állapotok magyarázata.
-
-### 5. `Welcome.css` Feliratozása
-- A "Kezdés" gomb egyértelmű azonosítása.
+### 4. Konfigurációs bővítés (`config.js`)
+- `simulatedState` mezők támogatása a diák metadata részében az egyedi flag-ek (pl. `hasUsedKey`) kezeléséhez.
 
 ## 🏁 Záró Megjegyzés
 
-A javaslat elfogadása után a küldetés átkerül a **Manager** szakaszba, ahol az egyes feladatok (router.json) kiosztásra kerülnek a **Worker** számára.
+A javaslat elfogadása után a küldetés átkerül a **Manager** szakaszba, ahol az egyes feladatok ütemezése megtörténik.
 
 **Következő lépés:** Amennyiben a terv megfelel, írd be: `proceed` vagy `go`.

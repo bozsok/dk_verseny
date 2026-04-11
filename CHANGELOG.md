@@ -5,67 +5,89 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.18.6] - 2026-04-11
+
+### Hozzáadva
+- **Munkamenet-alaphelyzetbe állítás (reset)**: Implementáltam a `TimeManager.reset()` metódust a tiszta munkamenet-indítás érdekében. Ez a SEL architektúra elveit követve biztosítja, hogy az időzítőadatok ne szivárogjanak át a különböző játékmenetek (session) között.
+
+### Módosítva
+- **Navigációs integráció**: A `main.js` navigációs folyamatában (évfolyam választásakor) mostantól automatikusan lefut a versenyóra alaphelyzetbe állítása a `TimeManager.reset()` hívásával.
+
+### Javítva
+- **Összegző képernyő (Summary) – Karaktermegjelenítés**: Javítottam a karakterképek elérési útjának feloldását a `SummarySlide.js` komponensben. A Grade 4 esetén használt teljes fájlútvonalakat a rendszer mostantól helyesen konvertálja nagy felbontású (`large`) képpé és `.jpg` kiterjesztéssé.
+- **Vizuális korrekció**: Kijavítottam egy elírást az összegző dia háttérképének alternatív szövegében (alt-szöveg): "Hátteér" -> "Háttér".
+
+## [0.18.5] - 2026-04-11
+
+### Hozzáadva
+- **Granuláris skip-rendszer**: Implementáltam egy atomi feladat-szimulációs mechanizmust a `DebugManager`-ben. Mostantól minden átugrott dia (regisztráció, karakterválasztó, állomások) egyedileg szimulálja a pontszámokat, kulcsokat és statisztikákat, biztosítva a ranglista konzisztenciáját masszív skippelés esetén is.
+- **Szimulált időoffset**: Új `addSimulationOffset` metódus a `TimeManager`-ben, amely reális időt ad hozzá a versenyidőhöz a kihagyott feladatok után (pl. 38 mp onboarding, 45 mp állomásfeladatonként), elkerülve a 0 másodperces rekordokat.
+
+### Módosítva
+- **Navigációs loop-refaktor**: A `main.js`-ből eltávolításra került a korábbi hardkódolt, monolitikus skip logika. A vezérlés átkerült a `DebugManager.handleSlideSkip` metódushoz, amely a State-Eventbus-Logger (SEL) architektúra szerint kezeli az állapotátmeneteket.
+- **DebugDummyData**: Új, finomhangolt időoffset-konstansok a reálisabb szimuláció érdekében.
+
 ## [0.18.4] - 2026-04-10
 
 ### Javítva
-- **FOUIF (Font Villanás)**: Megszüntettem az ikonok szöveges felvillanását egy rendszerszintű, az inicializációs logikába és a betöltőképernyőbe integrált font-betöltési kontrollal. Teljes körű megoldás a Google Fonts `display=block` és a JS `document.fonts.load` API kombinációjával.
-- **Kódtisztítás**: Eltávolításra kerültek az ideiglenes komponens-szintű hackek és időzítők a Grade 4 interfészből, eleget téve a Rule 89, 99 és 110-es irányelveknek.
+- **FOUIF (fontvillanás)**: Megszüntettem az ikonok szöveges felvillanását egy rendszerszintű, az inicializációs logikába és a betöltőképernyőbe integrált fontbetöltési kontrollal. Teljes körű megoldás a Google Fonts `display=block` és a JS `document.fonts.load` API kombinációjával.
+- **Kódtisztítás**: Eltávolításra kerültek az ideiglenes komponensszintű hackek és időzítők a 4. évfolyam interfészéből, eleget téve a Rule 89, 99 és 110-es irányelveknek.
 
 ## [0.18.3] - 2026-04-10
 
 ### Javítva
-- **Grade 4 Narráció**: Megoldottam a sortörés karakterek (`\n`) megjelenítési hibáját és helyreállítottam a hiányzó narratív leírásokat a regisztrációs dián.
-- **Scoring Rendszer**: Helyreállítottam a Grade 4-ben elromlott `+1` (floating point) animációt az `Interface.css`-ben fellépő osztálynév-eltérés javításával.
-- **Vizuális**: Visszaállítottam a pontozás arany színét a jobb láthatóság érdekében.
+- **4. évfolyam narráció**: Megoldottam a sortöréskarakterek (`\n`) megjelenítési hibáját, és helyreállítottam a hiányzó narratív leírásokat a regisztrációs dián.
+- **Pontozórendszer**: Helyreállítottam a 4. évfolyamon elromlott `+1` (lebegőpontos) animációt az `Interface.css`-ben fellépő osztálynév-eltérés javításával.
+- **Vizuális megjelenítés**: Visszaállítottam a pontozás arany színét a jobb láthatóság érdekében.
 
 ## [0.18.2] - 2026-04-10
 
 ### Hozzáadva
-- **Modál Interakciók**: A Beállítások ablak is megkapta a bezáró 'X' ikont.
-- **UX**: A Terminál (Narráció) ablak mostantól külső kattintásra is bezáródik.
+- **Modális interakciók**: A „Beállítások” ablak is megkapta a bezáró X-ikont.
+- **UX**: A „Terminál” (Narráció) ablak mostantól külső kattintásra is bezáródik.
 
 ### Javítva
-- **Onboarding Időzítő**: Helyreállítottam és szinkronizáltam az időzítő vizuális megjelenését az Onboarding szakasz alatt, hogy megegyezzen a játék többi részével.
+- **Onboarding-időzítő**: Helyreállítottam és szinkronizáltam az időzítő vizuális megjelenését az onboarding szakasz alatt, hogy megegyezzen a játék többi részével.
 
 ## [0.18.1] - 2026-04-10
 
 ### Módosítva
-- **Grade 4 "Quantum Terminal" Finomhangolás**:
-  - **Beállítások Panel**: A technikai label-ek magyarítása (HÁTTÉRZENE, NARRÁTOR, EGÉRKATTINTÁS) a jobb érthetőségért.
-  - **Vizuális Egységesítés**: A navigációs gombok, az oldalmenü és a beállítások gomb alap háttérszínének egységesítése (`rgba(0, 0, 0, 0.5)`).
-  - **Ikon Stabilitás**: A HUD ikonok CSS szelektorainak megerősítése (specificity), biztosítva a méretezési szabályok helyes érvényesülését.
-  - **Karakter Előnézet**: A "Kiválasztás" gomb vizuális finomítása és Grade 4-specifikus stílusizolációja a Character.css-ben.
+- **A 4. évfolyam „Quantum Terminal” interfészének finomhangolása**:
+  - **Beállítások panel**: A technikai labelek magyarítása (HÁTTÉRZENE, NARRÁTOR, EGÉRKATTINTÁS) a jobb érthetőségért.
+  - **Vizuális egységesítés**: A navigációs gombok, az oldalmenü és a beállítások gomb alapháttérszínének egységesítése (`rgba(0, 0, 0, 0.5)`).
+  - **Ikonstabilitás**: A HUD-ikonok CSS-szelektorainak megerősítése (specificity), biztosítva a méretezési szabályok helyes érvényesülését.
+  - **Karakter-előnézet**: A „Kiválasztás” gomb vizuális finomítása és 4. évfolyam-specifikus stílusizolációja a `Character.css`-ben.
 
 ### Javítva
-- **Szerkezeti inkonzisztencia**: Az inventory slotok kezdeti HTML osztályának (`bg-active` -> `active-item`) szinkronizálása a CSS-sel.
-- **Hover állapotok**: A navigációs nyilak és a beállítások gomb hover effektjeinek konzisztensebbé tétele.
+- **Szerkezeti inkonzisztencia**: Az inventory slotok kezdeti HTML-osztályának (`bg-active` -> `active-item`) szinkronizálása a CSS-sel.
+- **Hover-állapotok**: A navigációs nyilak és a beállítások gomb hover effektjeinek konzisztensebbé tétele.
 
 ## [0.18.0] - 2026-04-10
 
 ### Hozzáadva
-- **Grade 4 "Quantum Terminal" Polírozás**:
-  - Kontrasztosabb modális ablak elemek: Sötét háttér a 'Kiválasztom' gombhoz és a bezáró 'x' ikonhoz a jobb láthatóságért.
-  - Hover/Active állapotok: Jitter-mentes, Quantum stílusú gombvisszajelzések (glow és border-color).
+- **A 4. évfolyam „Quantum Terminal” interfészének csiszolása**:
+  - Kontrasztosabb modálisablak-elemek: Sötét háttér a „Kiválasztom” gombhoz és a bezáró „x” ikonhoz a jobb láthatóságért.
+  - Hover-/active-állapotok: Jittermentes, „Quantum” stílusú gombvisszajelzések (glow és border-color).
   - Tipográfiai egységesítés: Új standard betűméret (1.4rem) a Manrope és Space Grotesk betűtípusokhoz a teljes onboarding során.
 
 ### Módosítva
-- **Dinamikus Placeholder**: A regisztrációs íven az osztály példa már az évfolyamhoz igazodik (3. osztály -> 3.b, 4. osztály -> 4.b).
-- **Szelektor Architektúra**: A modális ablakok CSS szelektorai már nem függenek a slide konténertől, így stabilabb a stílusöröklődés.
+- **Dinamikus placeholder**: A regisztrációs íven az osztálypélda már az évfolyamhoz igazodik (3. osztály -> 3.b, 4. osztály -> 4.b).
+- **Szelektorarchitektúra**: A modális ablakok CSS-szelektorai már nem függenek a slide-konténertől, így stabilabb a stílusöröklődés.
 
 ### Javítva
-- **Grade 3 Vizuális Regresszió**: Az OK gombok olvashatatlanságát okozó korábbi CSS konfliktusok feloldva, a Grade 3 stílusok érintetlenek maradnak.
-- **Szintaktikai hibák**: Javítva a Character.css fájlban maradt zárójel és formázási hibák.
+- **3. évfolyam vizuális regresszió**: Az OK-gombok olvashatatlanságát okozó korábbi CSS-konfliktusok feloldva, a 3. évfolyamos stílusok érintetlenek maradnak.
+- **Szintaktikai hibák**: Javítva a `Character.css` fájlban maradt zárójel- és formázási hibák.
 
 ## [0.17.0] - 2026-04-09
 
 ### Hozzáadva
-- **Grade 4 "Quantum Terminal" interfész**: Teljes körű vizuális harmonizáció a 3. osztályos elrendezéssel.
-- **Brutalista Design**: Technikai vágások (clip-path), türkiz neon effektek és Space Grotesk/Manrope tipográfia bevezetése.
+- **A 4. évfolyam „Quantum Terminal” interfésze**: Teljes körű vizuális harmonizáció a 3. évfolyam elrendezésével.
+- **Brutalista dizájn**: Technikai vágások (clip-path), türkiz neoneffektek és Space Grotesk/Manrope tipográfia bevezetése.
 
 ### Javítva
-- **CSS Tisztítás**: Az összes tiltott `!important` szabály eltávolítása a Grade 4 stíluslapokról.
-- **Hover stabilitás**: A gombok és kártyák Y irányú elmozdulásának megszüntetése a globális design-system felülbírálásával.
-- **Nyelvi harmonizáció**: Minden Grade 4 CSS komment és dokumentáció magyarosítása a projekt szabályai szerint.
+- **CSS-tisztítás**: Az összes tiltott `!important` szabály eltávolítása a 4. évfolyam stíluslapjairól.
+- **Hover-stabilitás**: A gombok és kártyák Y irányú elmozdulásának megszüntetése a globális design-system felülbírálásával.
+- **Nyelvi harmonizáció**: Minden 4. évfolyamos CSS-komment és dokumentáció magyarosítása a projekt szabályai szerint.
 
 ## [0.16.7] - 2026-03-23
 
