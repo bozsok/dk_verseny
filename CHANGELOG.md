@@ -5,6 +5,16 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.21.0] - 2026-04-11
+
+### Hozzáadva
+- **7 szegmenses idővonal (Grade 4)**: Implementáltuk a teljesen szimmetrikus, 7 logikai egységre (Intro, 5 Állomás, Finálé) bontott idővonalat. Minden egység pontosan 4 diát fed le, így a 28 diás versenyfolyamat vizuálisan is követhetővé vált.
+
+### Módosítva
+- **Timeline vizualizáció**: A korábbi 10 pontos rendszert szimmetrikus „sín” (slider) mechanikára cseréltük, amely 25%-os lépésközökkel töltődik fel az egyes szekciókon belül.
+- **Onboarding elszigetelés**: Az idővonal mostantól helyesen csak az onboarding fázis (Welcome, Regisztráció, Karakterválasztó) után jelenik meg, biztosítva a fókuszált felhasználói élményt.
+- **Dinamikus szekciónevek**: Az interfész alsó sávja mostantól a metadata alapján jeleníti meg a fázisokat (INTRO, Sector, FINAL).
+
 ## [0.20.0] - 2026-04-11
 
 ### Hozzáadva

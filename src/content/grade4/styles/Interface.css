@@ -54,7 +54,7 @@
     direction: ltr;
     -webkit-font-smoothing: antialiased;
     font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-    
+
     font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
 }
 
@@ -295,6 +295,7 @@
 }
 
 .dkv-g4-station-info {
+    flex: 1;
     display: flex;
     align-items: baseline;
     gap: 0.75rem;
@@ -321,21 +322,29 @@
     gap: 0.5rem;
 }
 
-.dkv-g4-timeline-segment {
+.dkv-g4-timeline-track {
     width: 4rem;
     height: 0.125rem;
     background-color: var(--g4-surface-container-highest);
-    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
-.dkv-g4-timeline-segment.filled {
+.dkv-g4-timeline-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
     background-color: var(--g4-primary-container);
     box-shadow: 0 0 8px var(--g4-primary-container);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dkv-g4-inventory-area {
+    flex: 1;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 1rem;
 }
 
@@ -382,13 +391,13 @@
 /* NAVIGATION CONTROLS */
 .dkv-g4-nav-controls {
     position: absolute;
-    bottom: 5%;
+    bottom: 7%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 40;
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 5rem;
     pointer-events: none;
     /* Csak a gombok kapják vissza */
 }
@@ -423,7 +432,7 @@
     height: 56px;
     background: rgba(0, 0, 0, 0.5);
     /* Megduplázott opacitás a láthatóságért */
-    border: 2px solid #fde3c2;
+    border: 1px solid #c1fffe;
     color: #c1fffe;
     cursor: pointer;
     overflow: hidden;

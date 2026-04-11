@@ -154,6 +154,17 @@ export default class GameInterfaceGrade4 {
         timeline.className = 'dkv-g4-timeline';
         this.timelineContainerEl = timeline;
 
+        this.timelineFillEls = [];
+        for (let i = 0; i < 7; i++) {
+            const track = document.createElement('div');
+            track.className = 'dkv-g4-timeline-track';
+            const fill = document.createElement('div');
+            fill.className = 'dkv-g4-timeline-fill';
+            track.appendChild(fill);
+            timeline.appendChild(track);
+            this.timelineFillEls.push(fill);
+        }
+
         const inventoryArea = document.createElement('div');
         inventoryArea.className = 'dkv-g4-inventory-area';
         inventoryArea.innerHTML = `
@@ -303,36 +314,59 @@ export default class GameInterfaceGrade4 {
      * @param {number} currentSlide - Az aktuális dia sorszáma (1-alapú)
      */
     updateTimeline(currentSlide, slide = null) {
-        if (!this.timelineContainerEl) return;
-        this.timelineContainerEl.innerHTML = '';
+        if (!this.timelineContainerEl || !this.timelineFillEls) return;
 
-        // Az INTRO fázis detektálása a metaadatok alapján (pontosabb, mint a sorszám)
+        // Az aktuális fázis detektálása a metaadatok alapján
         const section = slide?.metadata?.section || 'unknown';
         const isIntro = section === 'onboarding' || section === 'intro';
+        const isFinal = section === 'final';
 
         if (this.stationLabelEl) {
-            this.stationLabelEl.textContent = isIntro ? 'INTRO' : 'Sector';
+            if (isIntro) this.stationLabelEl.textContent = 'INTRO';
+            else if (isFinal) this.stationLabelEl.textContent = 'FINAL';
+            else this.stationLabelEl.textContent = 'Sector';
         }
 
         if (this.stationTextEl) {
             if (isIntro) {
                 this.stationTextEl.innerHTML = `FELTÖLTÉS`;
+            } else if (isFinal) {
+                this.stationTextEl.innerHTML = `ANALÍZIS`;
             } else {
                 this.stationTextEl.innerHTML = `STATION_${String(currentSlide).padStart(2, '0')}`;
             }
         }
 
-        const segments = 10;
-        const offset = 1;
-        const current = Math.max(0, currentSlide - offset);
-        const progressPct = current / this.totalSlides;
-        const filledSegments = Math.round(progressPct * segments);
+        // Ha nem szám (pl. 'welcome'), ne frissítsük a töltöttséget
+        const slideIdx = typeof currentSlide === 'number' ? currentSlide : parseInt(currentSlide, 10);
+        if (isNaN(slideIdx)) return;
 
-        for (let i = 0; i < segments; i++) {
-            const seg = document.createElement('div');
-            seg.className = i < filledSegments ? 'dkv-g4-timeline-segment filled' : 'dkv-g4-timeline-segment';
-            this.timelineContainerEl.appendChild(seg);
+        // Korrekció: Az első 3 onboarding diát (Welcome, Reg, Char) nem számoljuk a 28-as idővonalba
+        const onboardingOffset = 3;
+        const targetIdx = slideIdx - onboardingOffset;
+
+        // Ha még az onboardingban vagyunk, minden csík üres
+        if (targetIdx <= 0) {
+            this.timelineFillEls.forEach(fill => {
+                fill.style.width = '0%';
+            });
+            return;
         }
+
+        // 7 csoport (Intro, 5 Állomás, Finálé), csoportonként 4 dia = 28 dia
+        const groupIndex = Math.floor((targetIdx - 1) / 4);
+        const groupProgress = ((targetIdx - 1) % 4) + 1;
+
+        this.timelineFillEls.forEach((fill, i) => {
+            if (i < groupIndex) {
+                fill.style.width = '100%';
+            } else if (i === groupIndex) {
+                // Sima töltődés a diák előrehaladtával (25%, 50%, 75%, 100%)
+                fill.style.width = `${(groupProgress / 4) * 100}%`;
+            } else {
+                fill.style.width = '0%';
+            }
+        });
     }
 
     /**
@@ -693,6 +727,7 @@ export default class GameInterfaceGrade4 {
         this.taskOkBtn = null;
         this.taskModalBody = null;
         this.timelineContainerEl = null;
+        this.timelineFillEls = null;
         this.stationLabelEl = null;
         this.stationTextEl = null;
         this.inventorySlotsEl = null;
