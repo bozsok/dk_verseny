@@ -5,6 +5,15 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.22.0] - 2026-04-11
+
+### Hozzáadva
+- **Named Export Refaktor**: A projekt összes kulcsfontosságú modulja (pl. `GameInterfaceGrade4`, `PortalTransition`) átállt Named Export-alapú exportálásra a Rule 33-nak megfelelően, növelve a kód olvashatóságát és a tree-shaking hatékonyságát.
+- **Interfész magyarítás (Grade 4)**: A technikai azonosítók (STATION_NAMES) véglegesítése és magyar szaknyelvi szinkronizálása az interfész minden rétegén.
+
+### Módosítva
+- **Kompatibilitási réteg**: Megtartottuk az `export default` deklarációkat a nagyobb komponenseknél (`SummarySlide`, `GameInterfaceGrade4`) a fokozatos átállás és a visszamenőleges kompatibilitás biztosítása érdekében.
+
 ## [0.21.0] - 2026-04-11
 
 ### Hozzáadva

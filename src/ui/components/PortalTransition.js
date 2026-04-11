@@ -604,3 +604,5 @@ export class PortalTransition {
         });
     }
 }
+
+export default PortalTransition;

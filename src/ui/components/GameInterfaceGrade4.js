@@ -1,6 +1,17 @@
 // import { animate, stagger } from 'animejs';
 
-export default class GameInterfaceGrade4 {
+const STATION_NAMES = {
+    'onboarding': 'AZONOSÍTÁS',
+    'intro': 'RENDSZER-BETÖLTÉS',
+    'station_1': 'ÜZENETEK KRIPTÁJA',
+    'station_2': 'MEMÓRIA TÜKÖRTERME',
+    'station_3': 'LOGIKAI KÖNYVTÁR',
+    'station_4': 'ANOMÁLIÁK SZIGETE',
+    'station_5': 'BIT-FOLYAM ZSILIPJE',
+    'final': 'RENDSZERMAG'
+};
+
+export class GameInterfaceGrade4 {
     constructor(options = {}) {
         this.options = options;
 
@@ -137,8 +148,6 @@ export default class GameInterfaceGrade4 {
         navControls.appendChild(nextBtn);
         this.element.appendChild(navControls);
 
-        // (Story szövegdoboz a képernyő aljáról eltávolítva)
-
         // 7. BOTTOM HUD
         const footer = document.createElement('footer');
         footer.className = 'dkv-g4-bottom-hud';
@@ -146,7 +155,7 @@ export default class GameInterfaceGrade4 {
         const stationInfo = document.createElement('div');
         stationInfo.className = 'dkv-g4-station-info';
         stationInfo.innerHTML = `
-            <span class="dkv-g4-station-label">Sector</span>
+            <span class="dkv-g4-station-label">ÁLLOMÁS</span>
             <span class="dkv-g4-station-value">STATION_00</span>
         `;
 
@@ -168,7 +177,7 @@ export default class GameInterfaceGrade4 {
         const inventoryArea = document.createElement('div');
         inventoryArea.className = 'dkv-g4-inventory-area';
         inventoryArea.innerHTML = `
-            <span class="dkv-g4-inventory-label">Updates</span>
+            <span class="dkv-g4-inventory-label">SZKRIPTEK</span>
             <div class="dkv-g4-inventory-slots">
                 <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon active-item"><span class="material-symbols-outlined">extension</span></div></div>
                 <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div></div>
@@ -213,9 +222,6 @@ export default class GameInterfaceGrade4 {
 
         this.taskOkBtn = this.taskModalOverlay.querySelector('.dkv-g4-task-ok-btn');
         this.taskModalBody = this.taskModalOverlay.querySelector('.dkv-g4-task-modal-body');
-
-        // 9. TASK MODAL (már előzőleg konfigurálva)
-        // Note: the taskModal logic is mapped similarly to GameInterface
 
         // Időmérő megjelenítés eseményfigyelőjének beállítása (globális elem vezérlése)
         if (this.eventBus) {
@@ -312,6 +318,7 @@ export default class GameInterfaceGrade4 {
     /**
      * Idővonal (haladásjelző szegmensek) és állomásszámláló frissítése.
      * @param {number} currentSlide - Az aktuális dia sorszáma (1-alapú)
+     * @param {Object} slide - Az aktuális dia objektum a metaadatokkal
      */
     updateTimeline(currentSlide, slide = null) {
         if (!this.timelineContainerEl || !this.timelineFillEls) return;
@@ -322,24 +329,27 @@ export default class GameInterfaceGrade4 {
         const isFinal = section === 'final';
 
         if (this.stationLabelEl) {
-            if (isIntro) this.stationLabelEl.textContent = 'INTRO';
-            else if (isFinal) this.stationLabelEl.textContent = 'FINAL';
-            else this.stationLabelEl.textContent = 'Sector';
+            this.stationLabelEl.textContent = isIntro ? 'INTRO' : 'ÁLLOMÁS';
         }
 
         if (this.stationTextEl) {
             if (isIntro) {
-                this.stationTextEl.innerHTML = `FELTÖLTÉS`;
-            } else if (isFinal) {
-                this.stationTextEl.innerHTML = `ANALÍZIS`;
+                this.stationTextEl.textContent = 'FELTÖLTÉS';
+            } else if (section in STATION_NAMES) {
+                this.stationTextEl.textContent = STATION_NAMES[section];
             } else {
-                this.stationTextEl.innerHTML = `STATION_${String(currentSlide).padStart(2, '0')}`;
+                this.stationTextEl.textContent = isFinal ? 'RENDSZERMAG' : 'ISMERETLEN';
             }
         }
 
-        // Ha nem szám (pl. 'welcome'), ne frissítsük a töltöttséget
+        // Ha nem szám (pl. 'welcome'), ne frissítsük a töltöttséget, de legyen alapállapot (0%)
         const slideIdx = typeof currentSlide === 'number' ? currentSlide : parseInt(currentSlide, 10);
-        if (isNaN(slideIdx)) return;
+        if (isNaN(slideIdx)) {
+            this.timelineFillEls.forEach(fill => {
+                fill.style.width = '0%';
+            });
+            return;
+        }
 
         // Korrekció: Az első 3 onboarding diát (Welcome, Reg, Char) nem számoljuk a 28-as idővonalba
         const onboardingOffset = 3;
@@ -736,3 +746,5 @@ export default class GameInterfaceGrade4 {
         this.avatarEl = null;
     }
 }
+
+export default GameInterfaceGrade4;

@@ -21,7 +21,7 @@ import CharacterSlide from './ui/components/CharacterSlide.js';
 import StorySlide from './ui/components/StorySlide.js';
 import SummarySlide from './ui/components/SummarySlide.js';
 import GameInterface from './ui/components/GameInterface.js';
-import GameInterfaceGrade4 from './ui/components/GameInterfaceGrade4.js';
+import { GameInterfaceGrade4 } from './ui/components/GameInterfaceGrade4.js';
 import { PortalTransition } from './ui/components/PortalTransition.js';
 import KeyCollectionAnimation from './ui/components/KeyCollectionAnimation.js';
 import TutorialManager from './features/tutorial/TutorialManager.js';

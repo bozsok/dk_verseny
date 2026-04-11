@@ -1,4 +1,4 @@
-import GameInterfaceGrade4 from '../../../src/ui/components/GameInterfaceGrade4';
+import { GameInterfaceGrade4 } from '../../../src/ui/components/GameInterfaceGrade4';
 
 describe('GameInterfaceGrade4 Timeline Logic', () => {
     let ui;
@@ -33,6 +33,7 @@ describe('GameInterfaceGrade4 Timeline Logic', () => {
         expect(ui.timelineFillEls[0].style.width).toBe('25%');
         expect(ui.timelineFillEls[1].style.width).toBe('0%');
         expect(ui.stationLabelEl.textContent).toBe('INTRO');
+        expect(ui.stationTextEl.textContent).toBe('FELTÖLTÉS');
 
         // Slide 7 (Intro 4/4)
         ui.updateTimeline(7, { metadata: { section: 'intro' } });
@@ -46,7 +47,8 @@ describe('GameInterfaceGrade4 Timeline Logic', () => {
         expect(ui.timelineFillEls[0].style.width).toBe('100%');
         expect(ui.timelineFillEls[1].style.width).toBe('25%');
         expect(ui.timelineFillEls[2].style.width).toBe('0%');
-        expect(ui.stationLabelEl.textContent).toBe('Sector');
+        expect(ui.stationLabelEl.textContent).toBe('ÁLLOMÁS');
+        expect(ui.stationTextEl.textContent).toBe('ÜZENETEK KRIPTÁJA');
 
         // Slide 11 (Station 1, Step 4/4)
         ui.updateTimeline(11, { metadata: { section: 'station_1' } });
@@ -59,7 +61,8 @@ describe('GameInterfaceGrade4 Timeline Logic', () => {
         ui.updateTimeline(28, { metadata: { section: 'final' } });
         expect(ui.timelineFillEls[5].style.width).toBe('100%');
         expect(ui.timelineFillEls[6].style.width).toBe('25%');
-        expect(ui.stationLabelEl.textContent).toBe('FINAL');
+        expect(ui.stationLabelEl.textContent).toBe('ÁLLOMÁS');
+        expect(ui.stationTextEl.textContent).toBe('RENDSZERMAG');
 
         // Slide 31 (Summary 4/4)
         ui.updateTimeline(31, { metadata: { section: 'final' } });
@@ -77,7 +80,8 @@ describe('GameInterfaceGrade4 Timeline Logic', () => {
     test('should handle edge cases and non-numeric input', () => {
         ui.updateTimeline('welcome', { metadata: { section: 'onboarding' } });
         expect(ui.stationLabelEl.textContent).toBe('INTRO');
+        expect(ui.stationTextEl.textContent).toBe('FELTÖLTÉS');
         // Widths should remain unchanged or stay at 0
-        expect(ui.timelineFillEls[0].style.width).toBe('');
+        expect(ui.timelineFillEls[0].style.width).toBe('0%');
     });
 });
