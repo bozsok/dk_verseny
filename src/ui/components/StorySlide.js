@@ -24,7 +24,7 @@ class StorySlide {
         // Alapértelmezett pozicionálás (mindig teljes képernyő, háttérben)
         Object.assign(this.element.style, {
             position: 'fixed', top: '0', left: '0',
-            width: '100vw', height: '100vh', zIndex: '-1',
+            width: '100vw', height: '100vh',
             backgroundColor: '#1a1a1a', overflow: 'hidden',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: 'Impact, sans-serif', color: '#ffffff', fontSize: '3rem'

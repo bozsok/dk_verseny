@@ -33,6 +33,7 @@ export class GameInterfaceGrade4 {
         this.totalSlides = options.totalSlides || 28;
         this.currentSlideIndex = options.currentSlideIndex || 1;
         this.currentDisplayedScore = 0;
+        this.lastInventoryCount = 0;
 
         this.element = null;
         this.contentContainer = null;
@@ -179,11 +180,11 @@ export class GameInterfaceGrade4 {
         inventoryArea.innerHTML = `
             <span class="dkv-g4-inventory-label">SZKRIPTEK</span>
             <div class="dkv-g4-inventory-slots">
-                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon active-item"><span class="material-symbols-outlined">extension</span></div></div>
-                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div></div>
-                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div></div>
-                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div></div>
-                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div></div>
+                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">terminal</span></div></div>
+                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">terminal</span></div></div>
+                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">terminal</span></div></div>
+                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">terminal</span></div></div>
+                <div class="dkv-g4-slot"><div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">terminal</span></div></div>
             </div>
         `;
         this.inventorySlotsEl = inventoryArea.querySelector('.dkv-g4-inventory-slots');
@@ -398,7 +399,7 @@ export class GameInterfaceGrade4 {
 
         // Reset
         slots.forEach(slot => {
-            slot.innerHTML = `<div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">extension</span></div>`;
+            slot.innerHTML = `<div class="dkv-g4-slot-icon"><span class="material-symbols-outlined">terminal</span></div>`;
         });
 
         // Fill based on acquired keys
@@ -408,9 +409,16 @@ export class GameInterfaceGrade4 {
             const keyPrefix = keyMap[stationId];
 
             if (keyPrefix) {
-                slots[i].innerHTML = `<div class="dkv-g4-slot-icon active-item"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">extension</span></div>`;
+                slots[i].innerHTML = `<div class="dkv-g4-slot-icon active-item"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span></div>`;
+                
+                // Ha ez egy újonnan szerzett tárgy, akkor kap egy pulzáló effektet
+                if (i === inventory.length - 1 && inventory.length > this.lastInventoryCount) {
+                    slots[i].classList.add('dkv-g4-slot-collected');
+                }
             }
         }
+        
+        this.lastInventoryCount = inventory.length;
     }
 
     _animateScore(start, end) {

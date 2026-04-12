@@ -5,6 +5,17 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.23.0] - 2026-04-12
+
+### Hozzáadva
+- **Globális diaátmenetek**: Implementáltuk a rendszerszintű 0.6 másodperces fade-in-out animációt (`Transitions.css`), amely minden évfolyamon egységes és sima váltást biztosít a diák között.
+- **Grade 4 Visual Polish**: Bevezettük a "Quantum Terminal" specifikus vizuális finomításokat, beleértve a script-részlet gyűjtési animációt (`ScriptPartAnimation.js`) és a terminál-stílusú glitch átmenetet (`GlitchTransition.js`).
+- **Z-Index Hierarchia Térkép**: Létrehoztunk egy központosított dokumentációt (`z-index-map.md`) és CSS változórendszert (`z-index.css`) a rétegzési hibák megelőzése érdekében.
+
+### Módosítva
+- **Navigációs logika**: A `main.js` mostantól támogatja az aszinkron, animált diaváltást, miközben megőrzi a SEL architektúra szerinti állapotkonzisztenciát.
+- **Inventory visszajelzés**: A 4. évfolyam interfésze dinamikus pulzáló effektust kapott az új tárgyak megszerzésekor.
+
 ## [0.22.0] - 2026-04-11
 
 ### Hozzáadva

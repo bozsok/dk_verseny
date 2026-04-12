@@ -1,0 +1,147 @@
+/**
+ * DIGITÁLIS KULTÚRA VERSENY
+ * GLITCH TRANSITION EFFECTS (Grade 4 - Quantum Terminal)
+ */
+
+.dkv-glitch-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2500;
+    background-color: #000;
+    overflow: hidden;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Az új dia befoglalója a glitch alatt */
+.dkv-glitch-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+}
+
+/* RGB Shift Effekt */
+.dkv-glitch-layers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* JS kapcsolja be */
+}
+
+.dkv-glitch-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.dkv-glitch-red {
+    background-color: rgba(255, 0, 0, 0.4);
+    mix-blend-mode: screen;
+    animation: glitch-anim-red 0.2s infinite;
+}
+
+.dkv-glitch-blue {
+    background-color: rgba(0, 0, 255, 0.4);
+    mix-blend-mode: screen;
+    animation: glitch-anim-blue 0.2s infinite;
+}
+
+.dkv-glitch-green {
+    background-color: rgba(0, 255, 0, 0.4);
+    mix-blend-mode: screen;
+    animation: glitch-anim-green 0.2s infinite;
+}
+
+/* Slicing (Szeletelés) Effekt */
+.dkv-glitch-slice {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 242, 255, 0.5);
+    left: 0;
+    z-index: 2501;
+    animation: glitch-slice-anim 1s infinite;
+}
+
+/* Statikus Zaj (Canvas felett) */
+.dkv-glitch-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.15;
+    z-index: 2505;
+}
+
+/* Terminál Szöveg */
+.dkv-glitch-text {
+    position: absolute;
+    bottom: 10%;
+    left: 5%;
+    color: #00f2ff;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px #00f2ff;
+    z-index: 2510;
+    letter-spacing: 2px;
+}
+
+@keyframes glitch-anim-red {
+    0% { transform: translate(2px, 2px); }
+    25% { transform: translate(-2px, -2px); }
+    50% { transform: translate(1px, -1px); }
+    75% { transform: translate(-1px, 2px); }
+    100% { transform: translate(2px, 2px); }
+}
+
+@keyframes glitch-anim-blue {
+    0% { transform: translate(-2px, -2px); }
+    25% { transform: translate(2px, 2px); }
+    50% { transform: translate(-1px, 1px); }
+    75% { transform: translate(1px, -2px); }
+    100% { transform: translate(-2px, -2px); }
+}
+
+@keyframes glitch-anim-green {
+    0% { transform: translate(1px, -1px); }
+    25% { transform: translate(-1px, 1px); }
+    50% { transform: translate(2px, -2px); }
+    75% { transform: translate(-2px, 0); }
+    100% { transform: translate(1px, -1px); }
+}
+
+@keyframes glitch-slice-anim {
+    0% { top: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+}
+
+.dkv-glitch-vibrate {
+    animation: vibrate 0.1s infinite;
+}
+
+@keyframes vibrate {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}

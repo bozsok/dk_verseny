@@ -45,21 +45,21 @@
   --th-font-display-weight: normal;
   --th-font-display-spacing: 1px;
   --th-font-color: #ffffff;
-  
+
   /* Panelek / Ablakok */
   --th-panel-bg: rgba(0, 0, 0, 0.4);
   --th-panel-bg-dark: rgba(0, 0, 0, 0.6);
   --th-panel-border: 2px solid #00d2d3;
   --th-panel-radius: 10px;
   --th-panel-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  
+
   /* Gombok */
   --th-btn-bg: #00636e;
   --th-btn-bg-hover: #007582;
   --th-btn-border: 2px solid #00eaff;
   --th-btn-radius: 10px;
   --th-btn-color: #ffffff;
-  
+
   /* Akcentusok és Glow effektek */
   --th-accent-color: #00eaff;
   --th-shadow-glow: 0 0 15px rgba(0, 234, 255, 0.3);
@@ -806,7 +806,8 @@ h3 {
   height: 100vh;
   background: var(--th-panel-bg, #1a1a1a);
   border-right: var(--th-panel-border, 2px solid #444);
-  border-radius: var(--th-panel-radius, 0); /* Right side can be straight, but if theme wants rounded corners... actually journal usually sticks to the left */
+  border-radius: var(--th-panel-radius, 0);
+  /* Right side can be straight, but if theme wants rounded corners... actually journal usually sticks to the left */
   z-index: var(--z-float-animation);
   transition: left 0.3s ease-in-out;
   padding: 80px 2rem 2rem 2rem;
@@ -1598,6 +1599,7 @@ h3 {
     right: 24px;
   }
 }
+
 /* Modal Header Tooltip Alignment & Subtitle Wrapper */
 .dkv-subtitle-wrapper {
   display: flex;
@@ -1664,7 +1666,8 @@ h3 {
 /* === NARRATOR PROGRESS BAR === */
 .dkv-btn-narrator {
   position: relative;
-  z-index: 1; /* Alap z-index, hogy a pseudo elem mögé tudjon kerülni */
+  z-index: 1;
+  /* Alap z-index, hogy a pseudo elem mögé tudjon kerülni */
 }
 
 /* Amíg tart az audio, az eredeti keret teljesen átlátszó lesz */
@@ -1682,10 +1685,10 @@ h3 {
   /* Kinyúlik a keret vastagságáig (3px biztosan lefedi a 2px és 3px bordereket is) */
   inset: -2px;
   border-radius: inherit;
-  
+
   /* A színátmenet: 0-tól az aktuális %-ig neon cián, utána a halvány inaktív szín */
   background: conic-gradient(var(--dkv-cyan-neon, #00eaff) var(--audio-progress, 0%), rgba(0, 0, 0, 0.3) 0);
-  
+
   /* A gomb MÖGÉ helyezzük. Mivel a gomb közepe teli színű, eltakarja a sáv közepét, csak a keret látszik! */
   z-index: -1;
   transition: opacity 0.1s linear;
@@ -1696,4 +1699,3 @@ h3 {
   border-color: var(--dkv-cyan-neon, #00eaff) !important;
   box-shadow: 0 0 15px rgba(0, 234, 255, 0.4) !important;
 }
-

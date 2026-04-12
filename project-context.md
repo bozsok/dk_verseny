@@ -115,6 +115,6 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
 - **Teszt Lefedettség**: ~90% (Minden lint hiba elhárítva, 69/69 teszt sikeres)
-- **Utoljára frissítve**: 2026-04-11T21:00:00+02:00
-- **Verzió**: v0.22.0 (Named Export & Labeling Completion - FINAL AUDIT DONE)
+- **Utoljára frissítve**: 2026-04-12T09:15:00+02:00
+- **Verzió**: v0.23.0 (Global Transitions & Visual Polish Completion - FINAL AUDIT DONE)
 - **Státusz**: Sprint Lezárva (69/69 teszt sikeres, 0 lint hiba)
