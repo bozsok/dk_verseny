@@ -578,6 +578,14 @@ class DigitalKulturaVerseny {
         this.hub = null;
       }
 
+      // Aktív interfész (HUD, Panels) megsemmisítése évfolyamváltáskor
+      if (this.activeGameInterface) {
+        if (typeof this.activeGameInterface.destroy === 'function') {
+          this.activeGameInterface.destroy();
+        }
+        this.activeGameInterface = null;
+      }
+
       this.renderSlide(firstSlide);
     }
   }
@@ -767,18 +775,34 @@ class DigitalKulturaVerseny {
 
     // --- TRANSITION EXECUTION ---
     if (useTransition && this.isInitialized) {
-      document.body.classList.add('dkv-slide-fade-out');
-      setTimeout(() => {
-        performRender();
-        document.body.classList.remove('dkv-slide-fade-out');
-        document.body.classList.add('dkv-slide-entering');
+      if (document.startViewTransition) {
+        // Modern View Transitions API (Cross-fade 0.6s definíció szerint a Transitions.css-ben)
+        const transition = document.startViewTransition(() => {
+          performRender();
+          this._updateUIAfterRender(slide, currentIndex, totalSlides, isLastSlide, isFullscreen, currentGrade, gradeClass, audioSrc, isTutorialPending);
+        });
+
+        // Biztonsági hibakezelés: Elnyeljük az InvalidStateError-t, ha pl. névütközés miatt a böngésző megszakítaná az animációt.
+        // Ilyenkor a rendszer automatikusan fallback módban (animáció nélkül) vált, ami jobb, mint a konzol hiba.
+        if (transition && transition.finished) {
+          transition.finished.catch(e => {
+            if (this.logger) this.logger.warn("View Transition interrupted (fallback active)", { error: e.message });
+          });
+        }
+      } else {
+        // Fallback a régi (szekvenciális) módra ha a böngésző nem támogatja
+        document.body.classList.add('dkv-slide-fade-out');
         setTimeout(() => {
-          document.body.classList.remove('dkv-slide-entering');
+          performRender();
+          document.body.classList.remove('dkv-slide-fade-out');
+          document.body.classList.add('dkv-slide-entering');
+          setTimeout(() => {
+            document.body.classList.remove('dkv-slide-entering');
+          }, 300);
+          this._updateUIAfterRender(slide, currentIndex, totalSlides, isLastSlide, isFullscreen, currentGrade, gradeClass, audioSrc, isTutorialPending);
         }, 300);
-        // UI frissítések a render után
-        this._updateUIAfterRender(slide, currentIndex, totalSlides, isLastSlide, isFullscreen, currentGrade, gradeClass, audioSrc, isTutorialPending);
-      }, 300);
-      return; // Megszakítjuk, mert a setTimeout folytatja
+      }
+      return; 
     } else {
       performRender();
       this._updateUIAfterRender(slide, currentIndex, totalSlides, isLastSlide, isFullscreen, currentGrade, gradeClass, audioSrc, isTutorialPending);
@@ -793,9 +817,19 @@ class DigitalKulturaVerseny {
 
       // 3. UI Layer Management
       if (!isFullscreen) {
+        const isGrade4 = (String(currentGrade) === '4');
+        const ExpectedInterfaceClass = isGrade4 ? GameInterfaceGrade4 : GameInterface;
+
+        // Ha van meglévő interfész, de nem a megfelelő típusú (pl. grade váltás miatt)
+        if (this.activeGameInterface && !(this.activeGameInterface instanceof ExpectedInterfaceClass)) {
+          if (typeof this.activeGameInterface.destroy === 'function') {
+            this.activeGameInterface.destroy();
+          }
+          this.activeGameInterface = null;
+        }
+
         if (!this.activeGameInterface) {
-          const isGrade4 = (String(currentGrade) === '4');
-          const InterfaceClass = isGrade4 ? GameInterfaceGrade4 : GameInterface;
+          const InterfaceClass = ExpectedInterfaceClass;
 
           this.activeGameInterface = new InterfaceClass({
             onNext: () => this.handleNext(),

@@ -5,6 +5,16 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.24.0] - 2026-04-12
+
+### Hozzáadva
+- **View Transitions API-integráció**: Implementáltuk a modern böngészőalapú diaátmeneteket, amelyek simább és hatékonyabb váltást tesznek lehetővé a diák között.
+- **Interfész-stabilitás (Persistent UI)**: A `view-transition-name` használatával elkülönítettük a statikus interfészelemeket (HUD, navigáció, leltár), így azok nem villannak be vagy tűnnek el a diaváltások során.
+- **Hibatűrés (Robustness)**: Bevezettünk egy biztonsági `catch` ágat a `startViewTransition` hívásokhoz, amely megakadályozza az `InvalidStateError` okozta összeomlást.
+
+### Eltávolítva
+- **Felesleges dekoratív elemek**: Eltávolítottuk a `dkv-g4-avatar-dot` osztályt és egyéb használaton kívüli stílusokat a kód tisztasága érdekében.
+
 ## [0.23.0] - 2026-04-12
 
 ### Hozzáadva

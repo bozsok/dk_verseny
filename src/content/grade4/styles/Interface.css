@@ -164,15 +164,6 @@
     /* Mélyített képernyő hatás */
 }
 
-.dkv-g4-avatar-dot {
-    position: absolute;
-    top: -0.25rem;
-    right: -0.25rem;
-    width: 0.75rem;
-    height: 0.75rem;
-    background-color: var(--g4-tertiary);
-}
-
 .dkv-g4-user-info {
     display: flex;
     flex-direction: column;

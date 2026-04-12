@@ -556,6 +556,15 @@ h3 {
   /* Allow clicks to pass through to Content Layer */
 }
 
+/* === VIZUÁLIS IZOLÁCIÓ (GRADE SPECIFIKUS ELREJTÉS) === */
+.dkv-grade-4 .dkv-game-interface {
+  display: none !important;
+}
+
+.dkv-grade-3 .dkv-g4-interface {
+  display: none !important;
+}
+
 /* -- 1. HUD (Top Bar) -- */
 .dkv-game-hud {
   height: 100px;

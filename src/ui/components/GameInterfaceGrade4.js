@@ -76,7 +76,6 @@ export class GameInterfaceGrade4 {
                 <div class="dkv-g4-avatar-border">
                     <div class="dkv-g4-avatar-image"></div>
                 </div>
-                <div class="dkv-g4-avatar-dot"></div>
             </div>
             <div class="dkv-g4-user-info">
                 <span class="dkv-g4-username">PLAYER</span>
