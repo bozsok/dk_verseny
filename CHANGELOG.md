@@ -11,6 +11,7 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 - **Globális diaátmenetek**: Implementáltuk a rendszerszintű 0.6 másodperces fade-in-out animációt (`Transitions.css`), amely minden évfolyamon egységes és sima váltást biztosít a diák között.
 - **Grade 4 Visual Polish**: Bevezettük a "Quantum Terminal" specifikus vizuális finomításokat, beleértve a script-részlet gyűjtési animációt (`ScriptPartAnimation.js`) és a terminál-stílusú glitch átmenetet (`GlitchTransition.js`).
 - **Z-Index Hierarchia Térkép**: Létrehoztunk egy központosított dokumentációt (`z-index-map.md`) és CSS változórendszert (`z-index.css`) a rétegzési hibák megelőzése érdekében.
+- **Grade 4 Slide Visibility Fix**: Kiterjesztettük a háttérkép betöltési logikát a `TASK` és `INFO` diátípusokra is a 4. évfolyamon, megszüntetve a fekete képernyő jelenséget.
 
 ### Módosítva
 - **Navigációs logika**: A `main.js` mostantól támogatja az aszinkron, animált diaváltást, miközben megőrzi a SEL architektúra szerinti állapotkonzisztenciát.

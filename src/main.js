@@ -830,7 +830,7 @@ class DigitalKulturaVerseny {
 
         // --- GRADE 4 SPECIFIKUS: Háttérkép frissítése ---
         if (this.activeGameInterface.setBackgroundImage) {
-          const bgImage = (slide.type === 'story' || slide.type === 'video')
+          const bgImage = (slide.type === SLIDE_TYPES.STORY || slide.type === SLIDE_TYPES.VIDEO || slide.type === SLIDE_TYPES.TASK || slide.type === SLIDE_TYPES.INFO)
             ? (slide.content?.imageUrl || slide.content?.backgroundUrl || null)
             : null;
           this.activeGameInterface.setBackgroundImage(bgImage);

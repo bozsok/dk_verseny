@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-04-11T21:00:00+02:00'
+date: '2026-04-12T10:24:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -83,6 +83,13 @@ _This file contains critical rules and patterns that AI agents must follow when 
     - **Config Sync:** The `build-config.json` must always have "skipping" flags disabled by default on the `main` branch to prevent accidental production impact.
     - **Resource Integrity:** Verify that all static assets are correctly optimized and accessible before deployment.
 
+### Swarm Integrity & Communication Rules
+
+- **Integrity Gate Protocol:** If any technical blocker (e.g., EPERM error) or logical contradiction (e.g., conflict between protocol and direct user prohibition) occurs that prevents a **100% official** mission closure, the agent MUST halt and request guidance from the user.
+- **Stop-on-Error Law:** If a Swarm script (e.g., `archive`) fails, switching to a manual fallback solution is forbidden without explicit user permission.
+- **Conflict Resolution Law:** In case of contradictory instructions (e.g., "close everything" vs. "do not use git"), the conflict must be resolved with the user before taking action.
+- **Physical Verification:** Before reporting completion, the agent MUST verify the physical state of the workspace (file locations, presence of expected artifacts) and report only the actual result as "completed".
+
 ### Critical Don't-Miss Rules
 
 - **Memory Leaks & Disposal:**
@@ -115,6 +122,6 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
 - **Teszt Lefedettség**: ~90% (Minden lint hiba elhárítva, 69/69 teszt sikeres)
-- **Utoljára frissítve**: 2026-04-12T09:15:00+02:00
+- **Utoljára frissítve**: 2026-04-12T10:24:00+02:00
 - **Verzió**: v0.23.0 (Global Transitions & Visual Polish Completion - FINAL AUDIT DONE)
 - **Státusz**: Sprint Lezárva (69/69 teszt sikeres, 0 lint hiba)
