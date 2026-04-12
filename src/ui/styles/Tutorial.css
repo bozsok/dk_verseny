@@ -54,8 +54,8 @@
   color: var(--dkv-text-main, #ffffff);
   padding: 20px;
   border: 1px solid var(--th-accent-color, #00eaff);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  border-radius: var(--th-panel-radius, 12px);
+  box-shadow: var(--th-panel-shadow, 0 10px 30px rgba(0, 0, 0, 0.6));
   z-index: var(--z-tutorial-tooltip);
   width: 450px;
   max-width: 90vw;
@@ -95,12 +95,12 @@
 .dkv-tutorial__btn {
   padding: 8px 16px;
   background: var(--th-btn-bg, #00636e);
-  color: white;
-  border: 1px solid var(--th-accent-color, #00eaff);
-  border-radius: 6px;
+  color: var(--th-btn-color, white);
+  border: var(--th-btn-border, 1px solid var(--th-accent-color, #00eaff));
+  border-radius: var(--th-btn-radius, 6px);
   font-family: var(--th-font-display, sans-serif);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: var(--th-font-display-weight, 500);
   cursor: pointer;
   transition: background 0.2s ease, box-shadow 0.2s ease;
 }
@@ -130,4 +130,11 @@
 .dkv-tutorial__btn--finish {
   background: linear-gradient(135deg, #00d2d3, #00a8a8);
   border-color: #fff;
+}
+
+/* === Speciális kiemelés a 4. osztályos vékony idővonalhoz === */
+.dkv-tutorial-clone.dkv-g4-timeline .dkv-g4-timeline-track {
+  background-color: var(--th-accent-color, #c1fffe);
+  box-shadow: 0 0 10px var(--th-accent-color, rgba(0, 255, 255, 0.5));
+  opacity: 1;
 }

@@ -5,6 +5,18 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.25.0] - 2026-04-12
+
+### Hozzáadva
+- **Grade 4 interaktív tutorial**: Teljes körű tutorial támogatást adtunk a "Quantum Terminal" felülethez, évfolyam-specifikus szelektorokkal és technikai szövegezéssel.
+- **Dinamikus tutorial-stílus**: A tutorial tooltip-ek és gombok mostantól CSS változókon keresztül öröklik az aktuális évfolyam stílusjegyeit (pl. szögletes formák a 4. osztályban).
+- **Idővonal (Timeline) vizuális kiemelés**: Speciális, `!important`-mentes CSS megoldás a vékony idővonal-csíkok látványos megvilágítására a tutorial klónozási folyamata során.
+- **Audió-struktúra (g4)**: Előkészítettük az új hangfájl-elérési utakat az `assets/audio/tutorial/g4/` könyvtárban.
+
+### Módosítva
+- **TutorialManager refaktor**: Az osztály mostantól `stepsByGrade` struktúrát használ, így az évfolyamonként eltérő interfész-elemek (PL. `.dkv-g4-avatar-wrapper`) pontosan célozhatók.
+- **Design System bővítés**: Bevezettük a `.dkv-grade-4` téma-változókat a globális `design-system.css` fájlba.
+
 ## [0.24.0] - 2026-04-12
 
 ### Hozzáadva

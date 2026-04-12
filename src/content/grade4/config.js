@@ -28,15 +28,15 @@ const applyVideoConfig = (slideConfig, slideKey) => {
 const NARRATIVE_DATA = {
     DIA_1: {
         title: 'Üdvözlet a Kód Királyságban!',
-        text: 'Üdvözlünk, Kódmester, a Kód Királyság legbelső védelmi zónájában. Ez a digitális birodalom az adatok és algoritmusok tökéletes szimfóniájára épült, ahol minden szektor a stabilitást szolgálja. Jelenléted kritikus fontosságú, ugyanis a rendszermag szokatlan jeleket sugároz.\nFelkészültél arra, hogy belépj a hálózat mélyére, és szembenézz az ismeretlen kihívásokkal? A Királyság sorsa mostantól a te kezedben van.'
+        text: 'Üdvözlünk, Kódmester, a Kód Királyság legbelső védelmi zónájában. Ez a digitális birodalom az adatok és algoritmusok tökéletes szimfóniájára épült, ahol minden szektor a stabilitást szolgálja. Jelenléted kritikus fontosságú, ugyanis a rendszermag szokatlan jeleket sugároz.\nFelkészültél arra, hogy belépj a hálózat mélyére, és szembenézz az ismeretlen kihívásokkal? A Királyság sorsa ismét a te kezedben van.'
     },
     DIA_2: {
         title: 'A hős azonosítása',
-        text: 'Mielőtt megkezdenénk a műveletet, a biztonsági protokoll megköveteli az azonosításodat. Kérjük, add meg a hálózati nevedet, becenevedet és az aktuális egységedet a terminálon.\nA rendszer minden adatpontot titkosítva tárol, biztosítva a küldetésed integritását. Az azonosítás után a protokoll a következő fázisba lép.'
+        text: 'Mielőtt megkezdenénk a műveletet, a biztonsági protokoll megköveteli az azonosításodat. Kérjük, add meg a hálózati nevedet, a rendszerszintű azonosítód és az aktuális egységedet a terminálon.\nA rendszer minden adatpontot titkosítva tárol, biztosítva a küldetésed integritását. Az azonosítás után a protokoll a következő fázisba lép.'
     },
     DIA_3: {
         title: 'Az Avatár kiválasztása',
-        text: 'A virtuális térve való belépéshez szükséged van egy digitális reprezentációra, egy Avatárra. Az Avatár lesz a kapcsolatod a Kód Királyság fizikai és digitális rétegei között.'
+        text: 'A virtuális térbe való belépéshez szükséged van egy digitális reprezentációra, egy Avatárra. Az Avatár lesz a kapcsolatod a Kód Királyság fizikai és digitális rétegei között.'
     },
     DIA_4: {
         title: 'A Nagy Frissítés előestéje',

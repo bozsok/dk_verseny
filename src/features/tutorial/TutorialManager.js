@@ -27,70 +27,136 @@ class TutorialManager {
         this.activeStepTimeout = null; // Aktív lépésváltási időzítő
         this.activeAudioPromise = null; // Aktív audió lejátszási Promise
 
-        // Tutorial lépések konfigurációja (sorrend: karakterkép, becenév, pont, idővonal,
-        // hanglejátszó, eltelt idő, küldetésnapló, narráció, inventory, jobbra nyíl)
-        this.steps = [
-            {
-                element: '.dkv-avatar-circle',
-                text: 'Itt láthatod a kiválasztott karaktered képét.',
-                position: 'bottom',
-                audio: 'assets/audio/tutorial/tut_01.mp3'
-            },
-            {
-                element: '.dkv-username',
-                text: 'Itt pedig a megadott beceneved láthatod.',
-                position: 'bottom',
-                audio: 'assets/audio/tutorial/tut_02.mp3'
-            },
-            {
-                element: '.dkv-points',
-                text: 'Itt láthatod a játék során szerzett pontjaidat. Gyűjts minél többet!',
-                position: 'bottom',
-                audio: 'assets/audio/tutorial/tut_03.mp3'
-            },
-            {
-                element: '.dkv-hud-timeline',
-                text: 'Ez az idővonal mutatja a haladásodat.',
-                position: 'bottom',
-                audio: 'assets/audio/tutorial/tut_04.mp3'
-            },
-            {
-                element: '.dkv-btn-settings',
-                text: 'Ezekkel a gombokkal vezérelheted a küldetés leírásának hanglejátszását és a hangeffekteket.',
-                position: 'bottom-right',
-                audio: 'assets/audio/tutorial/tut_05.mp3'
-            },
-            {
-                element: '.dkv-timer-display',
-                text: 'Ez pedig az eltelt időt mutatja. Figyelj rá, mert számít a végén!',
-                position: 'bottom-right',
-                audio: 'assets/audio/tutorial/tut_06.mp3'
-            },
-            {
-                element: '.dkv-btn-journal',
-                text: 'Erre a fülre kattintva éred el a Küldetésnaplót, ahová minden fontos feljegyzést begépelhetsz. Használd bátran a játék során!',
-                position: 'top-left',
-                audio: 'assets/audio/tutorial/tut_07.mp3'
-            },
-            {
-                element: '.dkv-btn-narrator',
-                text: 'Itt olvashatod az aktuális küldetés leírását.',
-                position: 'top-left',
-                audio: 'assets/audio/tutorial/tut_08.mp3'
-            },
-            {
-                element: '.dkv-game-sidebar',
-                text: 'Itt gyűlnek majd össze a megszerzett varázskulcsaid.',
-                position: 'left',
-                audio: 'assets/audio/tutorial/tut_09.mp3'
-            },
-            {
-                element: '.dkv-btn-next',
-                text: 'Használd mindig ezt a gombot a játék során. Ez biztosítja a továbbhaladásodat. Kalandra fel!',
-                position: 'top-right',
-                audio: 'assets/audio/tutorial/tut_10.mp3'
-            }
-        ];
+        // Tutorial lépések konfigurációja évfolyamonként
+        this.stepsByGrade = {
+            '3': [
+                {
+                    element: '.dkv-avatar-circle',
+                    text: 'Itt láthatod a kiválasztott karaktered képét.',
+                    position: 'bottom',
+                    audio: 'assets/audio/tutorial/tut_01.mp3'
+                },
+                {
+                    element: '.dkv-username',
+                    text: 'Itt pedig a megadott beceneved láthatod.',
+                    position: 'bottom',
+                    audio: 'assets/audio/tutorial/tut_02.mp3'
+                },
+                {
+                    element: '.dkv-points',
+                    text: 'Itt láthatod a játék során szerzett pontjaidat. Gyűjts minél többet!',
+                    position: 'bottom',
+                    audio: 'assets/audio/tutorial/tut_03.mp3'
+                },
+                {
+                    element: '.dkv-hud-timeline',
+                    text: 'Ez az idővonal mutatja a haladásodat.',
+                    position: 'bottom',
+                    audio: 'assets/audio/tutorial/tut_04.mp3'
+                },
+                {
+                    element: '.dkv-btn-settings',
+                    text: 'Ezekkel a gombokkal vezérelheted a küldetés leírásának hanglejátszását és a hangeffekteket.',
+                    position: 'bottom-right',
+                    audio: 'assets/audio/tutorial/tut_05.mp3'
+                },
+                {
+                    element: '.dkv-timer-display',
+                    text: 'Ez pedig az eltelt időt mutatja. Figyelj rá, mert számít a végén!',
+                    position: 'bottom-right',
+                    audio: 'assets/audio/tutorial/tut_06.mp3'
+                },
+                {
+                    element: '.dkv-btn-journal',
+                    text: 'Erre a fülre kattintva éred el a Küldetésnaplót, ahová minden fontos feljegyzést begépelhetsz. Használd bátran a játék során!',
+                    position: 'top-left',
+                    audio: 'assets/audio/tutorial/tut_07.mp3'
+                },
+                {
+                    element: '.dkv-btn-narrator',
+                    text: 'Itt olvashatod az aktuális küldetés leírását.',
+                    position: 'top-left',
+                    audio: 'assets/audio/tutorial/tut_08.mp3'
+                },
+                {
+                    element: '.dkv-game-sidebar',
+                    text: 'Itt gyűlnek majd össze a megszerzett varázskulcsaid.',
+                    position: 'left',
+                    audio: 'assets/audio/tutorial/tut_09.mp3'
+                },
+                {
+                    element: '.dkv-btn-next',
+                    text: 'Használd mindig ezt a gombot a játék során. Ez biztosítja a továbbhaladásodat. Kalandra fel!',
+                    position: 'top-right',
+                    audio: 'assets/audio/tutorial/tut_10.mp3'
+                }
+            ],
+            '4': [
+                {
+                    element: '.dkv-g4-avatar-wrapper',
+                    text: 'A terminál itt jeleníti meg a digitális reprezentációdat.',
+                    position: 'bottom',
+                    audio: 'assets/audio/tutorial/g4/tut_01.mp3'
+                },
+                {
+                    element: '.dkv-g4-username',
+                    text: 'Ez a rendszerszintű azonosítód a Quantum hálózaton.',
+                    position: 'bottom',
+                    audio: 'assets/audio/tutorial/g4/tut_02.mp3'
+                },
+                {
+                    element: '.dkv-g4-points-container',
+                    text: 'Itt követheted a pontszámokká letranszformált adatcsomagokat.',
+                    position: 'bottom',
+                    audio: 'assets/audio/tutorial/g4/tut_03.mp3'
+                },
+                {
+                    element: '.dkv-g4-timeline',
+                    text: 'Ez az idővonal mutatja az aktuális alrendszerben való haladásodat.',
+                    position: 'top',
+                    audio: 'assets/audio/tutorial/g4/tut_04.mp3'
+                },
+                {
+                    element: '.dkv-g4-btn-settings',
+                    text: 'Ezekkel a modulokkal kalibrálhatod a hangeffekteket és a narrációt.',
+                    position: 'bottom-right',
+                    audio: 'assets/audio/tutorial/g4/tut_05.mp3'
+                },
+                {
+                    element: '.dkv-timer-display',
+                    text: 'A központi mag eléréséig eltelt időt itt követheted figyelemmel.',
+                    position: 'bottom-right',
+                    audio: 'assets/audio/tutorial/g4/tut_06.mp3'
+                },
+                {
+                    element: '.dkv-g4-btn-journal',
+                    text: 'A Rendszernaplóba rögzítheted a dekódolt kódokat és észrevételeidet.',
+                    position: 'right',
+                    audio: 'assets/audio/tutorial/g4/tut_07.mp3'
+                },
+                {
+                    element: '.dkv-g4-btn-narrator',
+                    text: 'Itt olvashatod az aktuális terminál-bejegyzést és a feladatok leírását.',
+                    position: 'right',
+                    audio: 'assets/audio/tutorial/g4/tut_08.mp3'
+                },
+                {
+                    element: '.dkv-g4-inventory-slots',
+                    text: 'A dekódolt szkripttöredékek ebben a tárolóban jelennek meg.',
+                    position: 'top',
+                    audio: 'assets/audio/tutorial/g4/tut_09.mp3'
+                },
+                {
+                    element: '.dkv-g4-btn-next',
+                    text: 'Ezzel a paranccsal léphetsz tovább a következő hálózati szektorba. Sok sikert!',
+                    position: 'top-right',
+                    audio: 'assets/audio/tutorial/g4/tut_10.mp3'
+                }
+            ]
+        };
+
+        // Alapértelmezett steps (később a start() felülírja)
+        this.steps = this.stepsByGrade['3'];
     }
 
     /**
@@ -116,6 +182,10 @@ class TutorialManager {
      */
     start() {
         if (this.isActive) return;
+
+        // Évfolyam lekérése a StateManagerből
+        const currentGrade = this.app.stateManager.getStateValue('currentGrade') || '3';
+        this.steps = this.stepsByGrade[currentGrade] || this.stepsByGrade['3'];
 
         this.isActive = true;
         this.currentStepIndex = 0;
@@ -334,7 +404,7 @@ class TutorialManager {
             this.isLoading = true;
             this.currentAudio = new Audio(src);
             this.currentAudio.volume = this.app.narrationVolume || 1.0;
-            
+
             // Promise mentése a tisztításhoz
             this.activeAudioPromise = this.currentAudio.play();
             await this.activeAudioPromise;
@@ -364,7 +434,7 @@ class TutorialManager {
             this.currentAudio.src = ''; // Force cleanup
             this.currentAudio = null;
         }
-        
+
         if (this.activeStepTimeout) {
             clearTimeout(this.activeStepTimeout);
             this.activeStepTimeout = null;

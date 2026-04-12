@@ -66,6 +66,36 @@
   --th-shadow-glow-hover: 0 0 25px rgba(0, 234, 255, 0.6);
 }
 
+/* === THEME VARIABLES (GRADE 4 - Quantum Terminal) === */
+.dkv-grade-4 {
+  /* Tipográfia */
+  --th-font-display: 'Space Grotesk', sans-serif;
+  --th-font-main: 'Manrope', sans-serif;
+  --th-font-display-weight: 700;
+  --th-font-display-spacing: 2px;
+  --th-font-color: #f1f4fa;
+
+  /* Panelek / Ablakok (Szögletes stílus) */
+  --th-panel-bg: rgba(0, 15, 20, 0.9);
+  --th-panel-bg-dark: rgba(0, 8, 10, 0.95);
+  --th-panel-border: 1px solid #c1fffe;
+  --th-panel-radius: 0px;
+  --th-panel-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+  --th-backdrop-blur: blur(15px);
+
+  /* Gombok (Szögletes stílus) */
+  --th-btn-bg: rgba(0, 255, 255, 0.05);
+  --th-btn-bg-hover: rgba(0, 255, 255, 0.15);
+  --th-btn-border: 1px solid #c1fffe;
+  --th-btn-radius: 0px;
+  --th-btn-color: #c1fffe;
+
+  /* Akcentusok */
+  --th-accent-color: #c1fffe;
+  --th-shadow-glow: 0 0 15px rgba(0, 255, 255, 0.2);
+  --th-shadow-glow-hover: 0 0 25px rgba(0, 255, 255, 0.4);
+}
+
 /* ============================================
    GLOBAL RESET & BASE
    ============================================ */
