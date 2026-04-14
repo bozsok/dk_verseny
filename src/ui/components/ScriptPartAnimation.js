@@ -33,7 +33,6 @@ export class ScriptPartAnimation {
         this.overlay = null;
         this.largeScript = null;
         this.dropIcon = null; // A repülő ikon (mivel a képet nem kicsinyítjük)
-        this.glow = null;
         this.container = null;
 
         this._animations = []; // Aktív animációk követése
@@ -48,7 +47,7 @@ export class ScriptPartAnimation {
             this.styleTag.innerHTML = `
                 @keyframes scriptGlow {
                     0% { filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.6)) contrast(1); }
-                    50% { filter: drop-shadow(0 0 40px rgba(188, 0, 255, 0.9)) contrast(1.2); }
+                    // 50% { filter: drop-shadow(0 0 40px rgba(188, 0, 255, 0.9)) contrast(1.2); }
                     100% { filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.6)) contrast(1); }
                 }
                 @keyframes scriptPulse {
@@ -66,7 +65,7 @@ export class ScriptPartAnimation {
      */
     playPhaseA() {
         if (this._isDestroyed || this.container) return;
-        
+
         if (this.logger) this.logger.info('[ScriptAnim] Phase A indítása', { station: this.stationId });
 
         this.container = document.createElement('div');
@@ -90,63 +89,29 @@ export class ScriptPartAnimation {
             transition: 'opacity 0.4s ease-out'
         });
 
-        // Ragyogás effektus a háttérben
-        this.glow = document.createElement('div');
-        Object.assign(this.glow.style, {
-            position: 'absolute', top: '50%', left: '50%',
-            width: '40vh', height: '40vh',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(0, 242, 255, 0.4) 0%, rgba(188, 0, 255, 0.1) 70%, transparent 100%)',
-            transform: 'translate(-50%, -50%)',
-            zIndex: '9999',
-            opacity: '0',
-            transition: 'opacity 1s ease-in'
-        });
 
         // Nagy Szkriptrészlet Kép
         this.largeScript = document.createElement('img');
-        this.largeScript.src = `assets/images/grade4/scripts/${this.scriptName}.jpg`;
+        this.largeScript.src = `assets/images/grade4/scripts/${this.scriptName}.png`;
         Object.assign(this.largeScript.style, {
             position: 'absolute', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%) scale(0.01)',
             maxHeight: '50vh', maxWidth: '70vw',
-            borderRadius: '8px',
-            border: '2px solid rgba(0, 242, 255, 0.5)',
-            boxShadow: '0 0 30px rgba(0, 242, 255, 0.3)',
+            borderRadius: '0px',
             objectFit: 'contain', zIndex: '10000',
             opacity: '0',
             transition: 'opacity 0.6s ease-out'
         });
 
-        // Felirat a kép alatt
-        const label = document.createElement('div');
-        label.textContent = `SZRIPTRÉSZLET MENTÉSE: ${this.scriptName.toUpperCase()}`;
-        Object.assign(label.style, {
-            position: 'absolute', top: 'calc(50% + 30vh)', left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: '#00f2ff',
-            fontFamily: '"Orbitron", "Inter", sans-serif',
-            fontSize: '1.2rem',
-            letterSpacing: '2px',
-            textShadow: '0 0 10px rgba(0, 242, 255, 0.8)',
-            opacity: '0',
-            transition: 'opacity 1s ease-in'
-        });
-        this._label = label;
-
         this.container.appendChild(this.overlay);
-        this.container.appendChild(this.glow);
         this.container.appendChild(this.largeScript);
-        this.container.appendChild(label);
         document.body.appendChild(this.container);
 
         requestAnimationFrame(() => {
-            if (this._isDestroyed || !this.glow) return;
+            if (this._isDestroyed || !this.largeScript) return;
 
             // this.overlay.style.opacity = '1'; // Overlay elrejtve aUSER kérésére
-            this.glow.style.opacity = '1';
             this.largeScript.style.opacity = '1';
-            label.style.opacity = '1';
 
             // 1. szakasz: GYORS ELŐBUKKANÁS a csúcsértékre (0.01 -> 1.16)
             const enterAnim = this.largeScript.animate([
@@ -185,7 +150,6 @@ export class ScriptPartAnimation {
             const t = setTimeout(() => {
                 if (this._isDestroyed) return;
                 if (this.overlay) this.overlay.style.opacity = '0';
-                if (this._label) this._label.style.opacity = '0';
             }, 5500);
             this._timers.push(t);
         });
@@ -197,7 +161,7 @@ export class ScriptPartAnimation {
                 resolve();
                 return;
             }
-            
+
             if (this.logger) this.logger.info('[ScriptAnim] Phase B indítása');
 
             // 1. Állítsuk le a pulzáló animációkat
@@ -209,9 +173,6 @@ export class ScriptPartAnimation {
             this.largeScript.style.animation = 'none';
             this.largeScript.style.transform = currentTransform;
 
-            this.glow.style.transition = 'opacity 0.4s';
-            this.glow.style.opacity = '0';
-            if (this._label) this._label.style.opacity = '0';
 
             if (!this.targetSlot) {
                 this.largeScript.animate([
@@ -283,8 +244,6 @@ export class ScriptPartAnimation {
         this.overlay = null;
         this.largeScript = null;
         this.dropIcon = null;
-        this.glow = null;
-        this._label = null;
 
         // Erőforrások takarítása
         this._animations.forEach(anim => anim.cancel());

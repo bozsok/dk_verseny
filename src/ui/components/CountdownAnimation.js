@@ -51,11 +51,10 @@ export class CountdownAnimation {
                 }
                 .dkv-countdown-label {
                     color: #00f2ff;
-                    font-family: 'Courier New', Courier, monospace;
-                    font-size: 24px;
-                    font-weight: bold;
+                    font-family: 'Source Code Pro', monospace;
+                    font-size: 1.2rem;
                     text-transform: uppercase;
-                    letter-spacing: 4px;
+                    letter-spacing: 2px;
                     margin-top: 40px;
                     text-shadow: 0 0 10px rgba(0, 242, 252, 0.7);
                     animation: labelPulse 2s ease-in-out infinite;

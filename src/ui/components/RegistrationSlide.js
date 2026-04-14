@@ -319,7 +319,7 @@ class RegistrationSlide {
         // Több szóköz összevonása egyre, majd formázás
         const formatted = raw.trim().replace(/\s+/g, ' ').toLowerCase().replace(/(?:^|\s|-)\S/g, function (a) { return a.toUpperCase(); });
 
-        if (formatted.length === 0) return { valid: false, error: 'Kérlek add meg a teljes nevedet!' };
+        if (formatted.length === 0) return { valid: false, error: 'Kérlek, add meg a teljes nevedet!' };
 
         if (formatted.split(' ').length < 2) {
             return { valid: false, error: 'A nevednek legalább két szóból kell állnia!\nKérlek, ellenőrizd a helyesírást és a szóközöket!' };
@@ -349,7 +349,7 @@ class RegistrationSlide {
     _validateNick(raw) {
         let formatted = raw.trim();
         if (formatted.length === 0) {
-            return { valid: false, error: 'Kérlek add meg a becenevedet!' };
+            return { valid: false, error: 'Kérlek, add meg a becenevedet!' };
         }
 
         if (formatted.length < 3) {
@@ -386,7 +386,7 @@ class RegistrationSlide {
     _validateClass(raw) {
         const formatted = raw.replace(/\s+/g, '').toLowerCase();
 
-        if (formatted.length === 0) return { valid: false, error: 'Kérlek add meg az osztályodat!' };
+        if (formatted.length === 0) return { valid: false, error: 'Kérlek, add meg az osztályodat!' };
 
         if (!/^\d\.[a-z]$/.test(formatted)) {
             return { valid: false, error: 'Az osztály formátuma helytelen!\nHelyes példa: 4.b (szám, pont, betű)' };
