@@ -1,4 +1,3 @@
-import GameLogger from '../../core/logging/GameLogger.js';
 
 /**
  * ScriptPartAnimation - Szkriptrészlet gyűjtésének vizuális animációja a Grade 4-hez.

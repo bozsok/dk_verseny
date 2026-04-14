@@ -1181,7 +1181,10 @@ class DigitalKulturaVerseny {
       return;
     }
 
-    const isStationEnd = currentSlide?.metadata?.step === 3 && currentSlide?.metadata?.section?.startsWith('station_');
+    const isStationEnd = currentSlide?.metadata?.step === 3 && (
+      currentSlide?.metadata?.section?.startsWith('station_') ||
+      currentSlide?.metadata?.section === 'intro'
+    );
     const isNextSectionStart = nextSlide?.metadata?.step === 0 && (
       nextSlide?.metadata?.section?.startsWith('station_') ||
       nextSlide?.metadata?.section === 'final'
@@ -1254,8 +1257,15 @@ class DigitalKulturaVerseny {
 
         if (isGrade4) {
           // --- GRADE 4: DELAY BEFORE COUNTDOWN ---
-          // Várunk 2mp-et, hogy a játékos lássa, ahogy a szkript bekerült az inventory-ba
-          await this._wait(2000);
+          // Csak ha állomásról jövünk (ahol volt szkriptgyűjtés), várunk 2mp-et, 
+          // hogy a játékos lássa az animáció végét. Az intro után azonnal indulhat.
+          const isFromStation = currentSlide?.metadata?.section?.startsWith('station_');
+          if (isFromStation) {
+            await this._wait(2000);
+          } else {
+            // Rövid szünet az intro után, mielőtt a visszaszámláló overlay beúszik
+            await this._wait(300);
+          }
 
           if (this.isTransitioning === false) return; // Megszakítva időközben
 

@@ -1,4 +1,3 @@
-import GameLogger from '../../core/logging/GameLogger.js';
 
 /**
  * GlitchTransition - Digitális zavar alapú tranzíció a Grade 4-hez.

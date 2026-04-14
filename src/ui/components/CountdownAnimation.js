@@ -1,4 +1,3 @@
-import GameLogger from '../../core/logging/GameLogger.js';
 
 /**
  * CountdownAnimation - 3-2-1 visszaszámlálás Grade 4-hez.

@@ -9,6 +9,8 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 
 ### Hozzáadva
 - **Kontextusfüggő felirat a visszaszámláláson**: A Grade 4 visszaszámlálás alatt mostantól pulzáló türkiz neon felirat jelzi a haladást: "Kvantumugrás a következő szektorba...".
+- **Teljes körű kvantumugrás élmény**: A visszaszámlálás és glitch effekt mostantól az intro fázis után is aktiválódik az első állomásra való utazáskor, biztosítva a konzisztens vizuális élményt a játék kezdetétől.
+- **Optimalizált ugrási időzítés**: Bevezetésre került egy intelligens várakozási logika, amely az intro utáni első ugrást pörgősebbé teszi (300ms vs 2000ms), mivel ott nem előzi meg szkriptgyűjtési animáció.
 - **Életciklus-tudatos várakozás**: Új `_wait(ms)` helper a `main.js`-ben, amely figyeli az alkalmazás megsemmisített állapotát, megelőzve a háttérben futó és hibát okozó aszinkron folyamatokat.
 
 ### Módosítva
