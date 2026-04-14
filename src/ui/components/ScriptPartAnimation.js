@@ -1,10 +1,12 @@
+import GameLogger from '../../core/logging/GameLogger.js';
+
 /**
  * ScriptPartAnimation - Szkriptrészlet gyűjtésének vizuális animációja a Grade 4-hez.
  * 
  * FÁZIS A: Megjeleníti a szkriptrészletet középen (neon ragyogás + glitch effektek).
  * FÁZIS B: Áthelyezi a HUD inventory slotjába.
  */
-class ScriptPartAnimation {
+export class ScriptPartAnimation {
     /**
      * @param {Object} options 
      * @param {string} options.stationId - Az állomás azonosítása (pl. 'station_1')
@@ -15,6 +17,7 @@ class ScriptPartAnimation {
         this.stationId = options.stationId;
         this.targetSlot = options.targetSlot;
         this.onComplete = options.onComplete;
+        this.logger = options.logger || null;
 
         // Állomás -> Szkript kép index térkép
         this.scriptMap = {
@@ -33,6 +36,10 @@ class ScriptPartAnimation {
         this.dropIcon = null; // A repülő ikon (mivel a képet nem kicsinyítjük)
         this.glow = null;
         this.container = null;
+
+        this._animations = []; // Aktív animációk követése
+        this._timers = []; // Aktív időzítők
+        this._isDestroyed = false;
 
         // Stílus konténer animációkhoz
         this.styleTag = document.getElementById('dkv-script-animation-styles');
@@ -59,7 +66,9 @@ class ScriptPartAnimation {
      * FÁZIS A: Megjelenítés és Ragyogás
      */
     playPhaseA() {
-        if (this.container) return;
+        if (this._isDestroyed || this.container) return;
+        
+        if (this.logger) this.logger.info('[ScriptAnim] Phase A indítása', { station: this.stationId });
 
         this.container = document.createElement('div');
         this.container.className = 'script-animation-container';
@@ -133,6 +142,8 @@ class ScriptPartAnimation {
         document.body.appendChild(this.container);
 
         requestAnimationFrame(() => {
+            if (this._isDestroyed || !this.glow) return;
+
             // this.overlay.style.opacity = '1'; // Overlay elrejtve aUSER kérésére
             this.glow.style.opacity = '1';
             this.largeScript.style.opacity = '1';
@@ -147,14 +158,15 @@ class ScriptPartAnimation {
                 easing: 'ease-out',
                 fill: 'forwards'
             });
+            this._animations.push(enterAnim);
 
             // Amikor elérte a csúcsot (1.16), átadjuk a lassú pulzálásnak
             enterAnim.onfinish = () => {
-                if (!this.largeScript) return;
+                if (this._isDestroyed || !this.largeScript) return;
 
                 // 2. szakasz: LASSÚ PULZÁLÁS (1.16 -> 1.1 -> 1.16) - Infinite loop
                 // Megjegyzés: A ciklus a csúcsról indul, így az első mozdulat a lassú zsuporodás lesz
-                this.largeScript.animate([
+                const pulseAnim = this.largeScript.animate([
                     { transform: 'translate(-50%, -50%) scale(1.16)' },
                     { transform: 'translate(-50%, -50%) scale(1.1)' },
                     { transform: 'translate(-50%, -50%) scale(1.16)' }
@@ -163,6 +175,7 @@ class ScriptPartAnimation {
                     iterations: Infinity,
                     easing: 'ease-in-out'
                 });
+                this._animations.push(pulseAnim);
             };
 
             this.largeScript.style.animation = 'scriptGlow 4s infinite ease-in-out';
@@ -170,19 +183,23 @@ class ScriptPartAnimation {
             if (this.onComplete) this.onComplete();
 
             // 5mp után a sötétítés elhalványul, de a tárgy marad
-            setTimeout(() => {
+            const t = setTimeout(() => {
+                if (this._isDestroyed) return;
                 if (this.overlay) this.overlay.style.opacity = '0';
                 if (this._label) this._label.style.opacity = '0';
             }, 5500);
+            this._timers.push(t);
         });
     }
 
     playPhaseB() {
         return new Promise((resolve) => {
-            if (!this.container || !this.largeScript) {
+            if (this._isDestroyed || !this.container || !this.largeScript) {
                 resolve();
                 return;
             }
+            
+            if (this.logger) this.logger.info('[ScriptAnim] Phase B indítása');
 
             // 1. Állítsuk le a pulzáló animációkat
             const animations = this.largeScript.getAnimations();
@@ -204,10 +221,12 @@ class ScriptPartAnimation {
                 ], { duration: 500, fill: 'forwards' });
 
                 this.overlay.style.opacity = '0';
-                setTimeout(() => {
+                const t = setTimeout(() => {
+                    if (this._isDestroyed) { resolve(); return; }
                     this._cleanup();
                     resolve();
                 }, 500);
+                this._timers.push(t);
                 return;
             }
 
@@ -234,10 +253,12 @@ class ScriptPartAnimation {
                 easing: 'cubic-bezier(0.5, 0, 0.5, 1)',
                 fill: 'forwards'
             });
+            this._animations.push(travelAnim);
 
             this.overlay.style.opacity = '0';
 
             travelAnim.onfinish = () => {
+                if (this._isDestroyed) { resolve(); return; }
                 this._cleanup();
                 resolve();
             };
@@ -247,9 +268,11 @@ class ScriptPartAnimation {
     play() {
         return new Promise((resolve) => {
             this.playPhaseA();
-            setTimeout(() => {
+            const t = setTimeout(() => {
+                if (this._isDestroyed) { resolve(); return; }
                 this.playPhaseB().then(resolve);
             }, 2000);
+            this._timers.push(t);
         });
     }
 
@@ -263,11 +286,17 @@ class ScriptPartAnimation {
         this.dropIcon = null;
         this.glow = null;
         this._label = null;
+
+        // Erőforrások takarítása
+        this._animations.forEach(anim => anim.cancel());
+        this._animations = [];
+        this._timers.forEach(t => clearTimeout(t));
+        this._timers = [];
     }
 
     destroy() {
+        if (this.logger) this.logger.info('[ScriptAnim] Megsemmisítés...');
+        this._isDestroyed = true;
         this._cleanup();
     }
 }
-
-export default ScriptPartAnimation;

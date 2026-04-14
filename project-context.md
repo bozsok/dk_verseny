@@ -89,6 +89,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **Stop-on-Error Law:** If a Swarm script (e.g., `archive`) fails, switching to a manual fallback solution is forbidden without explicit user permission.
 - **Conflict Resolution Law:** In case of contradictory instructions (e.g., "close everything" vs. "do not use git"), the conflict must be resolved with the user before taking action.
 - **Physical Verification:** Before reporting completion, the agent MUST verify the physical state of the workspace (file locations, presence of expected artifacts) and report only the actual result as "completed".
+- **Agent Integrity Law:** An agent MUST NEVER place its own internal model or assumptions before the project's fixed rules and protocols. In all cases, the local project context, the dedicated SKILL documentation, and the current physical state of the workspace take precedence over general assistant routines and assumptions.
 
 ### Critical Don't-Miss Rules
 
@@ -121,7 +122,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Keep this file lean and focused on agent needs.
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
-- **Teszt Lefedettség**: ~90% (Minden lint hiba elhárítva, 69/69 teszt sikeres)
-- **Utoljára frissítve**: 2026-04-14T08:42:00+02:00
-- **Verzió**: v0.26.0 (Stable - Station Transition Countdown Added)
-- **Státusz**: Sprint Folyamatban (v0.26.0 - Countdown Animation implemented)
+- **Teszt Lefedettség**: ~91% (Minden animációs modul stabilizálva, 88/88 teszt sikeres)
+- **Utoljára frissítve**: 2026-04-14T17:18:00+02:00
+- **Verzió**: v0.27.0 (Stable - Technikai adósságkezelés elvégezve)
+- **Státusz**: Sprint Befejezve (Grade 4 Animations Stabilized & Documented)

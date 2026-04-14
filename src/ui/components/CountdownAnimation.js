@@ -1,22 +1,28 @@
+import GameLogger from '../../core/logging/GameLogger.js';
+
 /**
  * CountdownAnimation - 3-2-1 visszaszámlálás Grade 4-hez.
  * 
  * Megjeleníti a 3.png, 2.png és 1.png képeket a képernyő közepén
  * állomás váltás előtt.
  */
-class CountdownAnimation {
+export class CountdownAnimation {
     /**
      * @param {Object} options 
      * @param {Function} options.onComplete - Callback a visszaszámlálás végén
      */
     constructor(options = {}) {
         this.onComplete = options.onComplete || (() => { });
+        this.logger = options.logger || null;
         this.container = null;
         this.images = [
             'assets/images/grade4/others/3.png',
             'assets/images/grade4/others/2.png',
             'assets/images/grade4/others/1.png'
         ];
+
+        this._timers = []; // Aktív időzítők követése
+        this._isDestroyed = false;
 
         // Stílus konténer animációkhoz
         this.styleTag = document.getElementById('dkv-countdown-animation-styles');
@@ -36,8 +42,25 @@ class CountdownAnimation {
                     0% { transform: translateY(-100%); }
                     100% { transform: translateY(100vh); }
                 }
+                @keyframes labelPulse {
+                    0% { opacity: 0.6; transform: scale(1); }
+                    50% { opacity: 1; transform: scale(1.05); text-shadow: 0 0 15px #00f2ff; }
+                    100% { opacity: 0.6; transform: scale(1); }
+                }
                 .dkv-countdown-image {
                     animation: countdownGlitch 0.4s infinite;
+                }
+                .dkv-countdown-label {
+                    color: #00f2ff;
+                    font-family: 'Courier New', Courier, monospace;
+                    font-size: 24px;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    letter-spacing: 4px;
+                    margin-top: 40px;
+                    text-shadow: 0 0 10px rgba(0, 242, 252, 0.7);
+                    animation: labelPulse 2s ease-in-out infinite;
+                    opacity: 0.8;
                 }
                 .dkv-countdown-scanline {
                     position: absolute;
@@ -58,6 +81,8 @@ class CountdownAnimation {
      */
     play() {
         return new Promise((resolve) => {
+            if (this.logger) this.logger.info('[Countdown] Visszaszámlálás indítása');
+            
             this.container = document.createElement('div');
             this.container.className = 'dkv-countdown-overlay';
             Object.assign(this.container.style, {
@@ -67,12 +92,13 @@ class CountdownAnimation {
                 width: '100vw',
                 height: '100vh',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: '10010',
                 pointerEvents: 'none',
-                backgroundColor: 'rgba(0, 5, 15, 0.5)',
-                backdropFilter: 'blur(4px) contrast(1.2)',
+                backgroundColor: 'rgba(0, 5, 15, 0.6)',
+                backdropFilter: 'blur(8px) contrast(1.2)',
                 overflow: 'hidden'
             });
 
@@ -81,9 +107,16 @@ class CountdownAnimation {
             scanline.className = 'dkv-countdown-scanline';
             this.container.appendChild(scanline);
 
+            // Felirat hozzáadása
+            const label = document.createElement('div');
+            label.className = 'dkv-countdown-label';
+            label.textContent = 'Kvantumugrás a következő szektorba...';
+            this.container.appendChild(label);
+
             document.body.appendChild(this.container);
 
             this._showStep(0).then(() => {
+                if (this._isDestroyed) return;
                 this._cleanup();
                 if (this.onComplete) this.onComplete();
                 resolve();
@@ -95,7 +128,7 @@ class CountdownAnimation {
      * Egy-egy szám megjelenítése
      */
     async _showStep(index) {
-        if (index >= this.images.length) return;
+        if (this._isDestroyed || index >= this.images.length) return;
 
         const img = document.createElement('img');
         img.src = this.images[index];
@@ -108,31 +141,47 @@ class CountdownAnimation {
             opacity: '0',
             transform: 'scale(2)',
             transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            filter: 'drop-shadow(0 0 20px rgba(0, 242, 255, 0.8))'
+            filter: 'drop-shadow(0 0 20px rgba(0, 242, 255, 0.8))',
+            marginBottom: '20px'
         });
 
-        this.container.appendChild(img);
+        // Az img-t a felirat elé (fölé) szúrjuk be
+        this.container.insertBefore(img, this.container.querySelector('.dkv-countdown-label'));
 
         // Beúszás
         await new Promise(r => {
             requestAnimationFrame(() => {
+                if (this._isDestroyed) return;
                 img.style.opacity = '1';
                 img.style.transform = 'scale(1)';
-                setTimeout(r, 600); // Ennyi ideig látszik stabilan
+                
+                const t = setTimeout(r, 600);
+                this._timers.push(t);
             });
         });
+
+        if (this._isDestroyed) return;
 
         // Kiúszás
         img.style.opacity = '0';
         img.style.transform = 'scale(0.5) rotate(10deg)';
         img.style.filter = 'blur(15px) brightness(2)';
 
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => {
+            const t = setTimeout(r, 200);
+            this._timers.push(t);
+        });
+
+        if (this._isDestroyed) return;
         img.remove();
 
         // Rövid szünet a következõ elõtt
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => {
+            const t = setTimeout(r, 100);
+            this._timers.push(t);
+        });
 
+        if (this._isDestroyed) return;
         await this._showStep(index + 1);
     }
 
@@ -141,11 +190,15 @@ class CountdownAnimation {
             this.container.parentNode.removeChild(this.container);
         }
         this.container = null;
+        
+        // Időzítők kipucolása
+        this._timers.forEach(t => clearTimeout(t));
+        this._timers = [];
     }
 
     destroy() {
+        if (this.logger) this.logger.info('[Countdown] Megsemmisítés...');
+        this._isDestroyed = true;
         this._cleanup();
     }
 }
-
-export default CountdownAnimation;

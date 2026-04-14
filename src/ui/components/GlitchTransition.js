@@ -1,10 +1,12 @@
+import GameLogger from '../../core/logging/GameLogger.js';
+
 /**
  * GlitchTransition - Digitális zavar alapú tranzíció a Grade 4-hez.
  * 
  * Kiváltja a nehézkes WebGL portált egy könnyebb, CSS és Canvas alapú
  * tematikus átmenetre.
  */
-class GlitchTransition {
+export class GlitchTransition {
     /**
      * @param {Object} options 
      * @param {HTMLElement} options.newSlideHtml - Az új dia DOM eleme
@@ -16,6 +18,7 @@ class GlitchTransition {
         this.newSlideHtml = options.newSlideHtml;
         this.onComplete = options.onComplete || (() => { });
         this.duration = options.duration || 2500;
+        this.logger = options.logger || null;
 
         this.container = null;
         this.contentLayer = null;
@@ -24,7 +27,6 @@ class GlitchTransition {
         this.animationFrameId = null;
         this.startTime = null;
 
-        // Terminál üzenetek az átmenet alatt (Magyarul)
         this.messages = [
             "KVANTUM_ÚJRASZINKRONIZÁLÁS_FOLYAMATBAN...",
             "TÉRIDŐ_KONFIGURÁCIÓ_FRISSÍTÉSE...",
@@ -32,6 +34,10 @@ class GlitchTransition {
             "NEURÁLIS_KAPCSOLAT_STABILIZÁLVA.",
             "TERMINÁL_MAGHOZ_VALÓ_HOZZÁFÉRÉS..."
         ];
+        
+        this._resizeHandler = this._handleResize.bind(this);
+        this._finishTimer = null;
+        this._isDestroyed = false;
     }
 
     /**
@@ -76,7 +82,7 @@ class GlitchTransition {
 
         fragment.appendChild(this.container);
         this._handleResize();
-        window.addEventListener('resize', () => this._handleResize());
+        window.addEventListener('resize', this._resizeHandler);
 
         return fragment;
     }
@@ -95,6 +101,7 @@ class GlitchTransition {
      * Tranzíció indítása
      */
     start() {
+        if (this.logger) this.logger.info('[Glitch] Tranzíció indítása');
         this.startTime = performance.now();
         this._animate();
     }
@@ -103,7 +110,7 @@ class GlitchTransition {
      * Animációs ciklus
      */
     _animate() {
-        if (!this.startTime) return;
+        if (this._isDestroyed || !this.startTime) return;
 
         const now = performance.now();
         const elapsed = now - this.startTime;
@@ -174,17 +181,46 @@ class GlitchTransition {
     finish() {
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
         }
 
         this.onComplete();
 
         // DOM eltávolítása (késleltetve, hogy a rendszert ne akassza meg)
-        setTimeout(() => {
+        this._finishTimer = setTimeout(() => {
+            if (this._isDestroyed) return;
             if (this.container && this.container.parentNode) {
                 this.container.parentNode.removeChild(this.container);
             }
+            this._finishTimer = null;
         }, 100);
     }
-}
 
-export default GlitchTransition;
+    /**
+     * Erőforrások felszabadítása
+     */
+    destroy() {
+        if (this.logger) this.logger.info('[Glitch] Megsemmisítés...');
+        this._isDestroyed = true;
+        
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
+        if (this._finishTimer) {
+            clearTimeout(this._finishTimer);
+            this._finishTimer = null;
+        }
+
+        window.removeEventListener('resize', this._resizeHandler);
+
+        if (this.container && this.container.parentNode) {
+            this.container.parentNode.removeChild(this.container);
+        }
+        
+        this.container = null;
+        this.ctx = null;
+        this.canvas = null;
+    }
+}

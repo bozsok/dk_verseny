@@ -23,10 +23,10 @@ import SummarySlide from './ui/components/SummarySlide.js';
 import GameInterface from './ui/components/GameInterface.js';
 import { GameInterfaceGrade4 } from './ui/components/GameInterfaceGrade4.js';
 import { PortalTransition } from './ui/components/PortalTransition.js';
-import GlitchTransition from './ui/components/GlitchTransition.js';
+import { GlitchTransition } from './ui/components/GlitchTransition.js';
 import KeyCollectionAnimation from './ui/components/KeyCollectionAnimation.js';
-import ScriptPartAnimation from './ui/components/ScriptPartAnimation.js';
-import CountdownAnimation from './ui/components/CountdownAnimation.js';
+import { ScriptPartAnimation } from './ui/components/ScriptPartAnimation.js';
+import { CountdownAnimation } from './ui/components/CountdownAnimation.js';
 import TutorialManager from './features/tutorial/TutorialManager.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import './ui/styles/design-system.css';
@@ -86,6 +86,12 @@ class DigitalKulturaVerseny {
     this.leaderboardId = null;
     this.isSaving = false;
     this.taskResults = []; // Feladatonkénti részletes eredmény a dashboardhoz
+    
+    // Életciklus-kezelés: Aktív tranzíciók és időzítők követése
+    this.currentGlitchTransition = null;
+    this.currentCountdownAnimation = null;
+    this._activeTimers = new Set();
+    this._isDestroyed = false;
   }
 
   /**
@@ -713,6 +719,26 @@ class DigitalKulturaVerseny {
       this.currentKeyAnimation = null;
     }
 
+    if (this.currentCountdownAnimation) {
+      if (typeof this.currentCountdownAnimation.destroy === 'function') {
+        this.currentCountdownAnimation.destroy();
+      }
+      this.currentCountdownAnimation = null;
+    }
+
+    if (this.currentGlitchTransition) {
+      if (typeof this.currentGlitchTransition.destroy === 'function') {
+        this.currentGlitchTransition.destroy();
+      }
+      this.currentGlitchTransition = null;
+    }
+
+    // Összes egyéb aktív timer törlése
+    if (this._activeTimers) {
+      this._activeTimers.forEach(timer => clearTimeout(timer));
+      this._activeTimers.clear();
+    }
+
     // --- Slide Type Logic ---
     const isFullscreen = [
       SLIDE_TYPES.WELCOME,
@@ -884,7 +910,8 @@ class DigitalKulturaVerseny {
             if (isGrade4) {
               this.currentKeyAnimation = new ScriptPartAnimation({
                 stationId: stationId,
-                targetSlot: null
+                targetSlot: null,
+                logger: this.logger
               });
             } else {
               this.currentKeyAnimation = new KeyCollectionAnimation({
@@ -1228,18 +1255,27 @@ class DigitalKulturaVerseny {
         if (isGrade4) {
           // --- GRADE 4: DELAY BEFORE COUNTDOWN ---
           // Várunk 2mp-et, hogy a játékos lássa, ahogy a szkript bekerült az inventory-ba
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await this._wait(2000);
+
+          if (this.isTransitioning === false) return; // Megszakítva időközben
 
           // --- GRADE 4: COUNTDOWN (3-2-1) ---
-          const countdown = new CountdownAnimation();
-          await countdown.play();
+          this.currentCountdownAnimation = new CountdownAnimation({
+            logger: this.logger
+          });
+          await this.currentCountdownAnimation.play();
+          this.currentCountdownAnimation = null;
+
+          if (this.isTransitioning === false) return; // Megszakítva időközben
 
           // --- GRADE 4: GLITCH TRANSITION ---
-          const glitch = new GlitchTransition({
+          this.currentGlitchTransition = new GlitchTransition({
             newSlideHtml: nextSlideDOM,
             duration: 2500,
+            logger: this.logger,
             onComplete: () => {
               this.isTransitioning = false;
+              this.currentGlitchTransition = null;
               const next = this.slideManager.nextSlide();
               if (next) {
                 this.renderSlide(next, 0, 'forward', newComponent, nextSlideDOM);
@@ -1249,8 +1285,8 @@ class DigitalKulturaVerseny {
               }
             }
           });
-          document.body.appendChild(glitch.createElement());
-          glitch.start();
+          document.body.appendChild(this.currentGlitchTransition.createElement());
+          this.currentGlitchTransition.start();
         } else {
           // --- EGYÉB: CLASSIC PORTAL TRANSITION (WebGL) ---
           // Állomás-függő portál színek (Hex -> RGB konverzió)
@@ -1511,8 +1547,34 @@ class DigitalKulturaVerseny {
       this.eventBus = null;
     }
 
+    // Időzítők kipucolása
+    if (this._activeTimers) {
+      this._activeTimers.forEach(timer => clearTimeout(timer));
+      this._activeTimers.clear();
+    }
+
     this.logger = null;
     this.isInitialized = false;
+    this._isDestroyed = true;
+  }
+
+  /**
+   * Biztonságos aszinkron várakozás, amely figyeli az életciklust.
+   * @param {number} ms 
+   */
+  _wait(ms) {
+    return new Promise(resolve => {
+      if (this._isDestroyed) {
+        resolve();
+        return;
+      }
+
+      const timer = setTimeout(() => {
+        this._activeTimers.delete(timer);
+        resolve();
+      }, ms);
+      this._activeTimers.add(timer);
+    });
   }
 
   /**

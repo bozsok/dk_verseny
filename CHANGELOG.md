@@ -5,6 +5,22 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.27.0] - 2026-04-14
+
+### Hozzáadva
+- **Kontextusfüggő felirat a visszaszámláláson**: A Grade 4 visszaszámlálás alatt mostantól pulzáló türkiz neon felirat jelzi a haladást: "Kvantumugrás a következő szektorba...".
+- **Életciklus-tudatos várakozás**: Új `_wait(ms)` helper a `main.js`-ben, amely figyeli az alkalmazás megsemmisített állapotát, megelőzve a háttérben futó és hibát okozó aszinkron folyamatokat.
+
+### Módosítva
+- **Technikai adósságkezelés (v0.26.0 Recovery)**:
+    - A `CountdownAnimation.js`, `ScriptPartAnimation.js` és `GlitchTransition.js` modulok átálltak **Named Export** használatára.
+    - Robusztus **életciklus-kezelés**: Minden animációs komponens megkapta a `destroy()` metódust és a belső időzítők/animációs keretek precíz takarítását.
+    - **Safe Async Delays**: A `main.js`-ben lévő hardkódolt 2000 ms-os várakozást egy központilag követett, `this._isDestroyed` flaget figyelembe vevő megoldásra cseréltük.
+- **Tesztlefedettség növelése**: A kritikus UI animációs modulok lefedettsége **>90%**-ra emelkedett. Javításra kerültek a speciális határesetek és aszinkron versenyhelyzetek (race condition).
+
+### Javítva
+- **ScriptPartAnimation inicializációs hiba**: Megszüntettük a `null pointer` kivételt, amely akkor lépett fel, ha egy animációt a `requestAnimationFrame` lefutása előtt semmisítettek meg.
+
 ## [0.26.0] - 2026-04-14
 
 ### Hozzáadva
