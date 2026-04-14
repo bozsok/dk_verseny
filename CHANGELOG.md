@@ -5,6 +5,17 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.26.0] - 2026-04-14
+
+### Hozzáadva
+- **Grade 4 állomásváltó visszaszámlálás**: Implementáltunk egy 3-2-1 visszaszámlálást (`CountdownAnimation.js`), amely a szkriptrészlet megszerzése után, de a glitch tranzíció előtt jelenik meg.
+- **Vizuális effektek (Countdown)**: A visszaszámlálás speciális glitch effekteket, szkennelési vonalat (scanline) és a Grade 4 "Quantum" témához illeszkedő neon ragyogást kapott.
+
+### Módosítva
+- **Állomásváltási logika**: A `main.js` mostantól aszinkron módon megvárja a visszaszámlálás befejeződését, mielőtt elindítaná a `GlitchTransition`-t a 4. évfolyamon. Beiktattunk egy 2 másodperces várakozást a szkriptrészlet megszerzése és a visszaszámlálás indítása közé a jobb felhasználói élmény érdekében.
+- **Inventory ikonok**: Az inventory slotok ikonját lecseréltük `terminal`-ról `deployed_code`-ra, hogy elkerüljük az ütközést a "Terminál bejegyzések" gombbal.
+- **Szkriptrészlet animáció**: Szinkronizáltuk a belépési animációt a pulzálással, és eltávolítottuk a sötétítő overlay-t a megjelenéskor a tisztább vizuális élmény érdekében. A vándorlás az inventory-ba közvetlenül a nagy képpel történik.
+
 ## [0.25.0] - 2026-04-12
 
 ### Hozzáadva

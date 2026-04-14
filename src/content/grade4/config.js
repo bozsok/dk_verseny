@@ -40,19 +40,19 @@ const NARRATIVE_DATA = {
     },
     DIA_4: {
         title: 'A Nagy Frissítés előestéje',
-        text: 'A Kód Királyságban eddig teljes volt a harmónia, az adatfolyamok zavartalanul lüktettek a Puffer egységekben. A fejlesztők készen álltak a Nagy Frissítés telepítésére, amely örökre megszüntette volna a rendszer minden apróbb hibáját. A feszültség tapintható volt, de mindenki optimistán várta az új korszak hajnalát. Senki sem sejtette, hogy a mélyben egy sötét algoritmus már a rendszermag ellen készül. A stabilitás pillanatai hamarosan véget érnek.'
+        text: 'A Kód Királyságban eddig teljes volt a harmónia, az adatfolyamok zavartalanul lüktettek a Puffer egységekben. A digitális tér minden szeglete stabil fényben ragyogott, a holografikus csatornákon átsuhanó információk aranyló és kékes árnyalatokban táncoltak, tökéletes összhangban. A fejlesztők készen álltak a Nagy Frissítés telepítésére, amely örökre megszüntette volna a rendszer minden apróbb hibáját. Senki sem sejtette, hogy a mélyben egy sötét algoritmus már a rendszermag ellen készül. A stabilitás pillanatai hamarosan véget érnek.'
     },
     DIA_5: {
         title: 'A Rendszer összeomlása',
-        text: 'Hirtelen vészjósló vörös fények villannak fel az egész birodalomban, és a monitorok vadul vibrálni kezdenek. A kritikus szektorok egymás után válnak elérhetetlenné, a processzorok pedig túlhevülnek az ismeretlen terhelés alatt. Az adatok összezavarodnak, a fájlstruktúra pedig darabjaira hullik a szemünk láttára. Ez nem egy egyszerű hiba, hanem egy célzott támadás a Királyság legfontosabb értékei ellen. A káosz pillanatok alatt eluralkodik a hálózaton.'
+        text: 'Hirtelen vészjósló vörös fények villannak fel az egész birodalomban, és a monitorok vadul vibrálni kezdenek. A kritikus szektorok egymás után válnak elérhetetlenné, a vezérlő egységek pedig túlhevülnek az ismeretlen terhelés alatt. Az adatok összezavarodnak, a fájlstruktúra pedig darabjaira hullik a szemünk láttára. Ez nem egy egyszerű hiba. A vörös fények villódzásában, egyértelművé válik: célzott támadás érte a Királyság legfontosabb értékeit. A káosz pillanatok alatt eluralkodik a hálózaton.'
     },
     DIA_6: {
         title: 'A Zéró-szekvencia felemelkedése',
-        text: 'A füstölő terminálok mögül egy vészjósló, digitálisan torzított hang szólal meg: A Zéró-szekvencia az! Ő a legveszélyesebb, romboló algoritmus, akit valaha a hálózat szült, és most ellopta a Rejtett Frissítést. Könyörtelen precizitással darabolta szét a kódot, és a darabkáit az öt legveszélyesebb zónába rejtette el. A Zéró-szekvencia célja a teljes rendszermag felülírása és a Királyság örök sötétségbe borítása. Megállítása szinte lehetetlennek tűnik.'
+        text: 'A terminálok mindegyikén egyszerre szólal meg egy vészjósló, digitálisan torzított hang: "Zéró-szekvencia vagyok! Célom a teljes rendszermag felülírása, a Királyság örök sötétségbe borítása." Ő a legveszélyesebb, romboló entitás, akit valaha a hálózat szült, és most ellopta a Rejtett Frissítést. Könyörtelen precizitással darabolta szét a kódot, és a darabkáit az öt legveszélyesebb zónába rejtette el. Megállítása szinte lehetetlennek tűnik.'
     },
     DIA_7: {
         title: 'A Küldetés megkezdése',
-        text: 'Nincs több vesztegetni való időnk, a visszaszámlálás a teljes összeomlásig már megkezdődött. Feladatod ötszörös: meg kell látogatnod az elszigetelt szektorokat, és vissza kell szerezned mind az öt ellopott szkriptrészletet. Csak ha mind az öt kód a birtokodban van, tudjuk újraindítani a rendszert és legyőzni a Zéró-szekvenciát. Indulj el az első zóna felé, ahol a szkript nyomait sejtjük. A Királyság jövője a te bátorságodon múlik!'
+        text: 'Nincs több vesztegetni való idő. A visszaszámlálás a teljes összeomlásig már megkezdődött. Feladatod ötszörös: meg kell látogatnod az elszigetelt szektorokat, és vissza kell szerezned mind az öt ellopott szkriptrészletet. Csak ha mind az öt kód a birtokodban van, akkor tudjuk újraindítani a rendszermagot és legyőzni a Zéró-szekvenciát. Indulj el az első zóna felé, ahol a szkript nyomait sejtjük. A Királyság jövője a te bátorságodon múlik!'
     },
     DIA_8: {
         title: 'Az Üzenetek Kriptája',
@@ -136,7 +136,7 @@ const NARRATIVE_DATA = {
     },
     DIA_28: {
         title: 'A Rendszermag Kapuja',
-        text: 'Megérkeztél a Királyság legbelső szentélyéhez, a Rendszermag Kapujához, ahol a Zéró-szekvencia elbarikádozta magát. Az öt megszerzett szkript váratlanul pulzálni kezd a kezedben, és egyetlen hatalmas, ragyogó adategységgé áll össze. Ez a Rejtett Frissítés teljes formája, a birodalom végső védelmi eszköze. A kapu felismeri a hitelesített kódot, és hatalmas morajlással feltárul előtted. Nincs visszaút, a döntő pillanat elérkezett: szembe kell nézned a pusztító algoritmus maradékával.'
+        text: 'Visszaérkeztél a Királyság legbelső szentélyéhez, a Rendszermag Kapujához, ahol a Zéró-szekvencia elbarikádozta magát. Az öt megszerzett szkript váratlanul pulzálni kezd a kezedben, és egyetlen hatalmas, ragyogó adategységgé áll össze. Ez a Rejtett Frissítés teljes formája, a birodalom végső védelmi eszköze. A kapu felismeri a hitelesített kódot, és hatalmas morajlással feltárul előtted. Nincs visszaút, a döntő pillanat elérkezett: szembe kell nézned a pusztító algoritmus maradékával.'
     },
     DIA_29: {
         title: 'A végső Rendszer-szinkronizáció',

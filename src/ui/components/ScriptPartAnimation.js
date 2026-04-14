@@ -45,18 +45,10 @@ class ScriptPartAnimation {
                     50% { filter: drop-shadow(0 0 40px rgba(188, 0, 255, 0.9)) contrast(1.2); }
                     100% { filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.6)) contrast(1); }
                 }
-                @keyframes scriptFloat {
-                    0% { transform: translate(-50%, -50%) translateY(0px) scale(1.1); }
-                    50% { transform: translate(-50%, -50%) translateY(-10px) scale(1.12); }
-                    100% { transform: translate(-50%, -50%) translateY(0px) scale(1.1); }
-                }
-                @keyframes scriptGlitch {
-                    0% { clip-path: inset(0 0 0 0); transform: translate(-50%, -50%) skew(0deg); }
-                    2% { clip-path: inset(10% 0 80% 0); transform: translate(-50%, -50%) skew(5deg); }
-                    4% { clip-path: inset(0 0 0 0); transform: translate(-50%, -50%) skew(0deg); }
-                    95% { clip-path: inset(0 0 0 0); transform: translate(-50%, -50%) skew(0deg); }
-                    97% { clip-path: inset(40% 0 30% 0); transform: translate(-51%, -50%) skew(-5deg); }
-                    100% { clip-path: inset(0 0 0 0); transform: translate(-50%, -50%) skew(0deg); }
+                @keyframes scriptPulse {
+                    0% { transform: translate(-50%, -50%) scale(1.1); }
+                    50% { transform: translate(-50%, -50%) scale(1.16); }
+                    100% { transform: translate(-50%, -50%) scale(1.1); }
                 }
             `;
             document.head.appendChild(this.styleTag);
@@ -84,8 +76,8 @@ class ScriptPartAnimation {
         Object.assign(this.overlay.style, {
             position: 'absolute', top: '0', left: '0',
             width: '100%', height: '100%',
-            backgroundColor: 'rgba(0, 10, 20, 0.85)',
-            backdropFilter: 'blur(5px)',
+            backgroundColor: 'transparent',
+            backdropFilter: 'none',
             opacity: '0',
             transition: 'opacity 0.4s ease-out'
         });
@@ -115,12 +107,12 @@ class ScriptPartAnimation {
             boxShadow: '0 0 30px rgba(0, 242, 255, 0.3)',
             objectFit: 'contain', zIndex: '10000',
             opacity: '0',
-            transition: 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+            transition: 'opacity 0.6s ease-out'
         });
 
         // Felirat a kép alatt
         const label = document.createElement('div');
-        label.textContent = `SYSTEM_FRAGMENT_LOADED: ${this.scriptName.toUpperCase()}`;
+        label.textContent = `SZRIPTRÉSZLET MENTÉSE: ${this.scriptName.toUpperCase()}`;
         Object.assign(label.style, {
             position: 'absolute', top: 'calc(50% + 30vh)', left: '50%',
             transform: 'translate(-50%, -50%)',
@@ -141,31 +133,50 @@ class ScriptPartAnimation {
         document.body.appendChild(this.container);
 
         requestAnimationFrame(() => {
-            this.overlay.style.opacity = '1';
+            // this.overlay.style.opacity = '1'; // Overlay elrejtve aUSER kérésére
             this.glow.style.opacity = '1';
             this.largeScript.style.opacity = '1';
-            this.largeScript.style.transform = 'translate(-50%, -50%) scale(1.1)';
             label.style.opacity = '1';
 
-            if (this.onComplete) this.onComplete();
+            // 1. szakasz: GYORS ELŐBUKKANÁS a csúcsértékre (0.01 -> 1.16)
+            const enterAnim = this.largeScript.animate([
+                { transform: 'translate(-50%, -50%) scale(0.01)', opacity: 0 },
+                { transform: 'translate(-50%, -50%) scale(1.16)', opacity: 1 }
+            ], {
+                duration: 700,
+                easing: 'ease-out',
+                fill: 'forwards'
+            });
 
-            setTimeout(() => {
-                if (this.largeScript) {
-                    this.largeScript.style.animation = 'scriptFloat 4s infinite ease-in-out, scriptGlow 3s infinite ease-in-out, scriptGlitch 5s infinite linear';
-                }
-            }, 700);
+            // Amikor elérte a csúcsot (1.16), átadjuk a lassú pulzálásnak
+            enterAnim.onfinish = () => {
+                if (!this.largeScript) return;
+
+                // 2. szakasz: LASSÚ PULZÁLÁS (1.16 -> 1.1 -> 1.16) - Infinite loop
+                // Megjegyzés: A ciklus a csúcsról indul, így az első mozdulat a lassú zsuporodás lesz
+                this.largeScript.animate([
+                    { transform: 'translate(-50%, -50%) scale(1.16)' },
+                    { transform: 'translate(-50%, -50%) scale(1.1)' },
+                    { transform: 'translate(-50%, -50%) scale(1.16)' }
+                ], {
+                    duration: 5000,
+                    iterations: Infinity,
+                    easing: 'ease-in-out'
+                });
+            };
+
+            this.largeScript.style.animation = 'scriptGlow 4s infinite ease-in-out';
+
+            if (this.onComplete) this.onComplete();
 
             // 5mp után a sötétítés elhalványul, de a tárgy marad
             setTimeout(() => {
                 if (this.overlay) this.overlay.style.opacity = '0';
                 if (this._label) this._label.style.opacity = '0';
-            }, 5000);
+            }, 5500);
         });
     }
 
-    /**
-     * FÁZIS B: Berepülés az inventory slotba
-     */
     playPhaseB() {
         return new Promise((resolve) => {
             if (!this.container || !this.largeScript) {
@@ -173,18 +184,25 @@ class ScriptPartAnimation {
                 return;
             }
 
-            // Állítsuk le a díszítő animációkat
+            // 1. Állítsuk le a pulzáló animációkat
+            const animations = this.largeScript.getAnimations();
+            const currentTransform = window.getComputedStyle(this.largeScript).transform;
+            animations.forEach(anim => anim.pause());
+
+            // 2. Töröljük az automatikus Pulse animációt, de tartsuk meg a vizuális állapotot
             this.largeScript.style.animation = 'none';
+            this.largeScript.style.transform = currentTransform;
+
             this.glow.style.transition = 'opacity 0.4s';
             this.glow.style.opacity = '0';
             if (this._label) this._label.style.opacity = '0';
 
-            // A kép elhalványul és kicsit osszezsugorodik
-            this.largeScript.style.transition = 'opacity 0.3s ease-in, transform 0.3s ease-in';
-            this.largeScript.style.opacity = '0';
-            this.largeScript.style.transform = 'translate(-50%, -50%) scale(0.8)';
-
             if (!this.targetSlot) {
+                this.largeScript.animate([
+                    { opacity: 1, transform: currentTransform },
+                    { opacity: 0, transform: currentTransform + ' scale(0.8)' }
+                ], { duration: 500, fill: 'forwards' });
+
                 this.overlay.style.opacity = '0';
                 setTimeout(() => {
                     this._cleanup();
@@ -193,49 +211,36 @@ class ScriptPartAnimation {
                 return;
             }
 
-            // Berepülő ikon (kriksz-kraksz szimbólum - terminal ikon)
-            this.dropIcon = document.createElement('div');
-            this.dropIcon.className = 'script-drop-icon';
-            this.dropIcon.innerHTML = `<span class="material-symbols-outlined" style="font-size: 40px;">terminal</span>`;
-
-            const largeRect = this.largeScript.getBoundingClientRect();
-
-            Object.assign(this.dropIcon.style, {
-                position: 'fixed',
-                top: `${largeRect.top + largeRect.height / 2 - 20}px`,
-                left: `${largeRect.left + largeRect.width / 2 - 20}px`,
-                padding: '10px',
-                borderRadius: '4px',
-                backgroundColor: 'rgba(0, 242, 255, 0.2)',
-                border: '1px solid #00f2ff',
-                color: '#00f2ff',
-                zIndex: '10000',
-                transition: 'all 0.8s cubic-bezier(0.5, 0, 0.5, 1)',
-                boxShadow: '0 0 15px rgba(0, 242, 255, 0.8)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            });
-
-            this.container.appendChild(this.dropIcon);
-
+            // 3. Repülés az inventory-ba (Kizárólag transform használatával, ugrás nélkül)
             const slotRect = this.targetSlot.getBoundingClientRect();
 
-            requestAnimationFrame(() => {
-                this.dropIcon.style.top = `${slotRect.top}px`;
-                this.dropIcon.style.left = `${slotRect.left}px`;
-                this.dropIcon.style.width = `${slotRect.width}px`;
-                this.dropIcon.style.height = `${slotRect.height}px`;
-                this.dropIcon.style.transform = 'scale(0.8)';
-                this.dropIcon.style.opacity = '0.7';
+            // Kiszámítjuk a célpozíciót a középponthoz képest (mivel az elem 50%, 50%-on van)
+            const targetX = slotRect.left + slotRect.width / 2 - window.innerWidth / 2;
+            const targetY = slotRect.top + slotRect.height / 2 - window.innerHeight / 2;
 
-                this.overlay.style.opacity = '0';
+            // Cél skálázás (az eredeti mérethez képest, ami kb. 50vh magas)
+            const scriptHeight = this.largeScript.offsetHeight;
+            const targetScale = slotRect.height / scriptHeight;
 
-                setTimeout(() => {
-                    this._cleanup();
-                    resolve();
-                }, 850);
+            // ELINDÍTJUK A REPÜLÉST
+            const travelAnim = this.largeScript.animate([
+                { transform: currentTransform, opacity: 1 },
+                {
+                    transform: `translate(calc(-50% + ${targetX}px), calc(-50% + ${targetY}px)) scale(${targetScale})`,
+                    opacity: 0.3
+                }
+            ], {
+                duration: 900,
+                easing: 'cubic-bezier(0.5, 0, 0.5, 1)',
+                fill: 'forwards'
             });
+
+            this.overlay.style.opacity = '0';
+
+            travelAnim.onfinish = () => {
+                this._cleanup();
+                resolve();
+            };
         });
     }
 

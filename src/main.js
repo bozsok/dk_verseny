@@ -26,6 +26,7 @@ import { PortalTransition } from './ui/components/PortalTransition.js';
 import GlitchTransition from './ui/components/GlitchTransition.js';
 import KeyCollectionAnimation from './ui/components/KeyCollectionAnimation.js';
 import ScriptPartAnimation from './ui/components/ScriptPartAnimation.js';
+import CountdownAnimation from './ui/components/CountdownAnimation.js';
 import TutorialManager from './features/tutorial/TutorialManager.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import './ui/styles/design-system.css';
@@ -802,7 +803,7 @@ class DigitalKulturaVerseny {
           this._updateUIAfterRender(slide, currentIndex, totalSlides, isLastSlide, isFullscreen, currentGrade, gradeClass, audioSrc, isTutorialPending);
         }, 300);
       }
-      return; 
+      return;
     } else {
       performRender();
       this._updateUIAfterRender(slide, currentIndex, totalSlides, isLastSlide, isFullscreen, currentGrade, gradeClass, audioSrc, isTutorialPending);
@@ -1220,11 +1221,19 @@ class DigitalKulturaVerseny {
       }
 
       // Várjuk meg a kulcs/szkript animációt, majd indulhat a Tranzíció (Portal vagy Glitch)
-      animationPromise.then(() => {
+      animationPromise.then(async () => {
         const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
         const isGrade4 = String(currentGrade) === '4';
 
         if (isGrade4) {
+          // --- GRADE 4: DELAY BEFORE COUNTDOWN ---
+          // Várunk 2mp-et, hogy a játékos lássa, ahogy a szkript bekerült az inventory-ba
+          await new Promise(resolve => setTimeout(resolve, 2000));
+
+          // --- GRADE 4: COUNTDOWN (3-2-1) ---
+          const countdown = new CountdownAnimation();
+          await countdown.play();
+
           // --- GRADE 4: GLITCH TRANSITION ---
           const glitch = new GlitchTransition({
             newSlideHtml: nextSlideDOM,
