@@ -5,6 +5,16 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.30.1] - 2026-04-16
+
+### Módosítva
+- **Architekturális megfelelőség**: Az `isTransitioning` állapot átvezetése a központi `GameStateManager` egységbe a SEL-szabványoknak megfelelően, növelve a rendszer átláthatóságát.
+- **BEM CSS-refaktor**: A navigációs gombok figyelemfelhívó osztályainak átnevezése a névadási konvenciók szerint az `Interface.css`-ben.
+- **Named Export**: Áttérés a kizárólagos nevesített exportokra (Named Export) a `GameInterfaceGrade4` komponens moduljában.
+
+### Javítva
+- **Dokumentáció**: Magyar nyelvű JSDoc-blokkok pótlása a `GameInterfaceGrade4` komponens belső metódusaiban.
+
 ## [0.30.0] - 2026-04-16
 
 ### Hozzáadva

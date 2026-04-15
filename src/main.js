@@ -97,7 +97,6 @@ class DigitalKulturaVerseny {
     this.energyTimeLeft = 4800; // 80 perc másodpercben
     this.energyBarInterval = null;
     this.isEnergyBarActive = false;
-    this.isTransitioning = false;
   }
 
   /**
@@ -154,6 +153,31 @@ class DigitalKulturaVerseny {
       if (this.logger) this.logger.error('Application initialization failed:', { error: error.message, stack: error.stack });
       this.showError(error);
     }
+  }
+
+  /**
+   * Beállítja a tranzíciós állapotot a központi StateManager-ben.
+   * @param {boolean} value - Az új tranzíciós állapot.
+   * @private
+   */
+  _setTransitioning(value) {
+    if (!this.stateManager) return;
+    
+    // UI állapot lekérése a manager-ből
+    const ui = this.stateManager.getState('ui') || {};
+    this.stateManager.updateState({
+      ui: { ...ui, isTransitioning: value }
+    });
+  }
+
+  /**
+   * Lekéri a jelenlegi tranzíciós állapotot a StateManager-ből.
+   * @returns {boolean}
+   * @private
+   */
+  get _isTransitioning() {
+    if (!this.stateManager) return false;
+    return this.stateManager.getState('ui.isTransitioning') || false;
   }
 
   /**
@@ -634,7 +658,7 @@ class DigitalKulturaVerseny {
       }
     });
 
-    this.isTransitioning = false; // Kényszerített reset restartkor
+    this._setTransitioning(false); // Kényszerített reset restartkor
 
     // Verseny időzítő alaphelyzetbe állítása minden új játék előtt
     if (this.timeManager) {
@@ -1274,7 +1298,7 @@ class DigitalKulturaVerseny {
   }
 
   async handleNext() {
-    if (this.isTransitioning) {
+    if (this._isTransitioning) {
       if (this.logger) this.logger.warn('Navigáció blokkolva: Portál tranzíció folyamatban van.');
       return;
     }
@@ -1325,7 +1349,7 @@ class DigitalKulturaVerseny {
 
     if (isStationEnd && isNextSectionStart) {
       if (this.logger) this.logger.info('Portal Transition Triggered! (WebGL)');
-      this.isTransitioning = true; // Zároljuk az inputot a tranzíció megkezdésekor
+      this._setTransitioning(true); // Zároljuk az inputot a tranzíció megkezdésekor
 
       const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
       const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
@@ -1397,7 +1421,7 @@ class DigitalKulturaVerseny {
             await this._wait(300);
           }
 
-          if (this.isTransitioning === false) return; // Megszakítva időközben
+          if (this._isTransitioning === false) return; // Megszakítva időközben
 
           // --- GRADE 4: COUNTDOWN (3-2-1) ---
           this.currentCountdownAnimation = new CountdownAnimation({
@@ -1406,7 +1430,7 @@ class DigitalKulturaVerseny {
           await this.currentCountdownAnimation.play();
           this.currentCountdownAnimation = null;
 
-          if (this.isTransitioning === false) return; // Megszakítva időközben
+          if (this._isTransitioning === false) return; // Megszakítva időközben
 
           // --- GRADE 4: GLITCH TRANSITION ---
           this.currentGlitchTransition = new GlitchTransition({
@@ -1414,7 +1438,7 @@ class DigitalKulturaVerseny {
             duration: 2500,
             logger: this.logger,
             onComplete: () => {
-              this.isTransitioning = false;
+              this._setTransitioning(false);
               this.currentGlitchTransition = null;
               const next = this.slideManager.nextSlide();
               if (next) {
@@ -1456,7 +1480,7 @@ class DigitalKulturaVerseny {
               ]
             },
             onComplete: () => {
-              this.isTransitioning = false;
+              this._setTransitioning(false);
               const next = this.slideManager.nextSlide();
               if (next) {
                 this.renderSlide(next, 0, 'forward', newComponent, nextSlideDOM);
@@ -1486,8 +1510,8 @@ class DigitalKulturaVerseny {
   }
 
   async handlePrev() {
-    if (this.logger) this.logger.info(`[DKV handlePrev] Called. isTransitioning=${this.isTransitioning}, currentIndex=${this.slideManager?.currentIndex}, currentSlide=${this.slideManager?.getCurrentSlide()?.id}`);
-    if (this.isTransitioning) {
+    if (this.logger) this.logger.info(`[DKV handlePrev] Called. isTransitioning=${this._isTransitioning}, currentIndex=${this.slideManager?.currentIndex}, currentSlide=${this.slideManager?.getCurrentSlide()?.id}`);
+    if (this._isTransitioning) {
       if (this.logger) this.logger.warn('[DKV handlePrev] BLOCKED by isTransitioning!');
       return;
     }

@@ -429,6 +429,12 @@ export class GameInterfaceGrade4 {
         this.lastInventoryCount = inventory.length;
     }
 
+    /**
+     * Pontszám növekedésének (számláló) animálása.
+     * @param {number} start - Kezdőérték
+     * @param {number} end - Célérték
+     * @private
+     */
     _animateScore(start, end) {
         const duration = 1500;
         const startTime = performance.now();
@@ -737,20 +743,29 @@ export class GameInterfaceGrade4 {
         }
     }
 
+    /**
+     * Elindítja az inaktivitást figyelő időzítőt.
+     * 8 másodperc után vizuálisan jelzi a "Tovább" gombot.
+     * @private
+     */
     _startAttentionTimer() {
         this._clearAttentionTimer();
         const nextBtn = this.element.querySelector('.dkv-g4-btn-next');
         if (!nextBtn || nextBtn.disabled) return;
 
         this.attentionTimer = setTimeout(() => {
-            nextBtn.classList.add('dkv-btn-to-orange');
+            nextBtn.classList.add('dkv-g4-btn-next--to-orange');
             this.attentionPulseTimer = setTimeout(() => {
-                nextBtn.classList.remove('dkv-btn-to-orange');
-                nextBtn.classList.add('dkv-btn-attention');
+                nextBtn.classList.remove('dkv-g4-btn-next--to-orange');
+                nextBtn.classList.add('dkv-g4-btn-next--attention');
             }, 1200); // Animation duration
         }, 8000); // 8 seconds idle
     }
 
+    /**
+     * Törli az inaktivitást figyelő időzítőket és eltávolítja a vizuális jelzéseket.
+     * @private
+     */
     _clearAttentionTimer() {
         if (this.attentionTimer) {
             clearTimeout(this.attentionTimer);
@@ -762,7 +777,7 @@ export class GameInterfaceGrade4 {
         }
         const nextBtn = this.element.querySelector('.dkv-g4-btn-next');
         if (nextBtn) {
-            nextBtn.classList.remove('dkv-btn-to-orange', 'dkv-btn-attention');
+            nextBtn.classList.remove('dkv-g4-btn-next--to-orange', 'dkv-g4-btn-next--attention');
         }
     }
 
@@ -795,5 +810,3 @@ export class GameInterfaceGrade4 {
         this.avatarEl = null;
     }
 }
-
-export default GameInterfaceGrade4;

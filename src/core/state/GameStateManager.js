@@ -55,13 +55,14 @@ class GameStateManager {
         isLoading: false,
         showModal: false,
         modalType: null,
-        theme: 'light'
+        theme: 'light',
+        isTransitioning: false
       },
 
       // Rendszer adatok
       metadata: {
         lastSaved: null,
-        version: '0.28.0',
+        version: '0.30.1',
         totalPlayTime: 0,
         sessionsPlayed: 0
       }

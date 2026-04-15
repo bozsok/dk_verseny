@@ -881,12 +881,12 @@
     }
 }
 
-.dkv-g4-btn-next.dkv-btn-to-orange {
+.dkv-g4-btn-next.dkv-g4-btn-next--to-orange {
     animation: g4-btn-color-to-orange 1.2s ease-in-out forwards;
 }
 
-.dkv-g4-btn-next.dkv-btn-attention {
+.dkv-g4-btn-next.dkv-g4-btn-next--attention {
     animation: g4-btn-glow-orange 2s ease-in-out infinite;
     border-color: #ffa500;
     color: #ffa500;
-}
+}
