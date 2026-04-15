@@ -56,13 +56,14 @@ class GameStateManager {
         showModal: false,
         modalType: null,
         theme: 'light',
-        isTransitioning: false
+        isTransitioning: false,
+        energyTimeLeft: 4800
       },
 
       // Rendszer adatok
       metadata: {
         lastSaved: null,
-        version: '0.30.1',
+        version: '0.30.3',
         totalPlayTime: 0,
         sessionsPlayed: 0
       }
@@ -86,8 +87,10 @@ class GameStateManager {
 
   /**
    * State frissítése
+   * @param {Object} updates - A módosítandó state részlet
+   * @param {boolean} persist - Megadja, hogy történjen-e mentés a LocalStorage-ba (default: true)
    */
-  updateState(updates) {
+  updateState(updates, persist = true) {
     try {
       // State validáció
       const validatedUpdates = this.validateState(updates);
@@ -95,8 +98,10 @@ class GameStateManager {
       // State merge
       this.state = { ...this.state, ...validatedUpdates };
 
-      // Persistence mentése
-      this.saveState();
+      // Persistence mentése (csak ha a persist flag igaz)
+      if (persist) {
+        this.saveState();
+      }
 
       // Event emitálás
       if (this.eventBus) {
@@ -546,6 +551,11 @@ class GameStateManager {
         totalScore: 0,
         timeSpent: 0,
         achievements: []
+      },
+      ui: {
+        ...this.state.ui,
+        energyTimeLeft: 4800,
+        isTransitioning: false
       }
     });
 

@@ -94,9 +94,9 @@ class DigitalKulturaVerseny {
     this._isDestroyed = false;
 
     // Energiacsík állapot (Grade 4 Quantum Terminal)
-    this.energyTimeLeft = 4800; // 80 perc másodpercben
     this.energyBarInterval = null;
     this.isEnergyBarActive = false;
+    this._energySaveCounter = 0; // Számláló az optimalizált mentéshez
   }
 
   /**
@@ -440,25 +440,50 @@ class DigitalKulturaVerseny {
   _startEnergyBarTimer() {
     if (this.energyBarInterval) return;
 
-    const updateUI = () => {
+    // Kezdőérték betöltése a StateManager-ből
+    let timeLeft = this.stateManager.getState('ui.energyTimeLeft');
+    if (timeLeft === undefined || timeLeft === null) timeLeft = 4800;
+
+    const updateUI = (value) => {
       if (!this.energyFillHud || !this.isEnergyBarActive) return;
-      const percent = (this.energyTimeLeft / 4800) * 100;
+      const percent = (value / 4800) * 100;
       this.energyFillHud.style.width = `${percent}%`;
     };
 
-    updateUI();
+    updateUI(timeLeft);
+    this._energySaveCounter = 0;
+
     this.energyBarInterval = setInterval(() => {
       if (this._isDestroyed) {
         clearInterval(this.energyBarInterval);
         return;
       }
 
-      this.energyTimeLeft--;
-      if (this.energyTimeLeft <= 0) {
-        this.energyTimeLeft = 0;
-        clearInterval(this.energyBarInterval);
+      // Aktuális érték lekérése a state-ből
+      let currentLeft = this.stateManager.getState('ui.energyTimeLeft');
+      if (currentLeft === undefined || currentLeft === null) currentLeft = 4800;
+      
+      const newTime = Math.max(0, currentLeft - 1);
+      this._energySaveCounter++;
+
+      // Mentés logikája: 1 percenként (60 tick) perzisztálunk, egyébként csak memóriában frissítünk
+      const shouldPersist = this._energySaveCounter >= 60 || newTime === 0;
+      
+      this.stateManager.updateState({
+        ui: { ...this.stateManager.getState('ui'), energyTimeLeft: newTime }
+      }, shouldPersist);
+
+      if (shouldPersist) {
+        this._energySaveCounter = 0;
       }
-      updateUI();
+
+      updateUI(newTime);
+
+      if (newTime <= 0) {
+        clearInterval(this.energyBarInterval);
+        this.energyBarInterval = null;
+        // Game Over hívható itt, ha szükséges
+      }
     }, 1000);
   }
 
@@ -659,6 +684,29 @@ class DigitalKulturaVerseny {
     });
 
     this._setTransitioning(false); // Kényszerített reset restartkor
+
+    // Energiacsík resetelése (Grade 4)
+    if (this.energyBarInterval) {
+      clearInterval(this.energyBarInterval);
+      this.energyBarInterval = null;
+    }
+    
+    // Vizuális reset: Energiacsík elrejtése az onboarding/intro alatt
+    if (this.energyBarHud) {
+      this.energyBarHud.classList.remove('visible');
+    }
+
+    // Session-szintű flag-ek és adatok resetelése (Clean Slate)
+    this.tutorialCompletedInSession = false;
+    this.taskResults = [];
+    this.leaderboardId = null;
+    this._energySaveCounter = 0;
+    this.isEnergyBarActive = false;
+
+    const ui = this.stateManager.getState('ui') || {};
+    this.stateManager.updateState({
+      ui: { ...ui, energyTimeLeft: 4800 }
+    }, true); // Azonnali mentés restartkor
 
     // Verseny időzítő alaphelyzetbe állítása minden új játék előtt
     if (this.timeManager) {

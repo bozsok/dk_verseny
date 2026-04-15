@@ -5,6 +5,23 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.30.3] - 2026-04-16
+### Javítva
+- Újrakezdési életciklus (Restart Lifecycle) stabilizálása:
+    - Az energiacsík (Grade 4) vizuális eltüntetése az új játék onboarding/intro fázisai alatt (v0.30.2-ben még a képernyőn maradt).
+    - A tutorial flag (`tutorialCompletedInSession`) alaphelyzetbe állítása, így az azonnali újrakezdésnél ismét megjelenik a bemutató.
+    - Session-szintű adatok (taskResults, leaderboardId) kényszerített törlése új játék indításakor (Clean Slate).
+    - `GameStateManager.js` szintaktikai hibájának (törött JSDoc) javítása.
+
+## [0.30.2] - 2026-04-16
+### Hozzáadva
+- Energiacsík (Grade 4) perzisztens mentése a LocalStorage-ba (SecureStorage).
+- Optimalizált mentési stratégia: az állapot másodpercenként frissül a memóriában, de csak 60 másodpercenként (vagy mérföldköveknél) íródik lemezre.
+
+### Javítva
+- Az energiacsík "öröklődési" hibájának javítása: új játék indításakor (restart) az időmérő most már garantáltan 80 percről indul.
+- `GameStateManager` refaktor: `updateState` bővítése opcionális `persist` flaggel.
+
 ## [0.30.1] - 2026-04-16
 
 ### Módosítva
@@ -818,7 +835,7 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
     - **Grade 3 Tartalom:** A "Bevezetés" szakasz (1-4. dia) megkapta a végleges, formázott mesét (Kód Királyság eredettörténete, Hexadecimus, Varázskulcsok, Árnyprogram).
     - **Multi-Grade Támogatás:** A 4., 5. és 6. osztály konfigurációs fájljai is felkészítve a narráció fogadására (egyelőre helyőrző szövegekkel).
     - **Állomás Keverés (Station Shuffle):** A verseny tisztasága érdekében és a másolás elkerülésére az 5 darab köztes állomás (5-24. dia) sorrendje véletlenszerűen generálódik minden játékindításkor az összes évfolyamon (Grade 3-6). Ezzel biztosítva, hogy a szomszédos versenyzők nagy valószínűséggel éppen más feladatot oldanak meg.
-    - **Narratív Helyőrzők és Állomásnevek:** Kiépítve a részletes `if-else` struktúra az összes állomás (20 dia/évfolyam) szövegezéséhez. Minden évfolyamhoz egyedi, témába vágó fantázianevekkel (pl. Grade 3: Labirintuskert, Grade 6: Kristály Bolygó) ellátott blokkok kerültek a konfigurációs fájlokba a könnyebb szerkeszthetőség érdekében.
+    - **Narratív Helyőrzők és Állomásnevek:** Kiépítve a részletes `if-else` struktúra az összes állomás (20 dia/évfolyam) szövegezéséhez. Minden évfolyamhoz egyedi, témába vágó fantázianevekkel (pl. Grade 3: Labirintuskert, Grade 6: Kristály Bolygó) ellátott blokkok kerültek a konfigurációs fájlokba a könnyebb szerkeszhetőség érdekében.
 ### Megváltoztatva (Changed)
 - **UI Architecture Reform (CSS Refactor):**
     - A Grade 3 stíluslap (`main.css`) teljes szerkezeti átalakításon esett át. A korábbi szétszórt szabályok helyett logikus csoportokba (`Unified Button System`, `Unified Panel Base`, `Form Elements` és `HUD Elements`) rendeződtek a stílusok, megszüntetve a redundanciát és garantálva a könnyebb karbantarthatóságot.
