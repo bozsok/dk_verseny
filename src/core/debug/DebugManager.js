@@ -121,8 +121,26 @@ class DebugManager {
      * @param {Object} config - Config objektum
      */
     saveConfig(config) {
+        // Adat-tisztítás: biztosítsuk, hogy ne legyenek szellem-bejegyzések
+        if (config.skipSections) {
+            config.skipSections = config.skipSections.filter(id => id && typeof id === 'string');
+        }
+        if (config.skipSlides) {
+            config.skipSlides = config.skipSlides.filter(id => id);
+        }
+
         this.skipConfig = config;
-        this.isEnabled = config.enabled;
+        
+        // Csak akkor legyen aktív, ha a master switch be van kapcsolva ÉS van mit skippelni
+        const hasActiveSkips = (config.skipSections && config.skipSections.length > 0) || 
+                             (config.skipSlides && config.skipSlides.length > 0);
+        
+        this.isEnabled = config.enabled && hasActiveSkips;
+        
+        this.tasksConfig = Object.assign(
+            { globalTimeLimit: 900, mazeDifficulty: 16, memoryDifficulty: 16, puzzleDifficulty: 16 },
+            config.tasksConfig || {}
+        );
 
         try {
             SecureStorage.setItem('dkv-debug-config', config);
@@ -142,7 +160,16 @@ class DebugManager {
      */
     reloadConfig() {
         this.skipConfig = this.loadSkipConfig();
-        this.isEnabled = this.skipConfig.enabled;
+        
+        const hasActiveSkips = (this.skipConfig.skipSections && this.skipConfig.skipSections.length > 0) || 
+                             (this.skipConfig.skipSlides && this.skipConfig.skipSlides.length > 0);
+        
+        this.isEnabled = this.skipConfig.enabled && hasActiveSkips;
+        
+        this.tasksConfig = Object.assign(
+            { globalTimeLimit: 900, mazeDifficulty: 16, memoryDifficulty: 16, puzzleDifficulty: 16 },
+            this.skipConfig.tasksConfig || {}
+        );
 
         if (this.logger) {
             this.logger.info('[DEBUG] Config reloaded (hot reload)', this.skipConfig);

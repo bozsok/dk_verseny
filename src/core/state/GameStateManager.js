@@ -60,7 +60,7 @@ class GameStateManager {
       // Rendszer adatok
       metadata: {
         lastSaved: null,
-        version: '0.18.6',
+        version: '0.28.0',
         totalPlayTime: 0,
         sessionsPlayed: 0
       }
@@ -292,46 +292,27 @@ class GameStateManager {
    * State validáció
    */
   validateState(updates) {
-    const validated = {};
+    // Alapértelmezésben minden mezőt elfogadunk a merge-höz
+    const validated = { ...updates };
 
-    // currentGrade validáció
+    // Csak a speciális típusellenőrzést igénylő mezőket validáljuk
     if (updates.currentGrade !== undefined) {
-      const grade = updates.currentGrade;
-      if (grade === null || [3, 4, 5, 6].includes(grade)) {
-        validated.currentGrade = grade;
+      if (updates.currentGrade !== null && ![3, 4, 5, 6].includes(updates.currentGrade)) {
+        delete validated.currentGrade;
       }
     }
 
-    // gamePhase validáció
     if (updates.gamePhase !== undefined) {
       const phases = ['hub', 'grade-select', 'game', 'completed'];
-      if (phases.includes(updates.gamePhase)) {
-        validated.gamePhase = updates.gamePhase;
+      if (!phases.includes(updates.gamePhase)) {
+        delete validated.gamePhase;
       }
     }
 
-    // User Profile
-    if (updates.userProfile !== undefined) {
-      validated.userProfile = updates.userProfile;
-    }
-
-
-    // Avatar
-    if (updates.avatar !== undefined) {
-      validated.avatar = updates.avatar;
-    }
-
-    // Score
-    if (updates.score !== undefined) {
-      validated.score = updates.score;
-    }
-
-    // progress validáció
     if (updates.progress) {
       validated.progress = this.validateProgress(updates.progress);
     }
 
-    // grades validáció
     if (updates.grades) {
       validated.grades = this.validateGrades(updates.grades);
     }
@@ -480,7 +461,7 @@ class GameStateManager {
    */
   setSystemFlag(key, value) {
     SecureStorage.setItem(`dkv-sys-${key}`, value);
-    
+
     if (this.logger) {
       this.logger.debug(`System flag set: ${key}`, { value });
     }
@@ -538,6 +519,31 @@ class GameStateManager {
       state: { ...this.state },
       version: this.state.metadata.version
     };
+  }
+  /**
+   * Teljes játékmenet reset (ÚJ - Debug célokra)
+   * Törli a progress-t, pontszámot, profilt és a jelenlegi dia indexet
+   */
+  clearFullProgress() {
+    this.updateState({
+      currentGrade: null,
+      score: 0,
+      userProfile: null,
+      avatar: null,
+      currentSlideIndex: 0,
+      progress: {
+        completedLevels: [],
+        completedSlides: [],
+        inventory: [],
+        totalScore: 0,
+        timeSpent: 0,
+        achievements: []
+      }
+    });
+
+    if (this.logger) {
+      this.logger.info('[DEBUG] Full game progress cleared via StateManager');
+    }
   }
 }
 

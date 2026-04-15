@@ -464,10 +464,10 @@ class CharacterSlide {
 
     // Grade scope hozzáadása a hiba modálhoz is!
     if (this.stateManager) {
-        const currentGrade = this.stateManager.getStateValue('currentGrade');
-        if (currentGrade) {
-            this.errorModal.classList.add(`dkv-grade-${currentGrade}`);
-        }
+      const currentGrade = this.stateManager.getStateValue('currentGrade');
+      if (currentGrade) {
+        this.errorModal.classList.add(`dkv-grade-${currentGrade}`);
+      }
     }
 
     this.errorModal.style.display = 'none'; // Inicializálás
@@ -485,7 +485,7 @@ class CharacterSlide {
     this.errorOkBtn = document.createElement('button');
     let errorGrade = 3;
     if (this.stateManager) {
-        errorGrade = this.stateManager.getStateValue('currentGrade') || 3;
+      errorGrade = this.stateManager.getStateValue('currentGrade') || 3;
     }
     this.errorOkBtn.className = errorGrade === 4 ? 'dkv-grade-4-button' : 'dkv-button';
     this.errorOkBtn.textContent = 'OK';
@@ -612,7 +612,7 @@ class CharacterSlide {
       const selectionPoints = (this.slideData.content && this.slideData.content.scoring && this.slideData.content.scoring.selection) || 1;
 
       const userProfile = this.stateManager.getStateValue('userProfile') || {};
-      
+
       this.stateManager.updateState({
         userProfile: {
           ...userProfile,

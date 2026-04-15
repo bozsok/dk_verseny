@@ -5,6 +5,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.28.0] - 2026-04-15
+
+### Hozzáadva
+- **Teljes játékreset-funkció**: Implementáltuk a `GameStateManager.clearFullProgress()` metódust, amely lehetővé teszi a játék állapotának (pontszám, haladás, profil, dia index) teljes alaphelyzetbe állítását.
+- **Kényszerített állapotszinkronizáció**: A Debug Panel mentési és törlési műveletei után a rendszer mostantól automatikusan újratölti az oldalt (`window.location.reload()`). Ez garantálja, hogy a konfigurációs fájlok és a mentett játékállapot tökéletes szinkronba kerüljön.
+
+### Javítva
+- **Beragadó játékállapot**: Megszüntettük azt a hibát, amely miatt az új játék indításakor (évfolyam választásakor) a rendszer az előző játék végén maradt. Mostantól minden új indítás kötelezően nullázza a dia indexet is.
+- **Debug folyamat szuszpenziója**: Eltávolítottuk az automatikus, állapotfüggő skippelési logikát a `DebugManager`-ből. Így a rendszer többé nem ugorja át a már teljesített diákat magától, kizárólag a felhasználó által beállított szabályok érvényesülnek.
+- **Szekcióalapú skip-tisztítás**: A Debug Panelben egy szekció (pl. Onboarding) kikapcsolásakor az összes hozzá tartozó egyedi dia skip-beállítása is automatikusan törlődik, megelőzve a „szellem” szabályok beragadását.
+- **Konfigurációs adatvédelem**: A mentés során a rendszer automatikusan szűri és eltávolítja az érvénytelen vagy üres bejegyzéseket a skippelési listákból.
+- **Navigációs konzisztencia**: A „Clear All” funkció használata után a program mostantól megbízhatóan visszatér a HUB oldalra.
+
 ## [0.27.0] - 2026-04-14
 
 ### Hozzáadva

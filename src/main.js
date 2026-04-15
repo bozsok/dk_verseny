@@ -86,7 +86,7 @@ class DigitalKulturaVerseny {
     this.leaderboardId = null;
     this.isSaving = false;
     this.taskResults = []; // Feladatonkénti részletes eredmény a dashboardhoz
-    
+
     // Életciklus-kezelés: Aktív tranzíciók és időzítők követése
     this.currentGlitchTransition = null;
     this.currentCountdownAnimation = null;
@@ -536,6 +536,7 @@ class DigitalKulturaVerseny {
       score: 0,
       userProfile: null,
       avatar: null,
+      currentSlideIndex: 0,
       progress: {
         completedLevels: [],
         completedSlides: [],
@@ -1076,6 +1077,7 @@ class DigitalKulturaVerseny {
       stateManager: this.stateManager,
       timeManager: this.timeManager,
       apiService: this.apiService,
+      debugConfig: this.debugManager ? this.debugManager.tasksConfig : (this.buildConfig ? this.buildConfig.tasksConfig : {}),
       onNext: () => this.handleNext(),
       onPrev: () => this.handlePrev(),
       onComplete: () => this.slideManager.completeCurrentSlide(),

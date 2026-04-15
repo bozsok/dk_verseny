@@ -1037,6 +1037,20 @@ class DebugPanel {
             if (idx > -1) {
                 config.skipSections.splice(idx, 1);
             }
+
+            // Ha kiveszik a szekció skipet, távolítsuk el az összes ebbe a szekcióba tartozó egyedi slide skipet is!
+            // Ez megakadályozza, hogy a szekció kikapcsolása után a diák "ragadjanak"
+            if (section.slideIndices && section.slideIndices.length > 0) {
+                section.slideIndices.forEach(slideIdx => {
+                    const slide = this.debugManager.slides[slideIdx];
+                    if (slide && slide.id) {
+                        const skipIdx = config.skipSlides.indexOf(slide.id);
+                        if (skipIdx > -1) {
+                            config.skipSlides.splice(skipIdx, 1);
+                        }
+                    }
+                });
+            }
         }
 
         // Refresh right panel ha ez a section van kiválasztva
@@ -1138,9 +1152,11 @@ class DebugPanel {
         this.debugManager.reloadConfig();
         this._exportBuildConfig(config);
 
-        if (this.logger) this.logger.info('[DEBUG] Config saved, reloaded and exported to build-config.json', { config });
+        if (this.logger) this.logger.info('[DEBUG] Config saved and exported to build-config.json', { config });
 
-        this.close();
+        // Kényszerített újratöltés a szinkronizációhoz
+        window.location.reload();
+        // this.close(); // A reload miatt nem szükséges, de biztonsági okokból ott maradhat
     }
 
     /**
@@ -1164,9 +1180,17 @@ class DebugPanel {
         this.debugManager.reloadConfig();
         this._exportBuildConfig(config);
 
-        if (this.logger) this.logger.info('[DEBUG] Skip settings cleared, task config preserved');
+        // EXTRA: A játékállapot teljes alaphelyzetbe állítása is!
+        // Ez törli a korábbi haladást, pontszámot és profil adatokat.
+        if (this.debugManager.stateManager) {
+            this.debugManager.stateManager.clearFullProgress();
+        }
 
-        this.close();
+        if (this.logger) this.logger.info('[DEBUG] Skip settings and GAME PROGRESS cleared');
+
+        // Kényszerített újratöltés a szinkronizációhoz és a HUB-ra való visszatéréshez
+        window.location.reload();
+        // this.close(); // A reload miatt nem szükséges
     }
 
     /**

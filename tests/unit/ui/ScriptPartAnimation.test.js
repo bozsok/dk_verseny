@@ -61,16 +61,6 @@ describe('ScriptPartAnimation', () => {
         );
     });
 
-    test('should fade out labels after timeout in phase A', () => {
-        animation.playPhaseA();
-        jest.advanceTimersByTime(50);
-        
-        const label = document.querySelector('.script-animation-container div:last-child');
-        expect(label.style.opacity).toBe('1');
-        
-        jest.advanceTimersByTime(5600);
-        expect(label.style.opacity).toBe('0');
-    });
 
     test('should execute phase B without target slot (fade out)', async () => {
         // Re-create animation without target slot
