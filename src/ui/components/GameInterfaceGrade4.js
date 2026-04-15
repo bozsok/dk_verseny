@@ -43,6 +43,9 @@ export class GameInterfaceGrade4 {
         this.timeManager = options.timeManager || null;
         this.timerTickHandler = null;
         this.timerStartHandler = null;
+
+        this.attentionTimer = null;
+        this.attentionPulseTimer = null;
     }
 
     /**
@@ -133,7 +136,10 @@ export class GameInterfaceGrade4 {
         prevIcon.className = 'material-symbols-outlined';
         prevIcon.textContent = 'chevron_left';
         prevBtn.appendChild(prevIcon);
-        prevBtn.onclick = () => this.onPrev();
+        prevBtn.onclick = () => {
+            this._clearAttentionTimer();
+            this.onPrev();
+        };
 
         const nextBtn = document.createElement('button');
         nextBtn.className = 'dkv-g4-btn-next';
@@ -142,7 +148,10 @@ export class GameInterfaceGrade4 {
         nextIcon.className = 'material-symbols-outlined';
         nextIcon.textContent = 'chevron_right';
         nextBtn.appendChild(nextIcon);
-        nextBtn.onclick = () => this.onNext();
+        nextBtn.onclick = () => {
+            this._clearAttentionTimer();
+            this.onNext();
+        };
 
         navControls.appendChild(prevBtn);
         navControls.appendChild(nextBtn);
@@ -719,10 +728,41 @@ export class GameInterfaceGrade4 {
             btn.classList.add('dkv-g4-btn-active');
             btn.style.opacity = '1';
             btn.style.cursor = 'pointer';
+            this._startAttentionTimer();
         } else {
             btn.classList.remove('dkv-g4-btn-active');
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
+            this._clearAttentionTimer();
+        }
+    }
+
+    _startAttentionTimer() {
+        this._clearAttentionTimer();
+        const nextBtn = this.element.querySelector('.dkv-g4-btn-next');
+        if (!nextBtn || nextBtn.disabled) return;
+
+        this.attentionTimer = setTimeout(() => {
+            nextBtn.classList.add('dkv-btn-to-orange');
+            this.attentionPulseTimer = setTimeout(() => {
+                nextBtn.classList.remove('dkv-btn-to-orange');
+                nextBtn.classList.add('dkv-btn-attention');
+            }, 1200); // Animation duration
+        }, 8000); // 8 seconds idle
+    }
+
+    _clearAttentionTimer() {
+        if (this.attentionTimer) {
+            clearTimeout(this.attentionTimer);
+            this.attentionTimer = null;
+        }
+        if (this.attentionPulseTimer) {
+            clearTimeout(this.attentionPulseTimer);
+            this.attentionPulseTimer = null;
+        }
+        const nextBtn = this.element.querySelector('.dkv-g4-btn-next');
+        if (nextBtn) {
+            nextBtn.classList.remove('dkv-btn-to-orange', 'dkv-btn-attention');
         }
     }
 
@@ -734,6 +774,8 @@ export class GameInterfaceGrade4 {
             if (this.timerTickHandler) this.eventBus.off('timer:tick', this.timerTickHandler);
             if (this.timerStartHandler) this.eventBus.off('timer:competition-started', this.timerStartHandler);
         }
+
+        this._clearAttentionTimer();
 
         if (this.element && this.element.parentNode) {
             this.element.parentNode.removeChild(this.element);

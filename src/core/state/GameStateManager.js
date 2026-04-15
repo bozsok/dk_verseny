@@ -26,6 +26,7 @@ class GameStateManager {
       currentGrade: null,        // Kiválasztott évfolyam (3, 4, 5, 6)
       gamePhase: 'hub',          // hub, grade-select, game, completed
       currentLevel: 1,           // Jelenlegi szint
+      currentSlideIndex: 0,      // Jelenlegi dia indexe (ÚJ - Perzisztenciához)
 
       // Felhasználói adatok (ÚJ)
       userProfile: null,         // { name, nickname, classId }
@@ -306,6 +307,12 @@ class GameStateManager {
       const phases = ['hub', 'grade-select', 'game', 'completed'];
       if (!phases.includes(updates.gamePhase)) {
         delete validated.gamePhase;
+      }
+    }
+
+    if (updates.currentSlideIndex !== undefined) {
+      if (typeof updates.currentSlideIndex !== 'number' || updates.currentSlideIndex < 0) {
+        delete validated.currentSlideIndex;
       }
     }
 

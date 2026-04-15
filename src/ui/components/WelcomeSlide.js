@@ -195,7 +195,7 @@ class WelcomeSlide {
             if (btn.style.opacity !== '0') {
                 btn.style.opacity = enabled ? '1' : '0.5';
             }
-            btn.style.cursor = enabled ? 'pointer' : 'default';
+            btn.style.cursor = enabled ? 'pointer' : 'not-allowed';
         }
     }
     destroy() {

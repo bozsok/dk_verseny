@@ -5,6 +5,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.30.0] - 2026-04-16
+
+### Hozzáadva
+- **Navigációs figyelemfelkeltő rendszer (Grade 4)**: Bevezettünk egy 8 másodperces inaktivitás-figyelőt a Grade 4 felületén, amely narancssárga pulzáló animációval segíti a felhasználót a továbblépésben.
+
+### Módosítva
+- **A bevezető (onboarding) felhasználói élmény javítása**: Az inaktív navigációs gombok mostantól `not-allowed` kurzorstílust kapnak, egyértelmű visszajelzést adva a felhasználónak a blokkolt állapotról.
+- **Grade 4 narratív finomhangolás**: Korrigáltuk a finálé (27–28. dia) narrációs leképezéseit a `config.js` fájlban a történeti folytonosság érdekében.
+
+### Javítva
+- **Bevezetés → Állomás navigációs hiba**: Megszüntettük azt a kritikus hibát, amely miatt a rendszer elakadt a Bevezetés (Intro) 4. diája után. Az `isTransitioning` jelző aktiválási pontjának áthelyezésével a tranzíció mostantól minden esetben sikeresen lefut.
+- **Újraindítás és perzisztenciastabilitás**: Megerősítettük a `GameStateManager` állapotmentését a `currentSlideIndex` bevezetésével, és biztosítottuk az `isTransitioning` állapot kényszerített alaphelyzetbe állítását új játék indításakor, megelőzve a navigációs zárak beragadását.
+
 ## [0.29.0] - 2026-04-15
 
 ### Hozzáadva

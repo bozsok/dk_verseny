@@ -97,6 +97,7 @@ class DigitalKulturaVerseny {
     this.energyTimeLeft = 4800; // 80 perc másodpercben
     this.energyBarInterval = null;
     this.isEnergyBarActive = false;
+    this.isTransitioning = false;
   }
 
   /**
@@ -632,6 +633,8 @@ class DigitalKulturaVerseny {
         achievements: []
       }
     });
+
+    this.isTransitioning = false; // Kényszerített reset restartkor
 
     // Verseny időzítő alaphelyzetbe állítása minden új játék előtt
     if (this.timeManager) {
@@ -1322,6 +1325,7 @@ class DigitalKulturaVerseny {
 
     if (isStationEnd && isNextSectionStart) {
       if (this.logger) this.logger.info('Portal Transition Triggered! (WebGL)');
+      this.isTransitioning = true; // Zároljuk az inputot a tranzíció megkezdésekor
 
       const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
       const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
@@ -1340,8 +1344,6 @@ class DigitalKulturaVerseny {
       let animationPromise = Promise.resolve();
 
       if (!hasItem && stationId && stationId.startsWith('station_')) {
-        this.isTransitioning = true; // Zároljuk az inputot amíg be nem repül
-
         // Keresünk egy üres slot-ot
         const inventoryCount = this.stateManager ? this.stateManager.getInventory().length : 0;
         const slots = this.activeGameInterface ? this.activeGameInterface.element.querySelectorAll('.dkv-g4-slot, .dkv-inventory-slot') : [];

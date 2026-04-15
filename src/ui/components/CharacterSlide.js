@@ -352,7 +352,7 @@ class CharacterSlide {
         if (this.nextBtn.style.opacity !== '0') {
           this.nextBtn.style.opacity = '0.5';
         }
-        this.nextBtn.style.cursor = 'default';
+        this.nextBtn.style.cursor = 'not-allowed';
         return;
       }
 
@@ -362,7 +362,7 @@ class CharacterSlide {
       if (this.nextBtn.style.opacity !== '0') {
         this.nextBtn.style.opacity = hasSelection ? '1' : '0.5';
       }
-      this.nextBtn.style.cursor = hasSelection ? 'pointer' : 'default';
+      this.nextBtn.style.cursor = hasSelection ? 'pointer' : 'not-allowed';
     }
   }
 

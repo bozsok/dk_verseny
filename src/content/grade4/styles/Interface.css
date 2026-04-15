@@ -856,3 +856,37 @@
         transform: translateY(-50px) scale(1);
     }
 }
+
+/* --- NAVIGATION ATTENTION GRABBER (Grade 4) --- */
+
+@keyframes g4-btn-color-to-orange {
+    0% {
+        border-color: var(--g4-primary);
+        color: var(--g4-primary);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    }
+    100% {
+        border-color: #ffa500;
+        color: #ffa500;
+        box-shadow: 0 0 20px rgba(255, 165, 0, 0.6);
+    }
+}
+
+@keyframes g4-btn-glow-orange {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 165, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(255, 165, 0, 0.8);
+    }
+}
+
+.dkv-g4-btn-next.dkv-btn-to-orange {
+    animation: g4-btn-color-to-orange 1.2s ease-in-out forwards;
+}
+
+.dkv-g4-btn-next.dkv-btn-attention {
+    animation: g4-btn-glow-orange 2s ease-in-out infinite;
+    border-color: #ffa500;
+    color: #ffa500;
+}

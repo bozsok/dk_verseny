@@ -322,23 +322,23 @@ const createConfig = () => {
             diaKey = 'DIA_29';
             finalDescription = 'Kövessétek a történetet!';
         } else if (i === 27) {
-            diaKey = 'DIA_29'; // DIA 29-et használjuk a feladathoz is, más leírással
-            finalDescription = 'A végső feladat vár rád!';
-        } else {
             diaKey = 'DIA_30';
+            finalDescription = 'Restaurálás folyamatban...';
+        } else {
+            diaKey = null;
             finalDescription = 'Küldetés teljesítve!';
             type = SLIDE_TYPES.INFO;
             content = { showStats: true };
         }
 
-        const title = NARRATIVE_DATA[diaKey].title;
-        const narrationText = NARRATIVE_DATA[diaKey].text;
+        const title = diaKey ? NARRATIVE_DATA[diaKey].title : 'ÖSSZEGZÉS';
+        const narrationText = diaKey ? NARRATIVE_DATA[diaKey].text : '';
 
         const finaleContent = {
             ...content,
             imageUrl: `assets/images/grade4/slides/slide_${slideNum}.jpg`,
             narration: narrationText,
-            audioSrc: `assets/audio/grade4/slide_${slideNum}.mp3`
+            audioSrc: diaKey ? `assets/audio/grade4/slide_${slideNum}.mp3` : null
         };
         applyVideoConfig(finaleContent, `slide_${slideNum}`);
 

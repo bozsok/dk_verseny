@@ -593,7 +593,7 @@ class RegistrationSlide {
         if (this.nextBtn) {
             this.nextBtn.disabled = !enabled;
             this.nextBtn.style.opacity = enabled ? '1' : '0.5';
-            this.nextBtn.style.cursor = enabled ? 'pointer' : 'default';
+            this.nextBtn.style.cursor = enabled ? 'pointer' : 'not-allowed';
         }
     }
     /* Lifecycle Management */
