@@ -5,6 +5,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.29.0] - 2026-04-15
+
+### Hozzáadva
+- **EventBus alapú HUD-perzisztencia**: Bevezettük a `DKV_APP_SHELL_READY` eseményt, amely garantálja a globális HUD-konténer (`#dkv-global-hud-right-stack`) és komponenseinek (Timer, EnergyBar) automatikus újracsatolását minden App Shell-újjáépítés után.
+- **Grade 4 energiasáv és szöveges HUD-felirat**: Implementáltuk az új, vizuális energiafigyelő komponenst a terminálfelületen, amely tartalmazza az animált sávgrafikát és a kapcsolódó státuszfeliratokat.
+- **Vizuális stabilitás a View Transitions API-val**: Implementáltuk a `.dkv-g4-energy-bar-hud` elemhez tartozó `view-transition-name: dkv-g4-energy-bar;` CSS-konfigurációt, megszüntetve az energiacsík diaváltáskori eltűnését.
+
+### Javítva
+- **Grade 4 HUD-stabilizáció**: Megoldottuk a diaváltáskor fellépő HUD-elem-vesztést eseményvezérelt vezérlés alkalmazásával, kiküszöbölve a korábbi architektúrális hiányosságokat.
+- **Szintaktikai takarítás (main.js)**: Felszámoltuk a navigációs logikában lévő redundáns változódeklarációkból adódó `SyntaxError`-hibákat.
+- **Vizuális korrekció (energiacsík)**: Megcseréltük a felirat és a sáv sorrendjét az energiacsíkon, biztosítva a felirat bal oldali elrendezését.
+- **Dokumentációs fegyelem és MTA 12. megfeleltetés**: A projekt mai napi fejlesztései során elkövetett súlyos dokumentációs és archiválási hibákat (duplikált bejegyzések, rossz verziózás) követően helyreállítottuk a CHANGELOG integritását. A teljes mai technikai mérföldkő leírását a magyar helyesírás szabályai szerint (MTA 12. kiadás) és a szaknyelvi konvenciók mentén újrafogalmaztuk.
+
 ## [0.28.0] - 2026-04-15
 
 ### Hozzáadva

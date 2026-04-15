@@ -55,6 +55,14 @@ class TimerDisplay {
             this.eventBus.on('timer:competition-ended', () => {
                 this.element.classList.add('dkv-timer-finished');
             });
+
+            // App Shell újratöltés kezelése (Perzisztencia biztosítása a SEL szerint)
+            this.eventBus.on('DKV_APP_SHELL_READY', () => {
+                const newParent = document.getElementById('dkv-global-hud-right-stack');
+                if (newParent && this.element && !newParent.contains(this.element)) {
+                    newParent.appendChild(this.element);
+                }
+            });
         }
     }
 

@@ -216,6 +216,96 @@
     pointer-events: auto;
 }
 
+/* ==========================================================================
+   GRADE 4 - QUANTUM TERMINAL - GLOBAL HUD (PERZISZTENS RÉTEG)
+   ========================================================================== */
+
+/* Globális HUD konténer pozicionálása (Energiacsík + Timer) */
+#app.dkv-grade-4 #dkv-global-hud-right-stack {
+    position: fixed;
+    top: 32px;
+    right: 95px;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 3000;
+    pointer-events: none;
+}
+
+#app.dkv-grade-4 #dkv-global-hud-right-stack>* {
+    pointer-events: auto;
+}
+
+/* ENERGIACSÍK DESIGN */
+#app.dkv-grade-4 .dkv-g4-energy-bar-hud {
+    display: none;
+    align-items: center;
+    gap: 1.5rem;
+    height: 40px;
+}
+
+#app.dkv-grade-4 .dkv-g4-energy-bar-hud.visible {
+    display: flex;
+}
+
+#app.dkv-grade-4 .dkv-g4-energy-bar-hud-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--g4-primary, #c1fffe);
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+}
+
+#app.dkv-grade-4 .dkv-g4-energy-bar-hud-track {
+    width: 250px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(193, 255, 254, 0.3);
+    position: relative;
+    box-sizing: border-box;
+}
+
+#app.dkv-grade-4 .dkv-g4-energy-bar-hud-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #00d2d3, #00ffff);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    transition: width 1s linear;
+}
+
+/* TIMER KIJELZŐ FELÜLBÍRÁLÁSA (!important nélkül) */
+#app.dkv-grade-4 #dkv-global-hud-right-stack #dkv-timer-display {
+    display: flex;
+    position: static;
+    top: auto;
+    right: auto;
+    margin: 0;
+    border: 1px solid #c1fffe;
+    border-radius: 0;
+}
+
+#app.dkv-grade-4 .dkv-g4-energy-bar-hud-fill.critical {
+    background: linear-gradient(90deg, #ff4c4c, #ff0000);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+    animation: g4-energy-pulse-red 0.8s infinite alternate;
+}
+
+
+@keyframes g4-energy-pulse-red {
+    from {
+        opacity: 0.8;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+    }
+
+    to {
+        opacity: 1;
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    }
+}
+
+
 .dkv-g4-btn-settings .material-symbols-outlined {
     font-size: 1.25rem;
     /* Megnövelt méret a jobb láthatóságért */

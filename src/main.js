@@ -92,6 +92,11 @@ class DigitalKulturaVerseny {
     this.currentCountdownAnimation = null;
     this._activeTimers = new Set();
     this._isDestroyed = false;
+
+    // Energiacsík állapot (Grade 4 Quantum Terminal)
+    this.energyTimeLeft = 4800; // 80 perc másodpercben
+    this.energyBarInterval = null;
+    this.isEnergyBarActive = false;
   }
 
   /**
@@ -306,11 +311,13 @@ class DigitalKulturaVerseny {
   }
 
   /**
-   * App Shell (Rétegek) inicializálása
+   * App Shell (Rétegek) inicializálása.
+   * Létrehozza a perzisztens globális HUD konténert is, amely a slide-októl független.
    */
   setupAppShell() {
     const app = document.getElementById('app');
     if (!app) return;
+    this.app = app;
 
     app.innerHTML = ''; // Tiszta alap
 
@@ -332,10 +339,9 @@ class DigitalKulturaVerseny {
       position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '100', pointerEvents: 'auto'
     });
 
-    // 3. UI Layer (z-index: 1000)
+    // 3. UI Layer (z-index: 2500)
     this.layerUI = document.createElement('div');
     this.layerUI.id = 'dkv-layer-ui';
-    // Stílust a belekerülő GameInterface adja majd, de alapból áteresztő
     Object.assign(this.layerUI.style, {
       position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '2500', pointerEvents: 'none'
     });
@@ -343,17 +349,92 @@ class DigitalKulturaVerseny {
     app.appendChild(this.layerBackground);
     app.appendChild(this.layerContent);
     app.appendChild(this.layerUI);
+
+    // Globális HUD konténer az energiacsík és a timer számára (perzisztens réteg a UI felett)
+    if (!this.globalHudStack) {
+      this.globalHudStack = document.createElement('div');
+      this.globalHudStack.id = 'dkv-global-hud-right-stack';
+    }
+    app.appendChild(this.globalHudStack);
+
+    // KIBOCSÁTÁS: A SEL architektúra szerint jelezzük a komponenseknek, hogy a rétegek készen állnak.
+    if (this.eventBus) {
+      this.eventBus.emit('DKV_APP_SHELL_READY');
+    }
+  }
+
+  async initUIComponents() {
+    // SZENTÍRÁS KONFORM PERZISZTENCIÁK: Ha már létezik a komponens, csak újracsatoljuk a DOM-hoz.
+    if (!this.timerDisplay) {
+      this.timerDisplay = new TimerDisplay({
+        timeManager: this.timeManager,
+        eventBus: this.eventBus,
+        parentElement: this.globalHudStack
+      });
+    } else if (this.globalHudStack && !this.globalHudStack.contains(this.timerDisplay.element)) {
+      this.globalHudStack.appendChild(this.timerDisplay.element);
+    }
+
+    // Grade 4 especifikus energiacsík inicializálása vagy újracsatolása
+    this._initGrade4EnergyBar();
   }
 
   /**
-   * UI komponensek inicializálása
+   * Grade 4 energiacsík létrehozása a globális HUD konténerben.
+   * @private
    */
-  async initUIComponents() {
-    this.timerDisplay = new TimerDisplay({
-      timeManager: this.timeManager,
-      eventBus: this.eventBus,
-      parentElement: this.app
-    });
+  _initGrade4EnergyBar() {
+    // Ha már létezik, csak visszarakjuk a konténerbe (perzisztencia)
+    if (this.energyBarHud && this.globalHudStack) {
+      if (!this.globalHudStack.contains(this.energyBarHud)) {
+        this.globalHudStack.insertBefore(this.energyBarHud, this.globalHudStack.firstChild);
+      }
+      return;
+    }
+
+    this.energyBarHud = document.createElement('div');
+    this.energyBarHud.className = 'dkv-g4-energy-bar-hud';
+    this.energyBarHud.innerHTML = `
+        <div class="dkv-g4-energy-bar-hud-label">TELJES ÖSSZEOMLÁS BEKÖVETKEZÉSE:</div>
+        <div class="dkv-g4-energy-bar-hud-track">
+            <div class="dkv-g4-energy-bar-hud-fill"></div>
+        </div>
+    `;
+    this.energyFillHud = this.energyBarHud.querySelector('.dkv-g4-energy-bar-hud-fill');
+    
+    if (this.globalHudStack) {
+      // A timer elé (balra tőle) szúrjuk be
+      this.globalHudStack.insertBefore(this.energyBarHud, this.globalHudStack.firstChild);
+    }
+  }
+
+  /**
+   * 80 perces energiacsík visszaszámláló időzítőjének indítása és kezelése.
+   * @private
+   */
+  _startEnergyBarTimer() {
+    if (this.energyBarInterval) return;
+
+    const updateUI = () => {
+      if (!this.energyFillHud || !this.isEnergyBarActive) return;
+      const percent = (this.energyTimeLeft / 4800) * 100;
+      this.energyFillHud.style.width = `${percent}%`;
+    };
+
+    updateUI();
+    this.energyBarInterval = setInterval(() => {
+      if (this._isDestroyed) {
+        clearInterval(this.energyBarInterval);
+        return;
+      }
+
+      this.energyTimeLeft--;
+      if (this.energyTimeLeft <= 0) {
+        this.energyTimeLeft = 0;
+        clearInterval(this.energyBarInterval);
+      }
+      updateUI();
+    }, 1000);
   }
 
   /**
@@ -387,6 +468,11 @@ class DigitalKulturaVerseny {
     });
 
     // EventBus események
+    this.eventBus.on('DKV_APP_SHELL_READY', () => {
+      if (this.logger) this.logger.info('App Shell Ready - Re-initializing UI components');
+      this.initUIComponents();
+    });
+
     this.eventBus.on('hub:grade-selected', (data) => {
       if (this.logger) {
         this.logger.info('Grade selected from hub', data);
@@ -630,6 +716,24 @@ class DigitalKulturaVerseny {
     const isLastSlide = (currentIndex >= totalSlides - 1);
     const audioSrc = slide.content ? slide.content.audioSrc : null;
 
+    // --- GRADE SCOPE ÉS OSZTÁLYOK KEZELÉSE ---
+    const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
+    const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
+
+    // Az évfolyam osztályt az app-ra tesszük, mert a CSS szelektorok (#app.dkv-grade-4) erre támaszkodnak
+    if (this.app && gradeClass) {
+      this.app.classList.forEach(className => {
+        if (className.startsWith('dkv-grade-')) this.app.classList.remove(className);
+      });
+      this.app.classList.add(gradeClass);
+    }
+    
+    // Fallback a body-ra a globális stílusok miatt
+    if (gradeClass) {
+      document.body.className = '';
+      document.body.classList.add(gradeClass);
+    }
+
     const MAX_SKIP_DEPTH = 50; // Safety limit
 
     // === SKIP CHECK (DEV: debugManager, PROD: buildConfig) ===
@@ -696,10 +800,7 @@ class DigitalKulturaVerseny {
       this.setupAppShell();
     }
 
-    // --- Grade Scope ---
-    const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-    const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
-
+    // --- Grade Scope Logika (Már korábban deklarálva) ---
     if (gradeClass) {
       document.body.className = '';
       document.body.classList.add(gradeClass);
@@ -838,14 +939,26 @@ class DigitalKulturaVerseny {
   }
 
   /**
-   * UI elemek frissítése a dia renderelése után (segédfüggvény a transition támogatásához).
+   * Az interfész elemeinek (HUD, navigáció, extra animációk) frissítése a renderelés után.
+   * Külön metódunban, hogy a View Transitions API-val kompatibilis legyen.
+   * 
+   * @param {Object} slide - A dia objektum.
+   * @param {number} currentIndex - A dia aktuális indexe az évfolyamban.
+   * @param {number} totalSlides - Az összes dia száma az évfolyamban.
+   * @param {boolean} isLastSlide - Jelzi, hogy ez-e az utolsó dia.
+   * @param {boolean} isFullscreen - Jelzi, hogy onboarding (teljes képernyős) módban vagyunk-e.
+   * @param {string|number} currentGrade - Az aktuális évfolyam azonosítója.
+   * @param {string} gradeClass - Az évfolyamhoz tartozó CSS osztály (pl. 'dkv-grade-4').
+   * @param {string|null} audioSrc - A lejátszandó narrációs hang elérési útja.
+   * @param {boolean} isTutorialPending - Jelzi, hogy vár-e a tutorial az indulásra.
+   * @private
    */
   _updateUIAfterRender(slide, currentIndex, totalSlides, isLastSlide, isFullscreen, currentGrade, gradeClass, audioSrc, isTutorialPending) {
     try {
+      const isGrade4 = (String(currentGrade) === '4');
 
       // 3. UI Layer Management
       if (!isFullscreen) {
-        const isGrade4 = (String(currentGrade) === '4');
         const ExpectedInterfaceClass = isGrade4 ? GameInterfaceGrade4 : GameInterface;
 
         // Ha van meglévő interfész, de nem a megfelelő típusú (pl. grade váltás miatt)
@@ -890,6 +1003,23 @@ class DigitalKulturaVerseny {
         const narrationText = (slide.content && slide.content.narration) || slide.description || "Nincs elérhető történet ehhez a diához.";
         this.activeGameInterface.setNarration(narrationText);
 
+        // --- ENERGIACSÍK VEZÉRLÉS (Grade 4 Quantum Terminal) ---
+        if (isGrade4 && this.energyBarHud) {
+          const isIntro4 = slide.id === 'intro_4';
+          const isGameSession = slide.metadata?.section?.startsWith('station_') || slide.metadata?.section === 'final';
+          const isSummary = slide.type === SLIDE_TYPES.SUMMARY;
+
+          if (isIntro4 || (isGameSession && !isSummary)) {
+            this.energyBarHud.classList.add('visible');
+            this.isEnergyBarActive = true;
+            this._startEnergyBarTimer();
+          } else if (isSummary) {
+            this.energyBarHud.classList.remove('visible');
+          }
+        } else if (this.energyBarHud) {
+          this.energyBarHud.classList.remove('visible');
+        }
+
         // --- GRADE 4 SPECIFIKUS: Háttérkép frissítése ---
         if (this.activeGameInterface.setBackgroundImage) {
           const bgImage = (slide.type === SLIDE_TYPES.STORY || slide.type === SLIDE_TYPES.VIDEO || slide.type === SLIDE_TYPES.TASK || slide.type === SLIDE_TYPES.INFO)
@@ -905,10 +1035,8 @@ class DigitalKulturaVerseny {
           const hasItem = this.stateManager && this.stateManager.hasKey(stationId);
 
           if (!hasItem) {
-            const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-            const isGrade4 = String(currentGrade) === '4';
-
-            if (isGrade4) {
+            // Shadowing fix: A currentGrade és isGrade4 már elérhető a metódus hatókörében paraméterként
+            if (String(currentGrade) === '4') {
               this.currentKeyAnimation = new ScriptPartAnimation({
                 stationId: stationId,
                 targetSlot: null,
@@ -1197,6 +1325,7 @@ class DigitalKulturaVerseny {
 
       const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
       const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
+      let isGrade4 = String(currentGrade) === '4';
       const isFullscreen = [SLIDE_TYPES.WELCOME, SLIDE_TYPES.REGISTRATION, SLIDE_TYPES.CHARACTER].includes(nextSlide.type);
 
       // A Portál alatt lévő következő diát ELŐNÉZET módban példányosítjuk (isPreview = true),
@@ -1218,8 +1347,7 @@ class DigitalKulturaVerseny {
         const slots = this.activeGameInterface ? this.activeGameInterface.element.querySelectorAll('.dkv-g4-slot, .dkv-inventory-slot') : [];
         const targetSlot = slots[inventoryCount] || null;
 
-        const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-        const isGrade4 = String(currentGrade) === '4';
+        isGrade4 = String(currentGrade) === '4';
 
         if (this.currentKeyAnimation) {
           // Ha 'A' fázis már fut, adjuk meg neki a célt és indítsuk a B fázist.
@@ -1254,9 +1382,7 @@ class DigitalKulturaVerseny {
 
       // Várjuk meg a kulcs/szkript animációt, majd indulhat a Tranzíció (Portal vagy Glitch)
       animationPromise.then(async () => {
-        const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-        const isGrade4 = String(currentGrade) === '4';
-
+        // Redundancia eltávolítása: isGrade4 már deklarálva van a metódus elején (1309. sor)
         if (isGrade4) {
           // --- GRADE 4: DELAY BEFORE COUNTDOWN ---
           // Csak ha állomásról jövünk (ahol volt szkriptgyűjtés), várunk 2mp-et, 

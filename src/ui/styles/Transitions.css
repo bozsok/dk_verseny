@@ -99,6 +99,11 @@ body.dkv-slide-entering .dkv-g4-content-area {
   view-transition-name: dkv-ui-timer;
 }
 
+.dkv-g4-energy-bar-hud {
+  view-transition-name: dkv-g4-energy-bar;
+  contain: layout;
+}
+
 /* 6. Inventory Feedback Animáció (G4-hez) */
 .dkv-g4-slot-collected {
   animation: dkv-g4-inventory-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
