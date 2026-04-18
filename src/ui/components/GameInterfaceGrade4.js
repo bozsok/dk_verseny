@@ -642,6 +642,25 @@ export class GameInterfaceGrade4 {
     showTaskModal(content, onOk, options = {}) {
         if (!this.taskModalOverlay) return;
 
+        // Fejléc kezelése
+        const header = this.taskModalOverlay.querySelector('.dkv-g4-task-modal-header') || 
+                       this.taskModalOverlay.querySelector('.dkv-g4-task-header'); // Fallback ha nincs dedikált header elem
+        
+        if (header) {
+            if (options.hideHeader) {
+                header.style.display = 'none';
+            } else {
+                header.style.display = 'flex';
+                if (options.title) {
+                    const titleEl = header.querySelector('h2');
+                    if (titleEl) titleEl.textContent = options.title;
+                }
+                if (options.subtitle) {
+                    const subEl = header.querySelector('p');
+                    if (subEl) subEl.textContent = options.subtitle;
+                }
+            }
+        }
 
         if (typeof content === 'string') {
             this.taskModalBody.innerHTML = `<div>${content}</div>`;

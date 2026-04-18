@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-04-16T01:30:00+02:00'
+date: '2026-04-18T21:27:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -11,7 +11,13 @@ optimized_for_llm: true
 
 # Project Context for AI Agents
 
-_This file contains critical rules and patterns that AI agents must follow when implementing code in this project. Focus on unobvious details that agents might otherwise miss._
+> [!CAUTION]
+> **CRITICAL WARNING FOR AI AGENTS (THE SAGA LESSON):** 
+> An agent recently caused structural chaos by prioritizing "Wow Aesthetics" and code completion over the **UNQA Swarm Protocol**.
+> - **Error:** Reporting tasks as DONE while `done/` folders were empty.
+> - **Error:** Archiving without moving task-specific subdirectories into `done/`.
+> - **Root Cause:** **OVER-EAGERNESS (TÚLBUZGÓSÁG)**.
+> - **Correction:** Every agent MUST physically verify the contents of the `done/` folder with `list_dir` BEFORE reporting completion. Administrative integrity is EQUAL to code stability.
 
 ---
 
@@ -123,7 +129,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
 - **Tesztlefedettség**: ~91% (Minden animációs modul stabilizálva, 88/88 teszt sikeres)
-- **Utoljára frissítve**: 2026-04-18T16:15:00+02:00
-- **Verzió**: v0.30.4 (Stable - Leet Puzzle & Visual Sandwich Model Complete)
-- **Státusz**: Sprint Archiválva (Grade 4 compliance, Leet task implemented, visual layering and result modal synchronization fixed)
-- **Küldetés**: Grade 4 Quantum Terminal Optimization (Archived)
+- **Utoljára frissítve**: 2026-04-18T21:27:00+02:00
+- **Verzió**: v0.31.0 (Stable - Game Over Mechanism & Energy Feedback Complete)
+- **Státusz**: Sprint Archiválva (Game Over logic implemented, energy bar warnings active, result modal visual polish complete)
+- **Küldetés**: Grade 4 Quantum Terminal Game Over & Reset Optimization (Complete)

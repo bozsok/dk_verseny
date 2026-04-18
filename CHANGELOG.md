@@ -4,6 +4,17 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
+ 
+## [0.31.0] - 2026-04-18
+### Hozzáadva
+- **Grade 4 „Quantum Terminal” Game Over Mechanizmus**: Teljes körű implementáció a `main.js`-ben, amely automatikusan leállítja a játékot és megjeleníti az összegző ablakot, ha az üzemanyag (idő) elfogy.
+- **Energiacsík vizuális visszacsatolás**: Dinamikus színváltás (10% alatt piros) és kritikus villogó animáció (5% alatt) az alacsony energiaszint hatékonyabb jelzésére.
+- **Központosított Reset Logika**: Új `_resetGradeProgress()` metódus a `main.js`-ben, amely biztosítja a session-specifikus állapotok (pontszám, haladás, időzítők, zene) teljes és biztonságos törlését a Hub-ba való visszatéréskor.
+- **Vizuális Polírozás (Game Over UI)**: Új, brutalista stílusú „Result Modal” a sikertelen kimenetelhez, pirosas ragyogással, scanline effekttel és középre igazított elrendezéssel.
+- **Interaktív Gombhover**: Speciális `.dkv-g4-result-btn--failure` osztály bevezetése az `Interface.css`-ben, amely vöröses ragyogást és interaktív vizuális visszacsatolást biztosít a Game Over gomb számára.
+
+### Módosítva
+- **Éles konfiguráció**: A `G4_ENERGY_LIMIT` konstans visszaállítása a végleges, 4800 másodperces (80 perc) értékre a tesztelési fázis lezárásaként.
 
 ## [0.30.4] - 2026-04-18
 ### Hozzáadva

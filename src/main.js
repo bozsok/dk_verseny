@@ -45,6 +45,10 @@ if (__DEV__) {
   await import('./ui/styles/debug.css');
 }
 
+// --- JÁTÉK KONFIGURÁCIÓ ---
+/** @const {number} Grade 4 üzemanyag limit másodpercben (4800s = 80 perc) */
+const G4_ENERGY_LIMIT = 4800;
+
 /**
  * Alkalmazás osztály
  */
@@ -442,12 +446,16 @@ class DigitalKulturaVerseny {
 
     // Kezdőérték betöltése a StateManager-ből
     let timeLeft = this.stateManager.getState('ui.energyTimeLeft');
-    if (timeLeft === undefined || timeLeft === null) timeLeft = 4800;
+    if (timeLeft === undefined || timeLeft === null) timeLeft = G4_ENERGY_LIMIT;
 
     const updateUI = (value) => {
       if (!this.energyFillHud || !this.isEnergyBarActive) return;
-      const percent = (value / 4800) * 100;
+      const percent = (value / G4_ENERGY_LIMIT) * 100;
       this.energyFillHud.style.width = `${percent}%`;
+
+      // Vizuális visszajelzés szintek (10% alatt piros, 5% alatt villog is)
+      this.energyFillHud.classList.toggle('warning', percent <= 10 && percent > 5);
+      this.energyFillHud.classList.toggle('critical', percent <= 5);
     };
 
     updateUI(timeLeft);
@@ -461,7 +469,7 @@ class DigitalKulturaVerseny {
 
       // Aktuális érték lekérése a state-ből
       let currentLeft = this.stateManager.getState('ui.energyTimeLeft');
-      if (currentLeft === undefined || currentLeft === null) currentLeft = 4800;
+      if (currentLeft === undefined || currentLeft === null) currentLeft = G4_ENERGY_LIMIT;
 
       const newTime = Math.max(0, currentLeft - 1);
       this._energySaveCounter++;
@@ -482,9 +490,119 @@ class DigitalKulturaVerseny {
       if (newTime <= 0) {
         clearInterval(this.energyBarInterval);
         this.energyBarInterval = null;
-        // Game Over hívható itt, ha szükséges
+        this._handleG4GameOver();
       }
     }, 1000);
+  }
+
+  /**
+   * Grade 4 Game Over esemény kezelése (időzítő lejárta)
+   * @private
+   */
+  _handleG4GameOver() {
+    if (this.logger) this.logger.info('Grade 4 Game Over triggered');
+
+    // Megállítjuk a zenét
+    this.stopBackgroundMusicWithFade();
+
+    // Meglévő Result Modal struktúra felépítése (a 1281. sor mintájára)
+    const overlay = document.createElement('div');
+    overlay.className = 'dkv-g4-result-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'dkv-g4-result-modal failure'; // A failure osztály pirossá teszi a címet
+
+    modal.innerHTML = `
+      <div class="dkv-g4-result-header">
+        <span class="dkv-g4-result-label">RENDSZER ÖSSZESÍTÉS - KRITIKUS HIBA</span>
+        <h2 class="dkv-g4-result-title">ZÉRÓ-SZEKVENCIA GYŐZELEM</h2>
+      </div>
+      <div class="dkv-g4-panel-body" style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; line-height: 1.6; border: none; padding: 0; position: relative; z-index: 5; color: #b94848; text-shadow: 0 0 15px rgba(185, 72, 72, 0.5);">
+        <p>Sajnos nem tudtad megakadályozni a teljes összeomlást.</p><p>Ezért a Zéró-szekvencia átvette az irányítást és teljes sötétségbe taszította a Kód Királyságot.</p>
+        <p>Nem voltál elég felkészült.</p>
+      </div>
+      <button class="dkv-g4-result-btn dkv-g4-result-btn--failure" id="gameOverOkBtn" style="margin-top: 2rem;">OK</button>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Animált megjelenítés
+    requestAnimationFrame(() => overlay.classList.add('open'));
+
+    // OK gomb eseménykezelője
+    const okBtn = modal.querySelector('#gameOverOkBtn');
+    okBtn.onclick = () => {
+      overlay.classList.remove('open');
+      setTimeout(() => {
+        overlay.remove();
+        this._resetGradeProgress();
+        this.showHub();
+      }, 300);
+    };
+  }
+
+  /**
+   * Az aktuális évfolyam haladásának és állapotának alaphelyzetbe állítása.
+   * @private
+   */
+  _resetGradeProgress() {
+    if (this.logger) this.logger.info('Resetting grade progress and state');
+
+    // State resetelése a StateManager-en keresztül
+    if (this.stateManager) {
+      const currentState = this.stateManager.getState();
+      this.stateManager.updateState({
+        score: 0,
+        currentSlideIndex: 0,
+        ui: {
+          ...currentState.ui,
+          energyTimeLeft: G4_ENERGY_LIMIT
+        },
+        progress: {
+          ...currentState.progress,
+          completedLevels: [],
+          completedSlides: [],
+          inventory: [],
+          totalScore: 0,
+          timeSpent: 0
+        }
+      }, true); // Azonnali mentés
+    }
+
+    // Energiacsík és egyéb session-szintű flag-ek resetelése
+    if (this.energyBarInterval) {
+      clearInterval(this.energyBarInterval);
+      this.energyBarInterval = null;
+    }
+
+    if (this.energyBarHud) {
+      this.energyBarHud.classList.remove('visible');
+      this.energyBarHud.classList.remove('warning');
+      this.energyBarHud.classList.remove('critical');
+    }
+
+    this.tutorialCompletedInSession = false;
+    this.taskResults = [];
+    this.isEnergyBarActive = false;
+    this._energySaveCounter = 0;
+    this.isEnergyBarActive = false;
+
+    // Verseny időzítő alaphelyzetbe állítása
+    if (this.timeManager) {
+      this.timeManager.reset();
+    }
+
+    // Lejátszott hangok resetelése
+    if (this.playedAudioSlides) {
+      this.playedAudioSlides.clear();
+    }
+
+    // Zene megállítása
+    if (this.backgroundMusic) {
+      this.backgroundMusic.pause();
+      this.backgroundMusic = null;
+    }
   }
 
   /**
@@ -665,67 +783,18 @@ class DigitalKulturaVerseny {
       this.logger.info('Grade selected', { grade });
     }
 
-    // State frissítése (Reseteljük a session ÉS a progress adatokat új játék esetén)
+    // 1. Teljes reset a központi metódussal
+    this._resetGradeProgress();
+
+    // 2. State frissítése a választott évfolyamra
     this.stateManager.updateState({
       currentGrade: grade,
       gamePhase: 'grade-select',
-      score: 0,
       userProfile: null,
-      avatar: null,
-      currentSlideIndex: 0,
-      progress: {
-        completedLevels: [],
-        completedSlides: [],
-        inventory: [],
-        totalScore: 0,
-        timeSpent: 0,
-        achievements: []
-      }
+      avatar: null
     });
 
     this._setTransitioning(false); // Kényszerített reset restartkor
-
-    // Energiacsík resetelése (Grade 4)
-    if (this.energyBarInterval) {
-      clearInterval(this.energyBarInterval);
-      this.energyBarInterval = null;
-    }
-
-    // Vizuális reset: Energiacsík elrejtése az onboarding/intro alatt
-    if (this.energyBarHud) {
-      this.energyBarHud.classList.remove('visible');
-    }
-
-    // Session-szintű flag-ek és adatok resetelése (Clean Slate)
-    this.tutorialCompletedInSession = false;
-    this.taskResults = [];
-    this.leaderboardId = null;
-    this._energySaveCounter = 0;
-    this.isEnergyBarActive = false;
-
-    const ui = this.stateManager.getState('ui') || {};
-    this.stateManager.updateState({
-      ui: { ...ui, energyTimeLeft: 4800 }
-    }, true); // Azonnali mentés restartkor
-
-    // Verseny időzítő alaphelyzetbe állítása minden új játék előtt
-    if (this.timeManager) {
-      this.timeManager.reset();
-    }
-
-    // Reset played audios
-    if (this.playedAudioSlides) this.playedAudioSlides.clear();
-
-    // Stop background music if playing (New Game)
-    if (this.backgroundMusic) {
-      this.backgroundMusic.pause();
-      this.backgroundMusic = null;
-    }
-
-    // Verseny időzítő indítása - KIVÉVE! A WelcomeSlide indítja majd.
-    // if (this.timeManager) {
-    //   this.timeManager.startCompetition();
-    // }
 
     // Story Engine indítása
     if (this.slideManager) {

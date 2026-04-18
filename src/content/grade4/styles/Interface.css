@@ -286,6 +286,11 @@
     border-radius: 0;
 }
 
+#app.dkv-grade-4 .dkv-g4-energy-bar-hud-fill.warning {
+    background: linear-gradient(90deg, #ff4c4c, #ff0000);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+}
+
 #app.dkv-grade-4 .dkv-g4-energy-bar-hud-fill.critical {
     background: linear-gradient(90deg, #ff4c4c, #ff0000);
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
@@ -1051,5 +1056,18 @@
 .dkv-g4-result-btn:hover {
     background: rgba(0, 255, 255, 0.25);
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    color: #fff;
+}
+/* KÜLÖNLEGES STÍLUS: SIKERTELEN (PIROS) EREDMÉNY GOMB */
+.dkv-g4-result-btn--failure {
+    color: #ff716c;
+    border-color: #ff716c;
+    background-color: rgba(255, 113, 108, 0.15);
+    box-shadow: 0 0 15px rgba(255, 113, 108, 0.3);
+}
+
+.dkv-g4-result-btn--failure:hover {
+    background-color: rgba(255, 113, 108, 0.3);
+    box-shadow: 0 0 25px rgba(255, 113, 108, 0.6);
     color: #fff;
 }
