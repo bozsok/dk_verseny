@@ -5,6 +5,21 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.30.4] - 2026-04-18
+### Hozzáadva
+- **Grade 4 „Leet Puzzle” (Kódfeltörő) feladat**: Teljes körű implementáció a Grade 4 „Quantum Terminal” állomásaihoz. Tartalmazza a dinamikus betű-scramble animációt a `Leet.txt` karakterkészlete alapján.
+- **Interaktív súgórendszer (Leet Puzzle)**: Egyedi, négyzet alakú súgóikon bevezetése, amely egy glass-morphism alapú információs panelt nyit meg a teljes Leet-adatbázissal.
+
+### Módosítva
+- **Vizuális rétegelési modell (Sandwich Model)**: Bevezettük a szigorú pozitív `z-index` alapú rétegkezelést (`háttér: 1` < `scanline: 2` < `tartalom: 5`) a Grade 4 összes interfészén. Ez garantálja, hogy a scanline effekt látható marad az ablak üres felületein, de nem zavarja az interaktív elemek (gombok, beviteli mezők) olvashatóságát.
+- **Eredményösszesítő ablak (Result Modal)**: Az ablak vizuális paramétereit (szilárd háttérszín, elmosás, scanline stílus) szinkronizáltuk a feladatfelülettel a konzisztens felhasználói élmény érdekében.
+- **Anticsalás (Anti-Cheat) védelem**: A feladatmegoldások során elrejtettük a globális OK-gombot (`dkv-g4-task-ok-btn`), megakadályozva a feladatok kikerülését.
+- **Színpaletta-frissítés**: Az eredményablak fejléccímkéinek színe a tematikához illeszkedő rózsaszínre (`#ffa6f3`) módosult.
+
+### Javítva
+- **Scanline-interferencia**: Megszüntettük azt a vizuális hibát, amely miatt a scanline effekt „átvágott” a gombokon és a beviteli karaktereken, rontva az olvashatóságot.
+- **Áttetszőségi hibák**: Korrigáltuk az összegző modal ablak áttetszőségét, biztosítva a stabil, nem-transzparens megjelenést a technikai állomások végén.
+
 ## [0.30.3] - 2026-04-16
 ### Javítva
 - Újrakezdési életciklus (Restart Lifecycle) stabilizálása:

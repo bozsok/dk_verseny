@@ -122,7 +122,8 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Keep this file lean and focused on agent needs.
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
-- **Teszt Lefedettség**: ~91% (Minden animációs modul stabilizálva, 88/88 teszt sikeres)
-- **Utoljára frissítve**: 2026-04-16T01:30:00+02:00
-- **Verzió**: v0.30.3 (Stable - Restart Lifecycle & Polish Complete)
-- **Státusz**: Sprint Archiválva (Grade 4 compliance, restart lifecycle, reset logic and optimized persistence fixed)
+- **Tesztlefedettség**: ~91% (Minden animációs modul stabilizálva, 88/88 teszt sikeres)
+- **Utoljára frissítve**: 2026-04-18T16:15:00+02:00
+- **Verzió**: v0.30.4 (Stable - Leet Puzzle & Visual Sandwich Model Complete)
+- **Státusz**: Sprint Archiválva (Grade 4 compliance, Leet task implemented, visual layering and result modal synchronization fixed)
+- **Küldetés**: Grade 4 Quantum Terminal Optimization (Archived)

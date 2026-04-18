@@ -1,4 +1,5 @@
 // import { animate, stagger } from 'animejs';
+import Typewriter from '../../utils/Typewriter.js';
 
 const STATION_NAMES = {
     'onboarding': 'AZONOSÍTÁS',
@@ -46,6 +47,8 @@ export class GameInterfaceGrade4 {
 
         this.attentionTimer = null;
         this.attentionPulseTimer = null;
+
+        this.typewriter = new Typewriter();
     }
 
     /**
@@ -220,9 +223,6 @@ export class GameInterfaceGrade4 {
         this.taskModalOverlay.className = 'dkv-g4-task-modal-overlay';
         this.taskModalOverlay.innerHTML = `
             <div class="dkv-g4-task-modal">
-                <div class="dkv-g4-task-modal-header">
-                    <h2>FINÁLÉ FELADAT</h2>
-                </div>
                 <div class="dkv-g4-task-modal-body"></div>
                 <button class="dkv-g4-task-ok-btn">EXECUTE</button>
             </div>
@@ -642,30 +642,6 @@ export class GameInterfaceGrade4 {
     showTaskModal(content, onOk, options = {}) {
         if (!this.taskModalOverlay) return;
 
-        const header = this.taskModalOverlay.querySelector('.dkv-g4-task-modal-header');
-
-        if (header) {
-            if (options.hideHeader) {
-                header.style.display = 'none';
-            } else {
-                header.style.display = 'flex';
-                if (options.title !== undefined || options.subtitle !== undefined) {
-                    header.innerHTML = '';
-                    if (options.title) {
-                        const h2 = document.createElement('h2');
-                        h2.textContent = options.title;
-                        header.appendChild(h2);
-                    }
-                    if (options.subtitle) {
-                        const sub = document.createElement('p');
-                        sub.textContent = options.subtitle;
-                        header.appendChild(sub);
-                    }
-                } else {
-                    header.innerHTML = '<h2>SYSTEM_OVERRIDE: TASK REQUIRED</h2>';
-                }
-            }
-        }
 
         if (typeof content === 'string') {
             this.taskModalBody.innerHTML = `<div>${content}</div>`;
@@ -674,12 +650,17 @@ export class GameInterfaceGrade4 {
             this.taskModalBody.appendChild(content);
         }
 
-        this.taskOkBtn.style.display = '';
-        this.taskOkBtn.onclick = () => {
-            if (onOk) onOk();
-            this.hideTaskModal();
-        };
-        this.taskOkBtn.classList.add('visible');
+        if (onOk) {
+            this.taskOkBtn.style.display = '';
+            this.taskOkBtn.onclick = () => {
+                onOk();
+                this.hideTaskModal();
+            };
+            this.taskOkBtn.classList.add('visible');
+        } else {
+            this.taskOkBtn.style.display = 'none';
+            this.taskOkBtn.classList.remove('visible');
+        }
 
         this.taskModalOverlay.classList.add('open');
     }
@@ -788,6 +769,10 @@ export class GameInterfaceGrade4 {
         if (this.eventBus) {
             if (this.timerTickHandler) this.eventBus.off('timer:tick', this.timerTickHandler);
             if (this.timerStartHandler) this.eventBus.off('timer:competition-started', this.timerStartHandler);
+        }
+
+        if (this.typewriter) {
+            this.typewriter.stop();
         }
 
         this._clearAttentionTimer();

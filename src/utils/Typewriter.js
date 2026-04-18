@@ -103,8 +103,10 @@ class Typewriter {
             // VAGY: Ha ez az utolsó lépés (index >= length), akkor NE vegyük le.
 
             if (index >= charsToReveal.length) {
-                // Kész. Itt NEM vesszük le a lastSpan-ról (ha van).
-                // Így ott marad villogni az utolsó karakteren.
+                // Kész. Csak akkor vesszük le, ha kifejezetten kérték a hidet complete-kor.
+                if (options.hideCursorOnComplete && lastSpan) {
+                    lastSpan.classList.remove('dkv-cursor-active');
+                }
                 onComplete();
                 return;
             }

@@ -100,7 +100,7 @@ class TutorialManager {
                 },
                 {
                     element: '.dkv-g4-username',
-                    text: 'Ez a rendszerszintű azonosítód a Quantum hálózaton.',
+                    text: 'Ez a rendszerszintű azonosítód a kvantum hálózaton.',
                     position: 'bottom',
                     audio: 'assets/audio/tutorial/g4/tut_02.mp3'
                 },

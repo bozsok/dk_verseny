@@ -1,6 +1,6 @@
 {
   "name": "digitalis-kultura-verseny",
-  "version": "0.30.3",
+  "version": "0.30.4",
   "description": "Interaktív digitális kultúra verseny alkalmazás",
   "main": "src/index.js",
   "scripts": {

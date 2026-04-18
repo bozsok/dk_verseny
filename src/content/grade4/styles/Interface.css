@@ -685,8 +685,7 @@
     border-bottom: 1px solid rgba(193, 255, 254, 0.2);
 }
 
-.dkv-g4-panel-header h2,
-.dkv-g4-task-modal-header h2 {
+.dkv-g4-panel-header h2 {
     font-family: 'Space Grotesk', sans-serif;
     color: var(--g4-primary);
     text-transform: uppercase;
@@ -865,6 +864,7 @@
         color: var(--g4-primary);
         box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
     }
+
     100% {
         border-color: #ffa500;
         color: #ffa500;
@@ -873,9 +873,12 @@
 }
 
 @keyframes g4-btn-glow-orange {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 20px rgba(255, 165, 0, 0.4);
     }
+
     50% {
         box-shadow: 0 0 35px rgba(255, 165, 0, 0.8);
     }
@@ -889,4 +892,164 @@
     animation: g4-btn-glow-orange 2s ease-in-out infinite;
     border-color: #ffa500;
     color: #ffa500;
+}
+
+/* === GRADE 4 RESULT MODAL (Quantum Summary UI) === */
+
+.dkv-g4-result-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* background: rgba(0, 0, 0, 0.85); */
+    backdrop-filter: blur(15px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.dkv-g4-result-overlay.open {
+    opacity: 1;
+}
+
+.dkv-g4-result-modal {
+    width: 90vw;
+    max-width: 700px;
+    background: none;
+    backdrop-filter: blur(12px);
+    /* Lemásolva a LeetPuzzle-ből */
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    /* Lemásolva a LeetPuzzle-ből */
+    box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
+    /* Lemásolva a LeetPuzzle-ből */
+    border-radius: 4px;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 1. RÉTEG: ALAP HÁTTÉR - Pontos másolat */
+.dkv-g4-result-modal::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(21, 26, 31, 1);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* 2. RÉTEG: SCANLINE - Pontos másolat a LeetPuzzle-ből */
+.dkv-g4-result-modal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 255, 0.03) 50%);
+    background-size: 100% 3px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.dkv-g4-result-header {
+    margin-bottom: 2rem;
+    width: 100%;
+    position: relative;
+    z-index: 5;
+}
+
+.dkv-g4-result-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #ffa6f3;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.dkv-g4-result-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: bold;
+    font-size: 2rem;
+    color: #c1fffe;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.dkv-g4-result-modal.failure .dkv-g4-result-title {
+    color: #ff716c;
+    text-shadow: 0 0 15px rgba(255, 113, 108, 0.5);
+}
+
+.dkv-g4-result-stats {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    border-top: 1px solid rgba(193, 255, 254, 0.2);
+    border-bottom: 1px solid rgba(193, 255, 254, 0.2);
+    padding: 1.5rem 0;
+    position: relative;
+    z-index: 5;
+}
+
+.dkv-g4-result-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.dkv-g4-result-stat-label {
+    color: rgba(193, 255, 254, 0.7);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.dkv-g4-result-stat-value {
+    color: #f1f4fa;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.dkv-g4-result-stat-value.points {
+    color: #c1fffe;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.dkv-g4-result-btn {
+    background: rgba(0, 255, 255, 0.15);
+    border: 1px solid #c1fffe;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    color: #c1fffe;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 1rem 0;
+    font-size: 1.4rem;
+    padding: 12px 60px;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 5;
+}
+
+.dkv-g4-result-btn:hover {
+    background: rgba(0, 255, 255, 0.25);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    color: #fff;
 }

@@ -162,7 +162,7 @@ class DigitalKulturaVerseny {
    */
   _setTransitioning(value) {
     if (!this.stateManager) return;
-    
+
     // UI állapot lekérése a manager-ből
     const ui = this.stateManager.getState('ui') || {};
     this.stateManager.updateState({
@@ -426,7 +426,7 @@ class DigitalKulturaVerseny {
         </div>
     `;
     this.energyFillHud = this.energyBarHud.querySelector('.dkv-g4-energy-bar-hud-fill');
-    
+
     if (this.globalHudStack) {
       // A timer elé (balra tőle) szúrjuk be
       this.globalHudStack.insertBefore(this.energyBarHud, this.globalHudStack.firstChild);
@@ -462,13 +462,13 @@ class DigitalKulturaVerseny {
       // Aktuális érték lekérése a state-ből
       let currentLeft = this.stateManager.getState('ui.energyTimeLeft');
       if (currentLeft === undefined || currentLeft === null) currentLeft = 4800;
-      
+
       const newTime = Math.max(0, currentLeft - 1);
       this._energySaveCounter++;
 
       // Mentés logikája: 1 percenként (60 tick) perzisztálunk, egyébként csak memóriában frissítünk
       const shouldPersist = this._energySaveCounter >= 60 || newTime === 0;
-      
+
       this.stateManager.updateState({
         ui: { ...this.stateManager.getState('ui'), energyTimeLeft: newTime }
       }, shouldPersist);
@@ -690,7 +690,7 @@ class DigitalKulturaVerseny {
       clearInterval(this.energyBarInterval);
       this.energyBarInterval = null;
     }
-    
+
     // Vizuális reset: Energiacsík elrejtése az onboarding/intro alatt
     if (this.energyBarHud) {
       this.energyBarHud.classList.remove('visible');
@@ -802,7 +802,7 @@ class DigitalKulturaVerseny {
       });
       this.app.classList.add(gradeClass);
     }
-    
+
     // Fallback a body-ra a globális stílusok miatt
     if (gradeClass) {
       document.body.className = '';
@@ -1204,60 +1204,81 @@ class DigitalKulturaVerseny {
     const timeStr = `${mins}:${secs}`;
 
     const overlay = document.createElement('div');
-    overlay.className = 'maze-result-overlay';
-
-    const isMaze = Object.prototype.hasOwnProperty.call(result, 'stepCount') && result.stepCount !== undefined;
+    const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
+    const isGrade4 = currentGrade === 4;
+    overlay.className = isGrade4 ? 'dkv-g4-result-overlay' : 'maze-result-overlay';
 
     const modal = document.createElement('div');
-    modal.className = `maze-result-modal ${result.success ? 'success' : 'failure'}`;
+    const statusClass = result.success ? 'success' : 'failure';
 
-    modal.innerHTML = `
-      <div class="maze-result-icon">${result.success ? '🎉' : '😢'}</div>
-      <h2 class="maze-result-title">
-        ${result.title ? result.title : (result.success
-        ? 'Gratulálunk! Sikerült eljutni a kulcsig!'
-        : 'Sajnáljuk, nem sikerült teljesíteni a labirintus pályát!')}
-      </h2>
-      <div class="maze-result-stats">
-        <div class="maze-result-stat">
-          <span class="maze-result-stat-label">Felhasznált időd:</span>
-          <span class="maze-result-stat-value">${timeStr}</span>
+    if (isGrade4) {
+      modal.className = `dkv-g4-result-modal ${statusClass}`;
+      modal.innerHTML = `
+        <div class="dkv-g4-result-header">
+          <span class="dkv-g4-result-label">RENDSZER ÖSSZESÍTÉS</span>
+          <h2 class="dkv-g4-result-title">
+            ${result.success ? 'ADATFOLYAM HELYREÁLLÍTVA DEKÓDOLÁS SIKERES' : 'RENDSZERSZINTŰ KIVÉTEL HOZZÁFÉRÉS ELUTASÍTVA'}
+          </h2>
         </div>
-        ${isMaze ? `
-        <div class="maze-result-stat">
-          <span class="maze-result-stat-label">Lépések száma:</span>
-          <span class="maze-result-stat-value">${result.stepCount}</span>
+        <div class="dkv-g4-result-stats">
+          <div class="dkv-g4-result-stat">
+            <span class="dkv-g4-result-stat-label">Analízis időtartama:</span>
+            <span class="dkv-g4-result-stat-value">${timeStr}</span>
+          </div>
+          <div class="dkv-g4-result-stat">
+            <span class="dkv-g4-result-stat-label">Maximális adategység:</span>
+            <span class="dkv-g4-result-stat-value">${result.maxPoints ? result.maxPoints : '5'} egység</span>
+          </div>
+          <div class="dkv-g4-result-stat">
+            <span class="dkv-g4-result-stat-label">Szerzett adategység:</span>
+            <span class="dkv-g4-result-stat-value points">${result.points} egység</span>
+          </div>
         </div>
-        ` : ''}
-        <div class="maze-result-stat">
-          <span class="maze-result-stat-label">Szerezhető pontok max:</span>
-          <span class="maze-result-stat-value">${result.maxPoints ? result.maxPoints : '5'} pont</span>
+        <button class="dkv-g4-result-btn dkv-btn--result-modal">TOVÁBB</button>
+      `;
+    } else {
+      const isMaze = Object.prototype.hasOwnProperty.call(result, 'stepCount') && result.stepCount !== undefined;
+      modal.className = `maze-result-modal ${statusClass}`;
+      modal.innerHTML = `
+        <div class="maze-result-icon">${result.success ? '🎉' : '😢'}</div>
+        <h2 class="maze-result-title">
+          ${result.title ? result.title : (result.success
+          ? 'Gratulálunk! Sikerült eljutni a kulcsig!'
+          : 'Sajnáljuk, nem sikerült teljesíteni a labirintus pályát!')}
+        </h2>
+        <div class="maze-result-stats">
+          <div class="maze-result-stat">
+            <span class="maze-result-stat-label">Felhasznált időd:</span>
+            <span class="maze-result-stat-value">${timeStr}</span>
+          </div>
+          ${isMaze ? `
+          <div class="maze-result-stat">
+            <span class="maze-result-stat-label">Lépések száma:</span>
+            <span class="maze-result-stat-value">${result.stepCount}</span>
+          </div>
+          ` : ''}
+          <div class="maze-result-stat">
+            <span class="maze-result-stat-label">Szerezhető pontok max:</span>
+            <span class="maze-result-stat-value">${result.maxPoints ? result.maxPoints : '5'} pont</span>
+          </div>
+          <div class="maze-result-stat">
+            <span class="maze-result-stat-label">Kapott pontok:</span>
+            <span class="maze-result-stat-value points">${result.points} pont</span>
+          </div>
         </div>
-        <div class="maze-result-stat">
-          <span class="maze-result-stat-label">Kapott pontok:</span>
-          <span class="maze-result-stat-value points">${result.points} pont</span>
-        </div>
-      </div>
-      <button class="dkv-button dkv-grade-3-button dkv-btn--result-modal">Tovább</button>
-    `;
-
+        <button class="dkv-button dkv-grade-3-button dkv-btn--result-modal">Tovább</button>
+      `;
+    }
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 
-    // Megjelenítési animáció
     requestAnimationFrame(() => overlay.classList.add('open'));
 
-    // Tovább gomb
     modal.querySelector('.dkv-btn--result-modal').addEventListener('click', () => {
-      // 1. Azonnal: dia váltás (siker/öröm dia megjelenik a háttérben)
       if (onContinue) onContinue();
-
-      // 2. 300ms múlva: task modal eltűnik
       setTimeout(() => {
         if (onAfterFade) onAfterFade();
-
-        // 3. Majd az összegző overlay fade-outol utoljára
         overlay.classList.remove('open');
         setTimeout(() => overlay.remove(), 300);
       }, 300);
@@ -2339,6 +2360,3 @@ if (document.readyState === 'loading') {
 } else {
   startApp();
 }
-
-// Exportálás modulok számára
-export default DigitalKulturaVerseny;

@@ -1,3 +1,4 @@
+// Grade 4 Config - Version: 1.0.1 (Update trigger for Vite HMR)
 import { SLIDE_TYPES } from '../../core/engine/slides-config.js';
 import './styles/main.css';
 import './styles/Registration.css';
@@ -5,6 +6,7 @@ import './styles/Welcome.css';
 import './styles/Character.css';
 import './styles/Interface.css';
 import videoConfig from './video-config.json';
+
 
 const TYPING_SPEED = 2;
 
@@ -28,19 +30,19 @@ const applyVideoConfig = (slideConfig, slideKey) => {
 const NARRATIVE_DATA = {
     DIA_1: {
         title: 'Üdvözlet a Kód Királyságban!',
-        text: 'Üdvözlünk, Kódmester, a Kód Királyság legbelső védelmi zónájában. Ez a digitális birodalom az adatok és algoritmusok tökéletes szimfóniájára épült, ahol minden szektor a stabilitást szolgálja. Jelenléted kritikus fontosságú, ugyanis a rendszermag szokatlan jeleket sugároz.\nFelkészültél arra, hogy belépj a hálózat mélyére, és szembenézz az ismeretlen kihívásokkal? A Királyság sorsa ismét a te kezedben van.'
+        text: 'Üdvözlünk <b>Kódmester</b>, a Kód Királyság legbelső védelmi zónájában. Ez a digitális birodalom az adatok és algoritmusok tökéletes szimfóniájára épült, ahol minden szektor a stabilitást szolgálja. Jelenléted kritikus fontosságú, ugyanis a <b>rendszermag</b> szokatlan jeleket sugároz.\nFelkészültél arra, hogy belépj a hálózat mélyére, és szembenézz az ismeretlen kihívásokkal? A Királyság sorsa ismét a te kezedben van.'
     },
     DIA_2: {
         title: 'A hős azonosítása',
-        text: 'Mielőtt megkezdenénk a műveletet, a biztonsági protokoll megköveteli az azonosításodat. Kérjük, add meg a hálózati nevedet, a rendszerszintű azonosítód és az aktuális egységedet a terminálon.\nA rendszer minden adatpontot titkosítva tárol, biztosítva a küldetésed integritását. Az azonosítás után a protokoll a következő fázisba lép.'
+        text: 'Mielőtt megkezdenénk a műveletet, a biztonsági protokoll megköveteli az azonosításodat. Kérjük, add meg a <b>hálózati nevedet</b>, a <b>rendszerszintű azonosítód</b> és az <b>aktuális egységedet</b> a terminálon.\nA rendszer minden adatpontot titkosítva tárol, biztosítva a küldetésed integritását. Az azonosítás után a protokoll a következő fázisba lép.'
     },
     DIA_3: {
         title: 'Az Avatár kiválasztása',
-        text: 'A virtuális térbe való belépéshez szükséged van egy digitális reprezentációra, egy Avatárra. Az Avatár lesz a kapcsolatod a Kód Királyság fizikai és digitális rétegei között.'
+        text: 'A virtuális térbe való belépéshez szükséged van egy digitális reprezentációra, egy <b>Avatárra</b>. Az Avatár lesz a kapcsolatod a Kód Királyság fizikai és digitális rétegei között.'
     },
     DIA_4: {
         title: 'A Nagy Frissítés előestéje',
-        text: 'A Kód Királyságban eddig teljes volt a harmónia, az adatfolyamok zavartalanul lüktettek a Puffer egységekben. A digitális tér minden szeglete stabil fényben ragyogott, a holografikus csatornákon átsuhanó információk aranyló és kékes árnyalatokban táncoltak, tökéletes összhangban. A fejlesztők készen álltak a Nagy Frissítés telepítésére, amely örökre megszüntette volna a rendszer minden apróbb hibáját. Senki sem sejtette, hogy a mélyben egy sötét algoritmus már a rendszermag ellen készül. A stabilitás pillanatai hamarosan véget érnek.'
+        text: 'A Kód Királyságban eddig teljes volt a harmónia, az adatfolyamok zavartalanul lüktettek a puffer egységekben. A digitális tér minden szeglete stabil fényben ragyogott, a holografikus csatornákon átsuhanó információk aranyló és kékes árnyalatokban táncoltak, tökéletes összhangban. A fejlesztők készen álltak a Nagy Frissítés telepítésére, amely örökre megszüntette volna a rendszer minden apróbb hibáját. Senki sem sejtette, hogy a mélyben egy sötét algoritmus már a rendszermag ellen készül. A stabilitás pillanatai hamarosan véget érnek.'
     },
     DIA_5: {
         title: 'A Rendszer összeomlása',
@@ -52,11 +54,11 @@ const NARRATIVE_DATA = {
     },
     DIA_7: {
         title: 'A Küldetés megkezdése',
-        text: 'Nincs több vesztegetni való idő. A visszaszámlálás a teljes összeomlásig már megkezdődött. Feladatod ötszörös: meg kell látogatnod az elszigetelt szektorokat, és vissza kell szerezned mind az öt ellopott szkriptrészletet. Csak ha mind az öt kód a birtokodban van, akkor tudjuk újraindítani a rendszermagot és legyőzni a Zéró-szekvenciát. Indulj el az első zóna felé, ahol a szkript nyomait sejtjük. A Királyság jövője a te bátorságodon múlik!'
+        text: 'Nincs több vesztegetni való idő. A visszaszámlálás a teljes összeomlásig már megkezdődött. Feladatod ötszörös: meg kell látogatnod az elszigetelt szektorokat, és vissza kell szerezned mind az öt ellopott szkriptrészletet. Csak ha mind az öt kód a birtokodban van, akkor tudjuk újraindítani a rendszermagot és legyőzni a Zéró-szekvenciát. Indulj el az első zóna felé, ahol a szkript nyomait sejtjük. A szektorok közötti utazáshoz a kvantum kapukat fogod használni. Így akár pillanatok alatt elérkezel a kívánt helyszínre. A Királyság jövője a te bátorságodon múlik!'
     },
     DIA_8: {
         title: 'Az Üzenetek Kriptája',
-        text: 'Megérkeztél a Királyság legrégebbi adatarchívumába, ahol a fény csak halványan dereng a poros terminálok felett. A levegő nehéz a statikus elektromosságtól, és a falakból folyamatosan érthetetlen adatzaj szűrődik ki. A Zéró-szekvencia itt rejtette el az első szkriptet egy titkosított fájltároló mélyén. A kripta védelmi rendszere aktív, és minden behatolót azonnal zárolna. Csak a legprecízebb dekódolási eljárás hozhat sikert.'
+        text: 'Megérkeztél a Királyság legrégebbi adatarchívumába, ahol a fény csak halványan dereng a poros terminálok felett. A levegő nehéz a statikus elektromosságtól, és a falakból folyamatosan érthetetlen adatzaj szűrődik ki. A Zéró-szekvencia itt rejtette el az egyik szkriptrészletet egy titkosított fájltároló mélyén. A kripta védelmi rendszere aktív, és minden behatolót azonnal zárolna. Csak a legprecízebb dekódolási eljárás hozhat sikert.'
     },
     DIA_9: {
         title: 'A dekódolás kihívása',
@@ -88,7 +90,7 @@ const NARRATIVE_DATA = {
     },
     DIA_16: {
         title: 'A Logikai Könyvtár',
-        text: 'Megérkeztél a Királyság tudástárába, ahol a digitális polcok végeláthatatlan sorai sorakoznak a sötétségben. Itt tárolják az összes algoritmus és folyamat leírását, ami a birodalom működéséhez szükséges. A Zéró-szekvencia azonban itt is járt, és szándékosan összekeverte a metaadatokat a tartalommal, káoszt okozva az indexekben. A könyvtár csendje vészjósló, és minden egyes lépésednél a processzorok halk zümmögése hallatszik az árnyékból.'
+        text: 'Megérkeztél a Királyság tudástárába, ahol a digitális polcok végeláthatatlan sorai sorakoznak a sötétségben. Itt tárolják az összes algoritmus és folyamat leírását, ami a birodalom működéséhez szükséges. A Zéró-szekvencia azonban itt is járt, és szándékosan összekeverte a metaadatokat a tartalommal, káoszt okozva az indexekben. A könyvtár csendje vészjósló, és minden egyes lépésednél a vezérlő egységek halk zümmögése hallatszik az árnyékból.'
     },
     DIA_17: {
         title: 'Az Adatok integritása',
@@ -120,7 +122,7 @@ const NARRATIVE_DATA = {
     },
     DIA_24: {
         title: 'A Bit-folyam Zsilipje',
-        text: 'Megérkeztél a Királyság legkritikusabb pontjához, a Bit-folyam Zsilipjéhez, ahol a teljes birodalom energiaellátása áthalad. A zsilipben vadul örvénylik a tiszta adat, és a nyomás már a határértékeket feszegeti a támadás miatt. A Zéró-szekvencia ide vonta vissza utolsó soraidat, és itt próbálja megakadályozni, hogy megszerezd a befejező kódot. A sebesség itt nem előny, hanem alapkövetelmény a túléléshez és a sikerhez.'
+        text: 'Megérkeztél a Királyság legkritikusabb pontjához, a Bit-folyam Zsilipjéhez, ahol a teljes birodalom energiaellátása áthalad. A zsilipben vadul örvénylik a tiszta adat, és a nyomás már a határértékeket feszegeti a támadás miatt. A Zéró-szekvencia ide vonta vissza sorait, és itt próbálja megakadályozni, hogy megszerezd a befejező kódot. A sebesség itt nem előny, hanem alapkövetelmény a túléléshez és a sikerhez.'
     },
     DIA_25: {
         title: 'Időben végrehajtott művelet',
@@ -140,7 +142,7 @@ const NARRATIVE_DATA = {
     },
     DIA_29: {
         title: 'A végső Rendszer-szinkronizáció',
-        text: 'A Zéró-szekvencia utolsó, kétségbeesett támadást indít a rendszermag ellen, miközben te a frissítés telepítésén dolgozol. Ekkor következik a legnehezebb rész: szinkronizálnod kell a kódokat a Királyság alap architektúrájával a hatalmas ellenszélben. Ez az utolsó, mindent eldöntő logikai próba, ahol minden tudásodra és precizitásodra szükséged lesz. A processzorok üvöltenek, a memóriák villognak, te pedig a digitális vihar közepén állsz. Hajtsd végre a telepítést és győzd le az ellenséget egyszer és mindenkorra!'
+        text: 'A Zéró-szekvencia utolsó, kétségbeesett támadást indít a rendszermag ellen, miközben te a frissítés telepítésén dolgozol. Ekkor következik a legnehezebb rész: szinkronizálnod kell a kódokat a Királyság alap architektúrájával a hatalmas ellenszélben. Ez az utolsó, mindent eldöntő logikai próba, ahol minden tudásodra és precizitásodra szükséged lesz. A vezérlő egységek üvöltenek, a memóriák villognak, te pedig a digitális vihar közepén állsz. Hajtsd végre a telepítést és győzd le az ellenséget egyszer és mindenkorra!'
     },
     DIA_30: {
         title: 'A Királyság Restaurációja',
@@ -358,9 +360,15 @@ const portalColors = {
     final: ['#212121', '#212121', '#212121', '#000000']
 };
 
-// --- Feladat regiszter (Grade 4 - Placeholder) ---
+// --- Feladat regiszter (Grade 4 - Station 1: Leet Puzzle) ---
 const taskRegistry = {
-    // A Grade 4 feladatok itt lesznek definiálva
+    station_1: {
+        type: 'leet',
+        module: () => import('./tasks/leet/LeetPuzzle.js'),
+        options: {
+            // A szókészlet és nehézség a komponensben lesz definiálva a terv szerint
+        }
+    }
 };
 
 // Globális konfiguráció exportálása
