@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-04-18T21:27:00+02:00'
+date: '2026-04-19T01:42:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -129,7 +129,7 @@ optimized_for_llm: true
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
 - **Tesztlefedettség**: ~91% (Minden animációs modul stabilizálva, 88/88 teszt sikeres)
-- **Utoljára frissítve**: 2026-04-18T21:27:00+02:00
-- **Verzió**: v0.31.0 (Stable - Game Over Mechanism & Energy Feedback Complete)
-- **Státusz**: Sprint Archiválva (Game Over logic implemented, energy bar warnings active, result modal visual polish complete)
-- **Küldetés**: Grade 4 Quantum Terminal Game Over & Reset Optimization (Complete)
+- **Utoljára frissítve**: 2026-04-19T01:42:00+02:00
+- **Verzió**: v0.32.0 (Stable - Grade 4 Task Refinement & Pedagogical Leveling)
+- **Státusz**: Sprint Archiválva (LeetPuzzle difficulty levels active, MemoryTask visual sync & lifecycle cleanup complete)
+- **Küldetés**: Grade 4 Quantum Terminal Task Finalization & Logic Repair (Complete)

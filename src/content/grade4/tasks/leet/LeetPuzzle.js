@@ -13,14 +13,26 @@ const BASE_WORDS = [
     'MONITOR', 'RENDSZERMAG', 'KRIPTA', 'BIRODALOM', 'ADAT'
 ];
 
-/** @constant {Object} LEET_MAP - A karakterek és 'leet' kódolt párjaik leképezése */
+/** @constant {Object} LEET_MAP - A karakterek és 'leet' kódolt párjaik leképezése (teljes ábécé) */
 const LEET_MAP = {
-    'A': '4', 'E': '3', 'I': '1', 'O': '0', 'U': '6'
+    'A': '4', 'B': 'I3', 'C': '[', 'D': ')', 'E': '3',
+    'F': '|=', 'G': '6', 'H': '#', 'I': '1', 'J': ',_|',
+    'K': '>|', 'L': '|_', 'M': '/\\/\\', 'N': '^/', 'O': '0',
+    'P': '|*', 'Q': '(_,)', 'R': 'I2', 'S': '5', 'T': '7',
+    'U': '(_)', 'V': '\\/', 'W': '\\/\\/', 'X': '><', 'Y': 'j', 'Z': '2'
 };
+
+/** @constant {string[]} CONSONANTS - Mássalhangzók a fokozatos nehézséghez */
+const CONSONANTS = [
+    'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'
+];
+
+/** @constant {string[]} VOWELS - Magánhangzók a fokozatos nehézséghez */
+const VOWELS = ['A', 'E', 'I', 'O', 'U'];
 
 /** @constant {string[]} SCRAMBLE_CHARS - Az animációhoz használt karakterkészlet (Leet.txt alapján) */
 const SCRAMBLE_CHARS = [
-    '4', 'I3', '[', ')', '3', '|=', '6', '#', '1', ',_|', '>|', '1',
+    '4', 'I3', '[', ')', '3', '|=', '6', '#', '1', ',_|', '>|', '|_',
     '0', '|*', '5', '7', '2', '><', 'j', 'V', 'Z', 'X', 'Y'
 ];
 
@@ -41,6 +53,9 @@ export class LeetPuzzle {
         this.onComplete = options.onComplete || (() => { });
         /** @type {Object|null} */
         this.eventBus = options.eventBus || null;
+
+        /** @type {number} - Aktuális osztályfok (a nehézséghez) */
+        this.currentGrade = options.stateManager?.state?.currentGrade || 4;
 
         /** @type {string[]} - Megkevert szókészlet */
         this.words = this.shuffle([...BASE_WORDS]);
@@ -162,16 +177,39 @@ export class LeetPuzzle {
     }
 
     /**
-     * Karakteralapú kódolás elvégzése a LEET_MAP alapján.
+     * Karakteralapú kódolás elvégzése az osztályfoknak megfelelően.
      * @param {string} word - A kódolandó szó.
      * @returns {string} A kódolt szó.
      */
     encode(word) {
         let result = '';
+        const allowedToEncode = this.getEncodedCharsForGrade();
+
         for (const char of word.toUpperCase()) {
-            result += LEET_MAP[char] || char;
+            if (allowedToEncode.has(char)) {
+                result += LEET_MAP[char] || char;
+            } else {
+                result += char;
+            }
         }
         return result;
+    }
+
+    /**
+     * Az adott osztályfokon kódolandó karakterek halmazának lekérése.
+     * @returns {Set<string>}
+     */
+    getEncodedCharsForGrade() {
+        if (this.currentGrade <= 4) {
+            return new Set(VOWELS);
+        } else if (this.currentGrade === 5) {
+            // Magánhangzók + mássalhangzók fele
+            const halfConsonants = CONSONANTS.slice(0, Math.ceil(CONSONANTS.length / 2));
+            return new Set([...VOWELS, ...halfConsonants]);
+        } else {
+            // Teljes ábécé
+            return new Set([...VOWELS, ...CONSONANTS]);
+        }
     }
 
     /**
@@ -305,11 +343,11 @@ export class LeetPuzzle {
      * @returns {string} HTML string a rácshoz.
      */
     renderHelpGrid() {
-        const alphabet = [
+        const fullAlphabet = [
             { char: 'A', leet: '4' }, { char: 'B', leet: 'I3' }, { char: 'C', leet: '[' },
             { char: 'D', leet: ')' }, { char: 'E', leet: '3' }, { char: 'F', leet: '|=' },
             { char: 'G', leet: '6' }, { char: 'H', leet: '#' }, { char: 'I', leet: '1' },
-            { char: 'J', leet: ',_|' }, { char: 'K', leet: '>|' }, { char: 'L', leet: '1' },
+            { char: 'J', leet: ',_|' }, { char: 'K', leet: '>|' }, { char: 'L', leet: '|_' },
             { char: 'M', leet: '/\\/\\' }, { char: 'N', leet: '^/' }, { char: 'O', leet: '0' },
             { char: 'P', leet: '|*' }, { char: 'Q', leet: '(_,)' }, { char: 'R', leet: 'I2' },
             { char: 'S', leet: '5' }, { char: 'T', leet: '7' }, { char: 'U', leet: '(_)' },
@@ -317,7 +355,7 @@ export class LeetPuzzle {
             { char: 'Y', leet: 'j' }, { char: 'Z', leet: '2' }
         ];
 
-        return alphabet.map(item => `
+        return fullAlphabet.map(item => `
             <div class="dkv-leet__help-item">
                 <span class="dkv-leet__help-leet">${item.leet}</span>
                 <span class="dkv-leet__help-arrow">→</span>

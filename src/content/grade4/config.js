@@ -1,4 +1,4 @@
-// Grade 4 Config - Version: 1.0.1 (Update trigger for Vite HMR)
+// Grade 4 Config - Version: 1.0.3 (Force update for Vite HMR)
 import { SLIDE_TYPES } from '../../core/engine/slides-config.js';
 import './styles/main.css';
 import './styles/Registration.css';
@@ -360,14 +360,17 @@ const portalColors = {
     final: ['#212121', '#212121', '#212121', '#000000']
 };
 
-// --- Feladat regiszter (Grade 4 - Station 1: Leet Puzzle) ---
+// --- Feladat regiszter (Grade 4 - Tasks) ---
 const taskRegistry = {
     station_1: {
         type: 'leet',
         module: () => import('./tasks/leet/LeetPuzzle.js'),
-        options: {
-            // A szókészlet és nehézség a komponensben lesz definiálva a terv szerint
-        }
+        options: {}
+    },
+    station_2: {
+        type: 'memory',
+        module: () => import('./tasks/memory/MemoryTask.js'),
+        options: {}
     }
 };
 

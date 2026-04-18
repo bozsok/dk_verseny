@@ -5,6 +5,21 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.32.0] - 2026-04-19
+### Hozzáadva
+- **Grade 4 memóriafeladat (MemoryTask)**: Teljes körű implementáció háromciklusos (adatciklus) játékmenettel, amelyben a versenyzőnek az eltűnő képeket kell beazonosítania.
+- **Grade 4 pedagógiai szintezés (LeetPuzzle)**: A fokozatos nehézség implementálása: a 4. évfolyamon csak a magánhangzók kódolódnak (pl. ADAT -> 4D4T), miközben a teljes Leet-ábécé látható marad a segítség-panelen.
+- **MemoryTask dinamikus instrukciók**: A kiválasztási fázisban a program mostantól dinamikusan jelzi a keresendő képek számát (kettő vagy három) az évfolyam és a konfiguráció alapján.
+
+### Módosítva
+- **Vizuális szinkronizáció (MemoryTask)**: A memóriafeladat rácsa (viewport) és stílusa mostantól hajszálpontosan megegyezik a Leet-feladatéval (margómentes elrendezés, központosított fejléc, azonos szegélyszínek).
+- **Bezáró gomb (X) konzisztenciája**: A súgópanelek bezáró gombjainak egységesítése a Lightbox-stílussal (30x30 px, keretes, pixelpontos centírozás).
+
+### Javítva
+- **Memóriakezelés (életciklus)**: A MemoryTask komponens destroy() metódusának kiegészítése az összes aktív setTimeout időzítő törlésével, megelőzve a memóriaszivárgást.
+- **Vizuális finomhangolás**: A memóriakártyák hover állapotában fellépő mérettorzulásának megszüntetése, valamint az „ADAT CIKLUS” jelző pozicionálásának korrekciója.
+- **Súgópanelek megjelenítése**: Az overflow: visible beállításával biztosítottuk a panel fölé eltolt bezáró gomb láthatóságát.
+
 ## [0.31.0] - 2026-04-18
 ### Hozzáadva
 - **Grade 4 „Quantum Terminal” Game Over Mechanizmus**: Teljes körű implementáció a `main.js`-ben, amely automatikusan leállítja a játékot és megjeleníti az összegző ablakot, ha az üzemanyag (idő) elfogy.

@@ -614,6 +614,62 @@ class DebugPanel {
 
         container.appendChild(puzzleSection);
 
+        // === Quantum Memory ===
+        const qmSection = document.createElement('div');
+        qmSection.className = 'dkv-debug-video-section';
+        qmSection.style.marginTop = '20px';
+
+        const qmTitle = document.createElement('h4');
+        qmTitle.textContent = '🖥️ Quantum Memória';
+        qmTitle.style.cssText = 'color: #00eaff; margin: 0 0 12px; font-size: 1rem;';
+        qmSection.appendChild(qmTitle);
+
+        const createQMInput = (label, id, value, min, max) => {
+            const row = document.createElement('div');
+            row.className = 'dkv-debug-video-row';
+            row.style.marginBottom = '8px';
+            row.innerHTML = `
+                <label for="${id}" style="flex: 1;">${label}</label>
+                <input type="number" id="${id}" class="dkv-debug-video-input" 
+                       min="${min}" max="${max}" value="${value}" style="width: 80px;">
+            `;
+            return row;
+        };
+
+        const qmItemsRow = createQMInput('Összes kép:', 'dkv-debug-qm-items', this.tasksConfig.qmItems ?? 6, 2, 30);
+        const qmRemovedRow = createQMInput('Eltűnt képek:', 'dkv-debug-qm-removed', this.tasksConfig.qmRemoved ?? 2, 1, 5);
+        const qmOptionsRow = createQMInput('Választási opciók:', 'dkv-debug-qm-options', this.tasksConfig.qmOptions ?? 3, 2, 6);
+
+        qmSection.appendChild(qmItemsRow);
+        qmSection.appendChild(qmRemovedRow);
+        qmSection.appendChild(qmOptionsRow);
+
+        const qmApplyBtn = document.createElement('button');
+        qmApplyBtn.className = 'dkv-debug-btn dkv-debug-btn-apply';
+        qmApplyBtn.textContent = 'Mentés';
+        qmApplyBtn.style.marginTop = '12px';
+        qmApplyBtn.addEventListener('click', () => {
+            this.tasksConfig.qmItems = parseInt(document.getElementById('dkv-debug-qm-items').value, 10);
+            this.tasksConfig.qmRemoved = parseInt(document.getElementById('dkv-debug-qm-removed').value, 10);
+            this.tasksConfig.qmOptions = parseInt(document.getElementById('dkv-debug-qm-options').value, 10);
+
+            if (this.debugManager) {
+                this.debugManager.tasksConfig = { ...this.tasksConfig };
+                this.debugManager.saveConfig({
+                    ...this.debugManager.skipConfig,
+                    tasksConfig: this.tasksConfig
+                });
+            }
+            qmApplyBtn.textContent = '✅ Mentve!';
+            qmApplyBtn.disabled = true;
+            setTimeout(() => {
+                qmApplyBtn.textContent = 'Mentés';
+                qmApplyBtn.disabled = false;
+            }, 1500);
+        });
+        qmSection.appendChild(qmApplyBtn);
+        container.appendChild(qmSection);
+
         // === RESET ===
         const resetSection = document.createElement('div');
         resetSection.className = 'dkv-debug-video-section';
