@@ -1,0 +1,270 @@
+/**
+ * LibraryTask.css - Egységesített technikai feladat keret (Station 3)
+ */
+:root {
+    --lib-bg: #0a0f13;
+    --lib-surface: #151a1f;
+    --lib-cyan: #00ffff;
+}
+
+.dkv-library-container {
+    width: 1200px;
+    height: 900px;
+    position: relative;
+    font-family: 'Manrope', sans-serif;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    box-sizing: border-box;
+    backdrop-filter: blur(12px);
+    background: rgba(21, 26, 31, 0.8);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.dkv-library-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--lib-cyan), transparent);
+    z-index: 5;
+}
+
+/* Header szakasz */
+.dkv-library__header {
+    padding: 3rem 3rem 1rem 3rem;
+    position: relative;
+    z-index: 10;
+}
+
+.dkv-library__header-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #ffa6f3;
+    display: block;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.dkv-library__title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.25rem;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.dkv-library__subtitle {
+    font-size: 1.125rem;
+    color: #a8abb1;
+    margin: 1.5rem 0;
+    line-height: 1.6;
+    max-width: 850px;
+}
+
+/* Fő viewport - Üres sötét élettér */
+.dkv-library__main-viewport {
+    flex: 1;
+    margin: 0;
+    border: 1px solid rgba(114, 118, 123, 0.3);
+    background: rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow: visible;
+}
+
+/* Footer szakasz */
+.dkv-library__footer {
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+}
+
+.dkv-library__system-status {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #51555a;
+    text-transform: uppercase;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.status-dot--green {
+    background: #9cff93;
+}
+
+.dkv-library__execute-btn {
+    background: rgba(0, 255, 255, 0.15);
+    border: 1px solid #c1fffe;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    color: #c1fffe;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 1rem 0;
+    font-size: 1.4rem;
+    padding: 12px 40px;
+    letter-spacing: 2px;
+}
+
+.dkv-library__execute-btn:hover {
+    background: rgba(0, 255, 255, 0.25);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    color: #fff;
+}
+
+.dkv-library__execute-btn:active {
+    transform: none;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.dkv-library__execute-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+    filter: grayscale(1);
+    box-shadow: none;
+}
+
+/* === GLOW, GLASS, SCANLINE === */
+.glass-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.scanline {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 255, 0.03) 50%);
+    background-size: 100% 3px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* === HELP SYSTEM STYLES === */
+.dkv-library__help-btn {
+    position: absolute;
+    top: 3rem;
+    right: 3rem;
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid var(--lib-cyan);
+    color: var(--lib-cyan);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.dkv-library__help-btn:hover {
+    background: rgba(0, 255, 255, 0.25);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+.dkv-library__help-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 15, 19, 0.85);
+    backdrop-filter: blur(15px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.dkv-library__help-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dkv-library__help-content {
+    background: rgba(21, 26, 31, 0.95);
+    border: 1px solid var(--lib-cyan);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+    width: 90%;
+    max-width: 800px;
+    padding: 3rem;
+    position: relative;
+}
+
+.dkv-library__help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+    padding-bottom: 1rem;
+}
+
+.dkv-library__help-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #ff51fa;
+    text-transform: uppercase;
+}
+
+.dkv-library__help-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: 1px solid var(--lib-cyan);
+    color: var(--lib-cyan);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.2s ease;
+}
+
+.dkv-library__help-close:hover {
+    background: var(--lib-cyan);
+    color: #000;
+}
+
+.dkv-library__help-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #a8abb1;
+    border-left: 2px solid var(--lib-cyan);
+    padding-left: 1.5rem;
+}

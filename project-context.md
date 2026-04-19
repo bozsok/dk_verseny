@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-04-19T01:42:00+02:00'
+date: '2026-04-19T02:15:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -129,7 +129,10 @@ optimized_for_llm: true
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
 - **Tesztlefedettség**: ~91% (Minden animációs modul stabilizálva, 88/88 teszt sikeres)
-- **Utoljára frissítve**: 2026-04-19T01:42:00+02:00
-- **Verzió**: v0.32.0 (Stable - Grade 4 Task Refinement & Pedagogical Leveling)
-- **Státusz**: Sprint Archiválva (LeetPuzzle difficulty levels active, MemoryTask visual sync & lifecycle cleanup complete)
+- **Utoljára frissítve**: 2026-04-19
+- **Verzió**: 0.32.2 (v0.32.2)
+- **Státusz**: Stabil
+- [x] Grade 4: Összes állomás (1-5) vizuális és funkcionális egységesítése (v0.32.2)
+- [x] Grade 4: SÚGÓ rendszer integrálása minden feladathoz (v0.32.2)
+- [x] Grade 4: VÉGREHAJTÁS gombok pixelpontos szinkronizálása
 - **Küldetés**: Grade 4 Quantum Terminal Task Finalization & Logic Repair (Complete)

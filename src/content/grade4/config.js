@@ -371,6 +371,21 @@ const taskRegistry = {
         type: 'memory',
         module: () => import('./tasks/memory/MemoryTask.js'),
         options: {}
+    },
+    station_3: {
+        type: 'library',
+        module: () => import('./tasks/library/LibraryTask.js'),
+        options: {}
+    },
+    station_4: {
+        type: 'island',
+        module: () => import('./tasks/island/IslandTask.js'),
+        options: {}
+    },
+    station_5: {
+        type: 'speed',
+        module: () => import('./tasks/speed/SpeedTask.js'),
+        options: {}
     }
 };
 

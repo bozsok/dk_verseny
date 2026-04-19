@@ -5,6 +5,28 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.32.2] - 2026-04-19
+
+### Hozzáadva
+- A Grade 4 összes állomásához (Library, Island, Speed) hozzáadva a funkcionális **SÚGÓ** (Help) rendszer.
+- Modális segédlet panelek implementálása állomásspecifikus instrukciókkal.
+
+### Javítva
+- A **VÉGREHAJTÁS** gombok pixelpontos szinkronizálása a LeetPuzzle és MemoryTask etalonok alapján (Cyberpunk stílusú kerekítés, interakciós effektek).
+- A panelek vizuális egységesítése: `glass-panel` struktúra, neon ragyogás és felső fényvonal integrálása minden állomáson.
+- A státusz sor és a dekorációs elemek következetes alkalmazása az összes feladatmodulban.
+
+## [0.32.1] - 2026-04-18
+### Hozzáadott
+- Station 3 (Logikai Könyvtár), Station 4 (Anomáliák Szigete) és Station 5 (Bit-folyam Zsilipje) placeholder feladatmodulok létrehozása.
+- Állomásspecifikus CSS stíluslapok az egységes vizuális megjelenés érdekében.
+
+### Módosított
+- A 4. osztályos feladatpanelek struktúrájának egységesítése (fejléc, viewport, lábléc architektúra).
+- Vizuális finomhangolás: az összes új feladatpanel megkapta a türkiz ragyogású szegélyt és a felső neon fényvonalat.
+- A `config.js` frissítése az összes új feladatmodul dinamikus regisztrációjával.
+- Hibajavítás az új feladatmodulok konstruktoraiban (paraméterátadás és naplózás korrekciója).
+
 ## [0.32.0] - 2026-04-19
 ### Hozzáadva
 - **Grade 4 memóriafeladat (MemoryTask)**: Teljes körű implementáció háromciklusos (adatciklus) játékmenettel, amelyben a versenyzőnek az eltűnő képeket kell beazonosítania.
