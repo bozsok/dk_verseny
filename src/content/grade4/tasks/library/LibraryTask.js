@@ -127,9 +127,7 @@ export class LibraryTask {
                             <button class="dkv-library__help-close">×</button>
                         </div>
                         <p class="dkv-library__help-text">
-                            A könyvtár metaadatainak helyreállításához párosítsd össze a megjelenő képet a hozzá tartozó leírással. 
-                            Válassz egyet a három kártya közül, majd nyomd meg a TOVÁBB gombot. 
-                            A rendszer 2.5 másodperc alatt kiértékeli a döntésedet.
+                            A könyvtár metaadatainak helyreállításához párosítsd össze a megjelenő képet a hozzá tartozó leírással. Következtess a kép alapján, hogy miről szólhat és találd meg a legjobban illeszkedő leírást hozzá!
                         </p>
                     </div>
                 </div>
