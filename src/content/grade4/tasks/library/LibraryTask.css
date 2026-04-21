@@ -1,10 +1,13 @@
 /**
- * LibraryTask.css - Egységesített technikai feladat keret (Station 3)
+ * LibraryTask.css - Logikai Könyvtár feladat (Station 3)
  */
 :root {
     --lib-bg: #0a0f13;
     --lib-surface: #151a1f;
     --lib-cyan: #00ffff;
+    --lib-magenta: #ff51fa;
+    --lib-green: #9cff93;
+    --lib-red: #ff716c;
 }
 
 .dkv-library-container {
@@ -44,7 +47,7 @@
 .dkv-library__header-label {
     font-size: 10px;
     letter-spacing: 0.3em;
-    color: #ffa6f3;
+    color: var(--lib-magenta);
     display: block;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
@@ -66,26 +69,225 @@
     margin: 1.5rem 0;
     line-height: 1.6;
     max-width: 850px;
+    min-height: 3.2em;
 }
 
-/* Fő viewport - Üres sötét élettér */
+/* Fő viewport */
 .dkv-library__main-viewport {
     flex: 1;
     margin: 0;
-    border: 1px solid rgba(114, 118, 123, 0.3);
+    border-top: 1px solid rgba(114, 118, 123, 0.3);
+    border-bottom: 1px solid rgba(114, 118, 123, 0.3);
     background: rgba(0, 0, 0, 0.6);
     position: relative;
-    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
 }
 
-/* Footer szakasz */
+.dkv-library__main-viewport.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Ciklus kijelző (MemoryTask alapján) */
+.dkv-library__stage-tracker {
+    position: absolute;
+    top: -38px;
+    right: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: rgba(0, 234, 255, 0.7);
+    z-index: 20;
+}
+
+.dkv-library__stage-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.stage-dot {
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--lib-cyan);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.stage-dot.active {
+    background: var(--lib-cyan);
+    box-shadow: 0 0 10px var(--lib-cyan);
+    transform: scale(1.2);
+}
+
+.stage-dot.completed {
+    background: rgba(0, 255, 255, 0.4);
+}
+
+/* Layout Content Wrapper */
+.dkv-library__content-wrapper {
+    display: flex;
+    flex: 1;
+    width: 100%;
+}
+
+/* Kép konténer - 16:9 arány */
+.dkv-library__image-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #000;
+}
+
+.dkv-library__task-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: zoom-in;
+}
+
+.dkv-library__main-viewport.visible .dkv-library__task-image {
+    opacity: 1;
+}
+
+/* Kártyák konténere */
+.dkv-library__cards-container {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: rgba(0, 20, 30, 0.4);
+}
+
+/* Kártya stílusa */
+.dkv-library__card {
+    flex: 1;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid rgba(0, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+    border-top: 2px solid transparent;
+    border-right: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    /* Felülírja az előzőt az ugrás ellen */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.dkv-library__card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid transparent;
+    pointer-events: none;
+    transition: border-color 0.3s ease;
+}
+
+.dkv-library__card:last-child {
+    border-bottom: none;
+}
+
+.dkv-library__card:hover {
+    background: rgba(0, 255, 255, 0.05);
+}
+
+.dkv-library__card.selected {
+    background: rgba(0, 255, 255, 0.1);
+    box-shadow: inset 5px 0 0 var(--lib-cyan);
+}
+
+.dkv-library__card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+}
+
+.dkv-library__card-category {
+    color: var(--lib-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.dkv-library__card-id {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.dkv-library__card-text {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #e0e0e0;
+}
+
+/* Kiértékelés visszajelzés - Csak a kiválasztott kártyán */
+.dkv-library__card.revealed.selected.correct::before {
+    border-color: var(--lib-green);
+    background: rgba(0, 255, 0, 0.1);
+    box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.dkv-library__card.revealed.selected.correct::after {
+    content: 'A CÉL EGYEZIK';
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--lib-green);
+    font-weight: bold;
+}
+
+.dkv-library__card.revealed.selected.incorrect::before {
+    border-color: var(--lib-red);
+    background: rgba(255, 0, 0, 0.1);
+    box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.2);
+}
+
+.dkv-library__card.revealed.selected.incorrect::after {
+    content: 'A CÉL NEM EGYEZIK';
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--lib-red);
+    font-weight: bold;
+}
+
+/* Kis jelzés a helyes kártyán, ha nem azt választották */
+.dkv-library__card.actual-correct::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    background: var(--lib-green);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--lib-green);
+    animation: pulse 1s infinite;
+}
+
+/* Footer Section */
 .dkv-library__footer {
     padding: 2rem 3rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-    z-index: 5;
 }
 
 .dkv-library__system-status {
@@ -106,7 +308,7 @@
 }
 
 .status-dot--green {
-    background: #9cff93;
+    background: var(--lib-green);
 }
 
 .dkv-library__execute-btn {
@@ -126,17 +328,13 @@
     font-size: 1.4rem;
     padding: 12px 40px;
     letter-spacing: 2px;
+    min-width: 250px;
 }
 
 .dkv-library__execute-btn:hover {
     background: rgba(0, 255, 255, 0.25);
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
     color: #fff;
-}
-
-.dkv-library__execute-btn:active {
-    transform: none;
-    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
 .dkv-library__execute-btn:disabled {
@@ -152,6 +350,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    z-index: 1;
 }
 
 .scanline {
@@ -235,7 +434,7 @@
     font-family: 'Space Grotesk', sans-serif;
     font-size: 10px;
     letter-spacing: 0.3em;
-    color: #ff51fa;
+    color: var(--lib-magenta);
     text-transform: uppercase;
 }
 
@@ -267,4 +466,127 @@
     color: #a8abb1;
     border-left: 2px solid var(--lib-cyan);
     padding-left: 1.5rem;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* === LIGHTBOX SYSTEM STYLES === */
+.dkv-library__lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 5, 10, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.dkv-library__lightbox-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dkv-library__lightbox-content {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 0;
+    border: 1px solid var(--lib-cyan);
+    box-shadow: 0 0 50px rgba(0, 255, 255, 0.2);
+    position: relative;
+    max-width: 64vw;
+    max-height: 65vh;
+    width: auto;
+    transform: translateY(20px);
+    transition: transform 0.4s ease;
+    display: flex;
+}
+
+.dkv-library__lightbox-overlay.open .dkv-library__lightbox-content {
+    transform: translateY(0);
+}
+
+.dkv-library__lightbox-image-wrapper {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 65vh;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+}
+
+.dkv-library__lightbox-image {
+    max-width: 100%;
+    max-height: 75vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.dkv-library__lightbox-image-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 10px var(--lib-cyan);
+    animation: lib-scanner 4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes lib-scanner {
+    0% {
+        top: 0%;
+    }
+
+    100% {
+        top: 100%;
+    }
+}
+
+.dkv-library__lightbox-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(0, 5, 10, 0.8);
+    border-left: 1px solid var(--lib-cyan);
+    border-bottom: 1px solid var(--lib-cyan);
+    border-top: none;
+    border-right: none;
+    color: var(--lib-cyan);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.dkv-library__lightbox-close:hover {
+    background: var(--lib-cyan);
+    color: #000;
 }

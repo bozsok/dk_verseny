@@ -5,6 +5,18 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.32.3] - 2026-04-21
+
+### Hozzáadva
+- **Grade 4 Logikai Könyvtár (Station 3) teljes implementációja**: A 3-as állomás feladatának (`LibraryTask`) bevezetése. Tartalmazza az egyedi metaadat-párosítási logikát (kép felülvizsgálat), a dinamikus kártya-generálást (`LibraryData`), a BEM-alapú CSS architektúrát, valamint a látványos hacker/írógépszerű (typewriter) szöveges bevezető szekvenciát.
+- **Grade 4 Logikai Könyvtár (LibraryTask) vizuális frissítése**: A nagyító (Lightbox) ablak teljesen új, interaktív struktúrát kapott pásztázó lézer animációval, miközben a kép torzításmentes, padding nélküli és reszponzív (maximális kiterjedésű) maradt a képernyőn. A bezáró gomb pozicionálása stabilizálva.
+
+### Javítva
+- **Életciklus és memóriaszivárgás (LibraryTask)**: Az `introFallback` és a `handleNext` `setTimeout` időzítők a `destroy()` életciklus-metódusban mostantól megbízhatóan megsemmisülnek, megelőzve a háttérben történő hibás végrehajtásokat.
+- **Képbetöltési stabilitás (LibraryTask)**: Stabil kép-előbetöltési logikát kapott a modul (`onload` és `fade-in`), kiküszöbölve a képek betöltéskori bevillanását vagy törtikonos jelenlétét.
+- **Animációs állapotkezelés (LibraryTask)**: A `skipIntro` funkció dupla aktiválódásának javítása egy pontosabb `isIntroSkipped` állapotkövetéssel, továbbá a kártyák kaszkádszerű animációjának szinkronizált fade-in letisztítása.
+- **UI Ugrálás**: Az alsó vezérlő (Megerősít / Végrehajt) gombok `min-width` védelmet kaptak a szövegváltás alatti elméreteződések (layout shift) ellen.
+ 
 ## [0.32.2] - 2026-04-19
 
 ### Hozzáadva
