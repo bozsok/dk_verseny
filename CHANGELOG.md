@@ -5,6 +5,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.32.4] - 2026-04-22
+
+### Javítva
+- **LibraryTask (Station 3) – Kritikus viewport-befagyás**: Megszüntettük azt a race condition hibát, amely miatt a feladat képe és a metaadat kártyák sosem váltak teljesen láthatóvá és kattinthatóvá. A gyökér ok a kép `onload` handler és a böngésző cache-elési mechanizmusa közötti versenyhelyzet volt: ha a kép a cache-ből azonnal betöltődött, az `onload` callback nem tüzelt, az inline `opacity: 0` beragadt, és a `pointer-events` blokkolva maradt.
+- **LibraryTask – CSS/JS opacity ütközés**: Eltávolítottuk a `.dkv-library__main-viewport.visible .dkv-library__task-image { opacity: 1 }` CSS szabályt, amely ütközött a JS inline opacity-kezeléssel. A kép megjelenítését mostantól kizárólag a JS `revealImage()` függvény vezérli.
+- **LibraryTask – Timeout felhalmozódás**: A `this.timeouts` tömb mostantól minden körváltáskor (a `startRound()` metódus elején) törlődik, megelőzve a régi timeout-ok memóriafelhalmozódását és potenciális DOM-hivatkozási hibáit.
+- **LibraryTask – Hiányzó `onerror` handlerek**: A feladatkép és a lightbox kép betöltésekor mostantól `onerror` handler is regisztrálva van, amely naplózza a hibát és megelőzi a feladat végleges elakadását (project-context.md: No Floating Promises + Robustness szabály).
+- **LibraryTask – Cache-biztos kép megjelenítés**: Háromszintű védelmi mechanizmust vezettünk be: (1) `onload` handler a `src` beállítás előtt, (2) `img.complete && naturalWidth` cache-ellenőrzés, (3) 3 másodperces biztonsági fallback időzítő.
+- **Energiacsík (Grade 4) – Háttérfül-csalás**: Az energiacsík visszaszámlálóját tick-alapúról `performance.now()` alapú valós időszámításra cseréltük. Korábban a `setInterval` böngésző-throttling miatt a háttérfülre váltás lényegében megállította az energiacsíkot, míg a globális timer (`TimeManager`) pontosan futott. Mostantól a `setInterval` kizárólag UI-frissítő szerepben működik, az időszámítás valós differencia-alapú.
+
+### Módosítva
+- **LibraryTask – BEM konvenció**: Az összes prefix nélküli CSS osztálynév (`.glass-panel`, `.scanline`, `.stage-dot`, `.stage-text`, `.status-dot`, `.status-dot--green`, `.status-dot--magenta`, `.phase-label`) átnevezésre került a `.dkv-library__` BEM prefixes formára a project-context.md CSS architektúra szabályainak betartása érdekében.
+
 ## [0.32.3] - 2026-04-21
 
 ### Hozzáadva

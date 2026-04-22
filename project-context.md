@@ -5,7 +5,7 @@ date: '2026-04-19T02:15:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
-rule_count: 32
+rule_count: 37
 optimized_for_llm: true
 ---
 
@@ -62,7 +62,7 @@ optimized_for_llm: true
 
 ### Testing Rules
 
-- **Current Status:** A projekt mostantól **>88%-os tesztlefedettséggel** rendelkezik a kritikus magmodulokban (`src/core/state`, `src/core/utils`).
+- **Current Status:** Test coverage is **>88%** across critical core modules (`src/core/state`, `src/core/utils`).
 - **Mandatory Test-First (New Features):** Every **new** core module (`src/core`, `src/utils`, `src/features`) MUST be accompanied by a `*.test.js` file.
 - **Regression Protection:** When refactoring existing complex code (e.g., `SlideManager`, `StateManager`), a baseline unit test must be added first.
 - **Mocking Strategy:** Always mock external dependencies (Video API, Web Audio API, LocalStorage, network) in Jest using `jest.mock()`.
@@ -72,6 +72,7 @@ optimized_for_llm: true
 
 - **Coding Standard:** Follow strict ESLint and Prettier configurations. Avoid `var`; use `const` for immutables and `let` for variables.
 - **CSS Naming:** Classes must use **kebab-case** with the `.dkv-` prefix (**BEM style**).
+- **CSS/JS Animation Ownership:** A single DOM element's visual property (`opacity`, `transform`, `visibility`) MUST be controlled by exactly ONE source: either CSS class toggling OR JS inline styles. Mixing both on the same property is **forbidden** — it causes specificity conflicts and race conditions (see: v0.32.4 LibraryTask fix).
 - **Prohibited Patterns:** `console.log` is forbidden in production; use the built-in `GameLogger`.
 - **Documentation:** Hungarian JSDoc comments are mandatory for all public methods and modules.
 - **Changelog:** Maintain the `CHANGELOG.md` file in Hungarian, following Semantic Versioning (SemVer) principles.
@@ -101,16 +102,19 @@ optimized_for_llm: true
 
 - **Memory Leaks & Disposal:**
     - NEVER use `setInterval`, `setTimeout`, or `addEventListener` on `window/document` without explicit cleanup in the `destroy()` method.
+    - **Mid-lifecycle Cleanup:** If a component runs in multiple rounds/phases (e.g., multi-round tasks), the `this.timeouts` array MUST be cleared (`clearTimeout` + array reset) at the start of each new round — not only in `destroy()`. Stale timeouts referencing destroyed DOM elements cause silent failures.
     - **GPU Disposal:** Every Three.js resource (`geometries`, `materials`, `textures`) MUST be explicitly `.dispose()`-ed in the `destroy()` method to prevent GPU memory bloat.
 - **State & Timer Integrity:**
     - **Persistence Policy:** Use the **StateManager** for all game-related and user-progress data.
     - **LocalStorage Bypasses:** Direct `localStorage` access is permitted **ONLY** for system-level flags (e.g., GDPR consent, Master/Debug mode) where the StateManager is not yet initialized or contextually inappropriate.
     - **No direct write:** Never write directly to `localStorage` for game progress; use `SecureStorage` (via StateManager).
     - **Timer Policy:** Only the `TimeManager` is allowed to modify the global competition clock. Components should only read the time via the `EventBus` or `StateManager`.
+    - **Timing Accuracy Policy:** Using `setInterval`/`setTimeout` tick-counting for time measurement (e.g., `counter -= 1` per tick) is **forbidden**. Browsers throttle background tabs (Chrome: ~1 tick/minute). Always use `performance.now()` or `Date.now()` delta-based calculation. `setInterval` may only serve as a **UI refresh trigger**, never as a time source (see: v0.32.4 energy bar fix).
 - **Portal & Navigation Safety:**
     - **Navigation Lock:** All navigation buttons MUST be disabled and `EventBus` navigation events ignored while a `PortalTransition` or Slide transition is in progress.
 - **Audio Policies:** Respect browser autoplay policies; initialize Web Audio context only after the first user interaction.
 - **Asset Loading:** Use asynchronous loading for all large assets (videos, 3D models) with appropriate UI feedback (**Loader/Progress UI**).
+- **Image Cache Safety:** When loading images (`<img>`), the following sequence is **mandatory**: (1) Register `onload` handler BEFORE setting `src`, (2) Register `onerror` handler (log + fallback), (3) Set `src`, (4) After setting `src`, check `if (img.complete && img.naturalWidth > 0)` for cached images where `onload` may not fire, (5) Add a safety fallback timeout (e.g., 3s) if neither event triggers (see: v0.32.4 LibraryTask fix).
 - **Security:** Use `SecureStorage` for all sensitive user data.
 - **Performance:** Optimize rendering loop; avoid constant 60 FPS updates for static scenes.
 
@@ -128,11 +132,21 @@ optimized_for_llm: true
 - Keep this file lean and focused on agent needs.
 - Update when technology stack changes.
 - Review quarterly for outdated rules.
-- **Tesztlefedettség**: ~91% (Minden animációs modul stabilizálva, 88/88 teszt sikeres)
-- **Utoljára frissítve**: 2026-04-19
-- **Verzió**: 0.32.2 (v0.32.2)
-- **Státusz**: Stabil
-- [x] Grade 4: Összes állomás (1-5) vizuális és funkcionális egységesítése (v0.32.2)
-- [x] Grade 4: SÚGÓ rendszer integrálása minden feladathoz (v0.32.2)
-- [x] Grade 4: VÉGREHAJTÁS gombok pixelpontos szinkronizálása
-- **Küldetés**: Grade 4 Quantum Terminal Task Finalization & Logic Repair (Complete)
+
+---
+
+## Project Status
+
+- **Version:** 0.32.4 (v0.32.4)
+- **Status:** Stable
+- **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
+- **Last Updated:** 2026-04-22
+- **Current Mission:** Grade 4 Quantum Terminal Task Finalization & Logic Repair (Complete)
+
+### Completed Milestones
+- [x] Grade 4: All stations (1-5) visual and functional unification (v0.32.2)
+- [x] Grade 4: Help system integrated into all tasks (v0.32.2)
+- [x] Grade 4: EXECUTE buttons pixel-perfect synchronization (v0.32.2)
+- [x] Grade 4: LibraryTask race condition & cache safety fix (v0.32.4)
+- [x] Grade 4: Energy bar timing accuracy (performance.now) (v0.32.4)
+- [x] Grade 4: BEM naming compliance across all task modules (v0.32.4)

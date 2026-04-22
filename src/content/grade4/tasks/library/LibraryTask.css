@@ -111,7 +111,7 @@
     gap: 5px;
 }
 
-.stage-dot {
+.dkv-library__stage-dot {
     width: 12px;
     height: 12px;
     border: 1px solid var(--lib-cyan);
@@ -119,13 +119,13 @@
     transition: all 0.3s ease;
 }
 
-.stage-dot.active {
+.dkv-library__stage-dot.active {
     background: var(--lib-cyan);
     box-shadow: 0 0 10px var(--lib-cyan);
     transform: scale(1.2);
 }
 
-.stage-dot.completed {
+.dkv-library__stage-dot.completed {
     background: rgba(0, 255, 255, 0.4);
 }
 
@@ -151,12 +151,8 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    /* A transition-t és az opacity reveal-t kizárólag a JS kezeli (revealImage) */
     cursor: zoom-in;
-}
-
-.dkv-library__main-viewport.visible .dkv-library__task-image {
-    opacity: 1;
 }
 
 /* Kártyák konténere */
@@ -299,7 +295,7 @@
     text-transform: uppercase;
 }
 
-.status-dot {
+.dkv-library__status-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -307,7 +303,7 @@
     margin-right: 0.5rem;
 }
 
-.status-dot--green {
+.dkv-library__status-dot--green {
     background: var(--lib-green);
 }
 
@@ -345,7 +341,7 @@
 }
 
 /* === GLOW, GLASS, SCANLINE === */
-.glass-panel {
+.dkv-library__glass-panel {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -353,7 +349,7 @@
     z-index: 1;
 }
 
-.scanline {
+.dkv-library__scanline {
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 255, 0.03) 50%);

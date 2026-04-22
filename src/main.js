@@ -439,6 +439,8 @@ class DigitalKulturaVerseny {
 
   /**
    * 80 perces energiacsík visszaszámláló időzítőjének indítása és kezelése.
+   * performance.now() alapú számítás – háttérfülben is pontos, nem csalható.
+   * A setInterval kizárólag UI-frissítő szerepben működik.
    * @private
    */
   _startEnergyBarTimer() {
@@ -447,6 +449,10 @@ class DigitalKulturaVerseny {
     // Kezdőérték betöltése a StateManager-ből
     let timeLeft = this.stateManager.getState('ui.energyTimeLeft');
     if (timeLeft === undefined || timeLeft === null) timeLeft = G4_ENERGY_LIMIT;
+
+    // Referenciapont: mikor indult és mennyi volt akkor (performance.now alapú)
+    this._energyStartPerf = performance.now();
+    this._energyStartValue = timeLeft;
 
     const updateUI = (value) => {
       if (!this.energyFillHud || !this.isEnergyBarActive) return;
@@ -467,11 +473,10 @@ class DigitalKulturaVerseny {
         return;
       }
 
-      // Aktuális érték lekérése a state-ből
-      let currentLeft = this.stateManager.getState('ui.energyTimeLeft');
-      if (currentLeft === undefined || currentLeft === null) currentLeft = G4_ENERGY_LIMIT;
+      // Valós eltelt idő számítása (nem tick-alapú, háttérfülben is pontos)
+      const elapsedSec = (performance.now() - this._energyStartPerf) / 1000;
+      const newTime = Math.max(0, Math.round(this._energyStartValue - elapsedSec));
 
-      const newTime = Math.max(0, currentLeft - 1);
       this._energySaveCounter++;
 
       // Mentés logikája: 1 percenként (60 tick) perzisztálunk, egyébként csak memóriában frissítünk

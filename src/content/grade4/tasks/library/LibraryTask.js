@@ -109,8 +109,8 @@ export class LibraryTask {
         const subtitleText = `Rendszerezd a könyvtár adatait! Válaszd ki a képhez tartozó helyes metaadat leírást. A kép kattintással nagyítható.`;
 
         this.element.innerHTML = `
-            <div class="glass-panel">
-                <div class="scanline"></div>
+            <div class="dkv-library__glass-panel">
+                <div class="dkv-library__scanline"></div>
                 
                 <div class="dkv-library__header">
                     <span class="dkv-library__header-label">RENDSZERSZINTŰ KIVÉTEL // KÖNYVTÁRI PROTOKOLL</span>
@@ -136,9 +136,9 @@ export class LibraryTask {
                     <div class="dkv-library__stage-tracker">
                         <span>METAADAT CIKLUS:</span>
                         <div class="dkv-library__stage-dots">
-                            ${Array(this.taskCount).fill('<div class="stage-dot"></div>').join('')}
+                            ${Array(this.taskCount).fill('<div class="dkv-library__stage-dot"></div>').join('')}
                         </div>
-                        <span class="stage-text">1/${this.taskCount}</span>
+                        <span class="dkv-library__stage-text">1/${this.taskCount}</span>
                     </div>
                     <div class="dkv-library__content-wrapper">
                         <div class="dkv-library__image-container">
@@ -152,8 +152,8 @@ export class LibraryTask {
 
                 <div class="dkv-library__footer">
                     <div class="dkv-library__system-status">
-                        <div><span class="status-dot status-dot--green"></span> NEURÁLIS KAPCSOLAT: AKTÍV</div>
-                        <div><span class="status-dot status-dot--magenta" style="background: #ff51fa; animation: pulse 1s infinite;"></span> KÖNYVTÁR ANALÍZIS: <span class="phase-label">FOLYAMATBAN</span></div>
+                        <div><span class="dkv-library__status-dot dkv-library__status-dot--green"></span> NEURÁLIS KAPCSOLAT: AKTÍV</div>
+                        <div><span class="dkv-library__status-dot dkv-library__status-dot--magenta" style="background: #ff51fa; animation: pulse 1s infinite;"></span> KÖNYVTÁR ANALÍZIS: <span class="dkv-library__phase-label">FOLYAMATBAN</span></div>
                     </div>
                     <button class="dkv-library__execute-btn" disabled>TOVÁBB</button>
                 </div>
@@ -172,8 +172,8 @@ export class LibraryTask {
             this.showLightbox(round.image);
         });
         this.executeBtn = this.element.querySelector('.dkv-library__execute-btn');
-        this.stageDots = this.element.querySelectorAll('.stage-dot');
-        this.stageText = this.element.querySelector('.stage-text');
+        this.stageDots = this.element.querySelectorAll('.dkv-library__stage-dot');
+        this.stageText = this.element.querySelector('.dkv-library__stage-text');
 
         const titleEl = this.element.querySelector('.dkv-library__title');
         const subtitleEl = this.element.querySelector('.dkv-library__subtitle');
@@ -249,6 +249,10 @@ export class LibraryTask {
             return;
         }
 
+        // Előző kör timeout-jainak tisztítása (memóriavédelem)
+        this.timeouts.forEach(t => clearTimeout(t));
+        this.timeouts = [];
+
         // Viewport megjelenítése az első körnél
         if (this.currentIndex === 0) {
             this.logger.info('Starting first round, making viewport visible');
@@ -267,25 +271,49 @@ export class LibraryTask {
 
         const round = this.rounds[this.currentIndex];
 
-        // UI frissítése képletöltés védelemmel (Cache-biztos)
+        // UI frissítése – kezdőállapot (rejtett, kicsinyített)
         this.imageEl.style.transition = 'none';
         this.imageEl.style.opacity = '0';
         this.imageEl.style.transform = 'scale(0.95)';
 
-        // Kényszerített renderelés a DOM-ban a kezdőállapothoz
+        // Kényszerített reflow a DOM-ban a kezdőállapothoz
         void this.imageEl.offsetWidth;
 
-        this.imageEl.onload = () => {
+        // Közös reveal függvény – akár onload, akár cache, akár fallback hívja
+        let imageRevealed = false;
+        const revealImage = () => {
+            if (imageRevealed || !this.element) return;
+            imageRevealed = true;
             this.imageEl.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
             this.imageEl.style.opacity = '1';
             this.imageEl.style.transform = 'scale(1)';
         };
 
-        // Ráhegesztjük a requestAnimationFrame-re, hogy gyors internet (Cache) 
-        // esetén is érvényesüljön a 0 opacity fázis.
-        requestAnimationFrame(() => {
-            this.imageEl.src = round.image;
-        });
+        // 1. Onload handler regisztrálása SRC beállítás ELŐTT
+        this.imageEl.onload = revealImage;
+
+        // 2. Onerror handler – project-context.md: No Floating Promises + Robustness
+        this.imageEl.onerror = () => {
+            this.logger.error('Image load failed', { src: round.image });
+            revealImage();
+        };
+
+        // 3. SRC beállítása
+        this.imageEl.src = round.image;
+
+        // 4. Cache-ellenőrzés – ha a böngésző azonnal betöltötte, onload nem tüzel
+        if (this.imageEl.complete && this.imageEl.naturalWidth > 0) {
+            revealImage();
+        }
+
+        // 5. Biztonsági fallback időzítő – ha sem onload, sem complete nem tüzelt 3mp-en belül
+        const imgFallbackTimeout = setTimeout(() => {
+            if (!imageRevealed) {
+                this.logger.warn('Image reveal fallback triggered', { src: round.image });
+                revealImage();
+            }
+        }, 3000);
+        this.timeouts.push(imgFallbackTimeout);
 
         this.updateStageTracker();
         this.renderCards(round.options, round.categoryName);
@@ -462,6 +490,14 @@ export class LibraryTask {
                 </div>
             </div>
         `;
+
+        // Onerror handler – project-context.md: Robustness
+        const lightboxImg = overlay.querySelector('.dkv-library__lightbox-image');
+        if (lightboxImg) {
+            lightboxImg.onerror = () => {
+                this.logger.error('Lightbox image load failed', { src: imageSrc });
+            };
+        }
 
         document.body.appendChild(overlay);
 
