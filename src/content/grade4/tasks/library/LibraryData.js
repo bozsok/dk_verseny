@@ -15,9 +15,9 @@ export const LIBRARY_DATA = [
         name: 'Központi Szerver',
         image: 'assets/images/grade4/library/server.jpg',
         metadata: {
-            technical: 'A birodalom szívét jelentő Z-8000 modellszámú egység, amely a legmagasabb szintű számítási kapacitással rendelkezik a szektorban.',
+            technical: 'A birodalom szívét jelentő Z8000 modellszámú egység, amely a legmagasabb szintű számítási kapacitással rendelkezik a szektorban.',
             functional: 'Ez az egység felel az összes beérkező adatfolyam feldolgozásáért, biztosítva a Királyság algoritmusainak folyamatos lüktetését.',
-            logical: 'A rendszermag diagnosztikája szerint az egység állapota jelenleg túlterhelt, a Zéró-szekvencia támadása miatt a processzorok izzanak a vörös fényben.'
+            logical: 'A rendszermag diagnosztikája szerint az egység állapota jelenleg túlterhelt, a Zéró-szekvencia támadása miatt a vezérlő egységek izzanak a vörös fényben.'
         }
     },
     {
@@ -35,9 +35,9 @@ export const LIBRARY_DATA = [
         name: 'WiFi Jel',
         image: 'assets/images/grade4/library/wifi.jpg',
         metadata: {
-            technical: 'A levegőben vibráló adatátvitel 5 GHz-es frekvencián sugároz, bár a zavart szektorokban ez néha 2.4 GHz-re esik vissza.',
+            technical: 'A levegőben vibráló adatátvitel 5 GHz-es frekvencián sugároz, bár a zavart szektorokban ez 2.4 GHz-re esett vissza.',
             functional: 'Ez a láthatatlan híd teszi lehetővé a vezeték nélküli csatlakozást a hálózathoz, összekötve a távoli egységeket a központtal.',
-            logical: 'A kapcsolat bizonytalanná vált, a jelerősség mindössze 2/5 csík, ahogy a Zéró-szekvencia köde elnyeli a hullámokat.'
+            logical: 'A kapcsolat bizonytalanná vált, a jelerősség mindössze néhány csík, ahogy a Zéró-szekvencia köde elnyeli a hullámokat.'
         }
     },
     {
@@ -46,7 +46,7 @@ export const LIBRARY_DATA = [
         image: 'assets/images/grade4/library/broken_file.jpg',
         metadata: {
             technical: 'Az állomány azonosíthatatlan, a formátuma ismeretlenné vált a bináris szintű roncsolódás következtében.',
-            functional: 'Minden kísérlet a fájl megnyitására sikertelen, a rendszer csak hibaüzeneteket küld a Puffer egységekbe.',
+            functional: 'Minden kísérlet a fájl megnyitására sikertelen, a rendszer csak hibaüzeneteket küld a puffer egységekbe.',
             logical: 'A helyreállítási kísérlet megakadt, a diagnosztika szerint súlyos CRC-ellenőrzési hiba lépett fel az adatstruktúrában.'
         }
     },
@@ -67,7 +67,7 @@ export const LIBRARY_DATA = [
         metadata: {
             technical: 'Egy apró, de robusztus hordozható egység, amely a legújabb USB-C porton keresztül csatlakozik a terminálokhoz.',
             functional: 'Kritikus szerepet tölt be a hordozható adattárolásban, amikor a vezetékes hálózatok már nem megbízhatóak.',
-            logical: 'Az adattranszfer befejeződött, a biztonságos eltávolítás engedélyezve, indulhatsz a következő veszélyes zónába.'
+            logical: 'Az adattranszfer befejeződött, a biztonságos eltávolítás engedélyezve, a hordozható egység lecsatlakoztatható.'
         }
     },
     {
@@ -77,7 +77,7 @@ export const LIBRARY_DATA = [
         metadata: {
             technical: 'Az adatutak kereszteződésében álló eszköz, címe a hálózaton: 192.168.1.1.',
             functional: 'Feladata a száguldó adatcsomagok irányítása, hogy minden szkriptrészlet a megfelelő célállomásra érkezzen.',
-            logical: 'A hálózati térképen jelenleg 4 kapcsolódott eszköz látszik, amelyek kétségbeesetten próbálnak kommunikálni a központtal.'
+            logical: 'A hálózati térképen jelenleg 5 kapcsolódott eszköz látszik, amelyek kétségbeesetten próbálnak kommunikálni a központtal.'
         }
     },
     {
@@ -117,7 +117,7 @@ export const LIBRARY_DATA = [
         metadata: {
             technical: 'A vizuális megfigyelő egység, amely 1080p felbontásban pásztázza a virtuális folyosókat.',
             functional: 'Elsődlegesen a valós idejű videó streamelésére használjuk, hogy lássuk a pusztítás mértékét.',
-            logical: 'A lencse előtt vörös fény villog, a biztonsági adatvédelem aktív, meggátolva a jogosulatlan betekintést.'
+            logical: 'A lencse mellett vörös fény villog, a biztonsági adatvédelem aktív, meggátolva a jogosulatlan betekintést.'
         }
     },
     {
@@ -125,8 +125,8 @@ export const LIBRARY_DATA = [
         name: 'Mikrofon',
         image: 'assets/images/grade4/library/microphone.jpg',
         metadata: {
-            technical: 'A hangérzékelő modul, amely egy klasszikus 3.5 mm-es Jack csatlakozóval kapcsolódik a kommunikációs porthoz.',
-            functional: 'Az analóg rezgések hangrögzítéséért felel, digitális jellé alakítva a segélykéréseket.',
+            technical: 'A hangérzékelő modul, amely klasszikus mikrofon csatlakozóval kapcsolódik a kommunikációs porthoz.',
+            functional: 'Az analóg hanghullámok rögzítéséért felel, digitális jellé alakítva a segélykéréseket.',
             logical: 'A rendszerben csend honol, az egység állapota némítva, nehogy a Zéró-szekvencia észlelje a jelenlétedet.'
         }
     },

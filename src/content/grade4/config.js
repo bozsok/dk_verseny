@@ -50,7 +50,7 @@ const NARRATIVE_DATA = {
     },
     DIA_6: {
         title: 'A Zéró-szekvencia felemelkedése',
-        text: 'A terminálok mindegyikén egyszerre szólal meg egy vészjósló, digitálisan torzított hang: "Zéró-szekvencia vagyok! Célom a teljes rendszermag felülírása, a Királyság örök sötétségbe borítása." Ő a legveszélyesebb, romboló entitás, akit valaha a hálózat szült, és most ellopta a Rejtett Frissítést. Könyörtelen precizitással darabolta szét a kódot, és a darabkáit az öt legveszélyesebb zónába rejtette el. Megállítása szinte lehetetlennek tűnik.'
+        text: 'A terminálok mindegyikén egyforma kép jelenik meg és egyszerre szólal meg egy vészjósló, digitálisan torzított hang: "Zéró-szekvencia vagyok! Célom a teljes rendszermag felülírása, a Királyság örök sötétségbe borítása." Ő a legveszélyesebb, romboló entitás, akit valaha a hálózat szült, és most ellopta a Rejtett Frissítést. Könyörtelen precizitással darabolta szét a kódot, és a darabkáit az öt legveszélyesebb zónába rejtette el. Megállítása szinte lehetetlennek tűnik.'
     },
     DIA_7: {
         title: 'A Küldetés megkezdése',
