@@ -189,6 +189,47 @@ export default defineConfig({
           }
         });
       }
+    },
+    // Island Assets API (Development only) - Kilistázza a public/assets/images/grade4/island mappák tartalmát
+    {
+      name: 'island-assets-api',
+      configureServer(server) {
+        const fs = require('fs');
+        const path = require('path');
+
+        server.middlewares.use((req, res, next) => {
+          if (req.url !== '/__api/island-assets') return next();
+
+          if (req.method === 'GET') {
+            try {
+              const islandPath = path.resolve(__dirname, 'public/assets/images/grade4/island');
+              const categories = ['rune', 'crystal', 'core'];
+              const manifest = { rune: [], crystal: [], core: [] };
+
+              categories.forEach(cat => {
+                const catPath = path.join(islandPath, cat);
+                if (fs.existsSync(catPath)) {
+                  const files = fs.readdirSync(catPath);
+                  manifest[cat] = files
+                    .filter(f => f.endsWith('.png'))
+                    .map(f => f.replace('.png', ''))
+                    .sort();
+                }
+              });
+
+              console.log(`[Island Assets API] Scanned ${islandPath}. Found:`, manifest);
+
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify(manifest));
+            } catch (err) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: err.message }));
+            }
+          } else {
+            next();
+          }
+        });
+      }
     }
   ],
 

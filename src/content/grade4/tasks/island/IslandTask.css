@@ -66,6 +66,7 @@
     margin: 1.5rem 0;
     line-height: 1.6;
     max-width: 850px;
+    min-height: 3.2em; /* Fix magasság az ugrálás ellen */
 }
 
 /* Fő viewport - Üres sötét élettér */
@@ -73,10 +74,292 @@
     flex: 1;
     margin: 0;
     border: 1px solid rgba(114, 118, 123, 0.3);
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.8);
     position: relative;
-    overflow: visible;
+    overflow: hidden; /* Szalaghoz és zavaráshoz muszáj */
+    cursor: crosshair;
 }
+
+/* TELEMETRIA SÁVOK */
+.dkv-island__telemetry {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 24px;
+    background: transparent; /* Nincs külön háttér, hogy belesimuljon */
+    color: var(--isl-cyan);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    line-height: 24px;
+    white-space: nowrap;
+    overflow: hidden;
+    z-index: 10;
+    pointer-events: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-top: 1px solid rgba(0, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 255, 255, 0.05);
+}
+
+.dkv-island__telemetry--top {
+    top: 12px; /* Közelebb hozzuk a rúnákhoz */
+}
+
+.dkv-island__telemetry--bottom {
+    bottom: 12px; /* Közelebb hozzuk a rúnákhoz */
+}
+
+.dkv-island__telemetry .marquee,
+.dkv-island__telemetry .marquee-reverse {
+    display: flex;
+    width: max-content;
+}
+
+.dkv-island__telemetry span {
+    padding-right: 50px;
+}
+
+.dkv-island__telemetry .marquee {
+    animation: telemetry-scroll 30s linear infinite;
+}
+
+.dkv-island__telemetry .marquee-reverse {
+    animation: telemetry-scroll-reverse 20s linear infinite;
+    color: var(--isl-magenta); /* Az alsó sáv legyen kicsit más színű alapból */
+}
+
+@keyframes telemetry-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+@keyframes telemetry-scroll-reverse {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+}
+
+.dkv-island__rune-belt {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    height: 400px;
+    width: 10000px; /* Bőven elég nagyra állítjuk */
+    pointer-events: none;
+}
+
+.dkv-island__rune {
+    position: absolute;
+    width: 380px; /* 3x körüli méret (160 -> 380) */
+    height: 380px;
+    background: rgba(0, 255, 255, 0.03);
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s, background 0.3s; /* Transform transition törölve, hogy ne árulja el az anomáliát forgatással */
+    cursor: pointer;
+    pointer-events: auto;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+.dkv-island__rune:hover {
+    border-color: var(--isl-cyan);
+    background: rgba(0, 255, 255, 0.1);
+}
+
+.dkv-island__rune.selected {
+    border-color: var(--isl-cyan);
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+.dkv-island__rune img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.4));
+}
+
+/* Visszajelzés stílusok (Task 2 mintájára) */
+.dkv-island__rune.correct {
+    border-color: #00ff00 !important;
+    background: rgba(0, 255, 0, 0.15) !important;
+    box-shadow: 0 0 40px rgba(0, 255, 0, 0.5) !important;
+}
+
+.dkv-island__rune.correct::after {
+    content: 'A CÉL EGYEZIK';
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    color: #00ff00;
+    font-weight: bold;
+    text-shadow: 0 0 10px #000;
+    z-index: 10;
+}
+
+.dkv-island__rune.incorrect {
+    border-color: #ff0000 !important;
+    background: rgba(255, 0, 0, 0.15) !important;
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.5) !important;
+}
+
+.dkv-island__rune.incorrect::after {
+    content: 'A CÉL NEM EGYEZIK';
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    color: #ff0000;
+    font-weight: bold;
+    text-shadow: 0 0 10px #000;
+    z-index: 10;
+}
+
+/* Kis pulzáló zöld pötty a helyes rúnán, ha elrontották */
+.dkv-island__rune.actual-correct::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    background: #00ff00;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff00;
+    animation: pulse-dot 1s infinite;
+    z-index: 20;
+}
+
+@keyframes pulse-dot {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* --- INTERFERENCIA RÉTEG --- */
+.dkv-island__interference-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.dkv-island__particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--isl-cyan);
+    border-radius: 50%;
+    opacity: 0.6;
+    box-shadow: 0 0 4px var(--isl-cyan);
+}
+
+.dkv-island__glitch-box {
+    position: absolute;
+    background: rgba(0, 255, 255, 0.15);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    pointer-events: none;
+}
+
+/* --- STAGE TRACKER --- */
+.dkv-island__stage-tracker {
+    position: absolute;
+    top: -45px;
+    right: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: rgba(0, 234, 255, 0.7);
+    z-index: 10;
+}
+
+.dkv-island__stage-label {
+    letter-spacing: 2px;
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+.dkv-island__stage-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.dkv-island__stage-dots .stage-dot {
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    background: rgba(0, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    border-radius: 0; /* Brutalist 0px radius */
+}
+
+.dkv-island__stage-dots .stage-dot.active {
+    background: var(--isl-cyan);
+    box-shadow: 0 0 10px var(--isl-cyan);
+    border-color: var(--isl-cyan);
+    transform: scale(1.2);
+}
+
+.dkv-island__stage-dots .stage-dot.completed {
+    background: rgba(0, 255, 255, 0.4);
+    border-color: var(--isl-cyan);
+}
+
+.dkv-island__stage-text {
+    font-weight: bold;
+    color: var(--isl-cyan);
+    min-width: 35px;
+    text-align: right;
+}
+
+/* Animációk */
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes island-glitch-vibrate {
+    0% { transform: translate(0); }
+    20% { transform: translate(-5px, 5px); }
+    40% { transform: translate(-5px, -5px); }
+    60% { transform: translate(5px, 5px); }
+    80% { transform: translate(5px, -5px); }
+    100% { transform: translate(0); }
+}
+
+.dkv-island__main-viewport.shake {
+    animation: island-glitch-vibrate 0.3s linear infinite;
+    filter: brightness(2) contrast(3) saturate(0);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.dkv-island__main-viewport.shake::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 255, 255, 0.1);
+    z-index: 100;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
 
 /* Footer szakasz */
 .dkv-island__footer {

@@ -250,11 +250,9 @@ export class MemoryTask {
                     <div class="dkv-memory__stage-tracker">
                         <span>ADAT CIKLUS:</span>
                         <div class="dkv-memory__stage-dots">
-                            <div class="stage-dot"></div>
-                            <div class="stage-dot"></div>
-                            <div class="stage-dot"></div>
+                            ${this.renderStageDots()}
                         </div>
-                        <span class="stage-text">1/3</span>
+                        <span class="stage-text">1/${this.maxStages}</span>
                     </div>
                     <div class="dkv-memory__grid-overlay"></div>
                     <div class="dkv-memory__objects-layer"></div>
@@ -311,6 +309,10 @@ export class MemoryTask {
     nextStage() {
         if (this.isProcessing) return;
         this.isProcessing = true;
+
+        // Rule 105: Időzítők takarítása körváltáskor a memóriaszivárgás ellen
+        this.timeouts.forEach(clearTimeout);
+        this.timeouts = [];
 
         // 1. Vizsgálat / Kiértékelés fázis
         this.executeBtn.disabled = true;
@@ -477,12 +479,36 @@ export class MemoryTask {
         }
 
         // Stage indikátor frissítése
-        const dots = this.element.querySelectorAll('.stage-dot');
-        dots.forEach((dot, idx) => {
-            if (idx < this.currentStage) dot.classList.add('active');
-            else dot.classList.remove('active');
-        });
+        this.updateStageDots();
         this.element.querySelector('.stage-text').textContent = `${this.currentStage}/${this.maxStages}`;
+    }
+
+    /**
+     * Stage indikátor pöttyök generálása.
+     */
+    renderStageDots() {
+        let dotsHtml = '';
+        for (let i = 1; i <= this.maxStages; i++) {
+            dotsHtml += `<div class="dkv-memory__stage-dot" data-stage="${i}"></div>`;
+        }
+        return dotsHtml;
+    }
+
+    /**
+     * Stage indikátor pöttyök állapotának frissítése (Egységes vizualizáció).
+     */
+    updateStageDots() {
+        const dots = this.element.querySelectorAll('.dkv-memory__stage-dot');
+        dots.forEach((dot, idx) => {
+            const stageNum = idx + 1;
+            dot.classList.remove('active', 'completed');
+
+            if (stageNum === this.currentStage) {
+                dot.classList.add('active');
+            } else if (stageNum < this.currentStage) {
+                dot.classList.add('completed');
+            }
+        });
     }
 
     /**

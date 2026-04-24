@@ -637,11 +637,11 @@
     }
 }
 
-/* Adat Ciklus Indikátor */
+/* Adat Ciklus Indikátor - PONTOS MÁSOLAT A STATION 4-BŐL */
 .dkv-memory__stage-tracker {
     position: absolute;
-    top: -38px;
-    right: 1.5rem; /* Eltartás a jobb széltől */
+    top: -45px;
+    right: 1.5rem;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -649,24 +649,36 @@
     font-size: 0.85rem;
     color: rgba(0, 234, 255, 0.7);
     z-index: 10;
+    text-transform: uppercase;
 }
 
 .dkv-memory__stage-dots {
     display: flex;
-    gap: 5px;
+    gap: 6px;
+    align-items: center;
 }
 
-.stage-dot {
-    width: 12px;
-    height: 12px;
-    border: 1px solid var(--memory-cyan);
-    background: transparent;
+.dkv-memory__stage-dot {
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    background: rgba(0, 255, 255, 0.05);
     transition: all 0.3s ease;
+    border-radius: 0;
 }
 
-.stage-dot.active {
+.dkv-memory__stage-dot.active {
     background: var(--memory-cyan);
     box-shadow: 0 0 10px var(--memory-cyan);
+    border-color: var(--memory-cyan);
+    transform: scale(1.2);
+    z-index: 2;
+}
+
+.dkv-memory__stage-dot.completed {
+    background: rgba(0, 255, 255, 0.4);
+    border-color: var(--memory-cyan);
+    transform: scale(0.9);
 }
 
 /* Glitch Effekt a váltáshoz */

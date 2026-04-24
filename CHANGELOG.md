@@ -5,7 +5,30 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
-## [0.32.4] - 2026-04-22
+## [0.32.5] - 2026-04-23
+
+### Hozzáadva
+- **Anomáliák Szigete (Station 4) teljes implementációja**: A 4-es állomás feladatának (`IslandTask`) véglegesítése mindhárom felsős évfolyam számára (Grade 4: 1 sáv, Grade 5: 2 sáv ellentétes irányban, Grade 6: 3 sáv váltott irányban). Tartalmazza a dinamikus rúnarendszert, a 10 körös nehézségi skálázást (10mp -> 4mp) és a komplex vizuális visszajelzéseket.
+- **Dinamikus Rotációs Nehezítés**: Adaptív rotációs rendszer: a 4-8. körben kezdeti anomália-forgatás, az 5-10. körökben pedig periodikus (6mp/4mp/3mp) globális elforgatás a nehézség fokozásához.
+- **Vite Asset-pásztázó API**: Bevezettük a `vite.config.js`-be integrált `island-assets-api`-t, amely a fejlesztői szerver szintjén (Node.js) listázza ki a `public` mappában lévő képeket. Ez szükségtelenné teszi a manuális manifest fájlok karbantartását.
+- **Rendszer-telemetria és Diagnosztika**: Kétirányú, zavaró technikai adatsávok (Marquee) bevezetése magyar nyelvű feliratokkal. Dinamikus tartalomváltás kategóriánként (Rúna/Kristály/Mag) és valós idejű "Anomália Detektor" (X/Y koordináták és hibakódok).
+- **"Zéró-szekvencia" vizuális zaj**: Új "neurotikus" glitch-rendszer, amely véletlenszerű rángatózással (jitter), vörös/zöld szín-glitchekkel és vibráló áttetszőséggel nehezíti a feladat megoldását.
+
+### Javítva
+- **IslandTask – Asset betöltési hibák**: Megszüntettük a hiányzó sorszámok (pl. 01.png, 02.png) miatti 404-es hibákat az új szerveroldali pásztázó API és a robusztusabb ujjlenyomat-ellenőrző (magic bytes) fallback kombinációjával.
+- **IslandTask – Végtelenített görgetés**: A telemetria sávok "kifogyását" egy hatszoros ismétlésű, zökkenőmentes (seamless loop) CSS/JS megoldással orvosoltuk.
+- **IslandTask – Felirat forgatási hiba**: A "A CÉL EGYEZIK" visszajelző szöveg mostantól mindig függőleges marad, függetlenül attól, hogy a mögötte lévő rúna el van-e forgatva (a forgatás csak a belső képre vonatkozik).
+- **IslandTask – Állandó zaj**: A zavaró effektek (jitter, villogás) mostantól a kiértékelési fázis alatt sem állnak le, megőrizve a technikai feszültséget a körök között.
+- **IslandTask – Vizuális visszajelzés finomítása**: A hiba esetén megjelenő kettős zöld/piros villogást a 3. állomás (LibraryTask) diszkrét, pulzáló pöttyös módszerére cseréltük.
+- **IslandTask – Állapotkezelési hiba**: Implementáltuk a `resetRoundState` logikát, amely minden kör elején fizikai DOM-takarítást és állapot-resetet végez, így nem maradhatnak kint korábbi hibaüzenetek az új rúnákon.
+- **IslandTask – Csalás elleni védelem**: Eltávolítottuk a rúnákról a `transform` transition-t, így a 4. fázisban az anomália rúnája nem árulja el magát elforgatási animációval a generálás pillanatában.
+- **MemoryTask (Station 2) – Rule 105 szabálykövetés**: Bevezettük a ciklusok közötti időzítő-takarítást a memóriaszivárgás megelőzése érdekében, teljes összhangban a projekt technikai előírásaival.
+
+### Módosítva
+- **IslandTask – UI/UX szinkronizáció**: A feladat kezelőfelülete teljesen illeszkedik a 3-as állomáshoz (Station 3): statikus fejléc feliratok, pötty-alapú stage tracker, "ELLENŐRZÉS" gombfelirat és egységesített brutalista design.
+- **MemoryTask (Station 2) szinkronizáció**: A ciklusszámláló (stage-tracker) stílusait hajszálpontosan a 4. állomás értékeihez igazítottuk (10px méret, 6px gap, specifikus rgba színek), biztosítva a teljes konzisztenciát.
+
+ ## [0.32.4] - 2026-04-22
 
 ### Javítva
 - **LibraryTask (Station 3) – Kritikus viewport-befagyás**: Megszüntettük azt a race condition hibát, amely miatt a feladat képe és a metaadat kártyák sosem váltak teljesen láthatóvá és kattinthatóvá. A gyökér ok a kép `onload` handler és a böngésző cache-elési mechanizmusa közötti versenyhelyzet volt: ha a kép a cache-ből azonnal betöltődött, az `onload` callback nem tüzelt, az inline `opacity: 0` beragadt, és a `pointer-events` blokkolva maradt.

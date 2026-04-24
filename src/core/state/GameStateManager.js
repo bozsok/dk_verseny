@@ -420,7 +420,14 @@ class GameStateManager {
       const parsedState = SecureStorage.getItem('digitális-kultúra-verseny-state');
 
       if (parsedState) {
-        this.state = { ...this.getInitialState(), ...parsedState };
+        const initialState = this.getInitialState();
+        this.state = { ...initialState, ...parsedState };
+        
+        // Kényszerített visszazárás 5-6 számára (ha a mentett állásban nyitva maradtak volna)
+        if (this.state.grades) {
+          if (this.state.grades[5]) this.state.grades[5].unlocked = false;
+          if (this.state.grades[6]) this.state.grades[6].unlocked = false;
+        }
 
         if (this.logger) {
           this.logger.info('State loaded and decrypted from storage', {
@@ -428,6 +435,13 @@ class GameStateManager {
             currentGrade: this.state.currentGrade
           });
         }
+
+        // Értesítjük a figyelőket
+        this.notifyListeners('state:updated', {
+          state: this.state,
+          updates: parsedState
+        });
+
         return true;
       }
     } catch (error) {
