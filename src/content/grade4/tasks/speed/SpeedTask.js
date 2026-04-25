@@ -411,6 +411,14 @@ export class SpeedTask {
         const idx = this.currentSection - 1;
         const section = this.sections[idx];
 
+        // Vizuális glitch-ek globális takarítása (ha az előző kör végén beragadt volna valami)
+        if (this.element) {
+            const glitched = this.element.querySelectorAll('.dkv-speed__bar-wrapper--ai-glitch, .dkv-speed__main-viewport--glitch');
+            glitched.forEach(el => {
+                el.classList.remove('dkv-speed__bar-wrapper--ai-glitch', 'dkv-speed__main-viewport--glitch');
+            });
+        }
+
         // Adatok resetelése
         section.opClicks = 0;
         section.aiClicks = 0;
@@ -418,6 +426,7 @@ export class SpeedTask {
         section.aiPercent = 0;
 
         this.roundState = ROUND_STATE.ACTIVE;
+        this.aiIsFrozen = false; // BIZTONSÁGI RESET: Biztosítjuk, hogy az AI ne maradjon fagyasztva az előző menetből
         this.roundStartTime = performance.now();
 
         // Kattintó gomb és Csapás gyűrű engedélyezése
@@ -895,7 +904,7 @@ export class SpeedTask {
             bodyEl.innerHTML = `
                 <!-- OPERATOR bar -->
                 <div class="dkv-speed__bar-wrapper">
-                    <span class="dkv-speed__bar-label dkv-speed__bar-label--op">OPERATOR</span>
+                    <span class="dkv-speed__bar-label dkv-speed__bar-label--op">${this.userNickname}</span>
                     <div class="dkv-speed__cpm dkv-speed__cpm--op">CPM: 0</div>
                     <div class="dkv-speed__bar-track">
                         <div class="dkv-speed__bar-fill dkv-speed__bar-fill--op"><div class="dkv-speed__bar-glow"></div></div>
@@ -928,7 +937,7 @@ export class SpeedTask {
 
                 <!-- CORE_AI bar -->
                 <div class="dkv-speed__bar-wrapper">
-                    <span class="dkv-speed__bar-label dkv-speed__bar-label--ai">CORE_AI</span>
+                    <span class="dkv-speed__bar-label dkv-speed__bar-label--ai">ZÉRÓ-SZEKVENCIA</span>
                     <div class="dkv-speed__cpm dkv-speed__cpm--ai">CPM: 0</div>
                     <div class="dkv-speed__bar-track dkv-speed__bar-track--ai">
                         <div class="dkv-speed__bar-fill dkv-speed__bar-fill--ai"><div class="dkv-speed__bar-glow"></div></div>

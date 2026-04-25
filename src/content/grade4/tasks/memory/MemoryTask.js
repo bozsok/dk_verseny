@@ -440,7 +440,7 @@ export class MemoryTask {
                 });
             }
         } else if (this.phase === PHASES.ANALYSIS) {
-            subtitleText = `Most vedd észre, hogy pár kép eltűnik a terminál kijelzőjéről. Kattints a TOVÁBB gombra ahhoz, hogy megadd a hiányzó képeket!.`;
+            subtitleText = `Most vedd észre, hogy pár kép eltűnik a terminál kijelzőjéről. Kattints a TOVÁBB gombra a hiányzó képek megadásához!`;
             phaseStatus = `ELLENŐRZÉS`;
 
             subtitleEl.innerHTML = '';

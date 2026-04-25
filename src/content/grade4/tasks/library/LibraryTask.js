@@ -105,7 +105,7 @@ export class LibraryTask {
         this.element = document.createElement('div');
         this.element.className = 'dkv-library-container';
 
-        const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--lib-cyan);">LOGIKAI KÖNYVTÁR INICIALIZÁLVA</span>`;
+        const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--lib-cyan);">ADATBÁZIS-INDEX HELYREÁLLÍTÁS</span>`;
         const subtitleText = `Rendszerezd a könyvtár adatait! Válaszd ki a képhez tartozó helyes metaadat leírást. A kép kattintással nagyítható.`;
 
         this.element.innerHTML = `
@@ -231,7 +231,7 @@ export class LibraryTask {
         const titleEl = this.element.querySelector('.dkv-library__title');
         const subtitleEl = this.element.querySelector('.dkv-library__subtitle');
 
-        const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--lib-cyan);">LOGIKAI KÖNYVTÁR INICIALIZÁLVA</span>`;
+        const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--lib-cyan);">ADATBÁZIS-INDEX HELYREÁLLÍTÁS</span>`;
         const subtitleText = `Rendszerezd a könyvtár adatait! Válaszd ki a képhez tartozó helyes metaadat leírást. A kép kattintással nagyítható.`;
 
         if (titleEl) titleEl.innerHTML = titleText;
