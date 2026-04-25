@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.32.4 (v0.32.4)
+- **Version:** 0.32.6 (v0.32.6)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
-- **Last Updated:** 2026-04-22
-- **Current Mission:** Grade 4 Quantum Terminal Task Finalization & Logic Repair (Complete)
+- **Last Updated:** 2026-04-24
+- **Current Mission:** Grade 4 Bit-folyam Zsilip (SpeedTask) Finalization & Audit (Complete)
 
 ### Completed Milestones
 - [x] Grade 4: All stations (1-5) visual and functional unification (v0.32.2)
@@ -150,3 +150,4 @@ optimized_for_llm: true
 - [x] Grade 4: LibraryTask race condition & cache safety fix (v0.32.4)
 - [x] Grade 4: Energy bar timing accuracy (performance.now) (v0.32.4)
 - [x] Grade 4: BEM naming compliance across all task modules (v0.32.4)
+- [x] Grade 4: SpeedTask GC safety, BEM compliance, and timer accuracy (v0.32.6)

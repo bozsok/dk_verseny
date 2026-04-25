@@ -5,6 +5,31 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.32.7] - 2026-04-25
+
+### Hozzáadva
+- **SpeedTask: Jobb egérgombos elsütés**: Bevezettük a "Csapás" (Strike) elsütésének lehetőségét jobb egérgombbal is a középső korongon és a külső gyűrűn egyaránt. A funkció zavartalan használata érdekében az érintett elemeken letiltásra került az alapértelmezett böngésző-kontextusmenü.
+- **Dinamikus állapotjelző feliratok**: A gomb alatti felirat immár követi a töltési folyamatot: a menet elején "KATTINTÁS", az első interakció után "TÖLTÉS...", 100%-os energetizálásnál pedig "FELTÖLTVE" állapotba vált. A csapás elsütése után a felirat visszaugrik "KATTINTÁS" állapotba az újratöltés megkezdéséig.
+
+### Javítva
+- **Vizuális egység és hézagmentesség**: A START gomb belső korongját és keretét radikálisan átdolgoztuk: a belső rész immár 100%-os kitöltést kapott, megszüntetve a korábbi sötét hézagot. A gomb és a csapás gyűrű méretét összehangoltuk (80px/86px), így a gyűrű pontosan a gomb szélére illeszkedik, egységesebb vizuális élményt nyújtva.
+- **Személyre szabott narratív elemek**: Az "OPERATOR" technikai megnevezést a program immár a versenyző onboarding során megadott becenevére cseréli a StateManager-ből lekérve. A "CORE_AI" ellenfél-azonosítót a történetbe illeszkedő "ZÉRÓ-SZEKVENCIA" elnevezésre módosítottuk minden felületen.
+- **Tipográfiai finomítás**: A START gomb feliratának betűméretét 18px-re optimalizáltuk, biztosítva a kényelmes margót a kisebb méretűre szabott korongban.
+
+## [0.32.6] - 2026-04-24
+
+### Hozzáadva
+- **4. évfolyam: Bitfolyam-zsilip (Station 5) implementálása**: A feladat (Kattintás-csata) vizuális és strukturális megvalósítása a 4. évfolyam számára, amelyben a felhasználónak három menetben (menetenként 60 másodperc alatt) kell legyőznie a mesterséges intelligencia által vezérelt ellenfelet a START gombra kattintva.
+- **Kibővített vizuális visszacsatolások**: Bevezettük a neon glitch-átmenetet a menetek között (`dkv-speed__main-viewport--glitch`), és az "Academic Prestige" stílust képviselő, magas kontrasztú, animált statisztikasort (MIN, MAX, AVG, dominancia), amely szakaszosan (`300 ms` késleltetéssel) épül fel a menetek végén.
+- **Dinamikus visszaszámláló**: A feladat indítása mostantól egy `performance.now()`-alapú precíz, 3 másodperces visszaszámlálóval történik, elkerülve a böngésző háttérfolyamatokat lassító (throttling) anomáliáit.
+
+### Javítva
+- **Szigorú BEM-architektúra kikényszerítése**: Az összes olyan stílusosztály, amely sértette a projekt BEM-névadási konvencióját (pl. `.glass-panel`, `.scanline`, `.status-dot`, `.open`), kivezetésre és átnevezésre került a megfelelő `.dkv-speed__...` előtaggal ellátott formára.
+- **Kritikus szemétgyűjtő-optimalizáció (GC)**: A `SpeedTask` 100 milliszekundumonként futó frissítési ciklusából eltávolításra kerültek a folyamatos DOM-lekérdezések (`querySelector`). A felhasználói felület referenciái immár gyorstárazva (`this.cachedUI`) frissülnek, megszüntetve a memóriaterhelést és a potenciális mikrolagokat.
+- **DOM-manipuláció optimalizációja**: A `startCountdown` folyamatos, másodpercenként tízszer meghívott, `innerHTML`-alapú felülírása lecserélésre került egy precíz, kizárólag egy meglévő csomópontot módosító `textContent`-frissítésre.
+- **Memóriaszivárgás javítása**: A felhasználói és az AI-kattintások `setTimeout`-azonosítói korábban egy közös `this.timeouts` tömbben halmozódtak fel menet közben, körönként akár több száz felesleges elemet generálva. Ezt leváltottuk önálló, önmagukat felülíró (és törlő) azonosítóreferenciákra (`this.aiTimeout`, `this.clickVisualTimeout`), és integráltuk a `destroy()` metódus takarítási folyamatába.
+- **Animációs versenyhelyzetek (race conditionök) feloldása**: Megszüntettük a "CSS/JS Animation Ownership" szabálysértést a START gombon: a lenyomott állapot (`transform: scale(0.95)`) aktiválásakor az elem belsejében lévő pulzáló `@keyframes` animáció immár felfüggesztésre kerül (`animation: none`), kiküszöbölve a vizuális prioritási konfliktust.
+
 ## [0.32.5] - 2026-04-23
 
 ### Hozzáadva
