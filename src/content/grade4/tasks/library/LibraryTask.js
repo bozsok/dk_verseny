@@ -241,6 +241,51 @@ export class LibraryTask {
     }
 
     /**
+     * Glitch effektek indítása a kártyákon.
+     */
+    triggerGlitchEffects() {
+        this.stopGlitchEffects();
+
+        const cards = this.cardsContainer?.querySelectorAll('.dkv-library__card');
+        if (!cards || cards.length === 0) return;
+
+        this.glitchInterval = setInterval(() => {
+            if (this.isProcessing) return;
+
+            // Véletlenszerűen választunk egy kártyát
+            const randomIdx = Math.floor(Math.random() * cards.length);
+            const card = cards[randomIdx];
+
+            const effectType = Math.random();
+
+            if (effectType > 0.8) {
+                // Vörös flash és szöveg jitter
+                card.classList.add('dkv-library__card--glitch-red', 'dkv-library__card--glitch-text');
+                setTimeout(() => card.classList.remove('dkv-library__card--glitch-red', 'dkv-library__card--glitch-text'), 400 + Math.random() * 400);
+            } else if (effectType > 0.6) {
+                // Csak szöveg jitter
+                card.classList.add('dkv-library__card--glitch-text');
+                setTimeout(() => card.classList.remove('dkv-library__card--glitch-text'), 300 + Math.random() * 500);
+            }
+        }, 1200);
+    }
+
+    /**
+     * Glitch effektek leállítása.
+     */
+    stopGlitchEffects() {
+        if (this.glitchInterval) {
+            clearInterval(this.glitchInterval);
+            this.glitchInterval = null;
+        }
+
+        const cards = this.cardsContainer?.querySelectorAll('.dkv-library__card');
+        cards?.forEach(card => {
+            card.classList.remove('dkv-library__card--glitch-red', 'dkv-library__card--glitch-text');
+        });
+    }
+
+    /**
      * Aktuális kör indítása.
      */
     startRound() {
@@ -250,6 +295,7 @@ export class LibraryTask {
         }
 
         // Előző kör timeout-jainak tisztítása (memóriavédelem)
+        this.stopGlitchEffects();
         this.timeouts.forEach(t => clearTimeout(t));
         this.timeouts = [];
 
@@ -360,6 +406,9 @@ export class LibraryTask {
             }, 50);
             this.timeouts.push(cardAnimTimeout);
         });
+
+        // Glitch effektek indítása
+        setTimeout(() => this.triggerGlitchEffects(), 1000);
     }
 
     /**
@@ -517,6 +566,7 @@ export class LibraryTask {
     }
 
     destroy() {
+        this.stopGlitchEffects();
         this.timeouts.forEach(t => clearTimeout(t));
         this.timeouts = [];
         this.typewriter.stop();

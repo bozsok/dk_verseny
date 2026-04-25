@@ -99,6 +99,8 @@ export class MemoryTask {
         this.isProcessing = false;
         /** @type {Typewriter} */
         this.typewriter = new Typewriter();
+        /** @type {number|null} - Véletlenszerű glitch időzítője */
+        this.glitchTimer = null;
 
         /** @type {number} - A feladat elindításának időpontja */
         this.startTime = Date.now();
@@ -241,7 +243,7 @@ export class MemoryTask {
                             <button class="dkv-memory__help-close">×</button>
                         </div>
                         <p class="dkv-memory__help-text">
-                            Nagyíts a képre és próbáld megjegyezni a nevét, vagy a kinézetét, vagy a színét. Ezek mindegyike segíthet felismerni a hiányzó képeket.
+                            Nagyíts a képre és próbáld megjegyezni a nevét, vagy a kinézetét, vagy a színét. Ezek mindegyike segíthet felismerni a hiányzó képeket. A Zéró-szekvencia itt is megpróbál összezavarni, figyelj! 
                         </p>
                     </div>
                 </div>
@@ -438,7 +440,7 @@ export class MemoryTask {
                 });
             }
         } else if (this.phase === PHASES.ANALYSIS) {
-            subtitleText = `Most vedd észre, hogy pár kép eltűnik a terminál kijelzőjéről. A képek továbbra is nagyíthatók kattintással.`;
+            subtitleText = `Most vedd észre, hogy pár kép eltűnik a terminál kijelzőjéről. Kattints a TOVÁBB gombra ahhoz, hogy megadd a hiányzó képeket!.`;
             phaseStatus = `ELLENŐRZÉS`;
 
             subtitleEl.innerHTML = '';
@@ -542,16 +544,19 @@ export class MemoryTask {
             });
 
             setTimeout(() => {
-                el.style.opacity = '1';
-                el.style.transform = 'translate(-50%, -50%) scale(1)';
+                el.classList.add('visible');
             }, 50 * Math.random());
         });
+
+        // Glitch effektek indítása
+        setTimeout(() => this.triggerGlitchEffects(), 500);
     }
 
     /**
      * Kiválasztó felület kirajzolása a 3. fázishoz.
      */
     renderSelectionUI() {
+        this.stopGlitchEffects();
         this.objectsLayer.style.opacity = '0';
         this.selectionLayer.innerHTML = '';
         this.selectionLayer.classList.add('visible');
@@ -715,11 +720,62 @@ export class MemoryTask {
         }
     }
 
+    /**
+     * Véletlenszerű glitch effektek indítása a megjelenített képeken.
+     */
+    triggerGlitchEffects() {
+        this.stopGlitchEffects();
+
+        const objects = this.objectsLayer?.querySelectorAll('.dkv-memory__object');
+        if (!objects || objects.length === 0) return;
+
+        this.glitchTimer = setInterval(() => {
+            // Véletlenszerűen választunk egy objektumot
+            const randomIdx = Math.floor(Math.random() * objects.length);
+            const obj = objects[randomIdx];
+
+            if (!obj.classList.contains('visible')) return;
+
+            const effectType = Math.random();
+
+            if (effectType > 0.8) {
+                // Intenzív remegés és RGB split
+                obj.classList.add('dkv-memory__object--glitch');
+                setTimeout(() => obj.classList.remove('dkv-memory__object--glitch'), 300 + Math.random() * 400);
+            } else if (effectType > 0.6) {
+                // Szeletelés (clip-path) glitch
+                obj.classList.add('dkv-memory__object--glitch-slice');
+                setTimeout(() => obj.classList.remove('dkv-memory__object--glitch-slice'), 150 + Math.random() * 200);
+            }
+        }, 600); // 0.6 másodpercenként próbálkozik
+    }
+
+    /**
+     * Glitch effektek leállítása.
+     */
+    stopGlitchEffects() {
+        if (this.glitchTimer) {
+            clearInterval(this.glitchTimer);
+            this.glitchTimer = null;
+        }
+
+        if (this.objectsLayer) {
+            const objects = this.objectsLayer.querySelectorAll('.dkv-memory__object');
+            objects.forEach(obj => {
+                obj.classList.remove('dkv-memory__object--glitch', 'dkv-memory__object--glitch-slice');
+            });
+        }
+    }
+
+    /**
+     * Takarítás az objektum megsemmisítésekor.
+     */
     destroy() {
+        this.stopGlitchEffects();
         // Időzítők megállítása a memóriaszivárgás ellen
         this.timeouts.forEach(t => clearTimeout(t));
         this.timeouts = [];
-        
+
         this.typewriter.stop();
         if (this.element) {
             this.element.remove();

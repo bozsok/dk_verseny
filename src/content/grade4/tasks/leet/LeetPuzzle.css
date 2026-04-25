@@ -208,6 +208,40 @@
     box-shadow: 0 0 10px var(--leet-cyan);
 }
 
+/* === GLITCH EFFECTS FOR SLOTS === */
+
+.dkv-leet__slot--glitch {
+    animation: leet-slot-border-glitch 0.3s infinite;
+}
+
+.dkv-leet__slot.dkv-leet__slot--glitch-red {
+    background: rgba(255, 0, 0, 0.4);
+    border-color: #ff0000;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+}
+
+.dkv-leet__slot.dkv-leet__slot--glitch-text input {
+    animation: leet-text-jitter 0.1s infinite;
+    color: #fff;
+    text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+}
+
+@keyframes leet-slot-border-glitch {
+    0% { border-color: var(--leet-cyan); box-shadow: 0 0 5px var(--leet-cyan); transform: translate(0); }
+    20% { border-color: var(--leet-secondary); box-shadow: 0 0 10px var(--leet-secondary); transform: translate(-1px, 1px); }
+    40% { border-color: var(--leet-cyan); box-shadow: 0 0 2px var(--leet-cyan); transform: translate(1px, -1px); }
+    60% { border-color: var(--leet-tertiary); box-shadow: 0 0 8px var(--leet-tertiary); transform: translate(-1px, -1px); }
+    80% { border-color: var(--leet-cyan); box-shadow: 0 0 12px var(--leet-cyan); transform: translate(1px, 1px); }
+    100% { border-color: var(--leet-cyan); box-shadow: 0 0 5px var(--leet-cyan); transform: translate(0); }
+}
+
+@keyframes leet-text-jitter {
+    0% { transform: translate(0); }
+    33% { transform: translate(1px, -1px); }
+    66% { transform: translate(-1px, 1px); }
+    100% { transform: translate(0); }
+}
+
 /* Footer Section */
 .dkv-leet__footer {
     padding: 2rem 3rem;

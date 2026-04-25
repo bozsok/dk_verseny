@@ -187,9 +187,9 @@
 
 /* Visszajelzés stílusok (Task 2 mintájára) */
 .dkv-island__rune.correct {
-    border-color: #00ff00 !important;
-    background: rgba(0, 255, 0, 0.15) !important;
-    box-shadow: 0 0 40px rgba(0, 255, 0, 0.5) !important;
+    border-color: #00ff00;
+    background: rgba(0, 255, 0, 0.15);
+    box-shadow: 0 0 40px rgba(0, 255, 0, 0.5);
 }
 
 .dkv-island__rune.correct::after {
@@ -208,9 +208,9 @@
 }
 
 .dkv-island__rune.incorrect {
-    border-color: #ff0000 !important;
-    background: rgba(255, 0, 0, 0.15) !important;
-    box-shadow: 0 0 40px rgba(255, 0, 0, 0.5) !important;
+    border-color: #ff0000;
+    background: rgba(255, 0, 0, 0.15);
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.5);
 }
 
 .dkv-island__rune.incorrect::after {
@@ -359,7 +359,20 @@
     mix-blend-mode: overlay;
     pointer-events: none;
 }
+.dkv-island__main-viewport.dkv-island__main-viewport--flash-red::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 0, 0, 0.3);
+    z-index: 200;
+    pointer-events: none;
+}
 
+@keyframes island-flash-red {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
 
 /* Footer szakasz */
 .dkv-island__footer {

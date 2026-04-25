@@ -16,7 +16,7 @@ export const LIBRARY_DATA = [
         image: 'assets/images/grade4/library/server.jpg',
         metadata: {
             technical: 'A birodalom szívét jelentő Z8000 modellszámú egység, amely a legmagasabb szintű számítási kapacitással rendelkezik a szektorban.',
-            functional: 'Ez az egység felel az összes beérkező adatfolyam feldolgozásáért, biztosítva a Királyság algoritmusainak folyamatos lüktetését.',
+            functional: 'Ez a szuperszámítógép felelős az összes beérkező adatfolyam feldolgozásáért, biztosítva a Királyság algoritmusainak futását.',
             logical: 'A rendszermag diagnosztikája szerint az egység állapota jelenleg túlterhelt, a Zéró-szekvencia támadása miatt a vezérlő egységek izzanak a vörös fényben.'
         }
     },
@@ -27,7 +27,7 @@ export const LIBRARY_DATA = [
         metadata: {
             technical: 'A védelmi vonalak mentén futó HTTPS protokoll, amely titkosított csatornát biztosít a belső zónák és a külvilág között.',
             functional: 'Elsődleges feladata az ismeretlen forrásból érkező fenyegetések blokkolása, megállítva a kártékony algoritmusok beszivárgását a rendszerbe.',
-            logical: 'A védelmi rácsok lezárultak, a biztonsági szintet maximumra állítottuk, hogy megvédjük a Rejtett Frissítés maradékát.'
+            logical: 'A védelem működésbe lépett, a biztonsági szintet maximumra állítottuk, hogy megóvjuk a Rejtett Frissítés maradékát.'
         }
     },
     {
@@ -46,7 +46,7 @@ export const LIBRARY_DATA = [
         image: 'assets/images/grade4/library/broken_file.jpg',
         metadata: {
             technical: 'Az állomány azonosíthatatlan, a formátuma ismeretlenné vált a bináris szintű roncsolódás következtében.',
-            functional: 'Minden kísérlet a fájl megnyitására sikertelen, a rendszer csak hibaüzeneteket küld a puffer egységekbe.',
+            functional: 'Minden kísérlet a roncsolt fájl megnyitására sikertelen, a rendszer csak hibaüzeneteket küld a puffer egységekbe.',
             logical: 'A helyreállítási kísérlet megakadt, a diagnosztika szerint súlyos CRC-ellenőrzési hiba lépett fel az adatstruktúrában.'
         }
     },
@@ -55,9 +55,9 @@ export const LIBRARY_DATA = [
         name: 'Felhő Tároló',
         image: 'assets/images/grade4/library/cloud.jpg',
         metadata: {
-            technical: 'A virtuális tér felett lebegő adattár teljes kapacitása 1 TB, ahol a birodalom legfontosabb emlékeit őrizzük.',
-            functional: 'Az adatkristályok folyamatos online szinkronizálást végeznek, hogy minden változás azonnal tükröződjön a Királyságban.',
-            logical: 'A távoli elérés akadozik, a szinkronizálás folyamatban van, de a sötét algoritmus lassítja az adatátvitelt.'
+            technical: 'A virtuális tér felett lebegő adattár-felhő teljes kapacitása 1 TB, ahol a birodalom legfontosabb emlékeit őrizzük.',
+            functional: 'Az adatkristályok folyamatos online szinkronizálást végeznek az adattár-felhőben, miközben a Zéró-frekvencia támad.',
+            logical: 'A távoli elérés akadozik, a szinkronizálás folyamatban van az adattár-felhőben, de a Zéró-szekvencia támadása lassítja az adatátvitelt.'
         }
     },
     {
@@ -67,7 +67,7 @@ export const LIBRARY_DATA = [
         metadata: {
             technical: 'Egy apró, de robusztus hordozható egység, amely a legújabb USB-C porton keresztül csatlakozik a terminálokhoz.',
             functional: 'Kritikus szerepet tölt be a hordozható adattárolásban, amikor a vezetékes hálózatok már nem megbízhatóak.',
-            logical: 'Az adattranszfer befejeződött, a biztonságos eltávolítás engedélyezve, a hordozható egység lecsatlakoztatható.'
+            logical: 'Az adatátvitel befejeződött, a biztonságos eltávolítás engedélyezve, a hordozható egység lecsatlakoztatható.'
         }
     },
     {
@@ -85,9 +85,9 @@ export const LIBRARY_DATA = [
         name: 'Akkumulátor',
         image: 'assets/images/grade4/library/akku.jpg',
         metadata: {
-            technical: 'A hordozható terminálok belső energiaforrása, stabil 3.7 V feszültségen táplálja a logikai áramköröket.',
+            technical: 'A hordozható terminálok belső energiaforrása, stabil feszültségen táplálja a logikai áramköröket.',
             functional: 'A rendszer folyamatos energiaellátásáért felel, biztosítva a túlélést az elszigetelt szektorokban.',
-            logical: 'A feszültség vészjóslóan esik, a hátralévő idő 12 perc, mielőtt a kijelződ sötétbe borulna.'
+            logical: 'A feszültség vészjóslóan esik, az energiaforrás lemerülőben van, a kijelződ hamarosan sötétbe borul.'
         }
     },
     {
@@ -97,7 +97,7 @@ export const LIBRARY_DATA = [
         metadata: {
             technical: 'A törölt adatok gyűjtőhelye, amely jelenleg 1.2 GB méretű roncsolt kódrészletet tartalmaz.',
             functional: 'Itt kezdeményezhető a feleslegessé vált indexek végleges törlése, felszabadítva a helyet a frissítéseknek.',
-            logical: 'Az archívum nem üres, a tartalom 10 elem, melyek között a Zéró-szekvencia nyomai is ott lapulhatnak.'
+            logical: 'A megsemmisítő tölcsér nem üres, a tartalom 10 elem, melyek között a Zéró-szekvencia nyomai is ott lapulhatnak.'
         }
     },
     {
@@ -105,8 +105,8 @@ export const LIBRARY_DATA = [
         name: 'Adatbázis',
         image: 'assets/images/grade4/library/database.jpg',
         metadata: {
-            technical: 'A Könyvtár digitális polcain tárolt tudástár, amely összesen 10.000 bejegyzést tartalmaz a birodalomról.',
-            functional: 'Lehetővé teszi az összetett adatok lekérdezését, hogy megtaláljuk a keresett algoritmusok leírását.',
+            technical: 'A Könyvtár digitális polcain tárolt tudástár, amely összesen több, mint 10.000 bejegyzést tartalmaz a birodalomról.',
+            functional: 'Az összetett adatok lekérdezése bizonytalan, mert az adattároló egy része sérült.',
             logical: 'A keresési folyamat megszakadt, mivel az adatbázis-index sérült, manuális beavatkozásra van szükség.'
         }
     },
@@ -135,9 +135,9 @@ export const LIBRARY_DATA = [
         name: 'Lakat',
         image: 'assets/images/grade4/library/lock.jpg',
         metadata: {
-            technical: 'A legszigorúbb AES-256 titkosítás, amely szinte feltörhetetlen gátat emel az adatok köré.',
-            functional: 'A kritikus rendszermodulokhoz való hozzáférés szabályozására szolgál, csak a Kódmesterek számára.',
-            logical: 'A védelem aktiválódott, a rendszer 3 hiba után zárolva lett, várakozva a feloldó kódra.'
+            technical: 'A legszigorúbb AES-256 titkosítás, amely szinte feltörhetetlen gátat emel az adatok köré. Hibás kód esetén a rendszer lezár.',
+            functional: 'A kritikus rendszermodulokhoz való hozzáférés szabályozására szolgál, belépéshez három számjegyes kód szükséges.',
+            logical: 'A védelem aktiválódott, a rendszer három hiba után zárolva lett, várakozva a feloldó kódra.'
         }
     },
     {
@@ -145,8 +145,8 @@ export const LIBRARY_DATA = [
         name: 'Frissítés',
         image: 'assets/images/grade4/library/update.jpg',
         metadata: {
-            technical: 'A rendszer legújabb, 2.1.0-ás verziójú szoftvercsomagja, amely a stabilitást hivatott visszaállítani.',
-            functional: 'A sérült rendszer javítását célozza meg, befoltozva a Zéró-szekvencia ütötte réseket.',
+            technical: 'A rendszer legújabb verziójú szoftvercsomagja, amely a stabilitást hivatott visszaállítani.',
+            functional: 'A sérült rendszer javítását célozza meg a telepített csomag, befoltozva a Zéró-szekvencia ütötte réseket.',
             logical: 'A telepítés csaknem kész, de a véglegesítéshez a rendszer újraindítása szükséges.'
         }
     },

@@ -191,6 +191,29 @@
     z-index: 100;
 }
 
+/* === IMAGE GLITCH EFFECTS === */
+
+.dkv-memory__object--glitch {
+    animation: memory-image-jitter 0.2s infinite;
+}
+
+.dkv-memory__object.visible.dkv-memory__object--glitch img {
+    filter: drop-shadow(2px 0 #ff00ff) drop-shadow(-2px 0 #00ffff) brightness(1.5);
+}
+
+.dkv-memory__object.visible.dkv-memory__object--glitch-slice {
+    clip-path: inset(20% 0 50% 0);
+    transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
+}
+
+@keyframes memory-image-jitter {
+    0% { transform: translate(-50%, -50%) scale(1.0); }
+    25% { transform: translate(-52%, -48%) scale(1.05); }
+    50% { transform: translate(-48%, -52%) scale(0.95); }
+    75% { transform: translate(-51%, -51%) scale(1.02); }
+    100% { transform: translate(-50%, -50%) scale(1.0); }
+}
+
 
 /* Footer Section */
 .dkv-memory__footer {
@@ -694,9 +717,9 @@
 }
 
 .dkv-memory__selection-card.revealed.correct {
-    border-color: #00ff00 !important;
-    background: rgba(0, 255, 0, 0.15) !important;
-    box-shadow: 0 0 30px rgba(0, 255, 0, 0.4) !important;
+    border-color: #00ff00;
+    background: rgba(0, 255, 0, 0.15);
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
 }
 
 .dkv-memory__selection-card.revealed.correct::after {
@@ -713,9 +736,9 @@
 }
 
 .dkv-memory__selection-card.revealed.incorrect {
-    border-color: #ff0000 !important;
-    background: rgba(255, 0, 0, 0.15) !important;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.4) !important;
+    border-color: #ff0000;
+    background: rgba(255, 0, 0, 0.15);
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
 }
 
 .dkv-memory__selection-card.revealed.incorrect::after {

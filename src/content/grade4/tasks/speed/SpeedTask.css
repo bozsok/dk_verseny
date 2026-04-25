@@ -518,7 +518,7 @@
 }
 
 .dkv-speed__click-icon {
-    font-size: 36px !important; /* text-4xl */
+    font-size: 36px; /* text-4xl */
     color: var(--spd-cyan-400);
     user-select: none;
     pointer-events: none;
@@ -866,7 +866,7 @@
 
 .dkv-speed__bar-wrapper--ai-glitch .dkv-speed__bar-track--ai {
     position: relative;
-    background: #fff !important; /* Fehér felvillanás */
+    background: #fff; /* Fehér felvillanás */
 }
 
 /* RGB-split rétegek a sávhoz */

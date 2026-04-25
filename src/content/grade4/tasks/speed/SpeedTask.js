@@ -145,7 +145,7 @@ export class SpeedTask {
                             <button class="dkv-speed__help-close">×</button>
                         </div>
                         <p class="dkv-speed__help-text">
-                            Indtsd el a játékot a START gombbal és a visszaszámlálás után kattintgass folyamatosan a villám gombra! Miközben gyűjtöd a százalákokat, a gomb körül látható indikátor jelzi a CSAPÁS töltését. Ha a töltés befejeződik, akkor a jobb egérgombbal süssed el a villám gombot! Ez egy kis előnyt biztosít neked ahhoz, hogy legyőzzed a Zéró-szekvencia támadását. Háromszor kell legyőznöd a Zéró-szekvenciát.
+                            Indítsd el a játékot a START gombbal és a visszaszámlálás után kattints folyamatosan a villám gombra! Miközben gyűjtöd a százalékokat, a gomb körül látható indikátor jelzi a reduktorok töltését. Ha a töltés befejeződik, akkor a villám gombon a jobb egérgombbal aktiváld! Ez egy kis előnyt biztosít neked ahhoz, hogy legyőzzed a Zéró-szekvencia támadását. Háromszor kell helytállnod.
                         </p>
                     </div>
                 </div>

@@ -97,6 +97,9 @@ export class LeetPuzzle {
             enableConsole: true
         });
 
+        /** @type {number|null} - Véletlenszerű glitch időzítője */
+        this.glitchTimer = null;
+
         this.init();
     }
 
@@ -141,6 +144,7 @@ export class LeetPuzzle {
             } else {
                 this.isAnimating = false;
                 wordEl.textContent = originalText;
+                this.triggerGlitchEffects();
             }
         };
 
@@ -169,6 +173,7 @@ export class LeetPuzzle {
             this.encodedWord = this.encode(this.currentWord);
 
             if (this.element) {
+                this.stopGlitchEffects();
                 this.updateCurrentWordDisplay();
             } else {
                 this.render();
@@ -222,7 +227,7 @@ export class LeetPuzzle {
         this.element.className = 'dkv-leet-container';
 
         const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--leet-cyan);">KÓDFEJTÉS INICIALIZÁLVA</span>`;
-        const subtitleText = `Fejtsd meg az alábbi szavak jelentését! Használd a moduláris beviteli slotokat a dekódoláshoz.`;
+        const subtitleText = `Fejtsd meg az alábbi szavak jelentését! Használd a moduláris beviteli slotokat a dekódoláshoz. Siess, mert a Zéró-szekvencia sérültté teszi a beviteli slotokat!`;
 
         this.element.innerHTML = `
             <div class="glass-panel">
@@ -522,6 +527,7 @@ export class LeetPuzzle {
         this.sidebarList.innerHTML = this.renderList();
 
         setTimeout(() => {
+            this.stopGlitchEffects();
             this.onComplete({
                 success: true,
                 points: correctCount,
@@ -532,9 +538,61 @@ export class LeetPuzzle {
     }
 
     /**
+     * Véletlenszerű glitch effektek indítása a beviteli mezőkön.
+     */
+    triggerGlitchEffects() {
+        this.stopGlitchEffects();
+
+        const slots = this.element.querySelectorAll('.dkv-leet__slot');
+        if (slots.length === 0) return;
+
+        this.glitchTimer = setInterval(() => {
+            // Véletlenszerűen választunk egy slotot
+            const randomIdx = Math.floor(Math.random() * slots.length);
+            const slot = slots[randomIdx];
+
+            // Véletlenszerű effekt típus
+            const effectType = Math.random();
+
+            if (effectType > 0.8) {
+                // Intenzív glitch (szín + rázkódás)
+                slot.classList.add('dkv-leet__slot--glitch');
+                setTimeout(() => slot.classList.remove('dkv-leet__slot--glitch'), 400 + Math.random() * 600);
+            } else if (effectType > 0.6) {
+                // Vörös flash
+                slot.classList.add('dkv-leet__slot--glitch-red');
+                setTimeout(() => slot.classList.remove('dkv-leet__slot--glitch-red'), 200 + Math.random() * 300);
+            } else if (effectType > 0.4) {
+                // Szöveg jitter
+                slot.classList.add('dkv-leet__slot--glitch-text');
+                setTimeout(() => slot.classList.remove('dkv-leet__slot--glitch-text'), 300 + Math.random() * 500);
+            }
+
+        }, 800); // 0.8 másodpercenként próbálkozik egy effekttel
+    }
+
+    /**
+     * Glitch effektek leállítása.
+     */
+    stopGlitchEffects() {
+        if (this.glitchTimer) {
+            clearInterval(this.glitchTimer);
+            this.glitchTimer = null;
+        }
+
+        if (this.element) {
+            const slots = this.element.querySelectorAll('.dkv-leet__slot');
+            slots.forEach(slot => {
+                slot.classList.remove('dkv-leet__slot--glitch', 'dkv-leet__slot--glitch-red', 'dkv-leet__slot--glitch-text');
+            });
+        }
+    }
+
+    /**
      * Takarítás az objektum megsemmisítésekor.
      */
     destroy() {
+        this.stopGlitchEffects();
         this.typewriter.stop();
         if (this.element) {
             this.element.remove();

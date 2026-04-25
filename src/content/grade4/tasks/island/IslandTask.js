@@ -47,10 +47,10 @@ export class IslandTask {
 
     async init() {
         this.logger.info('IslandTask initialized (Station 4)');
-        
+
         // Először megvárjuk az assetek beolvasását
         await this.scanAssets();
-        
+
         // Csak ha megvan a lista, akkor rajzolunk és indítjuk a fázisokat
         this.render();
     }
@@ -63,7 +63,7 @@ export class IslandTask {
 
         // Fix szövegek (ezeket nem írógéppel írjuk a fejlécben, de a súgóban igen)
         const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--isl-cyan);">ANOMÁLIA ANALÍZIS</span>`;
-        const subtitleText = `Keresd meg az anomáliákat az adatfolyamban! Jelöld ki a hibás elemet, majd válaszd az ELLENŐRZÉS parancsot a felülvizsgálathoz!`;
+        const subtitleText = `A szigetről kimenő adatfolyam anomáliákat tartalmaz. A feladatod azonosítani azt az egyetlen rúnát, amely nem illik a sorozatba.`;
 
         this.element.innerHTML = `
             <div class="glass-panel">
@@ -185,7 +185,7 @@ export class IslandTask {
         this.currentStage = stage;
         this.isTransitioning = false;
         this.lastRotationTime = performance.now();
-        
+
         // Fixen rúnákat használunk (User kérése)
         this.currentCategory = 'rune';
 
@@ -233,7 +233,7 @@ export class IslandTask {
         if (this.beltElement) {
             this.beltElement.innerHTML = '';
         }
-        
+
         this.runes = [];
     }
 
@@ -269,7 +269,7 @@ export class IslandTask {
      */
     async scanAssets() {
         this.logger.info('Scanning assets...');
-        
+
         // 1. Megpróbáljuk a profi utat: lekérdezzük a Vite szervertől az API-n keresztül
         try {
             const response = await fetch('/__api/island-assets');
@@ -295,7 +295,7 @@ export class IslandTask {
             for (let i = 1; i <= probeLimit; i++) {
                 const id = i.toString().padStart(2, '0');
                 const url = `assets/images/grade4/island/${cat}/${id}.png`;
-                
+
                 probes.push(
                     fetch(url)
                         .then(async (res) => {
@@ -310,7 +310,7 @@ export class IslandTask {
                                 }
                             }
                         })
-                        .catch(() => {})
+                        .catch(() => { })
                 );
             }
 
@@ -328,10 +328,10 @@ export class IslandTask {
      */
     generateRunes() {
         this.runes = [];
-        
+
         // Elérhető ID-k az aktuális kategóriából
         const availableIds = this.assetManifest[this.currentCategory] || [];
-        
+
         // Biztonsági ellenőrzés: ha nincs elég kép, hiba
         if (availableIds.length < 2) {
             this.logger.error(`HIBA: Nem található elegendő kép a(z) ${this.currentCategory} kategóriában! Ellenőrizd a public/assets/images/grade4/island/ mappát.`);
@@ -341,7 +341,7 @@ export class IslandTask {
                 availableIds.push('04');
             }
         }
-        
+
         // Alap rúnák kiválasztása a létezők közül
         const baseRuneId = availableIds[this.getRandomInt(0, availableIds.length - 1)];
         const anomalyRuneId = this.getDifferentRuneId(baseRuneId);
@@ -386,7 +386,7 @@ export class IslandTask {
         };
 
         const data = telemetryData[this.currentCategory] || telemetryData.rune;
-        
+
         // Garantáljuk, hogy a szöveg elég hosszú legyen (min. 3000 pixel szélesség érzet)
         const repeatCount = 6;
         const topStr = (data.top + ' | ').repeat(repeatCount);
@@ -397,7 +397,7 @@ export class IslandTask {
 
         this.telemetryTop.innerHTML = `<div class="marquee">${topContent}</div>`;
         this.telemetryBottom.innerHTML = `<div class="marquee-reverse">${bottomContent}</div>`;
-        
+
         // Eltároljuk az eredeti szöveget a zaj-frissítéshez
         this.baseBottomText = data.bottom;
     }
@@ -589,7 +589,7 @@ export class IslandTask {
 
                 // Csak a pozíciót állítjuk a konténeren
                 rune.element.style.transform = `translateX(${currentX}px)`;
-                
+
                 // A forgatást csak a belső képre alkalmazzuk, hogy a szöveg (::after) álló maradjon
                 const img = rune.element.querySelector('img');
                 if (img) {
@@ -612,7 +612,7 @@ export class IslandTask {
         // Véletlenszerű remegés (Jitter) - még durvább rángatózás
         const jitterX = (Math.random() - 0.5) * 30;
         const jitterY = (Math.random() - 0.5) * 8;
-        
+
         if (this.telemetryTop) this.telemetryTop.style.transform = `translate(${jitterX}px, ${jitterY}px)`;
         if (this.telemetryBottom) this.telemetryBottom.style.transform = `translate(${-jitterX}px, ${-jitterY}px)`;
 
@@ -643,12 +643,12 @@ export class IslandTask {
             const y = this.getRandomInt(100, 999);
             const codes = ['ADAT-SZAKADÁS', 'SZINKRON-HIBA', 'VEKTOR-ELTÉRÉS', 'PUFFER-OVERFLOW', 'MINTA-ANOMÁLIA', 'KRITIKUS-ZAJ', 'ZÉRÓ-SZEKVENCIA'];
             const randomCode = codes[this.getRandomInt(0, codes.length - 1)];
-            
+
             const updatedText = this.baseBottomText
                 .replace(/X: \d+/, `X: ${x}`)
                 .replace(/Y: \d+/, `Y: ${y}`)
                 .replace(/KÓD: 0x[A-Z0-0]+/, `KÓD: 0x${this.getRandomInt(10, 99).toString(16).toUpperCase()}`);
-            
+
             let displayStr = updatedText;
             if (Math.random() > 0.5) {
                 const label = (glitchRoll > 0.95) ? '!!! TÁMADÁS !!!' : randomCode;
@@ -724,6 +724,11 @@ export class IslandTask {
         if (Math.random() < 0.02 * this.currentStage) {
             this.createGlitchBox();
         }
+
+        // Véletlen vörös bevillanás (még ritkábban, a Zéró-szekvencia támadását jelzi)
+        if (Math.random() < 0.005 * this.currentStage) {
+            this.triggerRedFlash();
+        }
     }
 
     createGlitchBox() {
@@ -748,6 +753,20 @@ export class IslandTask {
     }
 
     /**
+     * Vörös bevillanás (Zéró-szekvencia interferencia).
+     */
+    triggerRedFlash() {
+        const viewport = this.element.querySelector('.dkv-library__main-viewport') || this.element.querySelector('.dkv-island__main-viewport');
+        if (!viewport) return;
+
+        viewport.classList.add('dkv-island__main-viewport--flash-red');
+        const flashTimeout = setTimeout(() => {
+            viewport.classList.remove('dkv-island__main-viewport--flash-red');
+        }, 150);
+        this.timeouts.push(flashTimeout);
+    }
+
+    /**
      * Súgó panel kezelése írógéppel.
      */
     setupHelpLogic() {
@@ -757,12 +776,8 @@ export class IslandTask {
         const helpTextContainer = this.element.querySelector('.dkv-island__help-text');
 
         const helpContent = `
-            Az állomás adatfolyama anomáliákat tartalmaz. A feladatod azonosítani azt az egyetlen rúnát, amely nem illik a sorozatba.<br><br>
-            <b>ANALÍZIS PROTOKOLL:</b><br>
-            1. Vizsgáld meg az úszó rúnák mintázatát.<br>
-            2. Válaszd ki (kattints) azt az elemet, amely eltér a többitől.<br>
-            3. Nyomd meg a <b>VÉGREHAJTÁS</b> gombot a javításhoz.<br><br>
-            Vigyázz, a rendszer instabil: a sebesség körönként nő, és az interferencia egyre erősebb!
+            Keresd meg az egyetlen rejtett anomáliát az adatfolyamban! Jelöld ki a hibás elemet és kattints a TOVÁBB gombra az ellenőrzéshez!<br>
+            Tíz cikluson keresztül kell az éleslátásodat tesztelve megtalálni az eltérést a rúnák között. Vigyázz, a rendszer instabil: a sebesség körönként nő, és az interferencia egyre erősebb!
         `;
 
         if (helpBtn && helpOverlay) {
