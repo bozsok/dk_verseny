@@ -50,7 +50,7 @@ const NARRATIVE_DATA = {
     },
     DIA_6: {
         title: 'A Zéró-szekvencia felemelkedése',
-        text: 'A terminálok mindegyikén egyforma kép jelenik meg és egyszerre szólal meg egy vészjósló, digitálisan torzított hang: "Zéró-szekvencia vagyok! Célom a teljes rendszermag felülírása, a Királyság örök sötétségbe borítása." Ő a legveszélyesebb, romboló entitás, akit valaha a hálózat szült, és most ellopta a Rejtett Frissítést. Könyörtelen precizitással darabolta szét a kódot, és a darabkáit az öt legveszélyesebb zónába rejtette el. Megállítása szinte lehetetlennek tűnik.'
+        text: 'A terminálok mindegyikén egyforma kép jelenik meg és egyszerre szólal meg egy vészjósló, digitálisan torzított hang: "Zéró-szekvencia vagyok! Célom a teljes rendszermag felülírása, a Királyság örök sötétségbe borítása." Ő a legveszélyesebb, romboló entitás, akit valaha a hálózat szült, és most ellopta a Rejtett Frissítést. Könyörtelen precizitással darabolta szét a kódot, és a legfontosabb darabkáit az öt legveszélyesebb zónába rejtette el. Megállítása szinte lehetetlennek tűnik.'
     },
     DIA_7: {
         title: 'A Küldetés megkezdése',
@@ -138,15 +138,15 @@ const NARRATIVE_DATA = {
     },
     DIA_28: {
         title: 'A Rendszermag Kapuja',
-        text: 'Visszaérkeztél a Királyság legbelső szentélyéhez, a Rendszermag Kapujához, ahol a Zéró-szekvencia elbarikádozta magát. Az öt megszerzett szkript váratlanul pulzálni kezd a kezedben, és egyetlen hatalmas, ragyogó adategységgé áll össze. Ez a Rejtett Frissítés teljes formája, a birodalom végső védelmi eszköze. A kapu felismeri a hitelesített kódot, és hatalmas morajlással feltárul előtted. Nincs visszaút, a döntő pillanat elérkezett: szembe kell nézned a pusztító algoritmus maradékával.'
+        text: 'Visszaérkeztél a Királyság legbelső, legszentebb teréhez, a Rendszermag Kapujához. A levegőben fehér adatpor lebeg, elképesztő méretű digitális falain aranyszínű jelek bukkannak elő, ahogy haladsz mellettük. Az öt megszerzett szkript váratlanul pulzálni kezd a kezedben, és a terminálon megjelenő darabjaival együtt egyetlen hatalmas, ragyogó adategységgé állítod össze. Ez a Rejtett Frissítés teljes formája, a birodalom végső védelmi eszköze. A kapu felismeri a hitelesített kódot, és hatalmas, mély morajlással feltárul előtted. A döntő pillanat elérkezett. A kapu mögötti tér hív, fenyeget és kihívást intéz feléd.'
     },
     DIA_29: {
         title: 'A végső Rendszer-szinkronizáció',
-        text: 'A Zéró-szekvencia utolsó, kétségbeesett támadást indít a rendszermag ellen, miközben te a frissítés telepítésén dolgozol. Ekkor következik a legnehezebb rész: szinkronizálnod kell a kódokat a Királyság alap architektúrájával a hatalmas ellenszélben. Ez az utolsó, mindent eldöntő logikai próba, ahol minden tudásodra és precizitásodra szükséged lesz. A vezérlő egységek üvöltenek, a memóriák villognak, te pedig a digitális vihar közepén állsz. Hajtsd végre a telepítést és győzd le az ellenséget egyszer és mindenkorra!'
+        text: 'A Zéró-szekvencia utolsó, kétségbeesett támadást indít a Rendszermag ellen, miközben te a frissítés telepítésén dolgozol. A tér megremeg, a vezérlő egységek üvöltve pörögnek fel, a memóriabankok villódznak, a logikai csatornák vibrálnak, és a Rendszermag körül egy hatalmas, digitális vihar tombol. Ekkor következik a legnehezebb rész: szinkronizálnod kell a szkriptrészleteket a Királyság alap architektúrájával és újraindítani a Rendszermagot. Ez az utolsó, mindent eldöntő próba, ahol minden tudásodra és precizitásodra szükséged lesz. Hajtsd végre a telepítést, indítsd újra a Rendszermagot és győzd le az ellenséget egyszer és mindenkorra!'
     },
     DIA_30: {
         title: 'A Királyság Restaurációja',
-        text: 'Sikerült! A Rejtett Frissítés beépült a magba, és egy vakító fehér fényhullám söpör végig a Kód Királyságon, nyom nélkül kitörölve a Zéró-szekvenciát a memóriákból. A fagyások megszűnnek, a sebesség rekordot dönt, és a birodalom ismét a tökéletes rend és harmónia szerint működik. Te vagy az, aki megmentette az adatokat és helyreállította a jövőt. Gratulálunk, Kódmester, a küldetés teljesítve! A rendszer stabil, a Királyság pedig örökké emlékezni fog a nevedre.'
+        text: 'Sikerült! A Rejtett Frissítés beépült a magba és egy vakító arany-fehér fényhullám söpör végig a Kód Királyságon, nyom nélkül kitörölve a Zéró-szekvenciát a memóriákból. A fagyások megszűnnek, a sebesség rekordot dönt és a birodalom ismét a tökéletes rend és harmónia szerint működik. A fény lassan elhalványul, de a Királyság minden modulja, minden algoritmusa, minden adatcsomagja örökké őrizni fogja a nevedet. A birodalom stabil, a jövő biztos, és a rend helyreállt. A rendszer egyetlen üzenetet jelenít meg előtted, tiszta, ünnepélyes fénybetűkben: „Gratulálunk, Kódmester! A küldetés teljesítve.”'
     }
 };
 

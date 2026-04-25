@@ -943,6 +943,12 @@ class DigitalKulturaVerseny {
       this.currentAudio = null;
     }
 
+    // --- Solemn Message Cleanup ---
+    if (this._solemnOverlay) {
+      this._solemnOverlay.remove();
+      this._solemnOverlay = null;
+    }
+
     // --- App Shell Check ---
     if (!this.layerContent || !this.layerUI || !this.layerContent.isConnected || !this.layerUI.isConnected) {
       if (this.logger) this.logger.warn('App Shell detached or missing, rebuilding...');
@@ -1248,6 +1254,13 @@ class DigitalKulturaVerseny {
           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
           return;
         }
+
+        // --- ÜNNEPÉLYES FELIRAT TRIGGER (Grade 4, utolsó narrációs dia) ---
+        if (slide.id === 'final_3' && String(currentGrade) === '4') {
+          if (this.logger) this.logger.info('Solemn message triggered after final narration.');
+          this._showSolemnMessage();
+        }
+
         setBtnState(true, btnOptions);
         if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
       });
@@ -2102,6 +2115,33 @@ class DigitalKulturaVerseny {
     }
 
     audio.load();
+  }
+
+  /**
+   * Ünnepélyes gratuláció megjelenítése fénybetűkkel.
+   * A DIA_30 narrációja után hívódik meg.
+   */
+  _showSolemnMessage() {
+    // Ha már létezik, ne duplikáljuk
+    if (document.querySelector('.dkv-solemn-message-overlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'dkv-solemn-message-overlay';
+    overlay.innerHTML = `
+      <div class="dkv-solemn-text">
+        Gratulálunk, Kódmester!<br>
+        A küldetés teljesítve.
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    
+    // Finom megjelenítés (opacity transition)
+    requestAnimationFrame(() => {
+      overlay.classList.add('visible');
+    });
+
+    // Eltávolítás a következő navigációnál (vagy a destroy-ban)
+    this._solemnOverlay = overlay;
   }
 
   /**

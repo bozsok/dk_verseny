@@ -61,33 +61,33 @@ body.dkv-slide-entering .dkv-g4-content-area {
 
 /* 5. Persistent UI Isolation (No flicker during transitions) */
 /* GRADE 3 ELEMENTS */
-.dkv-game-hud { 
-  view-transition-name: dkv-top-g3; 
+.dkv-game-hud {
+  view-transition-name: dkv-top-g3;
 }
 
-.dkv-game-bottom-bar { 
-  view-transition-name: dkv-bottom-g3; 
+.dkv-game-bottom-bar {
+  view-transition-name: dkv-bottom-g3;
 }
 
-.dkv-game-sidebar { 
-  view-transition-name: dkv-side-g3; 
+.dkv-game-sidebar {
+  view-transition-name: dkv-side-g3;
 }
 
 /* GRADE 4 ELEMENTS */
-.dkv-g4-top-hud { 
-  view-transition-name: dkv-top-g4; 
+.dkv-g4-top-hud {
+  view-transition-name: dkv-top-g4;
 }
 
-.dkv-g4-bottom-hud { 
-  view-transition-name: dkv-bottom-g4; 
+.dkv-g4-bottom-hud {
+  view-transition-name: dkv-bottom-g4;
 }
 
-.dkv-g4-nav-controls { 
-  view-transition-name: dkv-nav-g4; 
+.dkv-g4-nav-controls {
+  view-transition-name: dkv-nav-g4;
 }
 
-.dkv-g4-side-nav { 
-  view-transition-name: dkv-side-g4; 
+.dkv-g4-side-nav {
+  view-transition-name: dkv-side-g4;
 }
 
 .dkv-g4-decorative-corners {
@@ -127,5 +127,65 @@ body.dkv-slide-entering .dkv-g4-content-area {
     transform: scale(1);
     filter: brightness(1);
     box-shadow: 0 0 0 rgba(0, 255, 255, 0);
+  }
+}
+
+/* --- ÜNNEPÉLYES GRATULÁCIÓ (Kódmester) --- */
+.dkv-solemn-message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+}
+
+.dkv-solemn-message-overlay.visible {
+  opacity: 1;
+}
+
+.dkv-solemn-text {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 3rem;
+  text-align: center;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+  line-height: 1.2;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(0, 210, 211, 0.8),
+    0 0 80px rgba(0, 210, 211, 0.6);
+  filter: drop-shadow(0 0 15px rgba(0, 210, 211, 0.5));
+  animation: solemn-pulse 4s infinite ease-in-out;
+  max-width: 80%;
+}
+
+@keyframes solemn-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dkv-solemn-text {
+    font-size: 3rem;
   }
 }

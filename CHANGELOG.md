@@ -5,6 +5,12 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.32.8] - 2026-04-25
+
+### Hozzáadva
+- **Ünnepélyes küldetés-lezárás**: A 4. évfolyam történetének legvégén, a narratív szöveg (DIA_30) meghallgatása után egy monumentális felirat jelenik meg a képernyő közepén: "Gratulálunk, Kódmester! A küldetés teljesítve."
+- **Fénybetűs vizuális effekt**: A záró üzenet tiszta, ünnepélyes, neon ragyogással ellátott "fénybetűkkel" és finom pulzáló animációval emeli ki a győzelem pillanatát. Az effektus automatikusan eltávolításra kerül az összegző diára való átlépéskor.
+
 ## [0.32.7] - 2026-04-25
 
 ### Hozzáadva
