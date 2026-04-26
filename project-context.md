@@ -142,6 +142,8 @@ optimized_for_llm: true
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
 - **Last Updated:** 2026-04-24
 - **Current Mission:** Grade 4 Bit-folyam Zsilip (SpeedTask) Finalization & Audit (Complete)
+- **Internal Tools:**
+    - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
 ### Completed Milestones
 - [x] Grade 4: All stations (1-5) visual and functional unification (v0.32.2)

@@ -1,0 +1,159 @@
+:root {
+    --bg-color: #010102;
+    --code-cyan: #00f2ff;
+    --code-yellow: #ffdf00;
+    --code-purple: #bd00ff;
+    --code-green: #39ff14;
+    --code-white: #ffffff;
+    --code-dim: #444444;
+    --panel-bg: rgba(5, 8, 12, 0.98);
+    
+    --global-font-size: 11px;
+    --global-line-height: 1.0;
+    --column-gap: 20px;
+    --scanline-opacity: 0.2;
+
+    /* Egyedi ragyogás és stílus változók */
+    --cyan-glow: 10px;
+    --cyan-opacity: 1.0;
+    --cyan-size-offset: 0px;
+
+    --dim-glow: 0px;
+    --dim-opacity: 0.6;
+    --dim-size-offset: 0px;
+
+    --yellow-glow: 10px;
+    --yellow-opacity: 0.9;
+
+    --purple-glow: 10px;
+    --purple-opacity: 0.9;
+
+    --green-glow: 10px;
+    --green-opacity: 0.9;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--code-cyan);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    position: relative;
+}
+
+.pg-scanlines {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: 
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 3px 100%;
+    z-index: 10;
+    pointer-events: none;
+    display: block;
+    opacity: var(--scanline-opacity, 0.2);
+}
+
+.pg-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 260px;
+    background: var(--panel-bg);
+    border: 1px solid #1a3a3d;
+    padding: 15px;
+    border-radius: 6px;
+    z-index: 1000;
+    backdrop-filter: blur(15px);
+    color: #fff;
+    font-family: sans-serif;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.pg-controls h1 { font-size: 0.9rem; margin-top: 0; color: var(--code-cyan); text-align: center; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+.pg-tabs { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 15px; border-bottom: 1px solid #1a3a3d; padding-bottom: 5px; }
+.pg-tab-btn { background: #111; border: 1px solid #222; color: #666; font-size: 0.6rem; padding: 4px 6px; cursor: pointer; border-radius: 3px; }
+.pg-tab-btn.active { background: #1a3a3d; color: var(--code-cyan); border-color: var(--code-cyan); }
+.pg-tab-content { display: none; }
+.pg-tab-content.active { display: block; }
+.pg-control-group { margin-bottom: 12px; }
+.pg-control-group label { display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 4px; }
+.pg-control-group input { width: 100%; cursor: pointer; }
+.pg-control-group span { color: var(--code-cyan); font-weight: bold; }
+.pg-actions { display: flex; gap: 8px; margin-top: 15px; }
+.pg-actions button { flex: 1; padding: 8px; font-size: 0.7rem; cursor: pointer; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; }
+#regenerate { background: var(--code-cyan); color: #000; font-weight: bold; border: none; }
+
+.pg-canvas { padding: 0; margin: 0; width: 100vw; height: 100vh; box-sizing: border-box; background: var(--bg-color); position: relative; }
+.pg-code-grid { display: flex; flex-direction: row; width: 100%; height: 100%; gap: var(--column-gap, 20px); position: relative; z-index: 5; }
+.pg-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.pg-block {
+    margin-bottom: var(--block-gap, 20px);
+    display: flex;
+    flex-direction: column;
+}
+
+.pg-line {
+    font-family: 'Source Code Pro', monospace;
+    font-size: var(--global-font-size, 14px);
+    line-height: var(--global-line-height, 1.6);
+    white-space: pre;
+    display: block;
+    overflow: hidden;
+}
+
+.token-white {
+    color: var(--code-white, #ffffff);
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+/* DROP SHADOW FILTER - A látványos ragyogásért */
+.token-cyan { 
+    color: var(--code-cyan); 
+    filter: drop-shadow(0 0 var(--cyan-glow) var(--code-cyan));
+    opacity: var(--cyan-opacity);
+    font-size: calc(var(--global-font-size) + var(--cyan-size-offset));
+}
+.token-dim { 
+    color: var(--code-dim); 
+    filter: drop-shadow(0 0 var(--dim-glow) var(--code-dim));
+    opacity: var(--dim-opacity); 
+    font-size: calc(var(--global-font-size) + var(--dim-size-offset)); 
+}
+.token-yellow { 
+    color: var(--code-yellow); 
+    filter: drop-shadow(0 0 var(--yellow-glow) var(--code-yellow));
+    opacity: var(--yellow-opacity);
+}
+.token-purple { 
+    color: var(--code-purple); 
+    filter: drop-shadow(0 0 var(--purple-glow) var(--code-purple));
+    opacity: var(--purple-opacity);
+}
+.token-green { 
+    color: var(--code-green); 
+    filter: drop-shadow(0 0 var(--green-glow) var(--code-green));
+    opacity: var(--green-opacity);
+}
+
+/* Biztonsági text-shadow a mentéshez (csak ha a böngésző támogatja) */
+@media screen {
+    .token-cyan, .token-yellow, .token-purple, .token-green {
+        text-shadow: 0 0 1px rgba(255,255,255,0.3);
+    }
+}

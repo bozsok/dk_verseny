@@ -39,7 +39,7 @@ A versenyzők adatai a `public/gameData/` mappában tárolódnak JSON formátumb
 - **Frontend**: JavaScript (ES6+), Vite, Vanilla CSS.
 - **Backend**: PHP (adatkezelés és ranglista).
 - **Adat**: JSON alapú perzisztencia.
-- **Grafika & Okmányok**: html2canvas alapú dinamikus generálás.
+- **Grafika & Okmányok**: html-to-image (SVG ForeignObject) alapú dinamikus generálás.
 
 ## 📁 Projekt Struktúra
 ```
@@ -56,16 +56,18 @@ digitális-kultúra-verseny/
 └── package.json              # Projekt konfiguráció
 ```
 
-## 📊 Projekt Állapot
-###- **Aktuális verzió:** v0.10.0
- (2026-03-20)
-A projekt elérte a végleges, versenyre kész állapotot! Minden tervezett funkció (feladatok, pontozás, ranglista) stabilan működik.
+## 🛠️ Segédeszközök (Tools)
+
+### Puzzle Kód-generátor
+Ez egy belső használatú eszköz a játékhoz szükséges puzzle képek alapanyagainak legyártásához. Sűrű, technikai jellegű "nonsense" kódsorokat generál.
+- **Elérés:** `npm run tool:puzzle`
+- **Funkciók:** Dinamikus oszlopkezelés (1-5), kódsziget-rendszer (blokkok), magyar nyelvű fehér megjegyzés-fejlécek, egyedi színválasztók minden elemhez és a háttérhez, CRT scanline effekt és konfigurációmentés. Professzionális SVG-alapú képmentés.
 
 ---
 
 **© 2026 Digitális Kultúra Verseny - Minden jog fenntartva**
 
-*Utolsó frissítés: 2026. március 20.*
+*Utolsó frissítés: 2026. április 26.*
 
 
 ### Hogyan járulhatsz hozzá?
@@ -95,4 +97,4 @@ Ez a projekt MIT licenc alatt áll - lásd a [LICENSE](LICENSE) fájlt a részle
 
 **© 2026 Digitális Kultúra Verseny - Minden jog fenntartva**
 
-*Utolsó frissítés: 2026. március 20.*
+*Utolsó frissítés: 2026. április 26.*

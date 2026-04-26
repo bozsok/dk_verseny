@@ -102,7 +102,7 @@ const NARRATIVE_DATA = {
     },
     DIA_19: {
         title: 'Helyreállított Logikai Rend',
-        text: 'Az Adat-szinkronizáció befejeződése után a Logikai Könyvtár mélyén egy tiszta, hullámszerű energialöket söpör végig. A lebegő polcok fényei stabilizálódnak, a torz metaadat-címkék kisimulnak, és a könyvtár rendszere újra hibátlan rendben pulzál. A káosz, amelyet a Zéró-szekvencia okozott, lassan eloszlik, mintha a tér maga is fellélegezne. A szkriptrészlet kiszabadult a korrupt indexek fogságából, és beépül az adatmoduljaid közé. A pillanat ünnepélyes: a Királyság frissítésének logikai alapjai most már a te kollekciódban vannak.'
+        text: 'Az adat-szinkronizáció befejeződése után a Logikai Könyvtár mélyén egy tiszta, hullámszerű energialöket söpör végig. A lebegő polcok fényei stabilizálódnak, a torz metaadat-címkék kisimulnak, és a könyvtár rendszere újra hibátlan rendben pulzál. A káosz, amelyet a Zéró-szekvencia okozott, lassan eloszlik, mintha a tér maga is fellélegezne. A szkriptrészlet kiszabadult a korrupt indexek fogságából, és beépül az adatmoduljaid közé. A pillanat ünnepélyes: a Királyság frissítésének logikai alapjai most már a te kollekciódban vannak.'
     },
     DIA_20: {
         title: 'Az Anomáliák Szigete',
@@ -122,7 +122,7 @@ const NARRATIVE_DATA = {
     },
     DIA_24: {
         title: 'A Bit-folyam Zsilipje',
-        text: 'A tér összeszűkűl és egy hatalmas, fénylő csatorna tárul eléd: megérkeztél a Bit-folyam Zsilipjéhez, a Királyság legkritikusabb pontjához. Itt, ebben a gigantikus adatcsatornában hömpölyög át a birodalom teljes energiaellátása — minden algoritmus, minden folyamat, minden életfunkció ebből a folyamatosan áramló digitális folyamból táplálkozik. A zsilip belsejében a fénylő bitfolyam úgy kavarog, mintha egy hatalmas, élő folyó lenne, amely egyszerre gyönyörű és félelmetes. A nyomás már a határértékeket feszegeti — a Zéró-szekvencia támadása miatt a rendszer túlterhelt, és minden pillanatban fennáll a veszélye annak, hogy a zsilip szerkezete összeomlik'
+        text: 'Megjelentél a Bit-folyam Zsilipnél, a Királyság legkritikusabb pontjánál. Itt, ebben a gigantikus adatcsatornában hömpölyög át a birodalom teljes energiaellátása — minden algoritmus, minden folyamat, minden életfunkció ebből a folyamatosan áramló digitális folyamból táplálkozik. A zsilip belsejében a fénylő bitfolyam úgy kavarog, mintha egy hatalmas, élő folyó lenne, amely egyszerre gyönyörű és félelmetes. A nyomás már a határértékeket feszegeti — a Zéró-szekvencia támadása miatt a rendszer túlterhelt, és minden pillanatban fennáll a veszélye annak, hogy a zsilip szerkezete összeomlik.'
     },
     DIA_25: {
         title: 'Időben végrehajtott művelet',

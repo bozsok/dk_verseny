@@ -1,6 +1,6 @@
 {
   "name": "digitalis-kultura-verseny",
-  "version": "0.32.7",
+  "version": "0.33.2",
   "description": "Interaktív digitális kultúra verseny alkalmazás",
   "main": "src/index.js",
   "scripts": {
@@ -12,7 +12,8 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md}"
+    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md}",
+    "tool:puzzle": "vite --open puzzle.html"
   },
   "keywords": [
     "digitális kultúra",

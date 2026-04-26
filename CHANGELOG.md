@@ -5,6 +5,42 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.33.2] - 2026-04-26
+
+### Javítva
+- **Oszlop-túlcsordulás elleni védelem**: Bevezetésre került az intelligens fejléc-csonkolás, amely megakadályozza, hogy a hosszú magyar nyelvű megjegyzések átlógjanak a szomszédos oszlopokba szűk elrendezés (pl. 5 oszlop) esetén.
+- **Vizuális izoláció**: CSS szintű `overflow: hidden` védelem az oszlopokon és sorokon, garantálva a tűéles elválasztást a kódblokkok között.
+- **Fejléc-lezárási hibák javítása**: Bevezettünk egy 2 karakteres biztonsági puffert az oszlopszélesség számításánál, és szigorítottuk a csonkolási algoritmust, így a blokk-megjegyzések lezáró `*/` jele már nem tűnik el a sorok végén.
+
+## [0.33.1] - 2026-04-26
+
+### Hozzáadva
+- **Puzzle Kód-generátor: Dinamikus Színpaletta-kezelés**: Teljes körű színválasztó rendszer bevezetése. Mostantól a háttérszín és minden egyes karaktercsoport (Türkiz, Szürke, Sárga, Lila, Zöld) színe egyedileg, interaktív színválasztóval állítható.
+- **Szín-szinkronizált Ragyogás**: A karakterek színeinek megváltoztatásakor a hozzájuk tartozó neon ragyogás (drop-shadow) színe is automatikusan frissül, megőrizve a konzisztens vizuális hatást.
+- **Képmentés háttérszín-támogatással**: Az SVG alapú képmentő motor immár figyelembe veszi a választott háttérszínt is a PNG generálásakor.
+- **Szín-perzisztencia**: Az egyedi színbeállítások elmentésre kerülnek a helyi tárolóba (`localStorage`) és az exportálható JSON konfigurációkba is.
+
+## [0.33.0] - 2026-04-26
+
+### Hozzáadva
+- **Puzzle Kód-generátor: „Sziget-mód” (Block System)**: Radikálisan új elrendezési logika, amely az oszlopokat különálló kódszigetekre (blokkokra) bontja. Ezáltal a generált kép sokkal strukturáltabb és professzionálisabb megjelenést kap.
+- **Dinamikus Blokkkezelés**: Bevezetésre került a **Blokkok száma** (oszloponkénti felosztás) és a **Blokkköz** (függőleges távolság) állítási lehetősége.
+- **Intelligens Blokkhossz**: A program véletlenszerűen osztja el a megadott sorszámot a blokkok között, így természetes hatású, változó hosszúságú kódrészletek jönnek létre.
+- **Kontextuális Blokk-fejlécek**: Minden blokk egy fehér színű, ragyogó, magyar nyelvű technikai megjegyzéssel kezdődik (pl. `/* RENDSZER-ANALÍZIS FOLYAMATBAN... */`).
+- **Nagy Sűrűségű Fejlécek**: A megjegyzés-sorok a fehér szöveg után automatikusan kitöltődnek szürke zaj-karakterekkel, így a vizuális textúra a fejlécekben is folytonos marad.
+
+## [0.32.9] - 2026-04-26
+
+### Hozzáadva
+- **Puzzle Kód-generátor: Teljes funkcionális megújulás**: A belső segédeszköz jelentős fejlesztést kapott. Mostantól támogatja az 1-5 oszlopos elrendezést, a "lépcsőzetes" (stepped) indentációt a forráskód-szerűbb megjelenésért, valamint az intelligens sorszélesség-kezelést (nincs több félbevágott karakter).
+- **Granuláris Tokenizáció**: A generátor már érti a kódstruktúrát: külön kezeli a kulcsszavakat, kommenteket, operátorokat és hex számokat, így minden elem egyedi színt és súlyozást kaphat.
+- **Per-szín Ragyogás és Átlátszóság**: Minden színcsoport (Türkiz, Sárga, Lila, Zöld, Szürke) saját ragyogás- (glow) és átlátszóság-csúszkát kapott a maximális vizuális kontroll érdekében.
+- **CRT Scanline Effekt**: Bevezetésre került egy állítható intenzitású, 4px-es CRT scanline overlay a retro-futurisztikus hatás fokozásához.
+- **Beállítások perzisztenciája**: A generátor immár megjegyzi az utolsó beállított értékeket a böngészőben (`localStorage`), így frissítés után is megmarad a konfiguráció. Bevezettük a beállítások exportálását és importálását is `.json` fájlba.
+
+### Javítva
+- **Professzionális Képmentés (SVG Engine)**: Lecseréltük az elavult `html2canvas` könyvtárat a modernebb `html-to-image` megoldásra. Ez a technológia SVG `foreignObject` renderelést használ, így a mentett PNG fájlok pixel-pontosan megegyeznek a monitoron látható képpel, megőrizve a komplex CSS szűrőket (`drop-shadow` ragyogás) és a finom gradienseket is.
+
 ## [0.32.8] - 2026-04-25
 
 ### Hozzáadva
