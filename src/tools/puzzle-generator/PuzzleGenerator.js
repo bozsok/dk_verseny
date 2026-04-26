@@ -6,8 +6,9 @@ class PuzzleGenerator {
     constructor() {
         this.container = document.getElementById('code-content');
         this.controlsPanel = document.getElementById('controls-panel');
-        
+
         this.controls = {
+            padding: document.getElementById('padding'),
             density: document.getElementById('density'),
             columns: document.getElementById('columns'),
             columnGap: document.getElementById('columnGap'),
@@ -19,38 +20,42 @@ class PuzzleGenerator {
             bgColor: document.getElementById('bgColor'),
             regenerate: document.getElementById('regenerate'),
             save: document.getElementById('save-image'),
-            cyan: { 
-                c: document.getElementById('c-cyan'), 
-                w: document.getElementById('p-cyan'), 
-                g: document.getElementById('g-cyan'), 
-                s: document.getElementById('s-cyan'), 
-                o: document.getElementById('o-cyan') 
+            cyan: {
+                c: document.getElementById('c-cyan'),
+                w: document.getElementById('p-cyan'),
+                g: document.getElementById('g-cyan'),
+                s: document.getElementById('s-cyan'),
+                o: document.getElementById('o-cyan')
             },
-            dim: { 
+            dim: {
                 c: document.getElementById('c-dim'),
-                w: document.getElementById('p-dim'), 
-                g: document.getElementById('g-dim'), 
-                s: document.getElementById('s-dim'), 
-                o: document.getElementById('o-dim') 
+                w: document.getElementById('p-dim'),
+                g: document.getElementById('g-dim'),
+                s: document.getElementById('s-dim'),
+                o: document.getElementById('o-dim')
             },
-            yellow: { 
+            yellow: {
                 c: document.getElementById('c-yellow'),
-                w: document.getElementById('p-yellow'), 
-                g: document.getElementById('g-yellow'), 
-                o: document.getElementById('o-yellow') 
+                w: document.getElementById('p-yellow'),
+                g: document.getElementById('g-yellow'),
+                s: document.getElementById('s-yellow'),
+                o: document.getElementById('o-yellow')
             },
-            purple: { 
+            purple: {
                 c: document.getElementById('c-purple'),
-                w: document.getElementById('p-purple'), 
-                g: document.getElementById('g-purple'), 
-                o: document.getElementById('o-purple') 
+                w: document.getElementById('p-purple'),
+                g: document.getElementById('g-purple'),
+                s: document.getElementById('s-purple'),
+                o: document.getElementById('o-purple')
             },
-            green: { 
+            green: {
                 c: document.getElementById('c-green'),
-                w: document.getElementById('p-green'), 
-                g: document.getElementById('g-green'), 
-                o: document.getElementById('o-green') 
-            }
+                w: document.getElementById('p-green'),
+                g: document.getElementById('g-green'),
+                s: document.getElementById('s-green'),
+                o: document.getElementById('o-green')
+            },
+            infoText: document.getElementById('infoText')
         };
 
         this.baseSnippets = [
@@ -100,6 +105,13 @@ class PuzzleGenerator {
 
         this.loadFromLocalStorage();
 
+        this.controls.padding.addEventListener('input', () => {
+            const valSpan = document.getElementById('padding-val');
+            if (valSpan) valSpan.textContent = this.controls.padding.value;
+            this.updateStyles();
+            this.generate();
+            this.saveToLocalStorage();
+        });
         const allInputs = document.querySelectorAll('.pg-controls input');
         allInputs.forEach(input => {
             input.addEventListener('input', () => {
@@ -111,9 +123,13 @@ class PuzzleGenerator {
             });
         });
 
+        this.controls.infoText.addEventListener('input', () => {
+            this.saveToLocalStorage();
+        });
+
         this.controls.regenerate.addEventListener('click', () => this.generate());
         this.controls.save.addEventListener('click', () => this.saveAsImage());
-        
+
         document.getElementById('save-config').addEventListener('click', () => this.exportConfig());
         document.getElementById('load-config').addEventListener('click', () => document.getElementById('config-file').click());
         document.getElementById('config-file').addEventListener('change', (e) => this.importConfig(e));
@@ -129,6 +145,7 @@ class PuzzleGenerator {
         document.querySelectorAll('.pg-controls input').forEach(input => {
             config[input.id] = input.value;
         });
+        config.infoText = this.controls.infoText.value;
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(config));
     }
 
@@ -138,7 +155,7 @@ class PuzzleGenerator {
             try {
                 const config = JSON.parse(saved);
                 this.applyConfig(config);
-            } catch (e) {}
+            } catch (e) { }
         }
     }
 
@@ -151,6 +168,9 @@ class PuzzleGenerator {
                 if (valSpan) valSpan.textContent = input.value;
             }
         });
+        if (config.infoText !== undefined) {
+            this.controls.infoText.value = config.infoText;
+        }
     }
 
     updatePercentages() {
@@ -171,13 +191,14 @@ class PuzzleGenerator {
 
     updateStyles() {
         const root = document.documentElement;
+        root.style.setProperty('--content-padding', `${this.controls.padding.value}px`);
         root.style.setProperty('--global-font-size', `${this.controls.fontSize.value}px`);
         root.style.setProperty('--global-line-height', this.controls.lineHeight.value);
         root.style.setProperty('--column-gap', `${this.controls.columnGap.value}px`);
         root.style.setProperty('--block-gap', `${this.controls.blockGap.value}px`);
         root.style.setProperty('--scanline-opacity', this.controls.scanlineOpacity.value);
         root.style.setProperty('--bg-color', this.controls.bgColor.value);
-        
+
         ['cyan', 'dim', 'yellow', 'purple', 'green'].forEach(key => {
             const ctrl = this.controls[key];
             root.style.setProperty(`--code-${key}`, ctrl.c.value);
@@ -189,14 +210,43 @@ class PuzzleGenerator {
 
     generate() {
         this.container.innerHTML = '';
+
+        // Mérési logika a pontos szélességhez
+        this.charWidths = {};
+        const measure = (type) => {
+            const tempLine = document.createElement('div');
+            tempLine.className = 'pg-line';
+            tempLine.style.visibility = 'hidden';
+            tempLine.style.position = 'absolute';
+            const span = document.createElement('span');
+            span.className = `token-${type}`;
+            span.textContent = 'M'; // Széles karakter a méréshez
+            tempLine.appendChild(span);
+            document.body.appendChild(tempLine);
+            const width = span.getBoundingClientRect().width;
+            document.body.removeChild(tempLine);
+            return width;
+        };
+
+        ['white', 'cyan', 'dim', 'yellow', 'purple', 'green'].forEach(t => {
+            this.charWidths[t] = measure(t);
+        });
+
         const totalLines = parseInt(this.controls.density.value);
         const colCount = parseInt(this.controls.columns.value);
         const blocksPerCol = parseInt(this.controls.blocksPerColumn.value);
+
+        const globalFontSize = parseInt(this.controls.fontSize.value);
         
-        const charWidth = parseInt(this.controls.fontSize.value) * 0.5;
-        const totalWidth = window.innerWidth - (colCount - 1) * parseInt(this.controls.columnGap.value);
-        const colWidthPx = totalWidth / colCount;
-        const targetLength = Math.floor(colWidthPx / charWidth) - 2;
+        // Pontos belső szélesség mérése a padding levonásával
+        const style = window.getComputedStyle(this.container);
+        const paddingLeft = parseFloat(style.paddingLeft) || 0;
+        const paddingRight = parseFloat(style.paddingRight) || 0;
+        const totalWidth = this.container.clientWidth - paddingLeft - paddingRight;
+        
+        const gapSize = parseInt(this.controls.columnGap.value);
+        const totalGap = (colCount - 1) * gapSize;
+        const colWidthPx = ((totalWidth - totalGap) / colCount) - 1; 
 
         const w = {
             cyan: parseInt(this.controls.cyan.w.value),
@@ -207,15 +257,19 @@ class PuzzleGenerator {
         };
         const totalW = w.cyan + w.dim + w.yellow + w.purple + w.green || 1;
 
+        // Felhasználói infó sorok előkészítése
+        const infoLines = this.controls.infoText.value.split('\n').filter(l => l.trim() !== '');
+        let infoIdx = 0;
+
         for (let c = 0; c < colCount; c++) {
             const colDiv = document.createElement('div');
             colDiv.className = 'pg-column';
-            
+
             let remainingLines = totalLines;
             for (let b = 0; b < blocksPerCol; b++) {
                 const blockDiv = document.createElement('div');
                 blockDiv.className = 'pg-block';
-                
+
                 let linesInBlock;
                 if (b === blocksPerCol - 1) {
                     linesInBlock = remainingLines;
@@ -231,7 +285,13 @@ class PuzzleGenerator {
                 for (let l = 0; l < linesInBlock; l++) {
                     const isHeader = (l === 0);
                     const variance = Math.floor(Math.random() * 6);
-                    blockDiv.appendChild(this.createLine(targetLength - variance, w, totalW, isHeader));
+
+                    let customHeader = null;
+                    if (isHeader && infoIdx < infoLines.length) {
+                        customHeader = infoLines[infoIdx++];
+                    }
+
+                    blockDiv.appendChild(this.createLine(colWidthPx, w, totalW, isHeader, customHeader, globalFontSize));
                 }
                 colDiv.appendChild(blockDiv);
                 if (remainingLines <= 0) break;
@@ -239,63 +299,79 @@ class PuzzleGenerator {
             this.container.appendChild(colDiv);
         }
     }
-
-    createLine(targetLength, w, totalW, isHeader = false) {
+    createLine(targetWidthPx, w, totalW, isHeader = false, customHeader = null, globalFontSize) {
         const lineDiv = document.createElement('div');
         lineDiv.className = 'pg-line';
-        
+
+        const getCharWidth = (type) => this.charWidths[type] || (globalFontSize * 0.6);
+
         if (isHeader) {
-            let header = this.blockHeaders[Math.floor(Math.random() * this.blockHeaders.length)];
-            
-            // Szigorúbb ellenőrzés: ha eléri a targetLength-et, már vágunk
-            if (header.length >= targetLength) {
-                header = header.substring(0, Math.max(5, targetLength - 5)) + '...*/';
+            let header = customHeader || this.blockHeaders[Math.floor(Math.random() * this.blockHeaders.length)];
+            const charW = getCharWidth('white');
+
+            if (header.length * charW > targetWidthPx) {
+                header = header.substring(0, Math.floor(targetWidthPx / charW));
             }
 
-            this.addToken(lineDiv, header, 'white');
-            
-            const remaining = targetLength - header.length;
-            if (remaining > 0) {
-                this.addToken(lineDiv, this.generateNoise(remaining), 'dim');
+            let currentWidth = this.addToken(lineDiv, header, 'white', globalFontSize);
+
+            // Kitöltés a végéig
+            const dimW = getCharWidth('dim');
+            while (currentWidth + dimW <= targetWidthPx) {
+                currentWidth += this.addToken(lineDiv, this.generateNoise(1), 'dim', globalFontSize);
             }
             return lineDiv;
         }
 
-        let currentLength = 0;
+        let currentWidth = 0;
         const indentLevels = [0, 0, 2, 4, 8];
         const indent = indentLevels[Math.floor(Math.random() * indentLevels.length)];
         if (indent > 0) {
-            this.addToken(lineDiv, ' '.repeat(indent), 'white');
-            currentLength += indent;
+            currentWidth += this.addToken(lineDiv, ' '.repeat(indent), 'white', globalFontSize);
         }
-        
+
         const colorW = w.cyan + w.yellow + w.purple + w.green;
-        while (currentLength < targetLength) {
+        while (currentWidth < targetWidthPx) {
             const rand = Math.random() * totalW;
             if (rand < colorW) {
                 const snippet = this.baseSnippets[Math.floor(Math.random() * this.baseSnippets.length)];
-                if (currentLength + snippet.length <= targetLength) {
-                    currentLength += this.renderGranularSnippet(lineDiv, snippet, w, totalW);
+
+                // Megkeressük a legszélesebb karaktert a snippetben a pontosabb becsléshez
+                const maxOffset = Math.max(
+                    (this.controls.cyan.s ? parseInt(this.controls.cyan.s.value) : 0),
+                    (this.controls.yellow.s ? parseInt(this.controls.yellow.s.value) : 0),
+                    (this.controls.purple.s ? parseInt(this.controls.purple.s.value) : 0),
+                    (this.controls.green.s ? parseInt(this.controls.green.s.value) : 0)
+                );
+                const snippetEstimatedWidth = snippet.length * (globalFontSize + maxOffset) * 0.61;
+
+                if (currentWidth + snippetEstimatedWidth <= targetWidthPx) {
+                    currentWidth += this.renderGranularSnippet(lineDiv, snippet, w, totalW, globalFontSize);
                 } else {
-                    currentLength += this.addToken(lineDiv, this.generateNoise(targetLength - currentLength), 'dim');
+                    // Ha a snippet nem fér be, zajjal töltjük ki a maradékot a legvégéig
+                    const dimW = getCharWidth('dim');
+                    while (currentWidth + dimW <= targetWidthPx) {
+                        currentWidth += this.addToken(lineDiv, this.generateNoise(1), 'dim', globalFontSize);
+                    }
                     break;
                 }
-            } else if (w.dim > 0) {
-                const len = Math.min(3 + Math.floor(Math.random() * 8), targetLength - currentLength);
-                currentLength += this.addToken(lineDiv, this.generateNoise(len), 'dim');
             } else {
-                currentLength += this.addToken(lineDiv, this.generateNoise(Math.min(2, targetLength - currentLength)), 'cyan');
-            }
-            if (currentLength < targetLength && w.cyan > 0) {
-                currentLength += this.addToken(lineDiv, this.generateNoise(1), 'cyan');
+                // Zaj generálása (dim vagy cyan)
+                const type = (w.dim > 0 && Math.random() > 0.3) ? 'dim' : 'cyan';
+                const charW = getCharWidth(type);
+                if (currentWidth + charW <= targetWidthPx) {
+                    currentWidth += this.addToken(lineDiv, this.generateNoise(1), type, globalFontSize);
+                } else {
+                    break;
+                }
             }
         }
         return lineDiv;
     }
 
-    renderGranularSnippet(container, text, w, totalW) {
+    renderGranularSnippet(container, text, w, totalW, globalFontSize) {
         const tokens = text.split(/(\/\*.*?\*\/|\/\/.*|0x[0-9A-F]+|0b[01_]+|\s+|[{}()\[\]]|[:;,.=><!&|+\-*\/%^]+|\w+)/gi).filter(t => t);
-        let len = 0;
+        let totalTokenWidth = 0;
         tokens.forEach(token => {
             let type = 'cyan';
             if (token.match(/\/\*|\/\/|::/)) type = 'purple';
@@ -305,19 +381,20 @@ class PuzzleGenerator {
             const colorW = w.cyan + w.yellow + w.purple + w.green;
             const chance = weight / colorW;
             if (type !== 'cyan' && Math.random() > chance) type = 'cyan';
-            len += this.addToken(container, token, type);
+            totalTokenWidth += this.addToken(container, token, type, globalFontSize);
         });
-        return len;
+        return totalTokenWidth;
     }
 
-    addToken(container, text, type) {
+    addToken(container, text, type, globalFontSize) {
         if (!text) return 0;
         if (type !== 'white' && type !== 'cyan' && this.controls[type] && parseInt(this.controls[type].w.value) === 0) type = 'cyan';
         const span = document.createElement('span');
         span.textContent = text;
         span.className = `token-${type}`;
         container.appendChild(span);
-        return text.length;
+
+        return text.length * (this.charWidths[type] || (globalFontSize * 0.6));
     }
 
     generateNoise(length) {
@@ -331,6 +408,7 @@ class PuzzleGenerator {
     exportConfig() {
         const config = {};
         document.querySelectorAll('.pg-controls input').forEach(input => { config[input.id] = input.value; });
+        config.infoText = this.controls.infoText.value;
         const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -363,17 +441,17 @@ class PuzzleGenerator {
             backgroundColor: bgColor,
             pixelRatio: 2
         })
-        .then(dataUrl => {
-            const link = document.createElement('a');
-            link.download = 'ismeretlen_kod_generator.png';
-            link.href = dataUrl;
-            link.click();
-            panel.style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Hiba a mentés során:', error);
-            panel.style.display = 'block';
-        });
+            .then(dataUrl => {
+                const link = document.createElement('a');
+                link.download = 'ismeretlen_kod_generator.png';
+                link.href = dataUrl;
+                link.click();
+                panel.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Hiba a mentés során:', error);
+                panel.style.display = 'block';
+            });
     }
 }
 

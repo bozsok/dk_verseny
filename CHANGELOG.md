@@ -5,6 +5,22 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.34.0] - 2026-04-26
+
+### Hozzáadva
+- **Puzzle Kód-generátor: 'Info' rendszer**: Új navigációs fül bevezetése, amely lehetővé teszi tetszőleges számú, soronkénti egyedi megjegyzés megadását.
+- **Dinamikus Fejlécek**: A beírt információk automatikusan fehér színű blokk-fejlécként (header) jelennek meg a generált kódblokkok tetején.
+- **Egyedi Méretkorrekció (Sárga, Lila, Zöld)**: Kiterjesztettük a betűméret-finomhangolást az összes kód-típusra, így minden színcsoport egyedileg skálázható a globális mérethez képest.
+- **Méretezhető Vezérlőpanel**: A kódgenerátor kezelőfelülete (`.pg-controls`) mostantól vízszintesen méretezhető, segítve a kényelmesebb munkavégzést szélesebb kijelzőkön.
+- **Belső margó (Padding) vezérlés**: Új csúszka az Alap fülön, amellyel 0-100 px közötti keret (safe area) állítható be a kódblokkok köré.
+
+### Javítva
+- **Precíziós Sor-kitöltés (Pixel-alapú motor)**: Lecseréltük a korábbi karakterszám-alapú becslést egy valós idejű, pixel-alapú kitöltő motorra.
+- **Valós idejű Betűszélesség-mérés**: A program mostantól a böngésző `getBoundingClientRect` API-ját használja a betűk pontos szélességének meghatározásához.
+- **Sorvégi hézag minimalizálása**: Az eltartás 1 pixelre csökkentésével a kódblokkok még szorosabban illeszkednek a jobb szélhez, maximalizálva a helykihasználást.
+- **Precíziós Belső Méret-mérés**: A program a számított stílusok (getComputedStyle) alapján méri le a rendelkezésre álló belső területet, figyelembe véve a beállított margókat.
+- **JSON Export/Import Stabilizáció**: Az egyedi Info szövegek és a Belső margó értéke is immár részei a menthető `.json` konfigurációs fájloknak.
+
 ## [0.33.2] - 2026-04-26
 
 ### Javítva
