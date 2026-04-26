@@ -29,6 +29,7 @@ import { ScriptPartAnimation } from './ui/components/ScriptPartAnimation.js';
 import { CountdownAnimation } from './ui/components/CountdownAnimation.js';
 import TutorialManager from './features/tutorial/TutorialManager.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
+import { FinaleIntroTask } from './content/grade4/tasks/finale/FinaleIntroTask.js';
 import './ui/styles/design-system.css';
 import './ui/styles/Tutorial.css';
 import './ui/styles/Portal.css';
@@ -854,6 +855,7 @@ class DigitalKulturaVerseny {
    * Slide megjelenítése
    */
   renderSlide(slide, skipDepth = 0, direction = 'forward', prebuiltComponent = null, prebuiltDOM = null) {
+    this.lastNavDirection = direction; // Irány elmentése
     if (!slide) return;
 
     // --- Változók inicializálása a függvény elején (Standard SEL mintát követve) ---
@@ -1249,6 +1251,35 @@ class DigitalKulturaVerseny {
       const enableButton = isLastSlide || (alreadyPlayed && (!isTaskSlide || isCompleted));
 
       setBtnState(enableButton, btnOptions);
+
+      // --- SPECIÁLIS FINÁLÉ INDÍTÓ MODAL INTERCEPTOR ---
+      // Csak akkor indul, ha ELŐRE navigálunk és még nincs kész
+      if (slide.id === 'final_1' && String(currentGrade) === '4' && !isCompleted && this.lastNavDirection === 'forward') {
+        if (this.logger) this.logger.info('Finale Intro Modal triggered, blocking narration.');
+        
+        const taskContainer = document.createElement('div');
+        const finaleTask = new FinaleIntroTask(taskContainer, {
+          onComplete: () => {
+            if (this.logger) this.logger.info('Finale task completed, starting narration.');
+            // JELÖLJÜK KÉSZNEK, hogy ne ugorjon fel többet!
+            this.stateManager?.markSlideCompleted(slide.id);
+            
+            // BEZÁRJUK A MODALT, hogy látszódjon a dia és a gombok!
+            this.activeGameInterface.hideTaskModal();
+            
+            this.playAudio(audioSrc, () => {
+              if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
+              setBtnState(true, btnOptions);
+            });
+          }
+        });
+
+        this.activeGameInterface.showTaskModal(taskContainer, null, {
+          hideHeader: true // A FinaleIntroTask saját fejlécet rajzol
+        });
+        return; // Kilépünk, hogy ne induljon el az automatikus playAudio lent
+      }
+
       this.playAudio(audioSrc, () => {
         if (isLastSlide) {
           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);

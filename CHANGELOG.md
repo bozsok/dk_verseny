@@ -5,6 +5,17 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.35.0] - 2026-04-27
+
+### Hozzáadva
+- **Finálé: 'Frissítőszkript' indító modal**: Egy új, interaktív feladat-modal bevezetése a Finálé kezdetekor (`final_1` dia).
+- **Komplett Feladat-struktúra**: Az új modal 100%-ban követi a korábbi állomások vizuális felépítését: tartalmazza a dinamikus fejlécet (írógép-effektussal), a központi Viewportot (dekoratív terminál-felülettel) és a Footer sávot a rendszerstátusz jelzőkkel.
+- **Narráció-szinkronizált Indítás**: A modal blokkolja az automatikus narrációt a 'final_1' dián, biztosítva, hogy a történetmesélés csak a 'VÉGREHAJTÁS' gomb megnyomása után vegye kezdetét.
+- **Navigációs Biztonság**: A feladat-modal csak előrehaladás (forward) esetén jelenik meg, megakadályozva az ismételt felugrást és az esetleges pontszám-halmozást visszafelé navigáláskor.
+- **Egységes Rendszer-azonosító**: A modal címe automatikusan megkapja a feladatokra jellemző 'RENDSZER FELÜLÍRÁS ELINDÍTVA: ' előtagot, megőrizve a vizuális konzisztenciát.
+- **Bit-pontos vizuális hűség**: A modal méretezése (1200x900), rétegrendje és animációs szekvenciája mostantól pixel-pontosan megegyezik a korábbi állomások feladataival, beleértve a segítség-rendszert (?) és a késleltetett megjelenítést is.
+- **Szabályzatnak megfelelő implementáció**: Teljes körű magyar nyelvű JSDoc dokumentáció és egységteszt (`FinaleIntroTask.test.js`) hozzáadva. A teszteléshez javítottuk a globális Jest konfigurációt (`jest.config.js`) és bevezettük a `styleMock.js`-t a CSS importok kezelésére.
+
 ## [0.34.0] - 2026-04-26
 
 ### Hozzáadva

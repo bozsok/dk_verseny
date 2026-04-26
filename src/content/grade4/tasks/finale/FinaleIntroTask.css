@@ -1,0 +1,302 @@
+/**
+ * FinaleIntroTask.css - Bit-pontos másolat a LeetPuzzle.css alapján
+ */
+:root {
+    --finale-bg: #0a0f13;
+    --finale-surface: #151a1f;
+    --finale-primary: #c1fffe;
+    --finale-secondary: #ff51fa;
+    --finale-tertiary: #9cff93;
+    --finale-cyan: #00ffff;
+}
+
+.dkv-finale-intro-container {
+    width: 1200px;
+    height: 900px;
+    position: relative;
+    font-family: 'Manrope', sans-serif;
+}
+
+.dkv-finale-intro-container .glass-panel {
+    backdrop-filter: blur(12px);
+    background: none;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.dkv-finale-intro-container .glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(21, 26, 31, 0.8);
+    z-index: 1;
+}
+
+.dkv-finale-intro-container .glass-panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--finale-cyan), transparent);
+}
+
+.dkv-finale-intro-container .scanline {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 255, 0.03) 50%);
+    background-size: 100% 3px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Header Section */
+.dkv-finale-intro__header {
+    padding: 3rem 3rem 1rem 3rem;
+    position: relative;
+    z-index: 5;
+}
+
+.dkv-finale-intro__header-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #ffa6f3;
+    display: block;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.dkv-finale-intro__title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.25rem;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1;
+    color: var(--finale-primary);
+}
+
+.dkv-finale-intro__subtitle {
+    font-size: 1.125rem;
+    color: #a8abb1;
+    margin: 1.5rem 0;
+    line-height: 1.6;
+    max-width: 800px;
+    min-height: 3.5rem;
+}
+
+/* Viewport Section */
+.dkv-finale-intro__main-viewport {
+    flex: 1;
+    margin: 0 3rem;
+    border: 1px solid rgba(114, 118, 123, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.dkv-finale-intro__main-viewport.visible {
+    opacity: 1;
+}
+
+.dkv-finale-intro__grid-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: calc(100% / 20) calc(100% / 10);
+    z-index: 2;
+}
+
+.dkv-finale-intro__decorative-icon {
+    font-size: 6rem;
+    color: rgba(0, 255, 255, 0.05);
+    animation: finale-pulse 4s infinite ease-in-out;
+}
+
+@keyframes finale-pulse {
+    0%, 100% { opacity: 0.05; transform: scale(1); }
+    50% { opacity: 0.15; transform: scale(1.1); }
+}
+
+/* Footer Section */
+.dkv-finale-intro__footer {
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    position: relative;
+    z-index: 5;
+}
+
+.dkv-finale-intro__footer.visible {
+    opacity: 1;
+}
+
+.dkv-finale-intro__system-status {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #51555a;
+    text-transform: uppercase;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.status-dot--green { background: var(--finale-tertiary); }
+.status-dot--magenta { 
+    background: var(--finale-secondary);
+    animation: status-pulse 1s infinite;
+}
+
+@keyframes status-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+/* EXECUTE Button */
+.dkv-finale-intro__execute-btn {
+    background: rgba(0, 255, 255, 0.15);
+    border: 1px solid #c1fffe;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    color: #c1fffe;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 1rem 0;
+    font-size: 1.4rem;
+    padding: 12px 40px;
+    letter-spacing: 2px;
+}
+
+.dkv-finale-intro__execute-btn:hover {
+    background: rgba(0, 255, 255, 0.25);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    color: #fff;
+}
+
+/* HELP SYSTEM */
+.dkv-finale-intro__help-btn {
+    position: absolute;
+    top: 3rem;
+    right: 3rem;
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid var(--finale-cyan);
+    color: var(--finale-cyan);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.dkv-finale-intro__help-btn:hover {
+    background: rgba(0, 255, 255, 0.25);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+.dkv-finale-intro__help-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 15, 19, 0.85);
+    backdrop-filter: blur(15px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.dkv-finale-intro__help-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dkv-finale-intro__help-content {
+    background: rgba(21, 26, 31, 0.95);
+    border: 1px solid var(--finale-cyan);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+    width: 90%;
+    max-width: 900px;
+    padding: 3rem;
+    position: relative;
+}
+
+.dkv-finale-intro__help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+    padding-bottom: 1rem;
+}
+
+.dkv-finale-intro__help-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--finale-secondary);
+    text-transform: uppercase;
+}
+
+.dkv-finale-intro__help-close {
+    background: transparent;
+    border: none;
+    color: var(--finale-cyan);
+    font-size: 2.5rem;
+    cursor: pointer;
+    line-height: 0.5;
+    transition: transform 0.2s ease;
+}
+
+.dkv-finale-intro__help-close:hover {
+    transform: rotate(90deg);
+}
+
+.dkv-finale-intro__help-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #a8abb1;
+    border-left: 2px solid var(--finale-cyan);
+    padding-left: 1.5rem;
+}

@@ -5,6 +5,7 @@ module.exports = {
     '<rootDir>/src/**/*.test.js'
   ],
   moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': '<rootDir>/tests/mocks/styleMock.js',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@core/(.*)$': '<rootDir>/src/core/$1',
     '^@features/(.*)$': '<rootDir>/src/features/$1',
