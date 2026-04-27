@@ -66,27 +66,22 @@ export class FinaleIntroTask {
                 </div>
 
                 <div class="dkv-finale-intro__main-viewport">
-                    <div class="dkv-finale-intro__grid-overlay"></div>
-                    <span class="material-symbols-outlined dkv-finale-intro__decorative-icon">terminal</span>
-                </div>
-
-                <div class="dkv-finale-intro__footer">
-                    <div class="dkv-finale-intro__system-status">
-                        <div><span class="status-dot status-dot--green"></span> NEURÁLIS KAPCSOLAT: AKTÍV</div>
-                        <div><span class="status-dot status-dot--magenta"></span> ADATFOLYAM: KÉSZENLÉT</div>
-                    </div>
-                    <button class="dkv-finale-intro__execute-btn">VÉGREHAJTÁS</button>
+                    <!-- Itt lesz a feladat tartalma -->
                 </div>
             </div>
         `;
 
         this.container.appendChild(this.element);
 
+        // A gombot közvetlenül a BODY-ba tesszük, hogy a fixed pozíció a BÖNGÉSZŐHÖZ igazodjon
+        this.executeBtn = document.createElement('button');
+        this.executeBtn.className = 'dkv-finale-intro__execute-btn';
+        this.executeBtn.textContent = 'VÉGREHAJTÁS';
+        document.body.appendChild(this.executeBtn);
+
         const titleEl = this.element.querySelector('.dkv-finale-intro__title');
         const subtitleEl = this.element.querySelector('.dkv-finale-intro__subtitle');
         const mainViewport = this.element.querySelector('.dkv-finale-intro__main-viewport');
-        const footer = this.element.querySelector('.dkv-finale-intro__footer');
-        const executeBtn = this.element.querySelector('.dkv-finale-intro__execute-btn');
 
         // Szekvenciális írógép effekt a LeetPuzzle mintájára
         this.typewriter.type(titleEl, titleText, {
@@ -97,9 +92,29 @@ export class FinaleIntroTask {
                     this.typewriter.type(subtitleEl, subtitleText, {
                         speed: 15,
                         onComplete: () => {
-                            // Csak a szöveg után jelennek meg a szekciók
+                            // Megjelenítjük a viewport-ot
                             mainViewport.classList.add('visible');
-                            footer.classList.add('visible');
+
+                            // Kép betöltése a 117. szabály szerint
+                            const puzzleImg = document.createElement('img');
+                            puzzleImg.className = 'dkv-finale-intro__puzzle-image';
+                            
+                            puzzleImg.onload = () => {
+                                puzzleImg.classList.add('loaded');
+                            };
+                            
+                            puzzleImg.onerror = () => {
+                                console.error('Hiba a puzzle kép betöltésekor:', puzzleImg.src);
+                            };
+
+                            puzzleImg.src = 'assets/images/grade4/finale/prefinale-puzzle.jpg';
+                            
+                            // Gyorsítótár ellenőrzése
+                            if (puzzleImg.complete && puzzleImg.naturalWidth > 0) {
+                                puzzleImg.classList.add('loaded');
+                            }
+
+                            mainViewport.appendChild(puzzleImg);
                         }
                     });
                 }, 300);
@@ -109,7 +124,7 @@ export class FinaleIntroTask {
         // Segítség rendszer inicializálása
         this.setupHelpLogic();
 
-        executeBtn.addEventListener('click', () => {
+        this.executeBtn.addEventListener('click', () => {
             this.onComplete();
         });
     }
@@ -144,6 +159,9 @@ export class FinaleIntroTask {
      */
     destroy() {
         this.typewriter.stop();
+        if (this.executeBtn) {
+            this.executeBtn.remove();
+        }
         if (this.element) {
             this.element.remove();
         }

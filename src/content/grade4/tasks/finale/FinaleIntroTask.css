@@ -61,6 +61,8 @@
     padding: 3rem 3rem 1rem 3rem;
     position: relative;
     z-index: 5;
+    height: 225px;
+    box-sizing: border-box;
 }
 
 .dkv-finale-intro__header-label {
@@ -92,34 +94,38 @@
 
 /* Viewport Section */
 .dkv-finale-intro__main-viewport {
-    flex: 1;
-    margin: 0 3rem;
-    border: 1px solid rgba(114, 118, 123, 0.3);
-    background: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 675px;
+    border-top: 1px solid rgba(0, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.6);
     position: relative;
     z-index: 5;
     opacity: 0;
     transition: opacity 1s ease-in-out;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+}
+
+.dkv-finale-intro__puzzle-image {
+    width: 1200px;
+    height: 675px;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.dkv-finale-intro__puzzle-image.loaded {
+    opacity: 1;
 }
 
 .dkv-finale-intro__main-viewport.visible {
     opacity: 1;
 }
 
-.dkv-finale-intro__grid-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: 
-        linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: calc(100% / 20) calc(100% / 10);
-    z-index: 2;
-}
+/* .dkv-finale-intro__grid-overlay eltávolítva */
 
 .dkv-finale-intro__decorative-icon {
     font-size: 6rem;
@@ -132,17 +138,7 @@
     50% { opacity: 0.15; transform: scale(1.1); }
 }
 
-/* Footer Section */
-.dkv-finale-intro__footer {
-    padding: 2rem 3rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-    position: relative;
-    z-index: 5;
-}
+/* .dkv-finale-intro__footer eltávolítva */
 
 .dkv-finale-intro__footer.visible {
     opacity: 1;
@@ -179,6 +175,9 @@
 
 /* EXECUTE Button */
 .dkv-finale-intro__execute-btn {
+    position: fixed;
+    bottom: 0;
+    right: 0;
     background: rgba(0, 255, 255, 0.15);
     border: 1px solid #c1fffe;
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
@@ -191,10 +190,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0 0 1rem 0;
+    border-radius: 1rem 0 0 0;
     font-size: 1.4rem;
-    padding: 12px 40px;
+    padding: 15px 50px;
     letter-spacing: 2px;
+    z-index: 9999;
 }
 
 .dkv-finale-intro__execute-btn:hover {
