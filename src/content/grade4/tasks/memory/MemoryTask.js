@@ -225,7 +225,7 @@ export class MemoryTask {
         this.element.className = 'dkv-memory-container';
 
         this.element.innerHTML = `
-            <div class="glass-panel">
+            <div class="dkv-memory__glass-panel">
                 <div class="scanline"></div>
                 
                 <div style="padding: 3rem 3rem 1rem 3rem; position: relative; z-index: 5;">

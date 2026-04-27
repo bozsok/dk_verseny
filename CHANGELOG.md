@@ -4,7 +4,12 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
- 
+
+## [0.36.3] - 2026-04-27
+
+### Javítva
+- **CSS Globális Szivárgás (Leakage) Javítása**: Rendszerszintű hiba elhárítása a Vanilla JS routing architektúrában. A 4. évfolyamos (Grade 4) feladatok (`IslandTask`, `MemoryTask`, `LeetPuzzle`, `FinaleIntroTask`) korábban a közös `.glass-panel` osztálynevet használták a fő wrapper elemüknél. A dinamikus betöltés során a `MemoryTask` `pointer-events: none` nélküli háttérrétege (`::before`, `z-index: 1`) globálissá vált, ami az `IslandTask`-ra navigálva fizikailag lefedte és kattinthatatlanná tette a `z-index` nélküli rúnákat. A megoldás érdekében a BEM (Block Element Modifier) architektúrának megfelelően minden érintett feladat megkapta a maga egyedi namespace-ét (pl. `.dkv-island__glass-panel`, `.dkv-memory__glass-panel`), véglegesen és rendszerszinten kiküszöbölve a CSS ütközéseket és az UI fagyásokat.
+
 ## [0.36.2] - 2026-04-27
 
 ### Módosítva

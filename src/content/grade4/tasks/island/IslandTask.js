@@ -62,7 +62,7 @@ export class IslandTask {
         const subtitleText = `A szigetről kimenő adatfolyam anomáliákat tartalmaz. A feladatod azonosítani azt az egyetlen rúnát, amely nem illik a sorozatba.`;
 
         this.element.innerHTML = `
-            <div class="glass-panel">
+            <div class="dkv-island__glass-panel">
                 <div class="scanline"></div>
                 
                 <div class="dkv-island__header">

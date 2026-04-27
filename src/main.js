@@ -916,9 +916,11 @@ class DigitalKulturaVerseny {
               });
             }
             if (slide.metadata?.section?.startsWith('station_')) {
-              const stId = slide.metadata.section;
-              if (this.stateManager && !this.stateManager.hasKey(stId)) {
-                this.stateManager.addKey(stId);
+              if (slide.type === 'task' || slide.metadata?.step === 3) {
+                const stId = slide.metadata.section;
+                if (this.stateManager && !this.stateManager.hasKey(stId)) {
+                  this.stateManager.addKey(stId);
+                }
               }
             }
           }
@@ -1189,29 +1191,23 @@ class DigitalKulturaVerseny {
         const isStationEnd = slide.metadata?.step === 3 && slide.metadata?.section?.startsWith('station_');
         if (isStationEnd) {
           const stationId = slide.metadata.section;
-          const hasItem = this.stateManager && this.stateManager.hasKey(stationId);
-
-          if (!hasItem) {
-            // Shadowing fix: A currentGrade és isGrade4 már elérhető a metódus hatókörében paraméterként
-            if (String(currentGrade) === '4') {
-              this.currentKeyAnimation = new ScriptPartAnimation({
-                stationId: stationId,
-                targetSlot: null,
-                logger: this.logger
-              });
-            } else {
-              this.currentKeyAnimation = new KeyCollectionAnimation({
-                stationId: stationId,
-                targetSlot: null
-              });
-            }
-
-            this._keyAnimationTimer = setTimeout(() => {
-              if (this.currentKeyAnimation) {
-                this.currentKeyAnimation.playPhaseA();
-              }
-            }, 6000);
+          
+          // FOLYAMATOS LEJÁTSZÁS KIKÉNYSZERÍTÉSE: Mindig lejátssza az animációt.
+          if (String(currentGrade) === '4') {
+            this.currentKeyAnimation = new ScriptPartAnimation({
+              stationId: stationId,
+              targetSlot: null,
+              logger: this.logger
+            });
+          } else {
+            this.currentKeyAnimation = new KeyCollectionAnimation({
+              stationId: stationId,
+              targetSlot: null
+            });
           }
+          
+          // A korábbi fix 6 másodperces várakozást eltávolítottuk.
+          // Ehelyett a `playPhaseA` pontosan a narráció végén indul el (vagy azonnal, ha nincs hang).
         }
 
       } else {
@@ -1298,6 +1294,12 @@ class DigitalKulturaVerseny {
           this._showSolemnMessage();
         }
 
+        // --- ANIMÁCIÓ INDÍTÁSA (Phase A) ---
+        // A 6 másodperces statikus várakozás helyett a szkript azonnal megjelenik a narráció végén.
+        if (this.currentKeyAnimation && typeof this.currentKeyAnimation.playPhaseA === 'function') {
+          this.currentKeyAnimation.playPhaseA();
+        }
+
         setBtnState(true, btnOptions);
         if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
       });
@@ -1309,6 +1311,12 @@ class DigitalKulturaVerseny {
       // HA TUTORIAL VAN, MINDIG DISABLE!
       const shouldDisable = this.tutorialManager.isActive || isTutorialPending;
       setBtnState(!shouldDisable, btnOptions);
+
+      // --- ANIMÁCIÓ INDÍTÁSA (Phase A) HA NINCS AUDIO ---
+      // Ha egyáltalán nincs narráció az összegző dián, azonnal indítjuk az animációt.
+      if (this.currentKeyAnimation && typeof this.currentKeyAnimation.playPhaseA === 'function') {
+        this.currentKeyAnimation.playPhaseA();
+      }
     }
 
     // 5. Preloading
@@ -1535,9 +1543,11 @@ class DigitalKulturaVerseny {
       currentSlide?.metadata?.section?.startsWith('station_') ||
       currentSlide?.metadata?.section === 'intro'
     );
-    const isNextSectionStart = nextSlide?.metadata?.step === 0 && (
-      nextSlide?.metadata?.section?.startsWith('station_') ||
-      nextSlide?.metadata?.section === 'final'
+    // JAVÍTÁS: Debug módban átugorhatják a step 0 diákat. 
+    // Egy állomásváltás ténye a lényeg: a következő dia szekciója más, mint a mostanié!
+    const isNextSectionStart = nextSlide && nextSlide.metadata?.section !== currentSlide?.metadata?.section && (
+      nextSlide.metadata?.section?.startsWith('station_') ||
+      nextSlide.metadata?.section === 'final'
     );
 
     if (isStationEnd && isNextSectionStart) {
@@ -1556,11 +1566,14 @@ class DigitalKulturaVerseny {
 
       // --- ANIMÁCIÓ BEKÖTÉSE (FÁZIS B) ---
       const stationId = currentSlide?.metadata?.section; // pl. 'station_1'
+      const isSummarySlide = currentSlide?.metadata?.step === 3; // CSAK az összegző dián!
       const hasItem = this.stateManager && this.stateManager.hasKey(stationId);
 
       let animationPromise = Promise.resolve();
 
-      if (!hasItem && stationId && stationId.startsWith('station_')) {
+      // FOLYAMATOS LEJÁTSZÁS KIKÉNYSZERÍTÉSE: Mindig berepül a táskába.
+      // JAVÍTÁS: Csak az összegző dia végén hajtsuk végre, ne a feladat (Task) dia végén!
+      if (isSummarySlide && stationId && stationId.startsWith('station_')) {
         // Keresünk egy üres slot-ot
         const inventoryCount = this.stateManager ? this.stateManager.getInventory().length : 0;
         const slots = this.activeGameInterface ? this.activeGameInterface.element.querySelectorAll('.dkv-g4-slot, .dkv-inventory-slot') : [];

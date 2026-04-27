@@ -13,6 +13,7 @@ export class ScriptPartAnimation {
      * @param {Function} options.onComplete - Callback a fázis A befejezésekor
      */
     constructor(options = {}) {
+        console.log('[ScriptAnim] Példányosítva!', options);
         this.stationId = options.stationId;
         this.targetSlot = options.targetSlot;
         this.onComplete = options.onComplete;
@@ -64,6 +65,7 @@ export class ScriptPartAnimation {
      * FÁZIS A: Megjelenítés és Ragyogás
      */
     playPhaseA() {
+        console.log('[ScriptAnim] playPhaseA meghívva! container létezik?', !!this.container, 'destroyed?', this._isDestroyed);
         if (this._isDestroyed || this.container) return;
 
         if (this.logger) this.logger.info('[ScriptAnim] Phase A indítása', { station: this.stationId });
@@ -90,9 +92,13 @@ export class ScriptPartAnimation {
         });
 
 
+        // BasePath kalkuláció a Vite környezetből, hogy subdirectory (pl. /informatika/verseny/) esetén is stabil legyen
+        const basePath = import.meta.env?.BASE_URL || '/';
+        const cleanBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        
         // Nagy Szkriptrészlet Kép
         this.largeScript = document.createElement('img');
-        this.largeScript.src = `assets/images/grade4/scripts/${this.scriptName}.png`;
+        this.largeScript.src = `${cleanBasePath}/assets/images/grade4/scripts/${this.scriptName}.png`;
         Object.assign(this.largeScript.style, {
             position: 'absolute', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%) scale(0.01)',
@@ -198,17 +204,18 @@ export class ScriptPartAnimation {
             const targetY = slotRect.top + slotRect.height / 2 - window.innerHeight / 2;
 
             // Cél skálázás (az eredeti mérethez képest, ami kb. 50vh magas)
-            const scriptHeight = this.largeScript.offsetHeight;
-            const targetScale = slotRect.height / scriptHeight;
+            const scriptHeight = this.largeScript.offsetHeight || window.innerHeight * 0.5;
+            const targetScale = isNaN(slotRect.height / scriptHeight) || !isFinite(slotRect.height / scriptHeight) ? 0.1 : (slotRect.height / scriptHeight);
 
             // ELINDÍTJUK A REPÜLÉST
-            const travelAnim = this.largeScript.animate([
-                { transform: currentTransform, opacity: 1 },
-                {
-                    transform: `translate(calc(-50% + ${targetX}px), calc(-50% + ${targetY}px)) scale(${targetScale})`,
-                    opacity: 0.3
-                }
-            ], {
+            try {
+                const travelAnim = this.largeScript.animate([
+                    { transform: currentTransform, opacity: 1 },
+                    {
+                        transform: `translate(calc(-50% + ${targetX}px), calc(-50% + ${targetY}px)) scale(${targetScale})`,
+                        opacity: 0.3
+                    }
+                ], {
                 duration: 900,
                 easing: 'cubic-bezier(0.5, 0, 0.5, 1)',
                 fill: 'forwards'
@@ -217,11 +224,18 @@ export class ScriptPartAnimation {
 
             this.overlay.style.opacity = '0';
 
-            travelAnim.onfinish = () => {
-                if (this._isDestroyed) { resolve(); return; }
+                travelAnim.onfinish = () => {
+                    if (this._isDestroyed) { resolve(); return; }
+                    this._cleanup();
+                    resolve();
+                };
+
+            } catch (err) {
+                if (this.logger) this.logger.error('[ScriptAnim] Repülés animációs hiba:', err);
+                console.error('[ScriptAnim] Repülés animációs hiba:', err, { currentTransform, targetX, targetY, targetScale });
                 this._cleanup();
                 resolve();
-            };
+            }
         });
     }
 

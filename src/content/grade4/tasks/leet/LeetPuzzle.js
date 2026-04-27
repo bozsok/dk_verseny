@@ -230,7 +230,7 @@ export class LeetPuzzle {
         const subtitleText = `Fejtsd meg az alábbi szavak jelentését! Használd a moduláris beviteli slotokat a dekódoláshoz. Siess, mert a Zéró-szekvencia sérültté teszi a beviteli slotokat!`;
 
         this.element.innerHTML = `
-            <div class="glass-panel">
+            <div class="dkv-leet__glass-panel">
                 <div class="scanline"></div>
                 
                 <div style="padding: 3rem 3rem 1rem 3rem; position: relative; z-index: 5;">

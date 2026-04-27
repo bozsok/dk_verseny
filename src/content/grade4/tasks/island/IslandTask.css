@@ -443,7 +443,7 @@
 }
 
 /* === GLOW, GLASS, SCANLINE === */
-.glass-panel {
+.dkv-island__glass-panel {
     height: 100%;
     display: flex;
     flex-direction: column;

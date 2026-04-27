@@ -378,8 +378,12 @@ class DebugManager {
             const stationId = section; // pl. "station_1"
             
             // Kulcs megszerzése (ha még nincs meg)
-            if (this.stateManager && !this.stateManager.hasKey(stationId)) {
-                this.stateManager.addKey(stationId);
+            // JAVÍTÁS: Csak akkor adjuk meg a kulcsot, ha a feladatot (task) vagy az összegzőt ugorjuk át, 
+            // ne akkor, amikor a bevezető sztori diákat (story) skippeljük!
+            if (type === 'task' || slide.metadata?.step === 3) {
+                if (this.stateManager && !this.stateManager.hasKey(stationId)) {
+                    this.stateManager.addKey(stationId);
+                }
             }
 
             // Pontszám és Idő szimuláció (ha történet vagy feladat dia)

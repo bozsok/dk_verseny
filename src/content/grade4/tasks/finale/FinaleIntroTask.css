@@ -17,7 +17,7 @@
     font-family: 'Manrope', sans-serif;
 }
 
-.dkv-finale-intro-container .glass-panel {
+.dkv-finale-intro-container .dkv-finale-intro__glass-panel {
     backdrop-filter: blur(12px);
     background: none;
     border: 1px solid rgba(0, 255, 255, 0.2);
@@ -29,7 +29,7 @@
     position: relative;
 }
 
-.dkv-finale-intro-container .glass-panel::before {
+.dkv-finale-intro-container .dkv-finale-intro__glass-panel::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -37,7 +37,7 @@
     z-index: 1;
 }
 
-.dkv-finale-intro-container .glass-panel::after {
+.dkv-finale-intro-container .dkv-finale-intro__glass-panel::after {
     content: '';
     position: absolute;
     top: 0;

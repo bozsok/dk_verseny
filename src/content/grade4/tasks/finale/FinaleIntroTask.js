@@ -82,7 +82,7 @@ export class FinaleIntroTask {
                 <span class="dkv-finale-intro__timer-clock">00:00</span>
             </div>
 
-            <div class="glass-panel">
+            <div class="dkv-finale-intro__glass-panel">
                 <div class="scanline"></div>
                 
                 <div class="dkv-finale-intro__header">
