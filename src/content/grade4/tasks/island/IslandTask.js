@@ -115,6 +115,10 @@ export class IslandTask {
         this.beltElement = this.element.querySelector('.dkv-island__rune-belt');
         this.interferenceLayer = this.element.querySelector('.dkv-island__interference-layer');
         this.executeBtn = this.element.querySelector('.dkv-island__execute-btn');
+
+        // BIZTOSÍTÉK: Explicit inline pointer-events, hogy a kattintás garantáltan átmenjen ezeken a rétegeken
+        if (this.beltElement) this.beltElement.style.pointerEvents = 'none';
+        if (this.interferenceLayer) this.interferenceLayer.style.pointerEvents = 'none';
         this.stageLabel = this.element.querySelector('.dkv-island__header-label');
         this.stageDotsContainer = this.element.querySelector('.dkv-island__stage-dots');
         this.stageText = this.element.querySelector('.dkv-island__stage-text');
@@ -328,11 +332,19 @@ export class IslandTask {
             // Kezdeti pozíció (az animate fogja frissíteni)
             runeDiv.style.left = `0px`;
 
+            // BIZTOSÍTÉK: Explicit inline pointer-events és z-index, hogy a rúna kattintható maradjon
+            runeDiv.style.pointerEvents = 'auto';
+            runeDiv.style.zIndex = '100';
+
             if (rune.rotation) {
                 runeDiv.style.transform = `rotate(${rune.rotation}deg)`;
             }
 
             const img = document.createElement('img');
+            
+            // BIZTOSÍTÉK: Kép ne fogja meg a kattintást, és legyen garantált a türkiz ragyogása (halvány probléma fix)
+            img.style.pointerEvents = 'none';
+            img.style.filter = 'drop-shadow(0 0 10px rgba(0, 255, 255, 0.4))';
 
             // BasePath kalkuláció a Vite környezetből, hogy subdirectory (pl. /informatika/verseny/) esetén is stabil legyen
             const basePath = import.meta.env?.BASE_URL || '/';
@@ -404,6 +416,11 @@ export class IslandTask {
             this.totalPoints += 1; // Minden helyes találat 1 pont
         } else {
             selectedRuneObj.element.classList.add('incorrect');
+            
+            // Ha hibás, az inline drop-shadow miatt JS-ből is pirosra kell állítani
+            const img = selectedRuneObj.element.querySelector('img');
+            if (img) img.style.filter = 'drop-shadow(0 0 10px rgba(255, 0, 0, 0.4)) grayscale(1)';
+
             // Megmutatjuk a helyeset egy diszkrét pöttyel (LibraryTask stílus)
             this.runes[this.anomalyIndex].element.classList.add('actual-correct');
         }

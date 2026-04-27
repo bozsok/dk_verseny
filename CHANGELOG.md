@@ -5,6 +5,11 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.36.2] - 2026-04-27
+
+### Módosítva
+- **IslandTask (Station 4) Bugfix**: Az éles (production) szerveren tapasztalható CSS layer (pointer-events) és drop-shadow eldobás javítva. A rúnák vizuális szűrője (filter) és interaktivitása (kattinthatóság) mostantól hardcoded inline JavaScript stílusként van biztosítva (`pointer-events: auto`, `z-index: 100`, `filter: drop-shadow`), így immunis a Vite vagy a PostCSS bármilyen minifikációs, vagy CSS selector összeomlási hibájára.
+
 ## [0.36.1] - 2026-04-27
 
 ### Módosítva
