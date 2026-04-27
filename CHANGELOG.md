@@ -5,6 +5,12 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.36.1] - 2026-04-27
+
+### Módosítva
+- **IslandTask (Station 4) Refaktor**: Eltávolításra került a komplex, aszinkron hálózat-tapogatást (asset scanning) végző `scanAssets()` metódus, és a kristály/mag (crystal/core) elemek támogatása. Mivel a feladat véglegesen csak a 15 darab rúnára épül, egy statikus 1-15 közötti tömb vette át a dinamikus manifest helyét. 
+- **IslandTask Szinkronizáció**: Ezáltal az `init()` metódus szinkronná vált, megszüntetve a háttérben történő hálózati torlódásokat és a "Floating Promise" jellegű architektúrális kockázatokat. A telemetriai szövegek is kizárólag a rúnákra vonatkozó tartalmakra lettek letisztítva.
+
 ## [0.36.0] - 2026-04-27
 
 ### Hozzáadva

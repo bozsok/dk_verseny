@@ -34,9 +34,10 @@ export class IslandTask {
         this.anomalyIndex = -1;
         this.totalPoints = 0;
         this.startTime = Date.now();
-        this.assetManifest = { rune: [], crystal: [], core: [] };
-        this.isScanning = true;
         this.lastRotationTime = 0; // Utolsó dinamikus rotáció ideje
+
+        // Elérhető rúnák ID-jai (15 db fixen)
+        this.availableRuneIds = Array.from({ length: 15 }, (_, i) => (i + 1).toString().padStart(2, '0'));
 
         // Sebességek körönként (ms / pixel vagy másodperc / képernyő)
         // A felhasználó kérte: 10, 8, 6, 6, 6, 6, 6, 6, 5, 4 másodperc / képernyő szélesség (1200px)
@@ -45,13 +46,8 @@ export class IslandTask {
         this.init();
     }
 
-    async init() {
+    init() {
         this.logger.info('IslandTask initialized (Station 4)');
-
-        // Először megvárjuk az assetek beolvasását
-        await this.scanAssets();
-
-        // Csak ha megvan a lista, akkor rajzolunk és indítjuk a fázisokat
         this.render();
     }
 
@@ -186,9 +182,6 @@ export class IslandTask {
         this.isTransitioning = false;
         this.lastRotationTime = performance.now();
 
-        // Fixen rúnákat használunk (User kérése)
-        this.currentCategory = 'rune';
-
         // Viewport megjelenítése az első körnél
         if (stage === 1) {
             this.viewport.classList.add('visible');
@@ -265,90 +258,18 @@ export class IslandTask {
     }
 
     /**
-     * Pásztázza a mappákat a létező képek sorszámai után (1-30 tartományban).
-     */
-    async scanAssets() {
-        this.logger.info('Scanning assets...');
-
-        // 1. Megpróbáljuk a profi utat: lekérdezzük a Vite szervertől az API-n keresztül
-        try {
-            const response = await fetch('/__api/island-assets');
-            if (response.ok) {
-                const data = await response.json();
-                this.assetManifest = data;
-                this.logger.info('Assets scanned successfully via API:', this.assetManifest);
-                this.isScanning = false;
-                return;
-            }
-        } catch (err) {
-            this.logger.warn('Island Assets API not available, falling back to probing.', err);
-        }
-
-        // 2. Fallback: Ha az API nem elérhető (pl. éles buildben), marad a robusztus ujjlenyomat-ellenőrzés
-        const categories = ['rune', 'crystal', 'core'];
-        const probeLimit = 30;
-
-        const scanPromises = categories.map(async (cat) => {
-            const foundIds = [];
-            const probes = [];
-
-            for (let i = 1; i <= probeLimit; i++) {
-                const id = i.toString().padStart(2, '0');
-                const url = `assets/images/grade4/island/${cat}/${id}.png`;
-
-                probes.push(
-                    fetch(url)
-                        .then(async (res) => {
-                            if (res.ok) {
-                                const blob = await res.blob();
-                                if (blob.type.includes('image') || blob.size > 1000) {
-                                    const buffer = await blob.slice(0, 4).arrayBuffer();
-                                    const view = new Uint8Array(buffer);
-                                    if (view[0] === 0x89 && view[1] === 0x50 && view[2] === 0x4E && view[3] === 0x47) {
-                                        foundIds.push(id);
-                                    }
-                                }
-                            }
-                        })
-                        .catch(() => { })
-                );
-            }
-
-            await Promise.all(probes);
-            this.assetManifest[cat] = foundIds.sort();
-        });
-
-        await Promise.all(scanPromises);
-        this.isScanning = false;
-        this.logger.info('Assets scanned via fallback probing:', this.assetManifest);
-    }
-
-    /**
      * Rúnák generálása a körhöz.
      */
     generateRunes() {
         this.runes = [];
 
-        // Elérhető ID-k az aktuális kategóriából
-        const availableIds = this.assetManifest[this.currentCategory] || [];
-
-        // Biztonsági ellenőrzés: ha nincs elég kép, hiba
-        if (availableIds.length < 2) {
-            this.logger.error(`HIBA: Nem található elegendő kép a(z) ${this.currentCategory} kategóriában! Ellenőrizd a public/assets/images/grade4/island/ mappát.`);
-            // Fallback csak a legvégső esetben, de nem találgatunk 15-ig
-            if (availableIds.length === 0) {
-                availableIds.push('03'); // Legalább egy létezőt adjunk hozzá, amit láttam a mappádban
-                availableIds.push('04');
-            }
-        }
-
         // Alap rúnák kiválasztása a létezők közül
-        const baseRuneId = availableIds[this.getRandomInt(0, availableIds.length - 1)];
+        const baseRuneId = this.availableRuneIds[this.getRandomInt(0, this.availableRuneIds.length - 1)];
         const anomalyRuneId = this.getDifferentRuneId(baseRuneId);
 
         this.anomalyIndex = this.getRandomInt(0, this.beltRunesCount - 1);
 
-        // Telemetria frissítése kategória alapján
+        // Telemetria frissítése
         this.updateTelemetryContent();
 
         for (let i = 0; i < this.beltRunesCount; i++) {
@@ -367,30 +288,16 @@ export class IslandTask {
     }
 
     /**
-     * Telemetria szövegek beállítása kategória alapján (Következetes magyar feliratokkal).
+     * Telemetria szövegek beállítása.
      */
     updateTelemetryContent() {
-        const telemetryData = {
-            rune: {
-                top: '[ RENDSZER-SZINTŰ ÁTÍRÁS ] [ MATERIA-KÓD: AKTÍV ] [ SZIMBÓLUM-INTEGRITÁS: MAX ] [ NEURÁLIS CSATOLÁS: ONLINE ]',
-                bottom: 'ANOMÁLIA DETEKTOR: X: 000 Y: 000 | ÁLLAPOT: SZAKRÁLIS INTEGRITÁS ELLENŐRZÉSE... | KÓD: 0xAF'
-            },
-            crystal: {
-                top: '[ REZONANCIA-ANALÍZIS ] [ FREKVENCIA: 432.12 THZ ] [ TÖRÉSMUTATÓ: STABIL ] [ OSZCILLÁCIÓ: ÉSZLELVE ]',
-                bottom: 'ANOMÁLIA DETEKTOR: X: 000 Y: 000 | ÁLLAPOT: KRISTÁLYSZERKEZETI VIZSGÁLAT... | KÓD: 0xBC'
-            },
-            core: {
-                top: '[ PLAZMA-STABILIZÁCIÓ ] [ HŐMÉRSÉKLET: 4500K ] [ FLUXUS-SZINT: KRITIKUS ] [ MAG-INTEGRITÁS: 88.2% ]',
-                bottom: 'ANOMÁLIA DETEKTOR: X: 000 Y: 000 | ÁLLAPOT: TERMIKUS SZIGNATÚRA ANALÍZIS... | KÓD: 0xEE'
-            }
-        };
-
-        const data = telemetryData[this.currentCategory] || telemetryData.rune;
+        const topText = '[ RENDSZER-SZINTŰ ÁTÍRÁS ] [ MATERIA-KÓD: AKTÍV ] [ SZIMBÓLUM-INTEGRITÁS: MAX ] [ NEURÁLIS CSATOLÁS: ONLINE ]';
+        const bottomText = 'ANOMÁLIA DETEKTOR: X: 000 Y: 000 | ÁLLAPOT: SZAKRÁLIS INTEGRITÁS ELLENŐRZÉSE... | KÓD: 0xAF';
 
         // Garantáljuk, hogy a szöveg elég hosszú legyen (min. 3000 pixel szélesség érzet)
         const repeatCount = 6;
-        const topStr = (data.top + ' | ').repeat(repeatCount);
-        const bottomStr = (data.bottom + ' | ').repeat(repeatCount);
+        const topStr = (topText + ' | ').repeat(repeatCount);
+        const bottomStr = (bottomText + ' | ').repeat(repeatCount);
 
         const topContent = `<span>${topStr}</span><span>${topStr}</span>`;
         const bottomContent = `<span>${bottomStr}</span><span>${bottomStr}</span>`;
@@ -399,16 +306,13 @@ export class IslandTask {
         this.telemetryBottom.innerHTML = `<div class="marquee-reverse">${bottomContent}</div>`;
 
         // Eltároljuk az eredeti szöveget a zaj-frissítéshez
-        this.baseBottomText = data.bottom;
+        this.baseBottomText = bottomText;
     }
 
     getDifferentRuneId(baseId) {
-        const availableIds = this.assetManifest[this.currentCategory] || [];
-        if (availableIds.length < 2) return baseId === '01' ? '02' : '01';
-
         let newId;
         do {
-            newId = availableIds[this.getRandomInt(0, availableIds.length - 1)];
+            newId = this.availableRuneIds[this.getRandomInt(0, this.availableRuneIds.length - 1)];
         } while (newId === baseId);
         return newId;
     }
@@ -430,17 +334,17 @@ export class IslandTask {
 
             const img = document.createElement('img');
 
+            // BasePath kalkuláció a Vite környezetből, hogy subdirectory (pl. /informatika/verseny/) esetén is stabil legyen
+            const basePath = import.meta.env?.BASE_URL || '/';
+            const cleanBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+
             // Rule 117: Image Cache Safety hívásrend
             img.onload = () => { img.dataset.loaded = 'true'; };
             img.onerror = () => {
                 this.logger.error(`Asset loading failed: ${img.src}`);
-                // Megpróbáljuk a rúnát fallback-nek, ha a crystal/core még nincs kész
-                if (this.currentCategory !== 'rune') {
-                    img.src = `assets/images/grade4/island/rune/${rune.id}.png`;
-                }
             };
 
-            img.src = `assets/images/grade4/island/${this.currentCategory}/${rune.id}.png`;
+            img.src = `${cleanBasePath}/assets/images/grade4/island/rune/${rune.id}.png`;
 
             // Cache check
             if (img.complete && img.naturalWidth > 0) {

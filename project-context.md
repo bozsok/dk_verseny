@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-04-19T02:15:00+02:00'
+date: '2026-04-27T17:43:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.32.6 (v0.32.6)
+- **Version:** 0.36.1 (v0.36.1)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
-- **Last Updated:** 2026-04-24
-- **Current Mission:** Grade 4 Bit-folyam Zsilip (SpeedTask) Finalization & Audit (Complete)
+- **Last Updated:** 2026-04-27
+- **Current Mission:** IslandTask (Station 4) Refactor & Performance Optimization (Complete)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
