@@ -1256,27 +1256,33 @@ class DigitalKulturaVerseny {
       // Csak akkor indul, ha ELŐRE navigálunk és még nincs kész
       if (slide.id === 'final_1' && String(currentGrade) === '4' && !isCompleted && this.lastNavDirection === 'forward') {
         if (this.logger) this.logger.info('Finale Intro Modal triggered, blocking narration.');
-        
+
         const taskContainer = document.createElement('div');
         const finaleTask = new FinaleIntroTask(taskContainer, {
-          onComplete: () => {
-            if (this.logger) this.logger.info('Finale task completed, starting narration.');
-            // JELÖLJÜK KÉSZNEK, hogy ne ugorjon fel többet!
-            this.stateManager?.markSlideCompleted(slide.id);
-            
-            // BEZÁRJUK A MODALT, hogy látszódjon a dia és a gombok!
-            this.activeGameInterface.hideTaskModal();
-            
-            this.playAudio(audioSrc, () => {
-              if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
-              setBtnState(true, btnOptions);
-            });
+          onComplete: (result) => {
+            // Egyedi című összegző ablak megjelenítése
+            this.showMazeResultModal(
+              { ...result, title: 'SIKERES FRISSÍTŐSZKRIPT ÖSSZEILLESZTÉS' },
+              () => {
+                // Pontok jóváírása és dia megjelölése befejezettként
+                this.stateManager?.updateProgress({
+                  level: slide.id,
+                  score: result.points || 0,
+                  completed: true
+                });
+                this.stateManager?.markSlideCompleted(slide.id);
+
+                this.activeGameInterface.hideTaskModal();
+                this.playAudio(audioSrc, () => {
+                  if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
+                  setBtnState(true, btnOptions);
+                });
+              }
+            );
           }
         });
 
-        this.activeGameInterface.showTaskModal(taskContainer, null, {
-          hideHeader: true // A FinaleIntroTask saját fejlécet rajzol
-        });
+        this.activeGameInterface.showTaskModal(taskContainer, null);
         return; // Kilépünk, hogy ne induljon el az automatikus playAudio lent
       }
 
@@ -1335,7 +1341,7 @@ class DigitalKulturaVerseny {
         <div class="dkv-g4-result-header">
           <span class="dkv-g4-result-label">RENDSZER ÖSSZESÍTÉS</span>
           <h2 class="dkv-g4-result-title">
-            ${result.success ? 'ADATFOLYAM HELYREÁLLÍTVA DEKÓDOLÁS SIKERES' : 'RENDSZERSZINTŰ KIVÉTEL HOZZÁFÉRÉS ELUTASÍTVA'}
+            ${result.title ? result.title : (result.success ? 'ADATFOLYAM HELYREÁLLÍTVA DEKÓDOLÁS SIKERES' : 'RENDSZERSZINTŰ KIVÉTEL HOZZÁFÉRÉS ELUTASÍTVA')}
           </h2>
         </div>
         <div class="dkv-g4-result-stats">
@@ -2165,7 +2171,7 @@ class DigitalKulturaVerseny {
       </div>
     `;
     document.body.appendChild(overlay);
-    
+
     // Finom megjelenítés (opacity transition)
     requestAnimationFrame(() => {
       overlay.classList.add('visible');

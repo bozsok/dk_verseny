@@ -5,6 +5,22 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
  
+## [0.36.0] - 2026-04-27
+
+### Hozzáadva
+- **Grade 4 Finálé Puzzle Feladat**: A Grade 3-as puzzle motor teljes körű integrációja a 4. osztályos finálé feladataként. Tartalmazza a dinamikus darab-generálást, az intelligens mágneses illesztést és a vizuális visszajelzéseket.
+- **Strategiai Súgó Segédlet**: A súgó modal mostantól tartalmazza a Grade 3-ból átvett stratégiai tanácsokat és az élek felismerését segítő előnézeti képet (`puzzle_help.png`).
+- **Integrált Pontszámítás**: A feladat sikeres befejezése után a 10 pont most már automatikusan és véglegesen jóváíródik a `totalScore` egyenlegen az `updateProgress` metóduson keresztül.
+
+### Javítva
+- **Súgó Overlay Stacking Context**: Megoldva a puzzle darabok és a súgó modal takarási hibája a Súgó `document.body`-ba történő kiemelésével és `position: fixed` pozicionálással.
+- **Automatikus Súgó Kezelés**: A Súgó modal mostantól automatikusan bezárul az írógép-effektus végén, amikor a játékmező aktívvá válik.
+- **Vizuális Finomítások**: 
+    - A puzzle darabok szegélyének áttetszősége 0.2-re csökkentve a jobb vizuális illeszkedés érdekében.
+    - Eltávolítva a viewport hátteréből a zavaró 0.1 opacity-vel rendelkező szellemképet.
+- **Rendszerszintű Konzisztencia**: Az összesítő modal címe mostantól helyesen a felhasználó által kért 'SIKERES FRISSÍTŐSZKRIPT ÖSSZEILLESZTÉS' szöveget jeleníti meg.
+- **Időzítő és Memória Audit**: Az időmérés immár `performance.now()` alapú, és a feladat bezárásakor minden eseménykezelő és DOM elem (a body-hoz csatoltak is) kényszerített törlésre kerül.
+
 ## [0.35.0] - 2026-04-27
 
 ### Hozzáadva
