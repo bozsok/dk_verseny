@@ -5,6 +5,10 @@
  * FÁZIS A: Megjeleníti a szkriptrészletet középen (neon ragyogás + glitch effektek).
  * FÁZIS B: Áthelyezi a HUD inventory slotjába.
  */
+import { puzzleService } from '../../features/puzzles/PuzzleService.js';
+import { PuzzlePiece } from '../../features/puzzles/PuzzlePiece.js';
+import '../../features/puzzles/PuzzlePiece.css';
+
 export class ScriptPartAnimation {
     /**
      * @param {Object} options 
@@ -47,18 +51,92 @@ export class ScriptPartAnimation {
             this.styleTag.id = 'dkv-script-animation-styles';
             this.styleTag.innerHTML = `
                 @keyframes scriptGlow {
-                    0% { filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.6)) contrast(1); }
-                    // 50% { filter: drop-shadow(0 0 40px rgba(188, 0, 255, 0.9)) contrast(1.2); }
-                    100% { filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.6)) contrast(1); }
+                    0% { filter: drop-shadow(0 0 10px #ffffff) brightness(1); }
+                    50% { filter: drop-shadow(0 0 25px #ffffff) brightness(1.2); }
+                    100% { filter: drop-shadow(0 0 10px #ffffff) brightness(1); }
                 }
                 @keyframes scriptPulse {
                     0% { transform: translate(-50%, -50%) scale(1.1); }
                     50% { transform: translate(-50%, -50%) scale(1.16); }
                     100% { transform: translate(-50%, -50%) scale(1.1); }
                 }
+                .dkv-puzzle-preview {
+                    position: absolute;
+                    top: 30px;
+                    right: 30px;
+                    display: grid;
+                    grid-template-columns: repeat(5, 40px);
+                    grid-template-rows: repeat(3, 30px);
+                    gap: 4px;
+                    padding: 10px;
+                    background: rgba(0, 0, 0, 0.6);
+                    border: 1px solid rgba(0, 242, 255, 0.3);
+                    border-radius: 4px;
+                    z-index: 10001;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: opacity 0.5s ease-out;
+                }
+                .dkv-preview-slot {
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    box-sizing: border-box;
+                }
+                .dkv-preview-slot--active {
+                    background: rgba(0, 242, 255, 0.3);
+                    border-color: #00f2ff;
+                    box-shadow: 0 0 10px #00f2ff;
+                }
             `;
             document.head.appendChild(this.styleTag);
         }
+    }
+
+    createPreviewGrid(activeIndex) {
+        const grid = document.createElement('div');
+        grid.className = 'dkv-puzzle-preview';
+        
+        // Stílus finomítás a hálóhoz (kisebb darabkák, teljes tartalommal)
+        Object.assign(grid.style, {
+            gridTemplateColumns: 'repeat(5, 60px)',
+            gridTemplateRows: 'repeat(3, 45px)',
+            gap: '2px',
+            transform: 'scale(1)',
+            transformOrigin: 'top right'
+        });
+
+        for (let i = 0; i < 15; i++) {
+            const pieceData = puzzleService.getPiece(i);
+            const piece = new PuzzlePiece(pieceData);
+            const pieceEl = piece.render();
+            
+            // Lekicsinyítjük a darabkát a rácscellához
+            // Alapméret: (400 + 200) x (300 + 200) = 600x500 a padding miatt
+            // Célméret: 60x45 (+ extra a fülnek)
+            const scale = 0.1; 
+            
+            const slot = document.createElement('div');
+            slot.style.position = 'relative';
+            slot.style.width = '60px';
+            slot.style.height = '45px';
+            slot.style.overflow = 'visible'; // Hogy a fülek átlógjanak
+
+            Object.assign(pieceEl.style, {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: `translate(-50%, -50%) scale(${scale})`,
+                pointerEvents: 'none',
+                opacity: (i === activeIndex) ? '1' : '0.4',
+                filter: (i === activeIndex) ? 'drop-shadow(0 0 20px #ffffff) brightness(1.5)' : 'none'
+            });
+
+            slot.appendChild(pieceEl);
+            grid.appendChild(slot);
+        }
+        return grid;
     }
 
     /**
@@ -92,32 +170,65 @@ export class ScriptPartAnimation {
         });
 
 
-        // BasePath kalkuláció a Vite környezetből, hogy subdirectory (pl. /informatika/verseny/) esetén is stabil legyen
-        const basePath = import.meta.env?.BASE_URL || '/';
-        const cleanBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        // Nagy Szkriptrészlet (Mostantól dinamikus PuzzlePiece a sorsolt indexek alapján)
+        const stationNum = parseInt(this.stationId.split('_')[1]);
+        const pieceData = puzzleService.getPiece(stationNum, true);
+        const pieceIndex = pieceData ? pieceData.index : 0;
         
-        // Nagy Szkriptrészlet Kép
-        this.largeScript = document.createElement('img');
-        this.largeScript.src = `${cleanBasePath}/assets/images/grade4/scripts/${this.scriptName}.png`;
-        Object.assign(this.largeScript.style, {
-            position: 'absolute', top: '50%', left: '50%',
-            transform: 'translate(-50%, -50%) scale(0.01)',
-            maxHeight: '50vh', maxWidth: '70vw',
-            borderRadius: '0px',
-            objectFit: 'contain', zIndex: '10000',
-            opacity: '0',
-            transition: 'opacity 0.6s ease-out'
+        const puzzlePiece = new PuzzlePiece({
+            ...pieceData,
+            isPulsing: true
         });
+
+        this.largeScript = puzzlePiece.render();
+        
+        // Előnézeti háló – kikapcsolva (debug célú volt, a darabka renderelése kész)
+        // this.previewGrid = this.createPreviewGrid(pieceIndex);
+
+        // Darabka elmentése a StateManager-be
+        const stateManager = puzzleService.stateManager || (window.DKV_APP?.stateManager);
+        if (stateManager) {
+            const puzzleState = stateManager.getState('puzzle') || { seed: null, earnedPieces: [] };
+            const earned = puzzleState.earnedPieces || [];
+            if (!earned.includes(pieceIndex)) {
+                stateManager.updateState({
+                    puzzle: { ...puzzleState, earnedPieces: [...earned, pieceIndex] }
+                });
+                console.log(`[PuzzleDebug] Piece ${pieceIndex} (from Station ${stationNum}) added to earnedPieces`);
+            }
+        }
+
+        if (this.largeScript) {
+            Object.assign(this.largeScript.style, {
+                position: 'absolute', top: '50%', left: '50%',
+                transform: 'translate(-50%, -50%) scale(0.01)',
+                zIndex: '10000',
+                opacity: '0',
+                visibility: 'hidden',
+                // BoxShadow törölve, mert a clip-path levágja. 
+                // A CSS-ben lévő drop-shadow fog érvényesülni.
+            });
+        } else {
+            // Fallback ha a puzzleService még nem él (ne legyen fehér képernyő)
+            this.largeScript = document.createElement('div');
+            this.largeScript.textContent = 'SCRIPT_' + stationNum;
+        }
 
         this.container.appendChild(this.overlay);
         this.container.appendChild(this.largeScript);
+        // this.container.appendChild(this.previewGrid); // kikapcsolva
         document.body.appendChild(this.container);
 
         requestAnimationFrame(() => {
             if (this._isDestroyed || !this.largeScript) return;
 
-            // this.overlay.style.opacity = '1'; // Overlay elrejtve aUSER kérésére
-            this.largeScript.style.opacity = '1';
+            // Elemek láthatóvá tétele (az animáció innentől indulhat villanás nélkül)
+            // FONTOS: Az opacity-t NEM állítjuk '1'-re, mert az animáció
+            // opacity: 0-ról indul! Ha itt '1'-re állítanánk, egy frame-ig full opacitás
+            // villanás lenne, mielőtt az animáció felülírná.
+            this.largeScript.style.visibility = 'visible';
+            // this.previewGrid.style.visibility = 'visible'; // kikapcsolva
+            // this.previewGrid.style.opacity = '1';          // kikapcsolva
 
             // 1. szakasz: GYORS ELŐBUKKANÁS a csúcsértékre (0.01 -> 1.16)
             const enterAnim = this.largeScript.animate([
@@ -134,21 +245,27 @@ export class ScriptPartAnimation {
             enterAnim.onfinish = () => {
                 if (this._isDestroyed || !this.largeScript) return;
 
+                // Az inline opacity szinkronizálása az animáció végállapotával,
+                // hogy ne legyen villanás a fill:forwards és a pulseAnim közötti résben
+                this.largeScript.style.opacity = '1';
+
                 // 2. szakasz: LASSÚ PULZÁLÁS (1.16 -> 1.1 -> 1.16) - Infinite loop
-                // Megjegyzés: A ciklus a csúcsról indul, így az első mozdulat a lassú zsuporodás lesz
                 const pulseAnim = this.largeScript.animate([
                     { transform: 'translate(-50%, -50%) scale(1.16)' },
                     { transform: 'translate(-50%, -50%) scale(1.1)' },
                     { transform: 'translate(-50%, -50%) scale(1.16)' }
                 ], {
-                    duration: 5000,
+                    duration: 4000,
                     iterations: Infinity,
                     easing: 'ease-in-out'
                 });
                 this._animations.push(pulseAnim);
-            };
 
-            this.largeScript.style.animation = 'scriptGlow 4s infinite ease-in-out';
+                // MEGJEGYZÉS: A korábbi scriptGlow CSS animáció (drop-shadow + brightness)
+                // szürkévé tette a hátteret, mert a fehér drop-shadow átszüremlett
+                // az rgba(0,0,0,0.8) félig áttetsző háttéren. Eltávolítva.
+                // A fehér körvonal ragyogást az SVG réteg saját glow filtere biztosítja.
+            };
 
             if (this.onComplete) this.onComplete();
 

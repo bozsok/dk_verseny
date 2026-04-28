@@ -1,0 +1,109 @@
+/**
+ * PuzzlePiece.css
+ * Glassmorphism stílusok és kód-token megjelenítés a puzzle darabkákhoz.
+ */
+
+:root {
+    --puzzle-cyan: #00f2ff;
+    --puzzle-yellow: #ffdf00;
+    --puzzle-purple: #bd00ff;
+    --puzzle-green: #39ff14;
+    --puzzle-white: #ffffff;
+    --puzzle-dim: #444444;
+}
+
+:root {
+    --puzzle-font-size: 30px;
+    --token-offset: -5px;
+}
+
+.dkv-puzzle-piece {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    cursor: default;
+    user-select: none;
+    pointer-events: none; /* Nem szabad elfognia az egéreseményeket */
+}
+
+/* Pulzáló ragyogás effekt - kikapcsolva vagy minimálisra állítva a steril hatás elkerülésére */
+.dkv-puzzle-piece--pulsing {
+    /* Nem adunk extra filtert, hogy ne torzítsuk a rögzített színeket */
+}
+
+/* Kód sorok stílusa */
+.dkv-puzzle-piece__content {
+    font-family: 'Source Code Pro', 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: var(--puzzle-font-size);
+    line-height: 1.3;
+    white-space: pre;
+}
+
+/* Kódfal belső konténer */
+.dkv-puzzle-wall {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Blokkcsoportok */
+.dkv-puzzle-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.dkv-puzzle-line {
+    display: flex;
+    white-space: pre;
+    min-height: 1.3em;
+}
+
+/* Token színek és ragyogás a JSON alapján */
+.dkv-token-white { 
+    color: #ffffff; 
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    opacity: 0.9;
+    font-size: var(--puzzle-font-size);
+}
+.dkv-token-cyan { 
+    color: #00f2ff; 
+    filter: drop-shadow(0 0 5px #00f2ff);
+    opacity: 0.9;
+    font-size: calc(var(--puzzle-font-size) + var(--token-offset));
+}
+.dkv-token-dim { 
+    color: #444444; 
+    opacity: 1; 
+    font-size: calc(var(--puzzle-font-size) + var(--token-offset));
+}
+.dkv-token-yellow { 
+    color: #ffdd00; 
+    filter: drop-shadow(0 0 5px #ffdd00);
+    opacity: 0.8;
+    font-size: calc(var(--puzzle-font-size) + var(--token-offset));
+}
+.dkv-token-purple { 
+    color: #bd00ff; 
+    filter: drop-shadow(0 0 10px #bd00ff);
+    opacity: 0.8;
+    font-size: calc(var(--puzzle-font-size) + var(--token-offset));
+}
+.dkv-token-green { 
+    color: #39ff14; 
+    filter: drop-shadow(0 0 10px #39ff14);
+    opacity: 0.8;
+    font-size: calc(var(--puzzle-font-size) + var(--token-offset));
+}
+
+/* Scanline effekt a darabkán belül */
+.dkv-puzzle-piece::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0.1;
+}

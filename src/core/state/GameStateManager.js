@@ -63,9 +63,15 @@ class GameStateManager {
       // Rendszer adatok
       metadata: {
         lastSaved: null,
-        version: '0.30.3',
+        version: '0.36.3',
         totalPlayTime: 0,
         sessionsPlayed: 0
+      },
+
+      // Puzzle adatok [NEW]
+      puzzle: {
+        seed: null,           // A kódháló generálásához használt mag
+        earnedPieces: []      // A megszerzett darabkák indexei (0-14)
       }
     };
   }

@@ -30,6 +30,7 @@ import { CountdownAnimation } from './ui/components/CountdownAnimation.js';
 import TutorialManager from './features/tutorial/TutorialManager.js';
 import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import { FinaleIntroTask } from './content/grade4/tasks/finale/FinaleIntroTask.js';
+import { puzzleService } from './features/puzzles/PuzzleService.js';
 import './ui/styles/design-system.css';
 import './ui/styles/Tutorial.css';
 import './ui/styles/Portal.css';
@@ -247,6 +248,17 @@ class DigitalKulturaVerseny {
         this.logger.info('[DEBUG] DebugManager initialized');
       }
     }
+
+    // PuzzleService inicializálása
+    const puzzleState = this.stateManager.getState('puzzle') || { seed: null, earnedPieces: [] };
+    const seed = puzzleState.seed || `dkv_seed_${Math.random().toString(36).substring(2, 9)}`;
+    if (!puzzleState.seed) {
+      this.stateManager.updateState({
+        puzzle: { ...puzzleState, seed }
+      });
+    }
+    puzzleService.init(seed);
+    puzzleService.setStateManager(this.stateManager);
 
     // Build config betöltése (DEV és PROD módban egyaránt)
     await this._loadBuildConfig();
@@ -1191,7 +1203,7 @@ class DigitalKulturaVerseny {
         const isStationEnd = slide.metadata?.step === 3 && slide.metadata?.section?.startsWith('station_');
         if (isStationEnd) {
           const stationId = slide.metadata.section;
-          
+
           // FOLYAMATOS LEJÁTSZÁS KIKÉNYSZERÍTÉSE: Mindig lejátssza az animációt.
           if (String(currentGrade) === '4') {
             this.currentKeyAnimation = new ScriptPartAnimation({
@@ -1205,7 +1217,7 @@ class DigitalKulturaVerseny {
               targetSlot: null
             });
           }
-          
+
           // A korábbi fix 6 másodperces várakozást eltávolítottuk.
           // Ehelyett a `playPhaseA` pontosan a narráció végén indul el (vagy azonnal, ha nincs hang).
         }
@@ -1407,12 +1419,16 @@ class DigitalKulturaVerseny {
 
     requestAnimationFrame(() => overlay.classList.add('open'));
 
-    modal.querySelector('.dkv-btn--result-modal').addEventListener('click', () => {
+    modal.querySelector('.dkv-btn--result-modal').addEventListener('click', (e) => {
+      // Azonnali elrejtés és zárás indítása, hogy ne legyen villanás/visszaugrás
+      e.target.style.visibility = 'hidden';
+      overlay.classList.remove('open');
+
       if (onContinue) onContinue();
+
       setTimeout(() => {
         if (onAfterFade) onAfterFade();
-        overlay.classList.remove('open');
-        setTimeout(() => overlay.remove(), 300);
+        overlay.remove();
       }, 300);
     });
   }

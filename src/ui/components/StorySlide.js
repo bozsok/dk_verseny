@@ -216,6 +216,10 @@ class StorySlide {
             this.videoElement.load();
             this.videoElement = null;
         }
+        if (this.puzzlePiece) {
+            this.puzzlePiece.destroy();
+            this.puzzlePiece = null;
+        }
         if (this.element) {
             this.element.remove();
         }

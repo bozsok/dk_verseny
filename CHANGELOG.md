@@ -5,6 +5,21 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.36.4] - 2026-04-28
+
+### Javítva
+- **Dinamikus puzzle-generálás**: Az állomások közötti, korábban statikus kép (PNG) alapú puzzle-darabkákat lecseréltük egy teljesen dinamikus, kód alapú generátorra. A darabkák mostantól a projekt saját kódfalából készülnek jigsaw formájú maszkolással (clip-path), biztosítva a tökéletes vizuális illeszkedést a finálé feladathoz.
+- **Puzzle darabka szellemkép-villanás**: Megszüntettük a puzzle darabka növekedési animációjánál tapasztalható „szellemkép" jelenséget. A korábbi különálló háttér (`bg`) és tartalom (`content`) rétegeket egyetlen közös div-be vontuk össze, így kiküszöböltük a két réteg eltérő ütemezésű kirajzolásából adódó vizuális késleltetést.
+- **Háttérszín-elszürkülés javítása**: A `scriptGlow` CSS animáció (`drop-shadow(0 0 10px #ffffff)`) fehér fénye átszüremlett az `rgba(0,0,0,0.8)` félig áttetsző háttéren, szürkés háttérszínt eredményezve a pulzálás fázisában. A `scriptGlow` animáció eltávolításra került; a fehér körvonal ragyogást az SVG réteg saját `feGaussianBlur` filtere biztosítja.
+- **Fehér körvonal visszahozása**: A `clipPath` a fő konténerről (`this.element`) a belső rétegekre került, így az SVG körvonal (fehér stroke + glow) már nem lesz levágva, teljes szélességében látszik.
+- **Opacity-szinkronizáció**: Az `enterAnim.onfinish` callbackben az inline `opacity` értéke explicit `'1'`-re áll, megelőzve a `fill:forwards` és a `pulseAnim` közötti résben fellépő átmeneti villanást.
+- **Tartalom-túlcsordulás**: A `pieceH` értéke 300-ról 360-ra nőtt (1080 / 3 = 360), így a kódfal tartalma (26 sor × 39px + blokkközök ≈ 1060px) beleilleszkedik a teljes fal magasságába (1080px).
+- **Navigációs gombok takarása**: A puzzle darabka `pad` értéke 200px-ről 130px-re csökkent (a jigsaw fülek max ~120px-re nyúlnak ki), és a `pointer-events: auto` → `none`-ra módosult, így ablakos módban sem takarja el a navigációs gombokat.
+
+### Módosítva
+- **Előnézeti puzzle háló (Preview Grid) kikapcsolása**: A `ScriptPartAnimation`-ben az előnézeti háló (jobb felső sarokban lévő mini térkép) létrehozása és megjelenítése kikommentelésre került, mivel debug célú volt.
+- **PuzzlePiece CSS takarítás**: A `cursor: grab` → `cursor: default`, a `.dkv-puzzle-piece:active` szabály eltávolítva (a PuzzlePiece nem vonszolható, a finálé kirakósnál a `PolyPiece` osztály kezeli azt).
+
 ## [0.36.3] - 2026-04-27
 
 ### Javítva

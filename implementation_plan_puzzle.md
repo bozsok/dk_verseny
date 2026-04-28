@@ -1,30 +1,44 @@
-# Implementation Plan - Grade 4 Finale Puzzle
+# Implementation Plan - Puzzle System Integration
 
-Ez a dokumentum a Finálé puzzle feladatának megvalósítását részletezi a jóváhagyott vázlat és technikai paraméterek alapján.
+Ez a dokumentum a meglévő Puzzle feladat és a Kód-generátor eszköz összekapcsolását, valamint a játékmenetbe való integrálását részletezi.
 
-## 1. Navigációs Sorrend és Logika
-*   **Belépés**: Az utolsó állomás után, a Finálé 1. diájának (`final_1`) elindulásakor a rendszer azonnal megnyitja a puzzle feladatot (beugró).
-*   **Összegző Modal**: A puzzle kirakása után a `main.js` megjeleníti a `showMazeResultModal`-t az alábbi címmel: **"SIKERES FRISSÍTŐSZKRIPT ÖSSZEILLESZTÉS"**.
-*   **Visszatérés**: A modal "TOVÁBB" gombjára kattintva a puzzle és az overlay eltűnik, és elindul a **Finálé 1. diájának (DIA_28) narrációja**.
-*   **Folytatás**: A narráció után a navigációs nyíllal megyünk a 2. diára, majd onnan a Végső Feladatra.
+## 1. Koncepció és Logika
+*   **Master Kód-háló**: A játék indításakor egy központi szerviz (`PuzzleService`) legenerál egy teljes képernyőnyi "nonsense" kód-textúrát a felhasználó által kikísérletezett paraméterek alapján.
+*   **Determinisztikus Generálás**: Egy `seed` (véletlenszám mag) használatával biztosítjuk, hogy a háló és a puzzle formák (fülek/lyukak) állandóak maradjanak a munkamenet során.
+*   **15 vs 5 darab**:
+    *   A hálót egy 5x3-as rácsra (15 darab) osztjuk.
+    *   Az 5 állomás (Station 1-5) végén a játékos 1-1 kiemelt darabot kap meg.
+    *   A finálé előselejtezőjében mind a 15 darab megjelenik (összekeverve), és a versenyzőnek mind a 15 darabot a helyére kell illesztenie a teljes kép összeállásához. A korábban megszerzett 5 darab a történet szerint adja meg a lehetőséget a feladat megoldására.
 
-## 2. Megjelenítés és Design
-*   **Viewport**: 1200x675px méretű terület a modal alján.
-*   **Időzítő (Timer Box)**: 
-    - **Stílus**: Átvéve a `SpeedTask` (Station 5) feladatból.
-    - **Paraméterek**: `Space Grotesk` (900), `tabular-nums`, ciánkék glow.
-    - **Helyszín**: A fejléc (`dkv-finale-intro__header`) jobb alsó sarkában.
-    - **Trigger**: Az **első puzzle darab megfogásakor** indul el a stopper.
+## 2. Vizuális Megvalósítás (Glassmorphism)
+*   **Technológia**: HTML + CSS + JS (nem képfájl).
+*   **Háttér**: `backdrop-filter: blur(10px)` és enyhén áttetsző réteg.
+*   **Forma**: A `finale/puzzle` algoritmusából származó SVG `clip-path` használata a jigsaw formákhoz.
+*   **Tartalom**: A Master-hálóból kivágott valódi kód-tokenek (span elemek).
+*   **Effektek**: Dinamikus pulzálás és a kód színéhez igazodó ragyogás (`drop-shadow`).
 
-## 3. Technikai Megvalósítás
-*   **Puzzle Motor**: A 3. osztályos mechanika (`PolyPiece`, `Generator`, `Geometry`) átemelése és 1200x675-ös méretre való kalibrálása.
-*   **Skálázhatóság**: A darabszám az osztályfoktól függ (4. osztály: 16, 5-6. osztály: magasabb).
-*   **Egyedi Cím**: A `main.js` módosítása, hogy a 4. osztályos összegző modal is tudjon egyedi címet megjeleníteni (ne csak a beégetett alapértelmezettet).
-*   **Memóriavédelem**: Minden globális `window` eseménykezelő (`mousemove`, `mouseup`, `resize`, `scroll`) regisztrálása a `this._handlers` listába, és kényszerített törlésük a `destroy()` hívásakor.
+## 3. Komponensek és Szolgáltatások [NEW]
+*   **`PuzzleService.js`**: Központi szerviz, amely kezeli a generálást, a háló adatait és a darabkák kiosztását.
+*   **`PuzzlePiece.js`**: Újrafelhasználható UI komponens a darabkák megjelenítéséhez (Station 4 diák és Finálé számára).
 
-## 4. Ellenőrzési Pontok (Verification)
-- [ ] A feladat indulásakor az időzítő látszik, de áll (00:00).
-- [ ] Az első darab elmozdításakor elindul a stopper.
-- [ ] A puzzle befejezése után felugrik a rendszer-szintű összegző modal.
-- [ ] A modal bezárása után elindul a DIA_28 narrációja.
-- [ ] A `destroy()` hívása után nem maradnak aktív eseménykezelők vagy intervallumok.
+## 4. Integrációs Pontok
+### Állomások (Station 1-5)
+*   A feladat befejezése és az összegző modal után a **4. dián** megjelenik az adott állomáshoz rendelt `PuzzlePiece`.
+*   A darabka elmentődik a `StateManager`-be mint "megszerzett" elem.
+
+### Finálé Előselejtező
+*   A meglévő `finale/puzzle` feladat módosítása, hogy statikus képek helyett a `PuzzleService` adatait használja.
+*   A 15 darabos háló megjelenítése a gyűjtött darabokkal kiegészítve.
+
+## 5. Implementációs Stratégia: Biztonság és Párhuzamosság
+*   **Párhuzamos Fejlesztés**: Az új rendszert a meglévő kódoktól teljesen függetlenül, a `src/features/puzzles/` mappában építjük fel.
+*   **Zero-Risk Garancia**: A jelenlegi `src/tools/puzzle-generator` és `src/content/grade4/tasks/finale/puzzle` fájlokhoz nem nyúlunk hozzá, amíg az új rendszer nem bizonyított.
+*   **Fokozatos Átállás**: Először csak az állomások 4. diáján vezetjük be az új vizualitást. A finálé átállítása csak azután történik meg, ha a generálás és a darabolás logikája már tökéletes.
+*   **Visszaállítási Terv**: Bármilyen hiba esetén egyetlen konstans átállításával visszaváltható a rendszer a régi, kép-alapú működésre.
+
+## 6. Ellenőrzési Pontok
+- [ ] A generált kód minden állomáson ugyanaz marad (a seed konzisztens).
+- [ ] A `blur()` effekt megfelelően működik a játéktér háttere felett.
+- [ ] A fináléban mind a 15 darabka illeszkedik egymáshoz.
+- [ ] A `StateManager` helyesen tárolja a megszerzett darabok indexeit.
+- [ ] Az eredeti rendszer továbbra is hibátlanul fut a fejlesztés ideje alatt.
