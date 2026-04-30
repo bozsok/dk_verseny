@@ -29,7 +29,7 @@
 .dkv-g4-interface {
     width: 100vw;
     height: 100vh;
-    background-color: var(--g4-bg-black);
+    background-color: transparent;
     color: var(--g4-on-surface);
     font-family: 'Manrope', sans-serif;
     position: relative;
@@ -104,7 +104,7 @@
 }
 
 /* FELSŐ HUD */
-.dkv-g4-top-hud { 
+.dkv-g4-top-hud {
     z-index: 5000;
     position: absolute;
     top: 0;
@@ -218,7 +218,7 @@
    ========================================================================== */
 
 /* Globális HUD konténer pozicionálása (Energiacsík + Timer) */
-#app.dkv-grade-4 #dkv-global-hud-right-stack { 
+#app.dkv-grade-4 #dkv-global-hud-right-stack {
     z-index: 5000;
     position: fixed;
     top: 32px;
@@ -299,6 +299,7 @@
         opacity: 0.8;
         box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
     }
+
     to {
         opacity: 1;
         box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
@@ -318,7 +319,7 @@
 }
 
 /* OLDALSÓ NAVIGÁCIÓ */
-.dkv-g4-side-nav { 
+.dkv-g4-side-nav {
     z-index: 5000;
     position: absolute;
     left: 1.5rem;
@@ -836,10 +837,12 @@
         opacity: 0;
         transform: translateY(0) scale(0.5);
     }
+
     10% {
         opacity: 1;
         transform: translateY(-10px) scale(1.2);
     }
+
     100% {
         opacity: 0;
         transform: translateY(-50px) scale(1);
@@ -854,6 +857,7 @@
         color: var(--g4-primary);
         box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
     }
+
     100% {
         border-color: #ffa500;
         color: #ffa500;
@@ -862,9 +866,12 @@
 }
 
 @keyframes g4-btn-glow-orange {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 20px rgba(255, 165, 0, 0.4);
     }
+
     50% {
         box-shadow: 0 0 35px rgba(255, 165, 0, 0.8);
     }
@@ -878,6 +885,28 @@
     animation: g4-btn-glow-orange 2s ease-in-out infinite;
     border-color: #ffa500;
     color: #ffa500;
+}
+
+/* Navigációs gomb 'VÉGE' állapota az összegzőnél */
+.dkv-g4-btn-next.dkv-g4-btn-next--final {
+    width: auto;
+    min-width: 140px;
+    padding: 0 30px;
+    border-radius: 0 0 1rem 0;
+    background: rgba(0, 255, 255, 0.15);
+}
+
+.dkv-g4-btn-next.dkv-g4-btn-next--final .material-symbols-outlined {
+    display: none; /* Nyíl elrejtése */
+}
+
+.dkv-g4-btn-next.dkv-g4-btn-next--final::after {
+    content: 'VÉGE';
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 2px;
 }
 
 /* === GRADE 4 EREDMÉNY MODÁL (Quantum Összegző UI) === */
@@ -1052,7 +1081,7 @@
 }
 
 /* Speciális igazítás: Ha a modálisban a Finálé feladat fut, kerüljön alulra */
-.dkv-g4-task-modal-overlay:has(.dkv-finale-task) { 
+.dkv-g4-task-modal-overlay:has(.dkv-finale-task) {
     z-index: 4000;
     align-items: flex-end;
     background: #020406;

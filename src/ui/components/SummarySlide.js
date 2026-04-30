@@ -63,11 +63,17 @@ export class SummarySlide {
         this.element.innerHTML = `
             <div class="certificate-scaler">
                 <div class="certificate-content">
-                    <img src="assets/images/grade3/slides/gratulaciol_alap_fekvo.jpg" class="certificate-bg" alt="Háttér">
+                    <img src="assets/images/grade${grade}/slides/gratulaciol_alap_fekvo.jpg" 
+                         class="certificate-bg" 
+                         alt="Háttér" 
+                         onerror="this.src='assets/images/grade3/slides/gratulaciol_alap_fekvo.jpg'; this.onerror=null;">
                     
                     <div class="cert-character-container">
                         <img id="cert-img-summary" src="${charSrc}" alt="Karakter">
-                        <img class="cert-character-frame" src="assets/images/grade3/slides/oklevel_keret_fekvo.png" alt="Keret">
+                        <img class="cert-character-frame" 
+                             src="assets/images/grade${grade}/slides/oklevel_keret_fekvo.png" 
+                             alt="Keret"
+                             onerror="this.src='assets/images/grade3/slides/oklevel_keret_fekvo.png'; this.onerror=null;">
                     </div>
 
                     <div id="summary-name" class="cert-text">${userProfile.name || 'Hős'}</div>

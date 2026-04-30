@@ -5,6 +5,25 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.41.0] - 2026-04-30
+
+### Hozzáadva
+- **Grade 4 navigáció**: A „VÉGE” gomb vizuális állapotának implementálása az összegző dián (a nyíl helyett szöveges felirat jelenik meg, követve a 3. osztályos logikát).
+
+### Megváltoztatva
+- **Stílusbiztonság és takarítás**:
+    - A HUB-ba való visszatéréskor végrehajtott drasztikus stílustakarítás bevezetése a `main.js`-ben.
+    - A `body`, `html` és `#app` elemek osztályainak teljes ürítése a HUB inicializálása előtt, megakadályozva az évfolyam-specifikus betűtípusok (pl. Grade 3 Impact) szivárgását a HUB felületére.
+
+### Javítva
+- **Grade 4 összegző képernyő**:
+    - Rétegzési hiba elhárítása: az interfészréteg (layerUI) mostantól magasabb z-indexet (4000) kap az oklevélnél (3000), így a gombok láthatók és kattinthatók maradnak.
+    - Háttérkép elérési útvonalainak javítása: a `gratulaciol_alap_fekvo.jpg` fájlnév korrekciója a `SummarySlide.js`-ben.
+    - Karakterkép illesztési hibájának javítása: a kerethez való pontosabb igazítás és méretezés a `Summary.css`-ben, megszüntetve a látható illesztési vonalakat.
+- **4. osztályos Finale üzenet**:
+    - Az ünnepélyes felirat („Gratulálunk, Kódmester!”) megjelenítési logikájának stabilizálása: a kiváltás mostantól szigorúan megvárja a tutorial végét és a narrációs hang (vagy annak hiánya/hibája) befejezését.
+    - A trigger logika központosítása a `main.js`-ben, biztosítva a hibatűrő működést és a helyes eseménysorrendet mind valós játék, mind debug módú tesztelés során.
+
 ## [0.40.0] - 2026-04-30
 
 ### Megváltoztatva

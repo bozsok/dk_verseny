@@ -1065,7 +1065,18 @@ class DigitalKulturaVerseny {
           }
 
           this.layerContent.appendChild(newContent);
-          this.currentSlideComponent = newComponent;
+          
+          // Emeljük ki a tartalom réteget az Interfész fölé, ha összegzőt mutatunk
+          // De az Interfész HUD elemeit (layerUI) még feljebb tesszük (4000), hogy látszódjanak a gombok
+          if (slide.id === 'summary') {
+            this.layerContent.style.zIndex = '3000';
+            this.layerUI.style.zIndex = '4000';
+          } else {
+            this.layerContent.style.zIndex = '100';
+            this.layerUI.style.zIndex = '2500';
+          }
+
+          this.currentSlideComponent = this.activeSlideComponent;
         }
       } catch (renderError) {
         if (this.logger) this.logger.error("CRITICAL RENDER ERROR:", { error: renderError.message, stack: renderError.stack });
@@ -1130,6 +1141,11 @@ class DigitalKulturaVerseny {
 
       // 3. UI Layer Management
       if (!isFullscreen) {
+        // Átállítjuk a fázist 'game'-re, ha már nem onboarding dián vagyunk
+        // Ez megakadályozza, hogy a state update-ek visszadobjanak a Hub-ba
+        if (this.stateManager && this.stateManager.getStateValue('gamePhase') !== 'game') {
+          this.stateManager.updateState({ gamePhase: 'game' }, false);
+        }
         const ExpectedInterfaceClass = isGrade4 ? GameInterfaceGrade4 : GameInterface;
 
         // Ha van meglévő interfész, de nem a megfelelő típusú (pl. grade váltás miatt)
@@ -1178,7 +1194,7 @@ class DigitalKulturaVerseny {
         if (isGrade4 && this.energyBarHud) {
           const isIntro4 = slide.id === 'intro_4';
           const isGameSession = slide.metadata?.section?.startsWith('station_') || slide.metadata?.section === 'final';
-          const isSummary = slide.type === SLIDE_TYPES.SUMMARY;
+          const isSummary = slide.id === 'summary' || slide.type === SLIDE_TYPES.INFO;
 
           if (isIntro4 || (isGameSession && !isSummary)) {
             this.energyBarHud.classList.add('visible');
@@ -1186,6 +1202,11 @@ class DigitalKulturaVerseny {
             this._startEnergyBarTimer();
           } else if (isSummary) {
             this.energyBarHud.classList.remove('visible');
+            this.isEnergyBarActive = false;
+            if (this.energyBarInterval) {
+              clearInterval(this.energyBarInterval);
+              this.energyBarInterval = null;
+            }
           }
         } else if (this.energyBarHud) {
           this.energyBarHud.classList.remove('visible');
@@ -1193,7 +1214,9 @@ class DigitalKulturaVerseny {
 
         // --- GRADE 4 SPECIFIKUS: Háttérkép frissítése ---
         if (this.activeGameInterface.setBackgroundImage) {
-          const bgImage = (slide.type === SLIDE_TYPES.STORY || slide.type === SLIDE_TYPES.VIDEO || slide.type === SLIDE_TYPES.TASK || slide.type === SLIDE_TYPES.INFO)
+          const isSummary = slide.id === 'summary';
+          // Összegző diánál NE állítsunk be háttérképet a felső rétegre, mert kitakarja az oklevelet!
+          const bgImage = (!isSummary && (slide.type === SLIDE_TYPES.STORY || slide.type === SLIDE_TYPES.VIDEO || slide.type === SLIDE_TYPES.TASK || slide.type === SLIDE_TYPES.INFO))
             ? (slide.content?.imageUrl || slide.content?.backgroundUrl || null)
             : null;
           this.activeGameInterface.setBackgroundImage(bgImage);
@@ -1295,15 +1318,12 @@ class DigitalKulturaVerseny {
       }
 
       this.playAudio(audioSrc, () => {
+        // --- ÜNNEPÉLYES FELIRAT TRIGGER (Grade 4, utolsó narrációs dia) ---
+        this._checkSolemnMessageTrigger(slide);
+
         if (isLastSlide) {
           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
           return;
-        }
-
-        // --- ÜNNEPÉLYES FELIRAT TRIGGER (Grade 4, utolsó narrációs dia) ---
-        if (slide.id === 'final_3' && String(currentGrade) === '4') {
-          if (this.logger) this.logger.info('Solemn message triggered after final narration.');
-          this._showSolemnMessage();
         }
 
         // --- ANIMÁCIÓ INDÍTÁSA (Phase A) ---
@@ -1328,6 +1348,11 @@ class DigitalKulturaVerseny {
       // Ha egyáltalán nincs narráció az összegző dián, azonnal indítjuk az animációt.
       if (this.currentKeyAnimation && typeof this.currentKeyAnimation.playPhaseA === 'function') {
         this.currentKeyAnimation.playPhaseA();
+      }
+
+      // --- ÜNNEPÉLYES FELIRAT TRIGGER (Grade 4, utolsó narrációs dia, HA NINCS AUDIO) ---
+      if (!this.tutorialManager.isActive && !isTutorialPending) {
+        this._checkSolemnMessageTrigger(slide);
       }
     }
 
@@ -1772,11 +1797,17 @@ class DigitalKulturaVerseny {
         if (this.slideManager.getCurrentIndex() === currentIndex) {
           this.activeGameInterface?.setNextButtonState(true);
           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
+          
+          // --- SPECIÁLIS: Ünnepélyes felirat trigger tutorial + narráció után ---
+          this._checkSolemnMessageTrigger(slide);
         }
       });
     } else {
       // Ha nincs audio, akkor engedélyezzük azonnal
       this.activeGameInterface?.setNextButtonState(true);
+
+      // --- SPECIÁLIS: Ünnepélyes felirat trigger tutorial után (HA NINCS AUDIO) ---
+      this._checkSolemnMessageTrigger(slide);
     }
 
     // 3. Videó indítása (ha van)
@@ -1832,6 +1863,13 @@ class DigitalKulturaVerseny {
       }
 
       // 3. Konténer ürítése és Hub hozzáadása
+      // Drasztikus takarítás: minden évfolyam-specifikus osztályt törlünk a body-ról, a html-ről és az app-ról is
+      if (this.logger) this.logger.info('Cleaning up grade styles before Hub display');
+      
+      document.body.className = '';
+      document.documentElement.className = ''; 
+      app.className = 'dkv-app'; // Kényszerített alaphelyzet
+
       app.innerHTML = '';
       app.appendChild(this.hub.getElement());
 
@@ -2184,10 +2222,23 @@ class DigitalKulturaVerseny {
   }
 
   /**
+   * Ellenőrzi és kiváltja az ünnepélyes feliratot a 4. osztályos finálé végén
+   * @param {Object} slide 
+   */
+  _checkSolemnMessageTrigger(slide) {
+    const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
+    if (slide.id === 'final_3' && String(currentGrade) === '4') {
+      if (this.logger) this.logger.info('Solemn message triggered (centralized check).');
+      this._showSolemnMessage();
+    }
+  }
+
+  /**
    * Ünnepélyes gratuláció megjelenítése fénybetűkkel.
    * A DIA_30 narrációja után hívódik meg.
    */
   _showSolemnMessage() {
+    if (this.logger) this.logger.info('Executing _showSolemnMessage()');
     // Ha már létezik, ne duplikáljuk
     if (document.querySelector('.dkv-solemn-message-overlay')) return;
 
