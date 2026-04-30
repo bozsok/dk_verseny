@@ -1,0 +1,733 @@
+/* === FinaleTask.css === */
+/* Grade 4 Záró Feladat - Neon Terminál Esztétika */
+
+:root {
+    --finale-cyan: #00f2ff;
+    --finale-cyan-glow: rgba(0, 242, 255, 0.6);
+    --finale-exception: #ffa6f3;
+    --finale-exception-glow: rgba(255, 166, 243, 0.4);
+    --finale-bg: #020406;
+    --finale-surface: rgba(10, 26, 36, 0.85);
+    --finale-text: #ffffff;
+    --finale-dim-text: rgba(255, 255, 255, 0.4);
+    --finale-font: 'Space Grotesk', sans-serif;
+}
+
+.dkv-finale-task {
+    width: 100%;
+    height: 100%;
+    background-color: var(--finale-bg);
+    color: var(--finale-text);
+    font-family: var(--finale-font);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+}
+
+/* --- Bevezető Cím --- */
+.dkv-finale-task__intro-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: var(--z-task-modal-overlay);
+    pointer-events: none;
+}
+
+.dkv-finale-task__intro-container.is-hidden {
+    opacity: 0;
+}
+
+.dkv-finale-task__title {
+    font-family: var(--finale-font);
+    font-size: 2.25rem;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1;
+    color: #ffffff;
+    text-align: center;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+}
+
+.dkv-finale-task__title.is-hidden {
+    opacity: 0;
+}
+
+.dkv-finale-task__subtitle {
+    font-family: var(--finale-font);
+    font-size: 1.125rem;
+    color: #a8abb1;
+    margin-top: 1.5rem;
+    line-height: 1.6;
+    max-width: 850px;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.dkv-finale-task__title .dkv-finale-task__title-highlight {
+    color: var(--finale-cyan);
+    text-shadow: 0 0 15px var(--finale-cyan-glow);
+}
+
+/* --- Mátrix-eső Háttér --- */
+#dkv-matrix-bg {
+    display: grid;
+    grid-template-columns: repeat(100, 1fr);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.7;
+    gap: 2px;
+}
+
+.dkv-finale-task__matrix-column {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    user-select: none;
+    line-height: 1.5;
+    white-space: nowrap;
+    pointer-events: none;
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.13);
+    position: relative;
+    height: fit-content;
+    letter-spacing: 0.2em;
+}
+
+.dkv-finale-task__matrix-column.is-falling {
+    animation: dkv-matrix-fall linear infinite;
+}
+
+.dkv-finale-task__matrix-char {
+    display: inline;
+}
+
+#dkv-matrix-bg .dkv-finale-task__matrix-char--target {
+    color: #fff;
+    font-weight: bold;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px var(--finale-cyan),
+        0 0 20px var(--finale-cyan),
+        0 0 40px var(--finale-cyan);
+    animation: dkv-matrix-pulse 1s infinite ease-in-out;
+    pointer-events: auto;
+    cursor: pointer;
+    position: relative;
+    z-index: 5;
+}
+
+@keyframes dkv-matrix-fall {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100vh);
+    }
+}
+
+@keyframes dkv-matrix-pulse {
+
+    0%,
+    100% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* --- Kódblokk Szekció --- */
+.dkv-finale-task__code-block {
+    width: 900px;
+    background: rgba(21, 26, 31, 0.85);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(193, 255, 254, 0.2);
+    box-shadow: 0 0 50px rgba(255, 166, 243, 0.05), 0 0 20px rgba(0, 255, 255, 0.05);
+    padding: 2rem;
+    position: relative;
+    margin-bottom: 0;
+    z-index: 10;
+}
+
+.dkv-finale-task__code-block::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--finale-cyan), transparent);
+    z-index: 2;
+}
+
+.dkv-finale-task__code-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+}
+
+.dkv-finale-task__header-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.8;
+}
+
+.dkv-finale-task__code-header>.dkv-finale-task__header-label {
+    color: #c1fffe;
+}
+
+#dkv-collect-stats {
+    color: #ffffff;
+    opacity: 1;
+}
+
+.dkv-finale-task__code-screen {
+    background: rgba(10, 15, 19, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: none;
+    padding: 2rem 2.5rem 3.5rem 2.5rem;
+    margin-top: 1rem;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    width: 480px;
+    display: flex;
+    gap: 1.5rem;
+    transition: filter 0.15s ease;
+}
+
+.dkv-finale-task__code-screen.is-glitching {
+    animation: dkv-monitor-glitch-heavy 2s steps(1) infinite;
+}
+
+@keyframes dkv-monitor-glitch-heavy {
+    0% {
+        transform: translate(0);
+        filter: hue-rotate(0deg) contrast(1);
+        clip-path: inset(0 0 0 0);
+    }
+
+    5% {
+        transform: translate(-5px, 2px);
+        filter: hue-rotate(90deg) contrast(2);
+        clip-path: inset(10% 0 30% 0);
+    }
+
+    10% {
+        transform: translate(5px, -2px);
+        filter: invert(0.2);
+        clip-path: inset(40% 0 10% 0);
+    }
+
+    15% {
+        transform: translate(-2px, 5px);
+        text-shadow: 2px 0 red, -2px 0 blue;
+    }
+
+    20% {
+        transform: translate(0);
+        filter: none;
+        clip-path: inset(0 0 0 0);
+    }
+
+    25% {
+        transform: translate(3px, 3px);
+        filter: brightness(3);
+        clip-path: inset(20% 0 50% 0);
+    }
+
+    30% {
+        transform: translate(-3px, -3px);
+        text-shadow: -3px 0 cyan, 3px 0 magenta;
+    }
+
+    35% {
+        transform: translate(0);
+    }
+
+    40% {
+        clip-path: inset(80% 0 5% 0);
+        transform: scaleY(1.2);
+    }
+
+    45% {
+        clip-path: inset(5% 0 85% 0);
+    }
+
+    50% {
+        transform: translate(-10px, 0);
+        filter: invert(1);
+    }
+
+    55% {
+        transform: translate(10px, 0);
+        filter: none;
+    }
+
+    60% {
+        text-shadow: 5px 0 yellow, -5px 0 purple;
+    }
+
+    100% {
+        transform: translate(0);
+    }
+}
+
+.dkv-finale-task__code-status {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 0.5rem;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.dkv-finale-task__status-value {
+    color: var(--finale-exception);
+    margin-left: 0.25rem;
+}
+
+.dkv-finale-task__code-reflection {
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, 0.01) 40%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.01) 60%, transparent 100%);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    z-index: 4;
+    animation: dkv-screen-sweep 15s infinite;
+}
+
+@keyframes dkv-screen-sweep {
+    0% {
+        left: -150%;
+    }
+
+    10% {
+        left: 150%;
+    }
+
+    100% {
+        left: 150%;
+    }
+}
+
+.dkv-finale-task__code-lines {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.08);
+    text-align: right;
+    line-height: 1.5;
+    user-select: none;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.dkv-finale-task__code-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 255, 0.02) 50%);
+    background-size: 100% 2px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.dkv-finale-task__code-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-align: left;
+    white-space: pre-wrap;
+    user-select: none;
+    position: relative;
+    z-index: 2;
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0;
+}
+
+.dkv-finale-task__char {
+    display: inline;
+    transition: all 0.4s ease;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+.dkv-finale-task__char--inactive {
+    color: var(--finale-dim-text);
+}
+
+.dkv-finale-task__char--active {
+    color: var(--finale-cyan);
+    text-shadow: 0 0 10px var(--finale-cyan-glow), 0 0 20px var(--finale-cyan-glow);
+    animation: dkv-char-flicker 0.2s ease-out forwards;
+}
+
+@keyframes dkv-char-flicker {
+    0% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* --- Ellenőrzés Gomb --- */
+.dkv-finale-task__footer-actions {
+    position: absolute;
+    bottom: 2.05rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    z-index: 20;
+}
+
+.dkv-finale-task__footer-hint {
+    font-size: 0.75rem;
+    color: rgba(193, 255, 254, 0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: var(--finale-font);
+}
+
+.dkv-finale-task__execute-btn {
+    background: rgba(0, 255, 255, 0.15);
+    border: 1px solid #c1fffe;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    color: #c1fffe;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 1rem 0;
+    font-size: 1.4rem;
+    padding: 12px 60px;
+    letter-spacing: 2px;
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: auto;
+}
+
+.dkv-finale-task__execute-btn.dkv-finale-task__execute-btn--active {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    animation: dkv-btn-glow-pulse 2s infinite ease-in-out;
+}
+
+.dkv-finale-task__execute-btn--active:hover {
+    background: rgba(0, 255, 255, 0.25);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+    color: #fff;
+}
+
+.dkv-finale-task__execute-btn:disabled {
+    cursor: not-allowed;
+    pointer-events: auto; /* Engedélyezzük az egéreseményeket a tiltó kurzor miatt */
+    animation: none;
+    box-shadow: none;
+}
+
+.dkv-finale-task__execute-btn--spent {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: rgba(193, 255, 254, 0.3);
+    color: rgba(193, 255, 254, 0.4);
+    opacity: 0.5;
+}
+
+@keyframes dkv-btn-glow-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+    }
+}
+
+/* --- Rendszerállapot Sáv --- */
+.dkv-finale-task__status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-top: 1px solid rgba(0, 242, 255, 0.2);
+    z-index: 30;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(193, 255, 254, 0.3);
+}
+
+.dkv-finale-task__status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--finale-cyan);
+}
+
+.dkv-finale-task__status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--finale-cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--finale-cyan);
+}
+
+.dkv-finale-task__status-dot--pulse {
+    animation: dkv-status-pulse 1s infinite alternate;
+}
+
+@keyframes dkv-status-pulse {
+    from {
+        opacity: 0.3;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* --- Felső Infó Panel --- */
+.dkv-finale-task__top-info {
+    position: fixed;
+    bottom: 2.5rem;
+    right: 2rem;
+    text-align: right;
+    font-size: 12px;
+    color: rgba(193, 255, 254, 0.4);
+    line-height: 1.4;
+    z-index: 30;
+}
+
+/* --- Súgó Rendszer --- */
+.dkv-finale-task__header-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dkv-finale-task__help-btn {
+    width: 18px;
+    height: 18px;
+    background: rgba(0, 242, 255, 0.1);
+    border: 1px solid var(--finale-cyan);
+    color: var(--finale-cyan);
+    font-family: var(--finale-font);
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    padding: 0;
+}
+
+.dkv-finale-task__help-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 13, 18, 0.85);
+    backdrop-filter: blur(15px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.dkv-finale-task__help-overlay--open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dkv-finale-task__help-content {
+    background: rgba(10, 26, 36, 0.95);
+    border: 1px solid var(--finale-cyan);
+    box-shadow: 0 0 40px rgba(0, 242, 255, 0.2);
+    width: 90%;
+    max-width: 600px;
+    padding: 2.5rem;
+    position: relative;
+}
+
+.dkv-finale-task__help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+    padding-bottom: 0.75rem;
+}
+
+.dkv-finale-task__help-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--finale-exception);
+    text-transform: uppercase;
+}
+
+.dkv-finale-task__help-close {
+    background: none;
+    border: 1px solid var(--finale-cyan);
+    color: var(--finale-cyan);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.dkv-finale-task__help-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #a8abb1;
+    border-left: 2px solid var(--finale-cyan);
+    padding-left: 1.25rem;
+}
+
+/* --- Győzelmi Szekvencia Stílusok --- */
+
+/* Mini Monitor Összeomlás Effektus */
+.dkv-finale-task__code-screen.is-collapsing {
+    animation: dkv-monitor-collapse 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes dkv-monitor-collapse {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    40% {
+        transform: scaleY(0.01) scaleX(1.1);
+        filter: brightness(2);
+    }
+
+    80% {
+        transform: scaleY(0.01) scaleX(0);
+        filter: brightness(5);
+    }
+
+    100% {
+        transform: scaleY(0.01) scaleX(0);
+        filter: brightness(10);
+        opacity: 0;
+    }
+}
+
+/* Képernyő-középpontú Újraindítás Üzenet Réteg */
+.dkv-finale-task__reboot-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9500;
+    pointer-events: none;
+    background: transparent;
+}
+
+.dkv-finale-task__reboot-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.5rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.dkv-finale-task__reboot-highlight {
+    color: var(--finale-cyan);
+    text-shadow: 0 0 25px var(--finale-cyan);
+}
+
+.dkv-finale-task__win-countdown {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10rem;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
+    font-weight: 900;
+    margin-top: 2rem;
+}
+
+/* Teljes Képernyős Elsötétítés - Globális Réteg */
+.dkv-finale-task__win-blackout {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+}
+
+.dkv-finale-task__win-blackout.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}

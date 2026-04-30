@@ -1,6 +1,6 @@
 /* src/content/grade4/styles/Interface.css */
 
-/* 1. RESET & INITIALIZATION (Grade 4 specific) */
+/* 1. ALAPHELYZETBE ÁLLÍTÁS (Grade 4 specifikus) */
 *,
 *::after,
 *::before {
@@ -9,7 +9,7 @@
     box-sizing: border-box;
 }
 
-/* DESIGN SYSTEM TOKENS */
+/* DESIGN SYSTEM TOKENEK */
 .dkv-g4-interface {
     --g4-primary: #c1fffe;
     --g4-primary-container: #00ffff;
@@ -25,7 +25,7 @@
     --g4-bg-black: #000000;
 }
 
-/* BASE CONTAINER */
+/* ALAP KONTÉNER */
 .dkv-g4-interface {
     width: 100vw;
     height: 100vh;
@@ -36,10 +36,10 @@
     overflow: hidden;
     user-select: none;
     pointer-events: none;
-    /* Átvezet a content layerre – mint Grade 3 */
+    /* Átvezet a tartalom rétegre – mint a Grade 3-nál */
 }
 
-/* Material Symbols Outlined alapbeállítás – elrejtve a font betöltéséig (FOUIF védelem) */
+/* Material Symbols Outlined alapbeállítás – elrejtve a betűtípus betöltéséig (FOUIF védelem) */
 .dkv-g4-interface .material-symbols-outlined {
     font-family: 'Material Symbols Outlined';
     font-weight: normal;
@@ -54,8 +54,6 @@
     direction: ltr;
     -webkit-font-smoothing: antialiased;
     font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-
-    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
 }
 
 .dkv-g4-interface *::selection {
@@ -63,7 +61,7 @@
     color: #005d5d;
 }
 
-/* BACKGROUND & LAYERS */
+/* HÁTTÉR ÉS RÉTEGEK */
 .dkv-g4-bg-layer {
     position: absolute;
     inset: 0;
@@ -105,12 +103,12 @@
     background-size: 32px 32px;
 }
 
-/* TOP HUD */
-.dkv-g4-top-hud {
+/* FELSŐ HUD */
+.dkv-g4-top-hud { 
+    z-index: 5000;
     position: absolute;
     top: 0;
     width: 100%;
-    z-index: 50;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -139,7 +137,7 @@
     width: 4.5rem;
     height: 4.5rem;
     border: 1px solid rgba(255, 81, 250, 0.5);
-    /* secondary/50 */
+    /* másodlagos/50 */
     padding: 0.2rem;
     transition: border-color 0.3s;
 }
@@ -182,7 +180,7 @@
     font-family: 'Space Grotesk', sans-serif;
     font-size: 0.9rem;
     color: rgba(241, 244, 250, 0.6);
-    /* on-surface/60 */
+    /* felületen/60 */
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
@@ -196,7 +194,6 @@
     align-items: center;
     gap: 1.5rem;
 }
-
 
 /* Beállítások (fogaskerék) gomb alapstílusa */
 .dkv-g4-btn-settings {
@@ -217,18 +214,18 @@
 }
 
 /* ==========================================================================
-   GRADE 4 - QUANTUM TERMINAL - GLOBAL HUD (PERZISZTENS RÉTEG)
+   GRADE 4 - QUANTUM TERMINAL - GLOBÁLIS HUD (PERZISZTENS RÉTEG)
    ========================================================================== */
 
 /* Globális HUD konténer pozicionálása (Energiacsík + Timer) */
-#app.dkv-grade-4 #dkv-global-hud-right-stack {
+#app.dkv-grade-4 #dkv-global-hud-right-stack { 
+    z-index: 5000;
     position: fixed;
     top: 32px;
     right: 95px;
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    z-index: 3000;
     pointer-events: none;
 }
 
@@ -275,7 +272,7 @@
     transition: width 1s linear;
 }
 
-/* TIMER KIJELZŐ FELÜLBÍRÁLÁSA (!important nélkül) */
+/* TIMER KIJELZŐ FELÜLBÍRÁLÁSA */
 #app.dkv-grade-4 #dkv-global-hud-right-stack #dkv-timer-display {
     display: flex;
     position: static;
@@ -297,19 +294,16 @@
     animation: g4-energy-pulse-red 0.8s infinite alternate;
 }
 
-
 @keyframes g4-energy-pulse-red {
     from {
         opacity: 0.8;
         box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
     }
-
     to {
         opacity: 1;
         box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
     }
 }
-
 
 .dkv-g4-btn-settings .material-symbols-outlined {
     font-size: 1.25rem;
@@ -323,13 +317,13 @@
     background: rgba(193, 255, 254, 0.1);
 }
 
-/* SIDE NAV */
-.dkv-g4-side-nav {
+/* OLDALSÓ NAVIGÁCIÓ */
+.dkv-g4-side-nav { 
+    z-index: 5000;
     position: absolute;
     left: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 60;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -359,12 +353,12 @@
     color: var(--g4-primary-container);
 }
 
-/* BOTTOM HUD */
+/* ALSÓ HUD */
 .dkv-g4-bottom-hud {
     position: absolute;
     bottom: 0;
     width: 100%;
-    z-index: 50;
+    z-index: 3000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -374,7 +368,7 @@
     /* Csak az interaktív gyerekek kapják vissza */
 }
 
-/* Az inventory sloták kattinthatók */
+/* Az inventory slotok kattinthatók */
 .dkv-g4-inventory-area,
 .dkv-g4-slot.active {
     pointer-events: auto;
@@ -474,7 +468,7 @@
     border: 1px solid rgba(193, 255, 254, 0.3);
 }
 
-/* NAVIGATION CONTROLS */
+/* NAVIGÁCIÓS VEZÉRLŐK */
 .dkv-g4-nav-controls {
     position: absolute;
     bottom: 7%;
@@ -496,14 +490,12 @@
     width: 64px;
     height: 56px;
     background: rgba(0, 0, 0, 0.5);
-    /* Megduplázott opacitás a láthatóságért */
     border: 1px solid #c1fffe;
     color: rgba(193, 255, 254, 0.6);
     cursor: pointer;
     pointer-events: auto;
     border-radius: 0;
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-    /* Erősebb ragyogás */
     margin: 0;
     padding: 0;
     transition: all 0.2s ease;
@@ -517,14 +509,12 @@
     width: 72px;
     height: 56px;
     background: rgba(0, 0, 0, 0.5);
-    /* Megduplázott opacitás a láthatóságért */
     border: 1px solid #c1fffe;
     color: #c1fffe;
     cursor: pointer;
     overflow: hidden;
     border-radius: 0 0 1rem 0;
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-    /* Erősebb ragyogás */
     pointer-events: auto;
     margin: 0;
     padding: 0;
@@ -555,7 +545,7 @@
     color: var(--g4-primary-container);
 }
 
-/* DECORATIVE CORNERS */
+/* DEKORATÍV SARKOK */
 .dkv-g4-decorative-corners {
     position: absolute;
     inset: 0;
@@ -598,19 +588,18 @@
     border-right: 1px solid var(--g4-primary);
 }
 
-/* CONTENT AREA & PANELS */
+/* TARTALMI TERÜLET ÉS PANELEK */
 .dkv-g4-content-area {
     position: absolute;
     inset: 0;
     z-index: 20;
 }
 
-/* MODALS AND PANELS (Narrator, Journal, Settings, Task) */
+/* MODÁLISOK ÉS PANELEK (Narrátor, Napló, Beállítások, Feladat) */
 .dkv-g4-task-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
     z-index: 1000;
     display: none;
     align-items: center;
@@ -628,7 +617,7 @@
     top: 6.5rem;
     right: 0;
     transform: translateX(100%);
-    z-index: 900;
+    z-index: 5000;
     display: flex;
     pointer-events: none;
     opacity: 0;
@@ -662,14 +651,13 @@
     top: 50%;
     left: 0;
     transform: translate(-100%, -50%);
-    z-index: 900;
+    z-index: 5000;
     display: flex;
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(193, 255, 254, 0.2);
     border-left: none;
     border-radius: 0 4px 4px 0;
-    /* box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5); */
     backdrop-filter: blur(15px);
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
     opacity: 0;
@@ -752,7 +740,6 @@
     cursor: pointer;
     text-transform: uppercase;
     border-radius: 0;
-    /* Square per user request */
     transition: all 0.3s;
 }
 
@@ -814,7 +801,7 @@
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
-/* --- HUD DECORATIONS (Moved from main.css) --- */
+/* --- HUD DEKORÁCIÓK (A main.css-ből átmozgatva) --- */
 
 /* Karakter avatar keret polírozása */
 .dkv-g4-avatar-circle {
@@ -849,19 +836,17 @@
         opacity: 0;
         transform: translateY(0) scale(0.5);
     }
-
     10% {
         opacity: 1;
         transform: translateY(-10px) scale(1.2);
     }
-
     100% {
         opacity: 0;
         transform: translateY(-50px) scale(1);
     }
 }
 
-/* --- NAVIGATION ATTENTION GRABBER (Grade 4) --- */
+/* --- NAVIGÁCIÓS FIGYELEMFELHÍVÓ (Grade 4) --- */
 
 @keyframes g4-btn-color-to-orange {
     0% {
@@ -869,7 +854,6 @@
         color: var(--g4-primary);
         box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
     }
-
     100% {
         border-color: #ffa500;
         color: #ffa500;
@@ -878,12 +862,9 @@
 }
 
 @keyframes g4-btn-glow-orange {
-
-    0%,
-    100% {
+    0%, 100% {
         box-shadow: 0 0 20px rgba(255, 165, 0, 0.4);
     }
-
     50% {
         box-shadow: 0 0 35px rgba(255, 165, 0, 0.8);
     }
@@ -899,7 +880,7 @@
     color: #ffa500;
 }
 
-/* === GRADE 4 RESULT MODAL (Quantum Summary UI) === */
+/* === GRADE 4 EREDMÉNY MODÁL (Quantum Összegző UI) === */
 
 .dkv-g4-result-overlay {
     position: fixed;
@@ -907,7 +888,6 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    /* background: rgba(0, 0, 0, 0.85); */
     backdrop-filter: blur(15px);
     display: flex;
     align-items: center;
@@ -928,9 +908,7 @@
     backdrop-filter: blur(12px);
     /* Lemásolva a LeetPuzzle-ből */
     border: 1px solid rgba(0, 255, 255, 0.2);
-    /* Lemásolva a LeetPuzzle-ből */
     box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
-    /* Lemásolva a LeetPuzzle-ből */
     border-radius: 4px;
     padding: 3rem;
     display: flex;
@@ -1058,7 +1036,8 @@
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
     color: #fff;
 }
-/* K�L�NLEGES ST�LUS: SIKERTELEN (PIROS) EREDM�NY GOMB */
+
+/* KÜLÖNLEGES STÍLUS: SIKERTELEN (PIROS) EREDMÉNY GOMB */
 .dkv-g4-result-btn--failure {
     color: #ff716c;
     border-color: #ff716c;
@@ -1070,4 +1049,11 @@
     background-color: rgba(255, 113, 108, 0.3);
     box-shadow: 0 0 25px rgba(255, 113, 108, 0.6);
     color: #fff;
+}
+
+/* Speciális igazítás: Ha a modálisban a Finálé feladat fut, kerüljön alulra */
+.dkv-g4-task-modal-overlay:has(.dkv-finale-task) { 
+    z-index: 4000;
+    align-items: flex-end;
+    background: #020406;
 }

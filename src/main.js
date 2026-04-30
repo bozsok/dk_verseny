@@ -2390,7 +2390,7 @@ class DigitalKulturaVerseny {
     // --- Feladat megnevezése ---
     const taskLabel = slide.id === 'final_2' ? 'Nagy Zár – Végjáték' : (slide.title || slide.id);
 
-    const onTaskComplete = (result) => {
+    const onTaskComplete = (result, instance) => {
       const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
       if (!alreadyDone) {
         const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
@@ -2444,8 +2444,18 @@ class DigitalKulturaVerseny {
 
       this.showMazeResultModal(
         { ...result, title: customTitle },
-        () => this.handleNext(),
-        () => this.activeGameInterface.hideTaskModal()
+        () => {
+          if (slide.id === 'final_2' && instance && typeof instance.runWinSequence === 'function') {
+            instance.runWinSequence(() => this.handleNext());
+          } else {
+            this.handleNext();
+          }
+        },
+        () => {
+          if (slide.id !== 'final_2') {
+            this.activeGameInterface.hideTaskModal();
+          }
+        }
       );
     };
 

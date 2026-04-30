@@ -322,10 +322,11 @@ const createConfig = () => {
             finalDescription = 'Kövessétek a történetet!';
         } else if (i === 26) {
             diaKey = 'DIA_29';
-            finalDescription = 'Kövessétek a történetet!';
+            finalDescription = 'Végezzétek el a végső szinkronizációt!';
+            type = SLIDE_TYPES.TASK;
         } else if (i === 27) {
             diaKey = 'DIA_30';
-            finalDescription = 'Restaurálás folyamatban...';
+            finalDescription = 'Kövessétek a történetet!';
         } else {
             diaKey = null;
             finalDescription = 'Küldetés teljesítve!';
@@ -386,6 +387,13 @@ const taskRegistry = {
         type: 'speed',
         module: () => import('./tasks/speed/SpeedTask.js'),
         options: {}
+    },
+    final_2: {
+        type: 'finale',
+        module: () => import('./tasks/finale/FinaleTask.js'),
+        options: {
+            // Itt adható meg a nehezített kód a későbbiekben
+        }
     }
 };
 

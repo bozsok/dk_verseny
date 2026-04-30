@@ -5,6 +5,83 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.40.0] - 2026-04-30
+
+### Megváltoztatva
+- **ELLENŐRZÉS Gomb UI Stabilizálása**:
+    - A gomb állapotkezelésének teljes refaktorálása: háromfázisú állapotgép bevezetése (Kezdeti tiltott -> Aktív -> Lezárt/Spent).
+    - Vizuális visszajelzés: a „not-allowed” (tiltó) kurzor kényszerített megjelenítése a kezdetektől a `pointer-events: auto` technikai megoldással.
+    - Hover effektus korlátozása: a kivilágosodás és glow-effekt most már kizárólag aktív állapotban jelentkezik.
+    - Lezárási fázis: a gomb a kattintás után felveszi a „TOVÁBB” gomb stílusát (sötét háttér, semleges szegély), megszüntetve a zavaró türkiz derengést.
+
+### Javítva
+- **Kódminőség és Lokalizáció**:
+    - A `FinaleTask.css` és `FinaleTask.js` fájlok teljes körű auditja: minden angol nyelvű komment és szekciófejléc magyarítása az MTA 12. szabályai szerint.
+    - Inline JS stílusok teljes körű eliminálása, az összes prezentációs réteg tisztán CSS osztályokba való kiszervezése.
+
+## [0.39.0] - 2026-04-30
+
+### Hozzáadva
+- **FinaleTask (Neon Terminal) győzelmi szekvencia**:
+    - Összetett vizuális lezárás az összegző képernyő után: mini monitor összeomlás-effekt (`digital collapse`).
+    - Képernyő közepére igazított (`fixed`) két tónusú írógép üzenet: „RENDSZERMAG ÚJRAINDÍTÁS: ELKEZDŐDÖTT”.
+    - 3-2-1 visszaszámlálás és 3 másodperces teljes elsötétítés a diaváltás előtt.
+    - Új technikai rétegek a győzelmi állapothoz (`dkv-finale-task__reboot-overlay`, `dkv-finale-task__win-blackout`).
+
+### Megváltoztatva
+- **Rendszerintegráció**:
+    - A `main.js` architektúra frissítése: a feladat példányának közvetlen átadása az `onTaskComplete` visszahívásnak a `ReferenceError` elkerülése érdekében.
+    - A modális ablak életciklusának szabályozása: a finálé slide esetén a `hideTaskModal` hívás késleltetése a vizuális szekvencia befejezéséig.
+    - Mini monitor glitch effekt finomhangolása: a gombnyomáskor jelentkező vizuális visszajelzés most már kizárólag a `dkv-finale-task__code-screen` elemre korlátozódik.
+
+### Javítva
+- **Hatókör és stabilitás**:
+    - A `gameInstance` láthatósági hibájának végleges elhárítása a záró szekvencia indításakor.
+    - Pozicionálási hiba javítása: a győzelmi feliratok most már garantáltan a képernyő (viewport) közepén jelennek meg.
+    - Időzítési korrekció: a specifikációnak megfelelő 3 másodperces sötét képernyő implementálása.
+
+## [0.38.0] - 2026-04-30
+
+### Hozzáadva
+- **FinaleTask (Neon Terminal) súgórendszer**:
+    - Új súgó gomb (`?`) integrálása a fejlécbe, a „BEGYŰJTVE” statisztika mellé a jobb oldalon.
+    - Teljes körű súgó-overlay-rendszer bevezetése, amely részletes instrukciókat ad a kódrekonstrukciós protokollról.
+    - Kontextusfüggő státuszüzenetek magyarítása (`INICIALIZÁLÁS_KÉSZ`, `ADATOK_KÜLDÉSE...`) a projekt szaknyelvi szabályainak megfelelően.
+
+### Megváltoztatva
+- **Vizuális és szöveges finomhangolás**:
+    - A fejléc színeinek és opacitásának korrekciója a jobb olvashatóság érdekében (türkiz és tiszta fehér).
+    - Technikai feliratok frissítése a szakmaibb hangvétel érdekében (pl. „SZKRIPTRÉSZLETEK SZINKRONIZÁLÁSA – ALAP ARCHITEKTÚRA”, „ELLENŐRZÖTT RENDSZERMAG”, „BIZTONSÁGOS HÉJPROGRAM AKTÍV”).
+    - A súgó szövegének finomítása a pontosabb instrukciókért és helyesírási javítások (pl. „kattints”).
+
+### Javítva
+- **Stabilitás és életciklus**:
+    - Eseménykezelők precíz takarítása a `destroy()` metódusban az új súgófunkcióhoz kapcsolódóan, megelőzve a memóriaszivárgást.
+    - A fejléc címkéinek (labelök) hibás színfelülbírálásának javítása a CSS-ben (specificitás-korrekció).
+
+## [0.37.0] - 2026-04-29
+
+### Hozzáadva
+- **FinaleTask (Neon Terminal) teljes újjászületése**: 
+    - Új technikai rétegek: scanline-effekt, animált üvegtükröződés, státuszsor (cím, kódolás, státusz) és CRT-stílusú szövegragyogás.
+    - Bevezető élmény: új írógép-animáció („RENDSZER FELÜLÍRÁS ELINDÍTVA”) és szinkronizált elhalványítás.
+    - Sorszámozás: precíz, a kódhoz igazított sorszámok (01, 02 stb.) a bal oldalon.
+    - Funkcionális integráció: „VÉGREHAJTÁS” gomb pótlása és eseménykezelők bekötése.
+
+### Megváltoztatva
+- **Mátrixeső-optimalizálás**: karakterkészlet szinkronizálása a `puzzle-generátorral` (A-Za-z0-9, speciális szimbólumok és a `÷` jel). Karakterek méretének 1,3-szoros növelése.
+- **Kódblokk-stabilitás**: fix szélesség (900 px), JetBrains Mono betűtípus használata és a ligatúrák tiltása a karakterek egyenkénti aktiválhatóságáért.
+- **Vizuális harmonizáció**: sötétített háttérszín (rgba(0,0,0,0.8)), glassmorphism hatás és türkiz ragyogások.
+- **Tipográfia**: JetBrains Mono betűtípus hangsúlyosabb betűvastagsággal (500/700).
+
+### Javítva
+- **Karakteraktiválási logika**: áttérés közvetlen DOM-elérésre (`data-char-index`), kényszerített reflow alkalmazása a vizuális torlódás (batching) ellen és indexelési szinkronhiba javítása.
+- **Kódnormalizálás**: a `targetCode` sorvégeinek egységesítése és pontosabb karakterszűrés.
+- **Hibakeresés**: granuláris `GameLogger` naplózás bevezetése a karakterek begyűjtésének követésére.
+- **Stabilitás**: időzítők takarítása a `destroy()` metódusban, tiltott `!important` szabályok eltávolítása, JSDoc dokumentáció pótlása és animációs tulajdonjog (Rule 75) rendezése.
+- **Intro-szinkron**: az indító feliratok hirtelen eltűnésének javítása az 5. másodpercben.
+- **Gombok vizuális szinkronizálása**: az „ELLENŐRZÉS” gomb stílusának (szín, padding, letter-spacing, hover és pulzálás) illesztése a Grade 4-es referenciákhoz.
+
 ## [0.36.4] - 2026-04-28
 
 ### Javítva
@@ -129,7 +206,7 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 - **LeetPuzzle: Dinamikus glitch effektek**: Az 1. állomás (Kódfejtés) beviteli mezői immár dinamikus glitch hatásokkal gazdagodtak. Amikor a kódolt szó pörgése megáll, a beviteli slotok véletlenszerűen villognak, rázkódnak, vagy vörös színre váltanak, fokozva a "Quantum Terminál" destabilizálódó hangulatát.
 - **MemoryTask: Kép-glitch animációk**: A 2. állomás (Memória modul) képei immár véletlenszerűen glitchelnek a megfigyelési szakaszban. A képek néha szétcsúsznak (RGB split), rázkódnak, vagy vízszintes szeletekre esnek szét (clip-path glitch), vizuálisan is jelezve a Zéró-szekvencia támadását.
 - **LibraryTask: Metaadat glitch effektek**: A 3. állomás (Logikai Könyvtár) metaadat kártyái is megkapták a glitch-kezelést. A kártyák szövege néha megremeg (jitter), a háttér pedig vörösen villan be, jelezve az adatbázis destabilizációját a Zéró-szekvencia hatására.
-- **IslandTask: Globális vörös interferencia**: A 4. állomás (Anomália Analízis) rúnáit érintetlenül hagytuk a pontos megfigyelhetőség érdekében, de a rendszer instabilitását immár véletlenszerű, globális vörös bevillanások jelzik a teljes nézőtéren. Az effekt gyakorisága a körök előrehaladtával növekszik.
+- **IslandTask: Globális vörös interferencia**: A 4. állomás (Anomália Analízis) rúnáit érintetlenül hagytuk a pontos megfigyelhetőség érdekében, de a rendszer instabilitását immár véletlenszerű, globális vörös bevillanások jelzik a teljes nézőtéren. Az effekt gyakorisága a körök előrehaladatával növekszik.
 
 ### Javítva
 - **SpeedTask: AI és vizuális beragadás javítása**: Megszüntettük azt a hibát, amely miatt a Zéró-szekvencia (AI) néha 0%-on maradt és nem indult el, illetve a vizuális glitch effekt is rajta maradhatott a sávon. A hiba akkor jelentkezett, ha a felhasználó a menet legvégén használta a Csapást. Mostantól minden menet elején automatikusan feloldásra kerül az AI és minden vizuális glitch eltávolításra kerül.

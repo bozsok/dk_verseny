@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-04-27T18:28:00+02:00'
+date: '2026-04-30T02:54:04+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.36.1 (v0.36.1)
+- **Version:** 0.40.0 (v0.40.0)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
-- **Last Updated:** 2026-04-27
-- **Current Mission:** IslandTask (Station 4) Refactor & Performance Optimization (Complete)
+- **Last Updated:** 2026-04-30
+- **Current Mission:** FinaleTask Milestone: UI Stabilization & Code Audit (v0.40.0)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -153,3 +153,22 @@ optimized_for_llm: true
 - [x] Grade 4: Energy bar timing accuracy (performance.now) (v0.32.4)
 - [x] Grade 4: BEM naming compliance across all task modules (v0.32.4)
 - [x] Grade 4: SpeedTask GC safety, BEM compliance, and timer accuracy (v0.32.6)
+- [x] Grade 4: FinaleTask visual style harmonization (Neon Terminal) (v0.36.5)
+- [x] Grade 4: FinaleTask functional integration (EXECUTE button, matrix collection) (v0.36.5)
+- [x] Grade 4: FinaleTask animated intro sequence with typewriter effect (v0.36.5)
+- [x] Grade 4: Full Project-Context compliance audit (JSDoc, lifecycle, animation ownership) (v0.36.5)
+- [x] Grade 4: FinaleTask code block stability and monospace font (v0.36.10)
+- [x] Grade 4: FinaleTask button visual alignment (hover, pulse, styles) (v0.36.11)
+- [x] Grade 4: FinaleTask intro sequence animation timing synchronization (v0.36.12)
+- [x] Grade 4: FinaleTask visual polish (magenta exception colors, dimmed matrix) (v0.36.13)
+- [x] Grade 4: FinaleTask inactive character color correction (white 0.4 opacity) (v0.36.14)
+- [x] Grade 4: FinaleTask code block font update to JetBrains Mono (v0.36.15)
+- [x] Grade 4: FinaleTask code block internal screen with dark background (v0.36.16)
+- [x] Grade 4: FinaleTask mini-monitor layout and style correction (v0.36.17)
+- [x] Grade 4: FinaleTask mini-monitor positioning (left-aligned, 650px) (v0.36.18)
+- [x] Grade 4: FinaleTask mini-monitor final styling (400px, no borders/shadows) (v0.36.19)
+- [x] Grade 4: FinaleTask character alignment correction (unified font-weight) (v0.36.20)
+- [x] Grade 4: FinaleTask code-block and mini-monitor background color swap (v0.36.21)
+- [x] Grade 4: FinaleTask background color restore (v0.36.22)
+- [x] Grade 4: FinaleTask Milestone: Visual & Functional Stabilization (v0.37.0)
+- [x] Grade 4: FinaleTask Milestone: UI Stabilization & Code Audit (v0.40.0)
