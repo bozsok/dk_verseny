@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.41.0 (v0.41.0)
+- **Version:** 0.42.0 (v0.42.0)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
 - **Last Updated:** 2026-04-30
-- **Current Mission:** FinaleTask & SummarySlide Stabilization (v0.41.0)
+- **Current Mission:** Onboarding Navigation & Scoring Logic Fixes (v0.42.0)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -172,4 +172,4 @@ optimized_for_llm: true
 - [x] Grade 4: FinaleTask background color restore (v0.36.22)
 - [x] Grade 4: FinaleTask Milestone: Visual & Functional Stabilization (v0.37.0)
 - [x] Grade 4: FinaleTask Milestone: UI Stabilization & Code Audit (v0.40.0)
-- [x] Grade 4: FinaleTask & SummarySlide Stabilization (v0.41.0)
+- [x] Grade 4: Onboarding Navigation & Scoring Logic Fixes (v0.42.0)

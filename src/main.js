@@ -1065,7 +1065,7 @@ class DigitalKulturaVerseny {
           }
 
           this.layerContent.appendChild(newContent);
-          
+
           // Emeljük ki a tartalom réteget az Interfész fölé, ha összegzőt mutatunk
           // De az Interfész HUD elemeit (layerUI) még feljebb tesszük (4000), hogy látszódjanak a gombok
           if (slide.id === 'summary') {
@@ -1076,7 +1076,7 @@ class DigitalKulturaVerseny {
             this.layerUI.style.zIndex = '2500';
           }
 
-          this.currentSlideComponent = this.activeSlideComponent;
+          this.currentSlideComponent = newComponent;
         }
       } catch (renderError) {
         if (this.logger) this.logger.error("CRITICAL RENDER ERROR:", { error: renderError.message, stack: renderError.stack });
@@ -1797,7 +1797,7 @@ class DigitalKulturaVerseny {
         if (this.slideManager.getCurrentIndex() === currentIndex) {
           this.activeGameInterface?.setNextButtonState(true);
           if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
-          
+
           // --- SPECIÁLIS: Ünnepélyes felirat trigger tutorial + narráció után ---
           this._checkSolemnMessageTrigger(slide);
         }
@@ -1865,9 +1865,9 @@ class DigitalKulturaVerseny {
       // 3. Konténer ürítése és Hub hozzáadása
       // Drasztikus takarítás: minden évfolyam-specifikus osztályt törlünk a body-ról, a html-ről és az app-ról is
       if (this.logger) this.logger.info('Cleaning up grade styles before Hub display');
-      
+
       document.body.className = '';
-      document.documentElement.className = ''; 
+      document.documentElement.className = '';
       app.className = 'dkv-app'; // Kényszerített alaphelyzet
 
       app.innerHTML = '';

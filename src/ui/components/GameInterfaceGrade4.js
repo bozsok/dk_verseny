@@ -643,9 +643,9 @@ export class GameInterfaceGrade4 {
         if (!this.taskModalOverlay) return;
 
         // Fejléc kezelése
-        const header = this.taskModalOverlay.querySelector('.dkv-g4-task-modal-header') || 
-                       this.taskModalOverlay.querySelector('.dkv-g4-task-header'); // Fallback ha nincs dedikált header elem
-        
+        const header = this.taskModalOverlay.querySelector('.dkv-g4-task-modal-header') ||
+            this.taskModalOverlay.querySelector('.dkv-g4-task-header'); // Fallback ha nincs dedikált header elem
+
         if (header) {
             if (options.hideHeader) {
                 header.style.display = 'none';

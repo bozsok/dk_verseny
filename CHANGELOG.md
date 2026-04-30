@@ -5,6 +5,17 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.42.0] - 2026-05-01
+
+### Hozzáadva
+- **Szigorított pontozási rendszer az onboarding alatt**:
+    - **RegistrationSlide**: Pontmegvonás bevezetése minden olyan adatbeviteli mezőnél (név, becenév, osztály), amely üresen marad a „TOVÁBB” gomb megnyomásakor. A későbbi javítás után a pont már nem jóváírható.
+    - **CharacterSlide**: Új logika a karakterválasztáshoz: a gomb narráció után aktívvá válik, de választás nélküli kattintás esetén hibaüzenetet ad és megvonja a pontot.
+
+### Javítva
+- **Onboarding navigációs zárolás**: A Welcome, Registration és Character diák „TOVÁBB” gombjainak kényszerített szinkronizálása a narrációs hanggal. A gombok a narráció végéig tiltottak maradnak.
+- **Kritikus alkalmazáslogikai hiba**: A `main.js`-ben javítva az `activeSlideComponent` elírás, amely megakadályozta az aktuális diakomponens helyes elérését és vezérlését.
+
 ## [0.41.0] - 2026-04-30
 
 ### Hozzáadva

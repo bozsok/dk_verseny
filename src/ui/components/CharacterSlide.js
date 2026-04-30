@@ -33,6 +33,7 @@ class CharacterSlide {
 
     this.lastFocusedElement = null;
     this.isAudioLocked = false;
+    this.hasAttemptedSubmitWithoutSelection = false;
     this.timeouts = [];
   }
 
@@ -201,7 +202,7 @@ class CharacterSlide {
         });
         footerEl.innerHTML = footerHTML;
         this._updateNextButton();
-        this.nextBtn.style.opacity = this.nextBtn.disabled ? '0.5' : '1';
+        this.nextBtn.style.opacity = (this.nextBtn.disabled || this.isAudioLocked) ? '0.5' : '1';
       }
     }, 4000);
 
@@ -273,9 +274,10 @@ class CharacterSlide {
     // 6. Next Button
     const showNextBtn = () => {
       if (sequenceFailed) return;
-      // Itt hagyjuk a kurzort a footer szövegen, mert ez az utolsó
-      this.nextBtn.style.opacity = this.nextBtn.disabled ? '0.5' : '1';
+      // Frissítjük az állapotot (Audio Lock + Selection)
       this._updateNextButton();
+      // Megjelenítés
+      this.nextBtn.style.opacity = (this.nextBtn.disabled || this.isAudioLocked) ? '0.5' : '1';
     };
 
     // Indítás
@@ -356,13 +358,13 @@ class CharacterSlide {
         return;
       }
 
-      const hasSelection = !!this.confirmedSelection;
-      this.nextBtn.disabled = !hasSelection;
+      // Narráció után mindig legyen aktív, akkor is ha nincs választás (Hibaüzenet kezeli)
+      this.nextBtn.disabled = false;
       // Csak akkor állítunk opacity-t, ha már látható (nem 0)
       if (this.nextBtn.style.opacity !== '0') {
-        this.nextBtn.style.opacity = hasSelection ? '1' : '0.5';
+        this.nextBtn.style.opacity = '1';
       }
-      this.nextBtn.style.cursor = hasSelection ? 'pointer' : 'not-allowed';
+      this.nextBtn.style.cursor = 'pointer';
     }
   }
 
@@ -552,11 +554,13 @@ class CharacterSlide {
       this.confirmedSelection = { ...this.previewSelection };
 
       // Pontszám lekérése configból (vagy fallback 1)
-      const selectionPoints = (this.slideData.content && this.slideData.content.scoring && this.slideData.content.scoring.selection) || 1;
+      // Utólagos választás esetén nem jár pont!
+      const selectionPoints = (!this.hasAttemptedSubmitWithoutSelection)
+        ? ((this.slideData.content && this.slideData.content.scoring && this.slideData.content.scoring.selection) || 1)
+        : 0;
 
-      // Bónusz animáció (csak egyszer)
-      // Bónusz animáció (csak egyszer)
-      if (!this.selectionBonusShown) {
+      // Bónusz animáció (csak egyszer, és csak ha jár pont)
+      if (!this.selectionBonusShown && selectionPoints > 0) {
         const cardIndex = this.confirmedSelection.index;
 
         // Késleltetjük kicsit, hogy a modal eltűnése után látszódjon
@@ -592,6 +596,8 @@ class CharacterSlide {
 
   handleSubmit() {
     if (!this.confirmedSelection) {
+      // Megjelöljük, hogy a beküldésnél nem volt választás -> Elbukta a pontot
+      this.hasAttemptedSubmitWithoutSelection = true;
       this._showError('Sajnos nem választottál magadnak karaktert!\nKérlek, válassz ki egyet az alábbiak közül!');
       return;
     }
@@ -609,7 +615,10 @@ class CharacterSlide {
       const currentScore = this.stateManager.getStateValue('score') || 0;
 
       // Pontszám a configból (vagy fallback 1)
-      const selectionPoints = (this.slideData.content && this.slideData.content.scoring && this.slideData.content.scoring.selection) || 1;
+      // De ha korábban elfelejtette, akkor 0!
+      const selectionPoints = (!this.hasAttemptedSubmitWithoutSelection)
+        ? ((this.slideData.content && this.slideData.content.scoring && this.slideData.content.scoring.selection) || 1)
+        : 0;
 
       const userProfile = this.stateManager.getStateValue('userProfile') || {};
 

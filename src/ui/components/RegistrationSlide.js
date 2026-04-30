@@ -113,6 +113,7 @@ class RegistrationSlide {
         this.nextBtn = document.createElement('button');
         this.nextBtn.className = 'dkv-button dkv-onboarding-next-btn';
         this.nextBtn.textContent = (this.slideData.content && this.slideData.content.buttonText) || 'Tovább';
+        this.nextBtn.disabled = true;
 
         // Ha van gépelés, az elemeket (Inputok + Gomb) egyesével jelenítjük meg
         const elementsToAnimate = [];
@@ -166,9 +167,11 @@ class RegistrationSlide {
                 // KÉSZ -> Elemek egyesével (staggered) megjelenítése
                 elementsToShow.forEach((el, index) => {
                     this._registerTimeout(() => {
-                        // Ha ez a gomb, és blokkolva van a hang miatt, akkor csak 0.5
-                        if (el === this.nextBtn && this.isAudioLocked) {
-                            el.style.opacity = '0.5';
+                        // Ha ez a gomb, és blokkolva van a hang miatt, akkor csak 0.5 és disabled
+                        if (el === this.nextBtn) {
+                            el.style.opacity = this.isAudioLocked ? '0.5' : '1';
+                            el.disabled = this.isAudioLocked;
+                            el.style.cursor = this.isAudioLocked ? 'not-allowed' : 'pointer';
                         } else {
                             el.style.opacity = '1';
                         }
@@ -505,7 +508,29 @@ class RegistrationSlide {
     handleSubmit() {
         if (this.isModalActive) return;
 
+        // Validáljuk az összes mezőt (csendesen, hogy mi kezelhessük a hibát)
         const nameCheck = this._validateField('name', this.nameInput.input, true);
+        const nickCheck = this._validateField('nick', this.nickInput.input, true);
+        const classCheck = this._validateField('classId', this.classIdInput.input, true);
+
+        // Pontmegvonás minden olyan mezőnél, ami érvénytelen a beküldéskor
+        if (!nameCheck.isValid && !this.fieldErrorOccurred.name) {
+            this.fieldErrorOccurred.name = true;
+            this.earnedPoints.name = 0;
+            if (this.logger) this.logger.info('Pont elbukva: Név mező üres volt a Tovább gomb megnyomásakor.');
+        }
+        if (!nickCheck.isValid && !this.fieldErrorOccurred.nick) {
+            this.fieldErrorOccurred.nick = true;
+            this.earnedPoints.nick = 0;
+            if (this.logger) this.logger.info('Pont elbukva: Becenév mező üres volt a Tovább gomb megnyomásakor.');
+        }
+        if (!classCheck.isValid && !this.fieldErrorOccurred.classId) {
+            this.fieldErrorOccurred.classId = true;
+            this.earnedPoints.classId = 0;
+            if (this.logger) this.logger.info('Pont elbukva: Osztály mező üres volt a Tovább gomb megnyomásakor.');
+        }
+
+        // Hibák megjelenítése sorrendben (ha van)
         if (!nameCheck.isValid) {
             this.showErrorModal(nameCheck.error, () => {
                 this.nameInput.input.focus();
@@ -514,7 +539,6 @@ class RegistrationSlide {
             return;
         }
 
-        const nickCheck = this._validateField('nick', this.nickInput.input, true);
         if (!nickCheck.isValid) {
             this.showErrorModal(nickCheck.error, () => {
                 this.nickInput.input.focus();
@@ -523,7 +547,6 @@ class RegistrationSlide {
             return;
         }
 
-        const classCheck = this._validateField('classId', this.classIdInput.input, true);
         if (!classCheck.isValid) {
             this.showErrorModal(classCheck.error, () => {
                 this.classIdInput.input.focus();

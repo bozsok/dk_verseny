@@ -88,6 +88,7 @@ class WelcomeSlide {
         const startBtn = document.createElement('button');
         startBtn.className = 'dkv-button dkv-start-button dkv-onboarding-next-btn';
         startBtn.textContent = (this.slideData.content && this.slideData.content.buttonText) || 'INDÍTÁS';
+        startBtn.disabled = true;
 
         if (typingSpeed > 0) {
             startBtn.style.opacity = '0';
@@ -137,8 +138,10 @@ class WelcomeSlide {
         const typeNextParagraph = () => {
             if (currentParagraphIndex >= paragraphs.length) {
                 // VÉGE: Kurzor maradjon az utolsón (User kérése) -> NEM VESSZÜK LE.
-                // Ha blokkolva van a hang miatt, akkor csak 0.5 opacity
+                // Ha blokkolva van a hang miatt, akkor csak 0.5 opacity és disabled
                 btn.style.opacity = this.isAudioLocked ? '0.5' : '1';
+                btn.disabled = this.isAudioLocked;
+                btn.style.cursor = this.isAudioLocked ? 'not-allowed' : 'pointer';
                 return;
             }
 
@@ -209,4 +212,4 @@ class WelcomeSlide {
     }
 }
 
-export default WelcomeSlide;
+export default WelcomeSlide;
