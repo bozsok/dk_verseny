@@ -60,7 +60,11 @@ export class SummarySlide {
 
         const dateStr = new Date().toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
 
+        const bgUrl = this.slideData.content?.imageUrl || '';
+        const bgStyle = bgUrl ? `style="background-image: url('${bgUrl}')"` : '';
+
         this.element.innerHTML = `
+            <div class="summary-bg-blur" ${bgStyle}></div>
             <div class="certificate-scaler">
                 <div class="certificate-content">
                     <img src="assets/images/grade${grade}/slides/gratulaciol_alap_fekvo.jpg" 

@@ -10,9 +10,11 @@ class FinaleGame {
         this.options = options;
         this.onComplete = options.onComplete || (() => { });
         
-        // Helyes értékek a help_json.txt alapján
-        this.CORRECT_WORD = "5kulcskell";
-        this.CORRECT_ORDER = ["keyA", "keyB", "keyC", "keyD", "keyE"];
+        // Helyes megoldások
+        this.SOLUTIONS = [
+            { word: "5kulcskell", order: ["keyA", "keyB", "keyC", "keyD", "keyE"] },
+            { word: "kell5kulcs", order: ["keyD", "keyE", "keyA", "keyB", "keyC"] }
+        ];
         
         // Pontozás
         this.POINTS_WORD = 5;
@@ -20,6 +22,7 @@ class FinaleGame {
 
         // Állapot
         this.placedKeys = [null, null, null, null, null]; // Slotok tartalma (keyA, keyB, etc.)
+        this.inventoryState = [null, null, null, null, null]; // Oldalsáv tartalma
         this.userWord = "";
         
         // Időzítő
@@ -34,6 +37,10 @@ class FinaleGame {
     init() {
         this.container.innerHTML = '';
         this.render();
+        
+        // Inventory állapot inicializálása a DOM-ból
+        this.captureInitialInventory();
+        
         this.setupInventoryDraggable(true);
         this.setupTimerUI();
         
@@ -45,6 +52,29 @@ class FinaleGame {
         if (sidebar) sidebar.classList.add('finale-active');
         if (bottomBar) bottomBar.classList.add('finale-active');
         if (journalBtn) journalBtn.classList.add('finale-active');
+    }
+
+    /**
+     * Beolvassa az oldalsáv jelenlegi állapotát
+     */
+    captureInitialInventory() {
+        const sidebar = document.querySelector('.dkv-game-sidebar');
+        if (!sidebar) return;
+
+        const slots = sidebar.querySelectorAll('.dkv-inventory-slot');
+        slots.forEach((slot, i) => {
+            const img = slot.querySelector('img');
+            if (img) {
+                const src = img.src;
+                if (src.includes('keyA')) this.inventoryState[i] = "keyA";
+                else if (src.includes('keyB')) this.inventoryState[i] = "keyB";
+                else if (src.includes('keyC')) this.inventoryState[i] = "keyC";
+                else if (src.includes('keyD')) this.inventoryState[i] = "keyD";
+                else if (src.includes('keyE')) this.inventoryState[i] = "keyE";
+            } else {
+                this.inventoryState[i] = null;
+            }
+        });
     }
 
     setupTimerUI() {
@@ -161,27 +191,76 @@ class FinaleGame {
         e.dataTransfer.dropEffect = 'move';
     }
 
-    handleDrop(e, slotIndex) {
+    handleDrop(e, targetSlotIndex) {
         e.preventDefault();
-        const slot = this.slots[slotIndex];
+        const slot = this.slots[targetSlotIndex];
         slot.classList.remove('drag-over');
 
-        this.startTimer(); // Időzítő indítása drop-ra
+        this.startTimer();
 
-        const keyId = e.dataTransfer.getData('text/plain'); // Pl. "keyA", "keyB"...
+        const keyId = e.dataTransfer.getData('keyId');
+        const sourceType = e.dataTransfer.getData('sourceType');
+        const sourceIndex = parseInt(e.dataTransfer.getData('sourceIndex'), 10);
+
         if (!keyId || !keyId.startsWith('key')) return;
 
-        // Ha már máshol ott volt a kulcs, onnan töröljük
-        const prevIndex = this.placedKeys.indexOf(keyId);
-        if (prevIndex !== -1) {
-            this.placedKeys[prevIndex] = null;
-            this.renderSlot(prevIndex);
+        const oldKeyInTarget = this.placedKeys[targetSlotIndex];
+
+        // 1. Ürítjük a forrást
+        if (sourceType === 'inventory') {
+            this.inventoryState[sourceIndex] = oldKeyInTarget; // Swap: a régi kulcs megy az inventory-ba
+        } else if (sourceType === 'slot') {
+            this.placedKeys[sourceIndex] = oldKeyInTarget; // Swap: a két slot között cserélnek
         }
 
-        // Új helyre tesszük
-        this.placedKeys[slotIndex] = keyId;
-        this.renderSlot(slotIndex);
+        // 2. Betöltjük az új kulcsot a célba
+        this.placedKeys[targetSlotIndex] = keyId;
+
+        // 3. Frissítjük a nézetet
+        this.renderAll();
         this.updateButtonState();
+    }
+
+    handleInventoryDrop(e, targetInvIndex) {
+        e.preventDefault();
+        const sidebar = document.querySelector('.dkv-game-sidebar');
+        const invSlots = sidebar.querySelectorAll('.dkv-inventory-slot');
+        const slot = invSlots[targetInvIndex];
+        if (slot) slot.classList.remove('drag-over');
+
+        this.startTimer();
+
+        const keyId = e.dataTransfer.getData('keyId');
+        const sourceType = e.dataTransfer.getData('sourceType');
+        const sourceIndex = parseInt(e.dataTransfer.getData('sourceIndex'), 10);
+
+        if (!keyId || !keyId.startsWith('key')) return;
+
+        // Csak akkor engedjük a drop-ot az inventory-ba, ha üres a hely
+        if (this.inventoryState[targetInvIndex] !== null) return;
+
+        // 1. Ürítjük a forrást
+        if (sourceType === 'inventory') {
+            this.inventoryState[sourceIndex] = null;
+        } else if (sourceType === 'slot') {
+            this.placedKeys[sourceIndex] = null;
+        }
+
+        // 2. Betöltjük az új kulcsot az inventory-ba
+        this.inventoryState[targetInvIndex] = keyId;
+
+        // 3. Frissítjük a nézetet
+        this.renderAll();
+        this.updateButtonState();
+    }
+
+    renderAll() {
+        // Task slotok frissítése
+        for (let i = 0; i < 5; i++) {
+            this.renderSlot(i);
+        }
+        // Inventory frissítése
+        this.renderInventory();
     }
 
     renderSlot(index) {
@@ -195,17 +274,59 @@ class FinaleGame {
             img.src = `assets/images/grade3/keys/${keyId}_drop.png`;
             img.className = 'placed-key-img';
             img.draggable = true;
-            img.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', keyId);
-            });
-            slot.appendChild(img);
             
-            img.onclick = () => {
-                this.placedKeys[index] = null;
-                this.renderSlot(index);
-                this.updateButtonState();
+            img.addEventListener('dragstart', (e) => {
+                this.startTimer();
+                e.dataTransfer.setData('keyId', keyId);
+                e.dataTransfer.setData('sourceType', 'slot');
+                e.dataTransfer.setData('sourceIndex', index);
+            });
+
+            // Kattintásra Lightbox (nagyítás) - felhasználói kérésre
+            img.onclick = (e) => {
+                e.stopPropagation();
+                if (this.options.gameInterface) {
+                    this.options.gameInterface.showKeyLightbox(keyId);
+                }
             };
+
+            slot.appendChild(img);
         }
+    }
+
+    renderInventory() {
+        const sidebar = document.querySelector('.dkv-game-sidebar');
+        if (!sidebar) return;
+
+        const slots = sidebar.querySelectorAll('.dkv-inventory-slot');
+        slots.forEach((slot, i) => {
+            slot.innerHTML = '';
+            const keyId = this.inventoryState[i];
+            
+            if (keyId) {
+                const img = document.createElement('img');
+                img.src = `assets/images/grade3/keys/${keyId}_drop.png`;
+                img.title = 'Kattints a megtekintéshez, vagy húzd a helyére!';
+                img.draggable = true;
+                
+                img.addEventListener('dragstart', (e) => {
+                    this.startTimer();
+                    e.dataTransfer.setData('keyId', keyId);
+                    e.dataTransfer.setData('sourceType', 'inventory');
+                    e.dataTransfer.setData('sourceIndex', i);
+                });
+
+                img.onclick = (e) => {
+                    e.stopPropagation();
+                    this.startTimer();
+                    if (this.options.gameInterface) {
+                        this.options.gameInterface.showKeyLightbox(keyId);
+                    }
+                };
+
+                slot.appendChild(img);
+            }
+        });
     }
 
     updateButtonState() {
@@ -219,14 +340,19 @@ class FinaleGame {
     }
 
     evaluate() {
-        const wordCorrect = this.userWord.toLowerCase() === this.CORRECT_WORD.toLowerCase();
-        const orderCorrect = JSON.stringify(this.placedKeys) === JSON.stringify(this.CORRECT_ORDER);
+        const userWordLower = this.userWord.toLowerCase();
+        const userOrderStr = JSON.stringify(this.placedKeys);
+
+        // Ellenőrizzük, hogy bármelyik megoldással egyezik-e a szó vagy a sorrend
+        const wordCorrect = this.SOLUTIONS.some(s => s.word.toLowerCase() === userWordLower);
+        const orderCorrect = this.SOLUTIONS.some(s => JSON.stringify(s.order) === userOrderStr);
+
+        // A 'szuper-engedékeny' siker feltétele: ha a szó is és a sorrend is jó (bármelyik variációból), akkor SIKER!
+        const success = wordCorrect && orderCorrect;
         
         let points = 0;
         if (wordCorrect) points += this.POINTS_WORD;
         if (orderCorrect) points += this.POINTS_ORDER;
-        
-        const success = wordCorrect && orderCorrect;
         
         let feedback = "";
         if (success) {
@@ -261,44 +387,19 @@ class FinaleGame {
         const sidebar = document.querySelector('.dkv-game-sidebar');
         if (!sidebar) return;
 
-        const keyImgs = sidebar.querySelectorAll('.dkv-inventory-slot img');
-        keyImgs.forEach(img => {
-            img.draggable = enabled;
+        const slots = sidebar.querySelectorAll('.dkv-inventory-slot');
+        slots.forEach((slot, i) => {
             if (enabled) {
-                // Meglévő listeners törlése (opcionális, de biztonságosabb ha újrakötjük)
-                const newImg = img.cloneNode(true);
-                img.parentNode.replaceChild(newImg, img);
-
-                newImg.addEventListener('dragstart', (e) => {
-                    this.startTimer(); // Időzítő indítása drag-re
-                    const src = newImg.src;
-                    let keyId = "";
-                    if (src.includes('keyA')) keyId = "keyA";
-                    else if (src.includes('keyB')) keyId = "keyB";
-                    else if (src.includes('keyC')) keyId = "keyC";
-                    else if (src.includes('keyD')) keyId = "keyD";
-                    else if (src.includes('keyE')) keyId = "keyE";
-                    
-                    e.dataTransfer.setData('text/plain', keyId);
-                });
-
-                // Kattintásra is indítsuk el az időmérőt (lightbox megnyitása)
-                newImg.addEventListener('click', () => {
-                    this.startTimer();
-                    const src = newImg.src;
-                    let keyId = "";
-                    if (src.includes('keyA')) keyId = "keyA";
-                    else if (src.includes('keyB')) keyId = "keyB";
-                    else if (src.includes('keyC')) keyId = "keyC";
-                    else if (src.includes('keyD')) keyId = "keyD";
-                    else if (src.includes('keyE')) keyId = "keyE";
-                    
-                    if (keyId && this.options.gameInterface) {
-                        this.options.gameInterface.showKeyLightbox(keyId);
-                    }
-                });
+                // Drop célponttá tétel a visszahúzáshoz
+                slot.addEventListener('dragover', (e) => this.handleDragOver(e));
+                slot.addEventListener('dragenter', () => slot.classList.add('drag-over'));
+                slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+                slot.addEventListener('drop', (e) => this.handleInventoryDrop(e, i));
             }
         });
+
+        // Kezdeti renderelés (beköti a dragstart-ot és a click-et)
+        this.renderInventory();
     }
 
     /**
@@ -382,7 +483,14 @@ class FinaleGame {
         if (journalBtn) journalBtn.classList.remove('finale-active');
 
         this.container.innerHTML = '';
-        this.setupInventoryDraggable(false);
+        
+        // Oldalsáv visszaállítása az eredeti állapotra
+        if (this.options.gameInterface && this.options.stateManager) {
+            const state = this.options.stateManager.getState();
+            if (state.progress && state.progress.inventory) {
+                this.options.gameInterface.updateInventory(state.progress.inventory);
+            }
+        }
     }
 }
 

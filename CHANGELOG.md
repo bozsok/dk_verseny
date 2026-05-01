@@ -5,6 +5,23 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.43.0] - 2026-05-01
+
+### Megváltoztatva
+- **Háttérzene-kezelés finomítása (Hangerdő - 3. osztály)**:
+    - A háttérzene mostantól a feladat modal ablakának megnyitásakor (a "Végrehajtás" gomb megnyomásakor) halkul el fokozatosan, biztosítva a zavartalanabb átmenetet.
+    - Implementálva a szüneteltetési (`pause`) és folytatási (`resume`) logika: a zene a feladat sikeres befejezése után (siker dia) onnan folytatódik, ahol abbamaradt, elkerülve az előlről való indítást.
+    - Új `pauseBackgroundMusicWithFade()` és frissített `playBackgroundMusicWithFade()` metódusok a zökkenőmentes, fokozatos audio-átmenetekért.
+- **Finálé dinamikus kulcskezelése:** Implementáltuk a kulcsok fizikai mozgatását az eszköztár (oldalsáv) és a foglalatok (slotok) között. A kulcsok az elhelyezésükkor kikerülnek az eszköztárból, és „fogd és vidd” (drag-and-drop) módszerrel helyezhetők vissza bármely üres helyre.
+- **Finálé navigációs hibájának javítása:** Megszüntettük azt a hurokhibát, amely miatt a 3. osztályos finálé befejezése után nem záródott be a feladatablak, és a rendszer ismételten visszaugrott a kiértékelésre. A javítás dinamikus: az ablakot csak akkor tartja nyitva, ha a feladat rendelkezik saját győzelmi szekvenciával (mint a 4. osztályban), egyébként automatikusan bezárja a modális ablakot.
+- **Engedékeny finálé-kiértékelés:** A rendszer ezentúl „szuper-engedékeny” módon értékeli a sikert. Ha a megadott varázsszó és a kulcsok sorrendje is szerepel a helyes megoldások között, a program sikeresnek tekinti a feladatot (10 pont), elkerülve a logikai ellentmondást akkor is, ha a versenyző stresszhelyzetben keverné a két alternatív megoldást.
+- **Alternatív megoldási útvonal:** A rendszer az eredeti `5kulcskell` mellett mostantól elfogadja a `kell5kulcs` varázsszót is, a hozzá tartozó `D-E-A-B-C` kulcssorrenddel együtt.
+- **Intelligens csere (Swap):** A kulcsok egymással és az eszköztárhelyekkel is megcserélhetők a húzási folyamat során.
+- **Egységesített Lightbox-kezelés:** A kulcsokra történő kattintás ezentúl egységesen a nagyítást (Lightbox) nyitja meg, a korábbi, kattintásra történő törlési funkciót eltávolítottuk a jobb felhasználói élmény érdekében.
+- **Az összegző dia vizuális fejlesztése:** Az utolsó, statisztikákat megjelenítő diának (SummarySlide) az egyszerű fekete hátterét lecseréltük a finálé záróképére (`slide_28.jpg`). A háttérkép 9 képpontos (pixel) elmosást (blur) és enyhe sötétítést kapott, így az oklevél elegánsabban és fókuszáltabban jelenik meg mindkét évfolyamnál.
+- **Alapértelmezett hangbeállítások módosítása:**
+    - A háttérzene alapértelmezett hangereje (`musicVolume`) 0,5-ről 0,2-re módosult a narráció jobb érthetősége és a kiegyensúlyozottabb hangélmény érdekében.
+
 ## [0.42.0] - 2026-05-01
 
 ### Hozzáadva

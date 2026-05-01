@@ -67,7 +67,7 @@ class DigitalKulturaVerseny {
     this.currentAudio = null; // Track current audio playback
     this.playedAudioSlides = new Set();
     this.backgroundMusic = null; // Track background music
-    this.musicVolume = 0.5;
+    this.musicVolume = 0.2;
     this.narrationVolume = 1.0;
     this.sfxVolume = 0.2; // Default SFX (click) volume
 
@@ -1245,6 +1245,11 @@ class DigitalKulturaVerseny {
           // Ehelyett a `playPhaseA` pontosan a narráció végén indul el (vagy azonnal, ha nincs hang).
         }
 
+        // --- Hangerdő (Station 5) speciális zene kezelés: Siker után visszatér ---
+        if (String(currentGrade) === '3' && slide.metadata?.section === 'station_5' && slide.metadata?.step === 3) {
+          this.playBackgroundMusicWithFade(3);
+        }
+
       } else {
         this.layerUI.style.display = 'none';
       }
@@ -2313,6 +2318,106 @@ class DigitalKulturaVerseny {
     }, intervalTime);
   }
 
+  /**
+   * Háttérzene indítása vagy folytatása fade-in effekttel (3mp)
+   * @param {string} grade - '3', '4', stb.
+   */
+  playBackgroundMusicWithFade(grade) {
+    // Debug Mute Check
+    if (this.debugManager && this.debugManager.shouldMuteMusic()) {
+      return;
+    }
+
+    const src = `assets/audio/grade${grade}/default_bg.mp3`;
+
+    // Ha már van zene és az a megfelelő grade-hez tartozik
+    if (this.backgroundMusic && this.backgroundMusic.src.includes(`grade${grade}`)) {
+      const audio = this.backgroundMusic;
+      if (!audio.paused) return; // Már megy
+
+      audio.volume = 0;
+      audio.play().then(() => {
+        const targetVolume = this.musicVolume;
+        const duration = 3000;
+        const steps = 30;
+        const intervalTime = duration / steps;
+        const volStep = targetVolume / steps;
+
+        const fadeInterval = setInterval(() => {
+          if (audio.volume < targetVolume - volStep) {
+            audio.volume += volStep;
+          } else {
+            audio.volume = targetVolume;
+            clearInterval(fadeInterval);
+          }
+        }, intervalTime);
+      }).catch(e => {
+        if (this.logger) this.logger.warn("Background music resume fade-in blocked", { error: e.message });
+      });
+      return;
+    }
+
+    // Új zene indítása (vagy grade váltás)
+    if (this.backgroundMusic) {
+      this.backgroundMusic.pause();
+      this.backgroundMusic = null;
+    }
+
+    try {
+      const audio = new Audio(src);
+      audio.loop = true;
+      audio.volume = 0;
+      this.backgroundMusic = audio;
+
+      audio.play().then(() => {
+        const targetVolume = this.musicVolume;
+        const duration = 3000;
+        const steps = 30;
+        const intervalTime = duration / steps;
+        const volStep = targetVolume / steps;
+
+        const fadeInterval = setInterval(() => {
+          if (audio.volume < targetVolume - volStep) {
+            audio.volume += volStep;
+          } else {
+            audio.volume = targetVolume;
+            clearInterval(fadeInterval);
+          }
+        }, intervalTime);
+      }).catch(e => {
+        if (this.logger) this.logger.warn("Background music fade-in autoplay blocked", { error: e.message });
+        this.backgroundMusic = null;
+      });
+    } catch (err) {
+      if (this.logger) this.logger.warn("Error starting background music with fade", { error: err.message });
+    }
+  }
+
+  /**
+   * Háttérzene szüneteltetése fade-out effekttel (2mp)
+   */
+  pauseBackgroundMusicWithFade() {
+    if (!this.backgroundMusic || this.backgroundMusic.paused) return;
+
+    const audio = this.backgroundMusic;
+    const startVolume = audio.volume;
+    const duration = 2000;
+    const steps = 20;
+    const intervalTime = duration / steps;
+    const volStep = startVolume / steps;
+
+    const fadeInterval = setInterval(() => {
+      if (audio.volume > volStep) {
+        audio.volume -= volStep;
+      } else {
+        audio.volume = 0;
+        audio.pause();
+        clearInterval(fadeInterval);
+        // NEM nullázzuk a referenciát és az időt!
+      }
+    }, intervalTime);
+  }
+
   setMusicVolume(vol) {
     this.musicVolume = vol;
     if (this.backgroundMusic) {
@@ -2422,6 +2527,12 @@ class DigitalKulturaVerseny {
     if (!this.activeGameInterface || isCompleted) return;
 
     const section = slide.metadata?.section || 'unknown';
+
+    // --- Hangerdő (Station 5) speciális zene kezelés: Feladat MODAL indításakor halkuljon el ---
+    const currentGrade = this.stateManager?.getStateValue('currentGrade');
+    if (String(currentGrade) === '3' && section === 'station_5') {
+      this.pauseBackgroundMusicWithFade();
+    }
     const registry = this.slideManager.taskRegistry || {};
     // Keresünk a registry-ben slide.id vagy section alapján
     const taskConfig = registry[slide.id] || registry[section];
@@ -2503,7 +2614,8 @@ class DigitalKulturaVerseny {
           }
         },
         () => {
-          if (slide.id !== 'final_2') {
+          const hasWinSequence = instance && typeof instance.runWinSequence === 'function';
+          if (!hasWinSequence) {
             this.activeGameInterface.hideTaskModal();
           }
         }

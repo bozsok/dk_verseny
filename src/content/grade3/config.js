@@ -236,7 +236,10 @@ export const createConfig = () => {
         applyVideoConfig(slideConfig, `slide_${slideNum}`);
 
         if (i === 28) {
-             addSlide(SLIDE_TYPES.INFO, title, 'Gratulálunk a verseny teljesítéséhez!', { showStats: true }, { section: 'final', step: 3 }, 'summary');
+             addSlide(SLIDE_TYPES.INFO, title, 'Gratulálunk a verseny teljesítéséhez!', { 
+                 showStats: true,
+                 imageUrl: `assets/images/grade3/slides/slide_${i}.jpg`
+             }, { section: 'final', step: 3 }, 'summary');
         } else {
              const finalDescription = (i === 26) ? 'A végső feladat vár rád!' : 'Kövessétek a történetet!';
              addSlide(SLIDE_TYPES.STORY, title, finalDescription, slideConfig, { section: 'final', step: i - 25 }, `final_${i - 24}`);

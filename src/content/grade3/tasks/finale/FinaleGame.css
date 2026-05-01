@@ -208,6 +208,12 @@
     pointer-events: auto;
 }
 
+.dkv-game-sidebar.finale-active .dkv-inventory-slot.drag-over {
+    background: rgba(0, 210, 211, 0.2);
+    border-style: solid;
+    transform: scale(1.05);
+}
+
 /* Időmérő - a fejlécben jobb szélen abszolút pozicionálva (mint a Sound feladatnál) */
 .finale-timer-bar {
     position: absolute;
