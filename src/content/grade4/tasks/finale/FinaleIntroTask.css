@@ -58,7 +58,7 @@
 
 /* Header Section */
 .dkv-finale-intro__header {
-    padding: 3rem 3rem 1rem 3rem;
+    padding: 3rem 3rem 0 3rem;
     position: relative;
     z-index: 10;
     box-sizing: border-box;
@@ -86,10 +86,10 @@
 .dkv-finale-intro__subtitle {
     font-size: 1.125rem;
     color: #a8abb1;
-    margin: 1.5rem 0;
+    margin: 1.5rem 0 0;
     line-height: 1.6;
     max-width: 800px;
-    min-height: 3.2em;
+    min-height: 2.2em;
 }
 
 /* Viewport Section */
@@ -342,6 +342,7 @@
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
     display: block;
 }
+
 /* PUZZLE ÉS IDŐZÍTŐ KIEGÉSZÍTÉS - CSAK A VIEWPORT ÉS ABSZOLÚT IDŐZÍTŐ */
 .dkv-finale-intro__timer-box {
     position: absolute;
