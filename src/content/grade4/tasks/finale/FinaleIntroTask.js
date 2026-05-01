@@ -148,12 +148,12 @@ export class FinaleIntroTask {
 
         // Szekvenciális írógép effekt
         this.typewriter.type(this.titleEl, titleText, {
-            speed: 25,
+            speed: 20,
             hideCursorOnComplete: true,
             onComplete: () => {
                 setTimeout(() => {
                     this.typewriter.type(this.subtitleEl, subtitleText, {
-                        speed: 15,
+                        speed: 10,
                         onComplete: () => {
                             // AUTOMATIKUSAN BEZÁRJUK A SÚGÓT, HA NYITVA VOLNA
                             if (this.helpOverlay) this.helpOverlay.classList.remove('open');

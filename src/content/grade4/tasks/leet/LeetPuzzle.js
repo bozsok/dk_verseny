@@ -94,6 +94,8 @@ export class LeetPuzzle {
 
         /** @type {boolean} - Az animáció futásának állapota */
         this.isAnimating = false;
+        /** @type {number|null} - Aktuális animáció azonosítója a versenyhelyzetek elkerülésére */
+        this.currentAnimationId = null;
 
         /** @type {GameLogger} */
         this.logger = options.logger || new GameLogger({
@@ -118,12 +120,15 @@ export class LeetPuzzle {
         const originalText = this.encodedWord;
         const length = originalText.length;
         this.isAnimating = true;
+        this.currentAnimationId = Math.random();
+        const animId = this.currentAnimationId;
 
         const duration = 3000; // 3 másodperc teljes tartam
         const startTime = Date.now();
 
         const animate = () => {
-            if (!this.isAnimating) return;
+            // Ha közben új animáció indult vagy leállították, kilépünk
+            if (!this.isAnimating || this.currentAnimationId !== animId) return;
 
             const now = Date.now();
             const elapsed = now - startTime;
@@ -177,6 +182,7 @@ export class LeetPuzzle {
             this.encodedWord = this.encode(this.currentWord);
 
             if (this.element) {
+                this.isAnimating = false; // Előző animációk leállítása
                 this.stopGlitchEffects();
                 this.updateCurrentWordDisplay();
             } else {
@@ -327,7 +333,6 @@ export class LeetPuzzle {
                             
                             this.setupInputLogic();
                             this.startScrambleAnimation();
-                            this.setupHelpLogic();
                         }
                     });
                 }, 300);
@@ -541,10 +546,11 @@ export class LeetPuzzle {
         if (this.currentIndex >= this.words.length) {
             this.finishTask();
         } else {
-            setTimeout(() => {
+            const t = setTimeout(() => {
                 this.isProcessing = false;
                 this.init();
             }, 600);
+            this.timeouts.push(t);
         }
     }
 

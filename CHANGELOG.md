@@ -12,6 +12,10 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 
 ### Megváltoztatva
 - **Szentírás-konformitási audit**: Minden állomás (1–5.) megkapta a kötelező magyar nyelvű JSDoc-dokumentációt és a biztonságos életciklus-kezelést (timeouts cleanup), megfelelve a `project-context.md` szigorú előírásainak.
+- **FinaleIntroTask fejlécének egységesítése**: Szinkronizáltuk a finálé beugró feladatának fejlécét (színek, `line-height`, animációs sebesség) az etalonnak számító 3. állomással. A Súgó bezáró gombját (X) is a modális ablakon kívülre helyeztük az egységes UI-élmény érdekében.
+
+### Javítva
+- **LeetPuzzle (1. állomás) kijelzőhibája**: Megszüntettük az animációs versenyhelyzetet (race condition), amely miatt a kódolt szó és a beviteli slotok száma eltérhetett egymástól gyors megoldás esetén.
 
 ## [0.46.0] - 2026-05-01
 
