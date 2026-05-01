@@ -267,7 +267,7 @@
 .dkv-debug-content {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 420px 1fr;
   gap: 0;
   overflow: hidden;
   min-height: 0;
@@ -278,6 +278,7 @@
   border-right: 2px solid #333;
   padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
   background: #1a1a1a;
 }
 
@@ -329,6 +330,7 @@
   font-size: 0.95rem;
   cursor: pointer;
   padding: 5px 0;
+  white-space: nowrap;
 }
 
 .dkv-debug-section-item span.dkv-debug-section-name:hover {

@@ -15,7 +15,7 @@
  * @param {number} grade - Aktuális évfolyam (3-6)
  * @returns {Array} Section configuration objektumok
  */
-export const buildSectionMap = (slides) => {
+export const buildSectionMap = (slides, grade = 3) => {
     const sections = [];
 
     // Helper függvény szekciók kinyeréséhez metadata alapján
@@ -51,13 +51,23 @@ export const buildSectionMap = (slides) => {
     }
 
     // 3. ÁLLOMÁSOK (1-5)
-    const stationNames = {
+    const grade3Names = {
         1: 'Labirintuskert',
         2: 'Adat-tenger',
         3: 'Tudás Torony',
         4: 'Pixel Palota',
         5: 'Hangerdő'
     };
+
+    const grade4Names = {
+        1: 'Üzenetek Kriptája',
+        2: 'Memória Tükörterme',
+        3: 'Logikai Könyvtár',
+        4: 'Anomáliák Szigete',
+        5: 'Bit-folyam Zsilipje'
+    };
+
+    const stationNames = grade === 4 ? grade4Names : grade3Names;
 
     for (let stationNum = 1; stationNum <= 5; stationNum++) {
         const stationSlides = getSlidesBySection(`station_${stationNum}`);
