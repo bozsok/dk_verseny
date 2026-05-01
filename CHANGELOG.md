@@ -5,6 +5,37 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.45.0] - 2026-05-01
+
+### Megváltoztatva
+- **Állomások fejlécének teljes körű egységesítése (4. osztály)**:
+    - Elértük a teljes vizuális és strukturális konzisztenciát mind az 5 állomás (Leet, Memory, Library, Island, Speed) és a Finálé bevezető fejléce között, a 3. (Library) feladatot tekintve etalonnak.
+    - **Címek vizuális javítása**: Beállítottuk a fehér alapszínt (`#fff`) a címek első feléhez, így mostantól minden állomáson egységesen csak a specifikus feladatmegnevezés színes (cyan), a rendszerszintű üzenet fehér.
+    - **Tipográfiai finomhangolás**: A sormagasságot (`line-height`) minden címnél `1.2`-re, az alcímeknél `1.6`-ra módosítottuk, ami megszüntette a szövegek függőleges tapadását és javította az olvashatóságot.
+    - **Ciklus-indikátorok (Stage tracker) szinkronizálása**: 
+        - Egységesítettük az "ADAT CIKLUS" és "METADAT CIKLUS" feliratok pozícióját a 2-3-4. feladatoknál (`top: -38px`, `right: 3rem`).
+        - A jelzőpontok méretét mindenhol a 3. feladat (etalon) szerint `12px`-re növeltük a jobb láthatóság érdekében.
+        - Pótoltuk a hiányzó stílusokat az `IslandTask.css`-ben, és kivezettük a zavaró inline stílusokat a JS fájlokból.
+    - **Struktúra és rétegződés**: 
+        - Eltávolítottuk az utolsó inline stílusmaradványokat a `LeetPuzzle.js` és `MemoryTask.js` fájlokból, helyettük CSS osztály alapú formázást vezettünk be.
+        - Egységesítettük a fejlécek rétegrendjét (`z-index: 10`) és térközeit (`padding: 3rem 3rem 1rem 3rem`).
+        - Migráltuk a `main-viewport` konténerek elrendezési stílusait (flex, position, z-index) a JS fájlokból a CSS-be, megszüntetve az összes maradék inline formázást a 2. és 4. állomáson.
+        - Az alcímek maximális szélességét egységesen `850px`-re állítottuk a stabilabb viewport-megjelenítés érdekében.
+
+## [0.44.0] - 2026-05-01
+
+### Javítva
+- **FinaleTask Súgó ablak és gombok fejlesztése (4. osztály)**:
+    - Kijavítottuk a Súgó ablak bezáró ('X') gombjának levágási hibáját. A gomb ezentúl akadálytalanul lebeg a kereten kívül, köszönhetően a modális konténerek (`dkv-g4-task-modal-body`) célzott overflow-kezelésének.
+    - Hozzáadtuk a hiányzó hover effektusokat és átmeneteket a Súgó indító (?) és bezáró (X) gombjaihoz, biztosítva a vizuális visszacsatolást és a többi feladattal való konzisztenciát.
+- **Karakterválasztó hibaablak vizuális egységesítése**: A karakterválasztásnál megjelenő hibaüzenet (ha nem választottak karaktert) stílusát és a gomb pozícióját a regisztrációs oldaléhoz igazítottuk. Mostantól egységes "Quantum" dizájn, középre igazított gomb és javított fókuszkezelés jellemzi.
+- **Globális hangeffekt-kezelés optimalizálása**:
+    - Kijavítottuk a hangeffektek (kattintás és hover) elmaradását a feladatokon belül. A hangeffekt-figyelőt **capture fázisra** állítottuk a `main.js`-ben, így a hang már a gombok letiltása vagy az eseménybuborékolás megállítása előtt lejátszódik.
+    - Kibővítettük a támogatott elemek körét a `.dkv-g4-close-icon` és `.dkv-close-icon` osztályokkal, így ezentúl a `div` alapú bezáró ikonok is adnak hangjelzést.
+    - Eltávolítottuk a felesleges `e.stopPropagation()` hívásokat a keretrendszer paneljeiből, biztosítva a tiszta eseményáramlást.
+
+- **Onboarding regisztrációs pontozás finomítása**: Bevezettük a "fókusz-alapú" pontmegvonást. Ezentúl a rendszer csak akkor von le pontot az üresen hagyott mezőkért, ha a továbblépés pillanatában ténylegesen abban a mezőben állt a kurzor. Ha a versenyző TAB gombbal átugrik a mezőkön a gombra, az első alkalommal pontlevonás nélküli figyelmeztetést kap.
+
 ## [0.43.0] - 2026-05-01
 
 ### Megváltoztatva
@@ -19,6 +50,11 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 - **Intelligens csere (Swap):** A kulcsok egymással és az eszköztárhelyekkel is megcserélhetők a húzási folyamat során.
 - **Egységesített Lightbox-kezelés:** A kulcsokra történő kattintás ezentúl egységesen a nagyítást (Lightbox) nyitja meg, a korábbi, kattintásra történő törlési funkciót eltávolítottuk a jobb felhasználói élmény érdekében.
 - **Az összegző dia vizuális fejlesztése:** Az utolsó, statisztikákat megjelenítő diának (SummarySlide) az egyszerű fekete hátterét lecseréltük a finálé záróképére (`slide_28.jpg`). A háttérkép 9 képpontos (pixel) elmosást (blur) és enyhe sötétítést kapott, így az oklevél elegánsabban és fókuszáltabban jelenik meg mindkét évfolyamnál.
+- **AssetLoader utility bevezetése:** Létrehoztunk egy univerzális erőforrás-kezelőt, amely a képek előtöltése mellett a memóriában történő dekódolást (`img.decode`) is elvégzi. Ez megszünteti a betöltéskori szürke villanásokat és a sávos megjelenítést.
+- **Feladatok optimalizálása (4. osztály):**
+    - A **LibraryTask**, **MemoryTask** és **IslandTask** mostantól a bevezető animáció alatt a háttérben előre betölti és dekódolja az összes szükséges képet (rúnák, ikonok, könyvtári képek) az `AssetLoader` segítségével.
+    - A LibraryTask képfájljainak méretének optimalizálása (1920px -> 910px szélességre), ami átlagosan 70%-os megtakarítást eredményez a fájlméretben.
+- **UI konzisztencia fejlesztése (4. osztály):** Egységesítettük a felugró ablakok (Lightbox, Súgó, Karakter előnézet) bezáró mechanizmusát. Az 'X' gomb ezentúl mindenhol a konténeren kívül, a jobb felső sarok felett lebegve jelenik meg. A gombok stílusát a 4. osztályos "Quantum Terminal" témához igazítva szögletesre és brutalista jellegűre módosítottuk.
 - **Alapértelmezett hangbeállítások módosítása:**
     - A háttérzene alapértelmezett hangereje (`musicVolume`) 0,5-ről 0,2-re módosult a narráció jobb érthetősége és a kiegyensúlyozottabb hangélmény érdekében.
 

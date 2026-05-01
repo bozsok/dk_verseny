@@ -19,7 +19,7 @@
     background-color: var(--finale-bg);
     color: var(--finale-text);
     font-family: var(--finale-font);
-    overflow: hidden;
+    overflow: visible;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -51,7 +51,7 @@
     font-size: 2.25rem;
     font-weight: bold;
     margin: 0;
-    line-height: 1;
+    line-height: 1.2;
     color: #ffffff;
     text-align: center;
     text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
@@ -467,7 +467,8 @@
 
 .dkv-finale-task__execute-btn:disabled {
     cursor: not-allowed;
-    pointer-events: auto; /* Engedélyezzük az egéreseményeket a tiltó kurzor miatt */
+    pointer-events: auto;
+    /* Engedélyezzük az egéreseményeket a tiltó kurzor miatt */
     animation: none;
     box-shadow: none;
 }
@@ -572,6 +573,13 @@
     justify-content: center;
     border-radius: 2px;
     padding: 0;
+    transition: all 0.2s ease;
+}
+
+.dkv-finale-task__help-btn:hover {
+    background: rgba(0, 242, 255, 0.25);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+    transform: scale(1.05);
 }
 
 .dkv-finale-task__help-overlay {
@@ -623,6 +631,9 @@
 }
 
 .dkv-finale-task__help-close {
+    position: absolute;
+    top: -45px;
+    right: 0;
     background: none;
     border: 1px solid var(--finale-cyan);
     color: var(--finale-cyan);
@@ -632,6 +643,12 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dkv-finale-task__help-close:hover {
+    background: var(--finale-cyan);
+    color: #000;
 }
 
 .dkv-finale-task__help-text {

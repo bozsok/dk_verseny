@@ -1,6 +1,7 @@
 import GameLogger from '../../../../core/logging/GameLogger.js';
 import Typewriter from '../../../../utils/Typewriter.js';
 import { LIBRARY_DATA, METADATA_CATEGORIES } from './LibraryData.js';
+import AssetLoader from '../../../../utils/AssetLoader.js';
 import './LibraryTask.css';
 
 /**
@@ -35,8 +36,21 @@ export class LibraryTask {
         // Feladatsor generálása
         this.rounds = this.generateRounds();
 
+        // Képek előtöltése a háttérben
+        this.preloadTaskAssets();
+
         this.element = null;
         this.init();
+    }
+
+    /**
+     * Képek előtöltése és dekódolása.
+     */
+    preloadTaskAssets() {
+        const imagesToPreload = this.rounds.map(r => r.image);
+        AssetLoader.preloadImages(imagesToPreload).then(() => {
+            this.logger.info(`Preloaded ${imagesToPreload.length} assets for LibraryTask`);
+        });
     }
 
     /**

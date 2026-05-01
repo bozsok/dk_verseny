@@ -751,7 +751,7 @@ class DigitalKulturaVerseny {
 
       // Global Hover Listener
       document.body.addEventListener('mouseover', (e) => {
-        const target = e.target.closest('button, a, .dkv-nav-arrow, .dkv-button, .dkv-btn, .dkv-card, .dkv-char-card, .clickable, input[type="range"]');
+        const target = e.target.closest('button, a, .dkv-nav-arrow, .dkv-button, .dkv-btn, .dkv-card, .dkv-char-card, .clickable, .dkv-g4-close-icon, .dkv-close-icon, input[type="range"]');
         if (target && target !== lastHovered) {
           lastHovered = target;
           if (!target.disabled && !target.classList.contains('disabled')) {
@@ -762,13 +762,13 @@ class DigitalKulturaVerseny {
         }
       });
 
-      // Global Click Listener
+      // Global Click Listener - Capture phase to play sound BEFORE event handlers disable buttons or stop propagation
       document.body.addEventListener('click', (e) => {
-        const target = e.target.closest('button, a, .dkv-nav-arrow, .dkv-button, .dkv-btn, .dkv-card, .clickable, input[type="range"]');
+        const target = e.target.closest('button, a, .dkv-nav-arrow, .dkv-button, .dkv-btn, .dkv-card, .clickable, .dkv-g4-close-icon, .dkv-close-icon, input[type="range"]');
         if (target && !target.disabled && !target.classList.contains('disabled')) {
           playSound('click', this.sfxVolume);
         }
-      });
+      }, true);
 
     } catch (err) {
       if (this.logger) this.logger.warn('Web Audio API not supported or failed', { error: err.message });

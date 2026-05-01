@@ -239,22 +239,22 @@
 /* Előnézeti modál bezárása (X) gomb */
 .dkv-preview-close {
     position: absolute;
-    top: 25px;
-    right: 25px;
+    top: -45px;
+    right: 0;
     cursor: pointer;
-    font-size: 28px;
+    font-size: 24px;
     color: #c1fffe;
     line-height: 1;
     transition: all 0.2s ease;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-    background: rgba(0, 0, 0, 0.5);
-    /* Sötétebb háttér a láthatóságért */
-    width: 40px;
-    height: 40px;
+    background: none;
+    border: 1px solid #c1fffe;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: 0;
     z-index: 10;
 }
 
@@ -266,37 +266,46 @@
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
 }
 
-/* Hibaablak a karakterválasztásnál */
+/* Hibaablak a karakterválasztásnál (RegistrationSlide stílusához igazítva) */
 .dkv-error-modal-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.85);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 10000;
+    backdrop-filter: blur(12px);
 }
 
 .dkv-error-modal-content {
-    background: rgba(20, 10, 10, 0.98);
-    border: 1px solid #ef4444;
-    padding: 30px;
+    background: rgba(10, 20, 30, 0.98);
+    border: 1px solid #c1fffe;
+    padding: 40px;
     border-radius: 4px;
-    max-width: 400px;
+    max-width: 500px;
+    width: 90%;
     text-align: center;
     color: #f1f4fa;
-    box-shadow: 0 0 40px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 255, 255, 0.1);
+    
+    /* Középre igazítás kényszerítése */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .dkv-error-message {
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     font-size: 1.4rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Manrope', sans-serif;
     white-space: pre-line;
     line-height: 1.6;
+    color: #c1fffe;
 }
 
 /* === Előnézeti Kiválasztó Gomb - Grade 4 stílus, Grade 3 pozíció === */

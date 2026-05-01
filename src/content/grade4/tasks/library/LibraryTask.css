@@ -47,7 +47,7 @@
 .dkv-library__header-label {
     font-size: 10px;
     letter-spacing: 0.3em;
-    color: var(--lib-magenta);
+    color: #ffa6f3;
     display: block;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
@@ -563,21 +563,18 @@
 
 .dkv-library__lightbox-close {
     position: absolute;
-    top: 0;
+    top: -40px;
     right: 0;
-    background: rgba(0, 5, 10, 0.8);
-    border-left: 1px solid var(--lib-cyan);
-    border-bottom: 1px solid var(--lib-cyan);
-    border-top: none;
-    border-right: none;
+    background: none;
+    border: 1px solid var(--lib-cyan);
     color: var(--lib-cyan);
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 20px;
     transition: all 0.2s ease;
     z-index: 10;
 }

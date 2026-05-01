@@ -1,5 +1,6 @@
 import GameLogger from '../../../../core/logging/GameLogger.js';
 import Typewriter from '../../../../utils/Typewriter.js';
+import AssetLoader from '../../../../utils/AssetLoader.js';
 import './IslandTask.css';
 
 /**
@@ -44,6 +45,19 @@ export class IslandTask {
         this.stageSpeeds = [0, 10, 8, 6, 6, 6, 6, 6, 6, 5, 4];
 
         this.init();
+
+        // Minden lehetséges rúnakép előtöltése a háttérben (15 db)
+        this.preloadAllRunes();
+    }
+
+    /**
+     * Az összes rendelkezésre álló rúnakép előtöltése és dekódolása.
+     */
+    preloadAllRunes() {
+        const imagesToPreload = this.availableRuneIds.map(id => `assets/images/grade4/island/rune/${id}.png`);
+        AssetLoader.preloadImages(imagesToPreload).then(() => {
+            this.logger.info(`Preloaded ${imagesToPreload.length} island runes`);
+        });
     }
 
     init() {
@@ -59,7 +73,7 @@ export class IslandTask {
 
         // Fix szövegek (ezeket nem írógéppel írjuk a fejlécben, de a súgóban igen)
         const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--isl-cyan);">ANOMÁLIA ANALÍZIS</span>`;
-        const subtitleText = `A szigetről kimenő adatfolyam anomáliákat tartalmaz. A feladatod azonosítani azt az egyetlen rúnát, amely nem illik a sorozatba.`;
+        const subtitleText = `A szigetről kimenő adatfolyam anomáliákat tartalmaz. A feladatod azonosítani azt az egyetlen rúnát, amely nem illik a sorozatba. Kattints az anomáliára és nyomd meg a TOVÁBB gombot!`;
 
         this.element.innerHTML = `
             <div class="dkv-island__glass-panel">
@@ -341,7 +355,7 @@ export class IslandTask {
             }
 
             const img = document.createElement('img');
-            
+
             // BIZTOSÍTÉK: Kép ne fogja meg a kattintást, és legyen garantált a türkiz ragyogása (halvány probléma fix)
             img.style.pointerEvents = 'none';
             img.style.filter = 'drop-shadow(0 0 10px rgba(0, 255, 255, 0.4))';
@@ -416,7 +430,7 @@ export class IslandTask {
             this.totalPoints += 1; // Minden helyes találat 1 pont
         } else {
             selectedRuneObj.element.classList.add('incorrect');
-            
+
             // Ha hibás, az inline drop-shadow miatt JS-ből is pirosra kell állítani
             const img = selectedRuneObj.element.querySelector('img');
             if (img) img.style.filter = 'drop-shadow(0 0 10px rgba(255, 0, 0, 0.4)) grayscale(1)';

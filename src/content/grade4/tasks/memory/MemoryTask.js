@@ -1,6 +1,7 @@
-import './MemoryTask.css';
-import Typewriter from '../../../../utils/Typewriter.js';
 import GameLogger from '../../../../core/logging/GameLogger.js';
+import Typewriter from '../../../../utils/Typewriter.js';
+import AssetLoader from '../../../../utils/AssetLoader.js';
+import './MemoryTask.css';
 
 /**
  * Fázisok definíciója
@@ -136,6 +137,19 @@ export class MemoryTask {
         this.timeouts = [];
 
         this.init();
+
+        // Minden lehetséges ikon előtöltése a háttérben (30 db)
+        this.preloadAllIcons();
+    }
+
+    /**
+     * Az összes rendelkezésre álló ikon előtöltése és dekódolása.
+     */
+    preloadAllIcons() {
+        const imagesToPreload = AVAILABLE_ICONS.map(icon => `assets/images/grade4/memory/${icon}`);
+        AssetLoader.preloadImages(imagesToPreload).then(() => {
+            this.logger.info(`Preloaded ${imagesToPreload.length} memory icons`);
+        });
     }
 
     /**
@@ -228,7 +242,7 @@ export class MemoryTask {
             <div class="dkv-memory__glass-panel">
                 <div class="scanline"></div>
                 
-                <div style="padding: 3rem 3rem 1rem 3rem; position: relative; z-index: 5;">
+                <div class="dkv-memory__header">
                     <span class="dkv-memory__header-label">RENDSZERSZINTŰ KIVÉTEL // MEMÓRIA MODUL</span>
                     <h1 class="dkv-memory__title"></h1>
                     <p class="dkv-memory__subtitle"></p>
@@ -248,7 +262,7 @@ export class MemoryTask {
                     </div>
                 </div>
 
-                <div class="dkv-memory__main-viewport" style="position: relative; z-index: 5;">
+                <div class="dkv-memory__main-viewport">
                     <div class="dkv-memory__stage-tracker">
                         <span>ADAT CIKLUS:</span>
                         <div class="dkv-memory__stage-dots">

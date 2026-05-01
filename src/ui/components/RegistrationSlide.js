@@ -56,6 +56,7 @@ class RegistrationSlide {
         // Context Binding (Fixing 'this' reference in event handlers)
         this.handleSubmit = this.handleSubmit.bind(this);
         this._validateField = this._validateField.bind(this);
+        this.lastActiveInputType = 'name'; // Alapértelmezett az auto-fókusz miatt
     }
 
     createElement() {
@@ -129,7 +130,20 @@ class RegistrationSlide {
             });
         }
 
-        this.nextBtn.onclick = () => this.handleSubmit();
+        this.nextBtn.onmousedown = () => {
+            // Elmentjük, hogy a kattintás pillanatában (mielőtt a fókusz átugrana a gombra) inputon álltunk-e
+            const active = document.activeElement;
+            this.isInputFocusedAtClick = (active === this.nameInput.input || active === this.nickInput.input || active === this.classIdInput.input);
+        };
+
+        this.nextBtn.onclick = () => {
+            // ENTER leütése esetén (ha a fókusz még az inputon van) is büntetünk
+            const active = document.activeElement;
+            if (active && active.tagName === 'INPUT') {
+                this.isInputFocusedAtClick = true;
+            }
+            this.handleSubmit();
+        };
 
         form.appendChild(this.nameInput.container);
         form.appendChild(this.nickInput.container);
@@ -224,6 +238,11 @@ class RegistrationSlide {
         } else if (type === 'nick') {
             inp.maxLength = 10;
         }
+
+        // onFocus - Aktuális mező követése a pontozáshoz
+        inp.onfocus = () => {
+            this.lastActiveInputType = type;
+        };
 
         // onBlur esemény - Validáció és Formázás
         inp.onblur = () => {
@@ -513,22 +532,23 @@ class RegistrationSlide {
         const nickCheck = this._validateField('nick', this.nickInput.input, true);
         const classCheck = this._validateField('classId', this.classIdInput.input, true);
 
-        // Pontmegvonás minden olyan mezőnél, ami érvénytelen a beküldéskor
-        if (!nameCheck.isValid && !this.fieldErrorOccurred.name) {
-            this.fieldErrorOccurred.name = true;
-            this.earnedPoints.name = 0;
-            if (this.logger) this.logger.info('Pont elbukva: Név mező üres volt a Tovább gomb megnyomásakor.');
+        // Pontmegvonás: Csak akkor vonunk le pontot, ha a kurzor ténylegesen egy beviteli mezőben állt (3. verzió - engedékeny logika)
+        const focusedType = this.lastActiveInputType;
+        const checks = {
+            name: nameCheck,
+            nick: nickCheck,
+            classId: classCheck
+        };
+
+        // Csak akkor büntetünk, ha volt tényleges fókusz az inputon a beküldéskor
+        if (this.isInputFocusedAtClick && focusedType && checks[focusedType] && !checks[focusedType].isValid && !this.fieldErrorOccurred[focusedType]) {
+            this.fieldErrorOccurred[focusedType] = true;
+            this.earnedPoints[focusedType] = 0;
+            if (this.logger) this.logger.info(`Pont elbukva: ${focusedType} mezőben állt a kurzor beküldéskor, de érvénytelen volt.`);
         }
-        if (!nickCheck.isValid && !this.fieldErrorOccurred.nick) {
-            this.fieldErrorOccurred.nick = true;
-            this.earnedPoints.nick = 0;
-            if (this.logger) this.logger.info('Pont elbukva: Becenév mező üres volt a Tovább gomb megnyomásakor.');
-        }
-        if (!classCheck.isValid && !this.fieldErrorOccurred.classId) {
-            this.fieldErrorOccurred.classId = true;
-            this.earnedPoints.classId = 0;
-            if (this.logger) this.logger.info('Pont elbukva: Osztály mező üres volt a Tovább gomb megnyomásakor.');
-        }
+
+        // Reset a következő próbálkozáshoz
+        this.isInputFocusedAtClick = false;
 
         // Hibák megjelenítése sorrendben (ha van)
         if (!nameCheck.isValid) {

@@ -502,8 +502,8 @@ export class GameInterfaceGrade4 {
 
             const closeIcon = journalPanel.querySelector('.dkv-g4-close-icon');
             if (closeIcon) {
-                closeIcon.onclick = (e) => {
-                    e.stopPropagation();
+                closeIcon.classList.add('clickable');
+                closeIcon.onclick = () => {
                     journalPanel.classList.remove('open');
                 };
             }
@@ -536,8 +536,8 @@ export class GameInterfaceGrade4 {
 
             const closeIcon = narratorBox.querySelector('.dkv-g4-close-icon');
             if (closeIcon) {
-                closeIcon.onclick = (e) => {
-                    e.stopPropagation();
+                closeIcon.classList.add('clickable');
+                closeIcon.onclick = () => {
                     narratorBox.classList.remove('open');
                 };
             }
@@ -586,8 +586,8 @@ export class GameInterfaceGrade4 {
 
             const closeIcon = settingsPanel.querySelector('.dkv-g4-close-icon');
             if (closeIcon) {
-                closeIcon.onclick = (e) => {
-                    e.stopPropagation();
+                closeIcon.classList.add('clickable');
+                closeIcon.onclick = () => {
                     settingsPanel.classList.remove('open');
                 };
             }

@@ -233,7 +233,7 @@ export class LeetPuzzle {
             <div class="dkv-leet__glass-panel">
                 <div class="scanline"></div>
                 
-                <div style="padding: 3rem 3rem 1rem 3rem; position: relative; z-index: 5;">
+                <div class="dkv-leet__header">
                     <span class="dkv-leet__header-label">RENDSZERSZINTŰ KIVÉTEL // KIEMELT FONTOSSÁGÚ</span>
                     <h1 class="dkv-leet__title"></h1>
                     <p class="dkv-leet__subtitle"></p>
