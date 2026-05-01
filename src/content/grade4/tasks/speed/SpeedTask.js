@@ -59,6 +59,8 @@ export class SpeedTask {
         this.roundState = ROUND_STATE.IDLE;
         /** @type {boolean} - AI le van-e fagyasztva (Csapás miatt). */
         this.aiIsFrozen = false;
+        /** @type {boolean} - Átugrották-e az intrót */
+        this.isIntroSkipped = false;
 
         // --- Szekciónkénti adatok ---
         /** @type {Array<Object>} */
@@ -150,29 +152,31 @@ export class SpeedTask {
                     </div>
                 </div>
 
-                <div class="dkv-speed__main-viewport">
-                    <!-- Dot-grid háttér -->
-                    <div class="dkv-speed__dot-grid"></div>
+                <div class="dkv-speed__game-area">
+                    <div class="dkv-speed__main-viewport">
+                        <!-- Dot-grid háttér -->
+                        <div class="dkv-speed__dot-grid"></div>
 
-                    <!-- Viewport Header -->
-                    <div class="dkv-speed__vp-header">
-                        <div class="dkv-speed__vp-header-left">
-                            <span class="dkv-speed__vp-label">RENDSZER_MODE:</span>
-                            <span class="dkv-speed__vp-mode">SZINKRONIZÁCIÓ INICIALIZÁLVA</span>
+                        <!-- Viewport Header -->
+                        <div class="dkv-speed__vp-header">
+                            <div class="dkv-speed__vp-header-left">
+                                <span class="dkv-speed__vp-label">RENDSZER_MODE:</span>
+                                <span class="dkv-speed__vp-mode">SZINKRONIZÁCIÓ INICIALIZÁLVA</span>
+                            </div>
+                            <div class="dkv-speed__vp-timer-box">
+                                <span class="dkv-speed__vp-timer-label">HÁTRALÉVŐ IDŐ</span>
+                                <div class="dkv-speed__vp-timer-clock">01:00</div>
+                            </div>
+                            <div class="dkv-speed__vp-header-right">
+                                <span class="dkv-speed__vp-label">ZSILIP_AZONOSÍTÓ:</span>
+                                <span class="dkv-speed__vp-ref">AX-772-BETA</span>
+                            </div>
                         </div>
-                        <div class="dkv-speed__vp-timer-box">
-                            <span class="dkv-speed__vp-timer-label">HÁTRALÉVŐ IDŐ</span>
-                            <div class="dkv-speed__vp-timer-clock">01:00</div>
-                        </div>
-                        <div class="dkv-speed__vp-header-right">
-                            <span class="dkv-speed__vp-label">ZSILIP_AZONOSÍTÓ:</span>
-                            <span class="dkv-speed__vp-ref">AX-772-BETA</span>
-                        </div>
-                    </div>
 
-                    <!-- Battle Grid: 3 szekció -->
-                    <div class="dkv-speed__battle-grid">
-                        ${this._renderSections()}
+                        <!-- Battle Grid: 3 szekció -->
+                        <div class="dkv-speed__battle-grid">
+                            ${this._renderSections()}
+                        </div>
                     </div>
                 </div>
 
@@ -210,6 +214,14 @@ export class SpeedTask {
         this.setupHelpLogic();
         this.executeBtn.addEventListener('click', () => this.handleExecute());
 
+        // Átugrás funkció kattintásra (ha még az intrónál tartunk)
+        this.element.addEventListener('click', () => {
+            if (!this.isIntroSkipped && this.roundState === 'idle') {
+                this.logger.info('Intro skipped by user click');
+                this.skipIntro();
+            }
+        });
+
         // --- Typewriter szekvencia ---
         const titleEl = this.element.querySelector('.dkv-speed__title');
         const subtitleEl = this.element.querySelector('.dkv-speed__subtitle');
@@ -226,6 +238,7 @@ export class SpeedTask {
                         speed: 15,
                         onComplete: () => {
                             viewport.classList.add('visible');
+                            this.element.querySelector('.dkv-speed__help-overlay')?.classList.remove('open');
                             footer.classList.add('visible');
                             if (dataStream) dataStream.classList.add('visible');
                             // Kis késleltetés után indítjuk az első menetet
@@ -237,6 +250,36 @@ export class SpeedTask {
                 this.timeouts.push(t);
             }
         });
+    }
+
+    /**
+     * Bevezető animáció átugrása.
+     */
+    skipIntro() {
+        if (this.isIntroSkipped) return;
+        this.isIntroSkipped = true;
+        this.typewriter.stop();
+
+        const titleEl = this.element.querySelector('.dkv-speed__title');
+        const subtitleEl = this.element.querySelector('.dkv-speed__subtitle');
+        const viewport = this.element.querySelector('.dkv-speed__main-viewport');
+        const footer = this.element.querySelector('.dkv-speed__footer');
+        const dataStream = this.element.querySelector('.dkv-speed__data-stream');
+
+        const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--spd-cyan);">NYOMÁSSZABÁLYOZÁS ENGEDÉLYEZVE</span>`;
+        const subtitleText = `Akadályozd meg egérkattintásokkal a Zéró-szekvencia támadását! A START gombbal kezdheted a zsilip nyomásának szinkronizálását`;
+
+        if (titleEl) titleEl.innerHTML = titleText;
+        if (subtitleEl) subtitleEl.innerHTML = subtitleText;
+
+        viewport.classList.add('visible');
+        this.element.querySelector('.dkv-speed__help-overlay')?.classList.remove('open');
+        footer.classList.add('visible');
+        if (dataStream) dataStream.classList.add('visible');
+
+        // Kis késleltetés után indítjuk az első menetet
+        const t2 = setTimeout(() => this.startBattle(), 600);
+        this.timeouts.push(t2);
     }
 
     /**
@@ -1005,7 +1048,10 @@ export class SpeedTask {
         const closeBtn = this.element.querySelector('.dkv-speed__help-close');
 
         if (helpBtn && helpOverlay) {
-            this._boundOpenHelp = () => helpOverlay.classList.add('dkv-speed__help-overlay--open');
+            this._boundOpenHelp = (e) => {
+                if (e) e.stopPropagation();
+                helpOverlay.classList.add('dkv-speed__help-overlay--open');
+            };
             this._boundCloseHelp = () => helpOverlay.classList.remove('dkv-speed__help-overlay--open');
             this._boundOverlayClick = (e) => {
                 if (e.target === helpOverlay) {

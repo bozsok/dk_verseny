@@ -5,6 +5,22 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.46.0] - 2026-05-01
+
+### Hozzáadva
+- **Teljes körű játéktér (Game-Area) architektúra**: Kiterjesztettük a `dkv-xxx__game-area` konténert az összes Grade 4 feladatra (1-5. állomás), megteremtve a teljes strukturális egyezőséget és a jövőbeli bővíthetőséget.
+
+### Megváltoztatva
+- **Ciklus-indikátorok (Stage tracker) láthatósági szinkronja**: A trackerek mostantól nem jelennek meg azonnal a feladat indulásakor, hanem a viewport inicializálásával egy időben úsznak be, megőrizve a narratív/írógép szekvencia integritását.
+- **Rétegződés (Z-index) optimalizálás**: Standardizáltuk a `game-area` rétegrendjét (`z-index: 5`) minden állomáson, ami megoldotta a `scanline` effekt miatti kattinthatatlansági hibát az 1. állomáson.
+- **Súgó (Help) UI kényelmi funkció**: Bevezettük az automatikus súgó-bezárást minden feladatnál; ha a felhasználó az intro alatt megnyitja a segítséget, az a játéktér élesedésekor magától eltűnik.
+
+### Javítva
+- **MemoryTask (2. állomás) kritikus hiba**: Megszüntettük a modul indulásakor fellépő `textContent of null` hibát, amit a BEM-átállás során elmaradt DOM-lekérdezési frissítés okozott.
+- **LeetPuzzle (1. állomás) interaktivitás**: Helyreállítottuk a beviteli mezők kattinthatóságát az új architektúra mellett.
+- **Súgó (Help) interakció javítása**: Megszüntettük a Súgó gomb és az intro-átugrás közötti interferenciát (`stopPropagation`). A segítség megnyitása mostantól nem szakítja meg az írógép effektust, de az ablak továbbra is automatikusan bezárul a feladat kezdetekor.
+- **Intro-átugrás (Skip) szinkronizálása**: Pótoltuk a hiányzó "kattints bárhová" átugrási funkciót az 1., 2. és 5. állomásokon, így az összes Grade 4 feladat konzisztensen kezelhetővé vált. Az 1. feladatnál (LeetPuzzle) helyreállítottuk a Súgó gomb elérhetőségét is az intro animáció alatt.
+
 ## [0.45.0] - 2026-05-01
 
 ### Megváltoztatva
@@ -12,15 +28,15 @@ A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
     - Elértük a teljes vizuális és strukturális konzisztenciát mind az 5 állomás (Leet, Memory, Library, Island, Speed) és a Finálé bevezető fejléce között, a 3. (Library) feladatot tekintve etalonnak.
     - **Címek vizuális javítása**: Beállítottuk a fehér alapszínt (`#fff`) a címek első feléhez, így mostantól minden állomáson egységesen csak a specifikus feladatmegnevezés színes (cyan), a rendszerszintű üzenet fehér.
     - **Tipográfiai finomhangolás**: A sormagasságot (`line-height`) minden címnél `1.2`-re, az alcímeknél `1.6`-ra módosítottuk, ami megszüntette a szövegek függőleges tapadását és javította az olvashatóságot.
-    - **Ciklus-indikátorok (Stage tracker) szinkronizálása**: 
-        - Egységesítettük az "ADAT CIKLUS" és "METADAT CIKLUS" feliratok pozícióját a 2-3-4. feladatoknál (`top: -38px`, `right: 3rem`).
-        - A jelzőpontok méretét mindenhol a 3. feladat (etalon) szerint `12px`-re növeltük a jobb láthatóság érdekében.
-        - Pótoltuk a hiányzó stílusokat az `IslandTask.css`-ben, és kivezettük a zavaró inline stílusokat a JS fájlokból.
+    - **Ciklus-indikátorok (Stage tracker) és játéktér egységesítése**: 
+        - Bevezettük a **`game-area`** konténert mint egységes szülő elemet a 2-3-4. feladatoknál, biztosítva a stabil viszonyítási pontot a feliratoknak.
+        - Egységesítettük a pozíciókat (`top: -38px`, `right: 3rem`) és a jelzőpontok méretét (`12px`) minden érintett modulban.
+        - A ciklus-indikátorokat mindenhol a `main-viewport` elemen kívülre helyeztük, így az `overflow: hidden` (pl. IslandTask-nál) már nem vágja le őket.
+        - Megszüntettük az összes maradék inline stílust és inkonzisztens osztálynevet (`stage-dot`, `stage-text` -> `dkv-xxx__stage-dot`).
     - **Struktúra és rétegződés**: 
-        - Eltávolítottuk az utolsó inline stílusmaradványokat a `LeetPuzzle.js` és `MemoryTask.js` fájlokból, helyettük CSS osztály alapú formázást vezettünk be.
-        - Egységesítettük a fejlécek rétegrendjét (`z-index: 10`) és térközeit (`padding: 3rem 3rem 1rem 3rem`).
-        - Migráltuk a `main-viewport` konténerek elrendezési stílusait (flex, position, z-index) a JS fájlokból a CSS-be, megszüntetve az összes maradék inline formázást a 2. és 4. állomáson.
-        - Az alcímek maximális szélességét egységesen `850px`-re állítottuk a stabilabb viewport-megjelenítés érdekében.
+        - Eltávolítottuk az utolsó inline stílusmaradványokat a `LeetPuzzle.js`, `MemoryTask.js` és `IslandTask.js` fájlokból.
+        - Egységesítettük a fejlécek rétegrendjét (`z-index: 10`) és a ciklus-indikátorok prioritását (`z-index: 20`).
+        - Az alcímek maximális szélességét egységesen `850px`-re állítottuk a stabilabb megjelenítés érdekében.
 
 ## [0.44.0] - 2026-05-01
 

@@ -99,7 +99,7 @@ export class IslandTask {
                     </div>
                 </div>
 
-                <div class="dkv-island__viewport-container" style="position: relative; flex: 1; display: flex; flex-direction: column;">
+                <div class="dkv-island__game-area">
                     <div class="dkv-island__stage-tracker">
                         <span>ADAT CIKLUS:</span>
                         <div class="dkv-island__stage-dots"></div>
@@ -203,6 +203,8 @@ export class IslandTask {
         // Viewport megjelenítése az első körnél
         if (stage === 1) {
             this.viewport.classList.add('visible');
+            this.element.querySelector('.dkv-island__stage-tracker')?.classList.add('visible');
+            this.element.querySelector('.dkv-island__help-overlay')?.classList.remove('open');
         }
 
         this.updateStageDots();
@@ -253,14 +255,14 @@ export class IslandTask {
         this.stageDotsContainer.innerHTML = '';
         for (let i = 0; i < this.maxStages; i++) {
             const dot = document.createElement('div');
-            dot.className = 'stage-dot';
+            dot.className = 'dkv-island__stage-dot';
             this.stageDotsContainer.appendChild(dot);
         }
     }
 
     updateStageDots() {
         if (!this.stageDotsContainer) return;
-        const dots = this.stageDotsContainer.querySelectorAll('.stage-dot');
+        const dots = this.stageDotsContainer.querySelectorAll('.dkv-island__stage-dot');
         dots.forEach((dot, index) => {
             dot.classList.remove('active', 'completed');
             if (index < this.currentStage - 1) {
@@ -716,7 +718,8 @@ export class IslandTask {
         `;
 
         if (helpBtn && helpOverlay) {
-            helpBtn.addEventListener('click', () => {
+            helpBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 helpOverlay.classList.add('open');
                 if (helpTextContainer) helpTextContainer.innerHTML = helpContent;
             });

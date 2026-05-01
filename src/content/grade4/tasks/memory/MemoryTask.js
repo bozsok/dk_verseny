@@ -98,6 +98,8 @@ export class MemoryTask {
 
         /** @type {boolean} - Folyamatban van-e művelet */
         this.isProcessing = false;
+        /** @type {boolean} - Átugrották-e az intrót */
+        this.isIntroSkipped = false;
         /** @type {Typewriter} */
         this.typewriter = new Typewriter();
         /** @type {number|null} - Véletlenszerű glitch időzítője */
@@ -262,17 +264,19 @@ export class MemoryTask {
                     </div>
                 </div>
 
-                <div class="dkv-memory__main-viewport">
+                <div class="dkv-memory__game-area">
                     <div class="dkv-memory__stage-tracker">
                         <span>ADAT CIKLUS:</span>
                         <div class="dkv-memory__stage-dots">
                             ${this.renderStageDots()}
                         </div>
-                        <span class="stage-text">1/${this.maxStages}</span>
+                        <span class="dkv-memory__stage-text">1/${this.maxStages}</span>
                     </div>
-                    <div class="dkv-memory__grid-overlay"></div>
-                    <div class="dkv-memory__objects-layer"></div>
-                    <div class="dkv-memory__selection-layer"></div>
+                    <div class="dkv-memory__main-viewport">
+                        <div class="dkv-memory__grid-overlay"></div>
+                        <div class="dkv-memory__objects-layer"></div>
+                        <div class="dkv-memory__selection-layer"></div>
+                    </div>
                 </div>
 
                 <div class="dkv-memory__footer" style="position: relative; z-index: 5;">
@@ -296,6 +300,43 @@ export class MemoryTask {
         this.setupHelpLogic();
 
         this.executeBtn.addEventListener('click', () => this.handleExecute());
+
+        // Átugrás funkció kattintásra (ha még az intrónál tartunk)
+        this.element.addEventListener('click', () => {
+            if (this.phase === PHASES.OBSERVATION && !this.isIntroSkipped && this.isProcessing) {
+                this.logger.info('Intro skipped by user click');
+                this.skipIntro();
+            }
+        });
+    }
+
+    /**
+     * Bevezető animáció átugrása.
+     */
+    skipIntro() {
+        if (this.isIntroSkipped) return;
+        this.isIntroSkipped = true;
+        this.typewriter.stop();
+
+        const titleEl = this.element.querySelector('.dkv-memory__title');
+        const subtitleEl = this.element.querySelector('.dkv-memory__subtitle');
+        const viewport = this.element.querySelector('.dkv-memory__main-viewport');
+        const footer = this.element.querySelector('.dkv-memory__footer');
+
+        const titleText = `RENDSZER FELÜLÍRÁS ELINDÍTVA: <span style="color: var(--memory-cyan);">MEGFIGYELÉS INICIALIZÁLVA</span>`;
+        const subtitleText = `Figyeld meg a terminálon megjelenő képeket! Legyél nagyon alapos, mert a követlező lépésnél ezekből el fognak tűnni. A képek kattintással nagyíthatók.`;
+
+        if (titleEl) titleEl.innerHTML = titleText;
+        if (subtitleEl) subtitleEl.innerHTML = subtitleText;
+        
+        viewport.classList.add('visible');
+        this.element.querySelector('.dkv-memory__stage-tracker')?.classList.add('visible');
+        this.element.querySelector('.dkv-memory__help-overlay')?.classList.remove('open');
+        footer.classList.add('visible');
+
+        this.renderObjects();
+        this.isProcessing = false;
+        this.executeBtn.disabled = false;
     }
 
     /**
@@ -427,6 +468,8 @@ export class MemoryTask {
                                 speed: 15,
                                 onComplete: () => {
                                     viewport.classList.add('visible');
+                                    this.element.querySelector('.dkv-memory__stage-tracker')?.classList.add('visible');
+                                    this.element.querySelector('.dkv-memory__help-overlay')?.classList.remove('open');
                                     footer.classList.add('visible');
                                     this.renderObjects();
                                     this.isProcessing = false;
@@ -446,6 +489,8 @@ export class MemoryTask {
                     speed: 15,
                     onComplete: () => {
                         viewport.classList.add('visible');
+                        this.element.querySelector('.dkv-memory__stage-tracker')?.classList.add('visible');
+                        this.element.querySelector('.dkv-memory__help-overlay')?.classList.remove('open');
                         footer.classList.add('visible');
                         this.renderObjects();
                         this.isProcessing = false;
@@ -496,7 +541,7 @@ export class MemoryTask {
 
         // Stage indikátor frissítése
         this.updateStageDots();
-        this.element.querySelector('.stage-text').textContent = `${this.currentStage}/${this.maxStages}`;
+        this.element.querySelector('.dkv-memory__stage-text').textContent = `${this.currentStage}/${this.maxStages}`;
     }
 
     /**
@@ -718,7 +763,8 @@ export class MemoryTask {
         const closeBtn = this.element.querySelector('.dkv-memory__help-close');
 
         if (helpBtn && helpOverlay) {
-            helpBtn.addEventListener('click', () => {
+            helpBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 helpOverlay.classList.add('open');
             });
 

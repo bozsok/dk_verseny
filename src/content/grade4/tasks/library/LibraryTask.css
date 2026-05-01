@@ -72,6 +72,15 @@
     min-height: 3.2em;
 }
 
+/* Játéktér konténer az egységes pozicionáláshoz */
+.dkv-library__game-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 5;
+}
+
 /* Fő viewport */
 .dkv-library__main-viewport {
     flex: 1;
@@ -104,6 +113,12 @@
     font-size: 0.85rem;
     color: rgba(0, 234, 255, 0.7);
     z-index: 20;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.dkv-library__stage-tracker.visible {
+    opacity: 1;
 }
 
 .dkv-library__stage-dots {

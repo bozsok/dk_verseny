@@ -81,6 +81,8 @@ export class LeetPuzzle {
         this.executeBtn = null;
         /** @type {boolean} - Folyamatban van-e művelet (spam védelem) */
         this.isProcessing = false;
+        /** @type {boolean} - Átugrották-e az intrót */
+        this.isIntroSkipped = false;
         /** @type {Typewriter} */
         this.typewriter = new Typewriter();
 
@@ -256,20 +258,22 @@ export class LeetPuzzle {
                     </div>
                 </div>
 
-                <div class="dkv-leet__main-grid" style="position: relative; z-index: 5;">
-                    <div class="dkv-leet__word-display">
-                        <span class="glitch-text" id="dkv-leet-word"></span>
-                    </div>
-
-                    <div class="dkv-leet__sidebar">
-                        <div class="dkv-leet__sidebar-title">STATUS_DECODED</div>
-                        <div class="dkv-leet__list">
-                            ${this.renderList()}
+                <div class="dkv-leet__game-area">
+                    <div class="dkv-leet__main-grid">
+                        <div class="dkv-leet__word-display">
+                            <span class="glitch-text" id="dkv-leet-word"></span>
                         </div>
-                    </div>
 
-                    <div class="dkv-leet__input-section">
-                        ${this.renderSlots()}
+                        <div class="dkv-leet__sidebar">
+                            <div class="dkv-leet__sidebar-title">STATUS_DECODED</div>
+                            <div class="dkv-leet__list">
+                                ${this.renderList()}
+                            </div>
+                        </div>
+
+                        <div class="dkv-leet__input-section">
+                            ${this.renderSlots()}
+                        </div>
                     </div>
                 </div>
 
@@ -294,6 +298,17 @@ export class LeetPuzzle {
         const mainGrid = this.element.querySelector('.dkv-leet__main-grid');
         const footer = this.element.querySelector('.dkv-leet__footer');
 
+        this.setupHelpLogic();
+        this.executeBtn.addEventListener('click', () => this.handleExecute());
+
+        // Átugrás funkció kattintásra (ha még az intrónál tartunk)
+        this.element.addEventListener('click', () => {
+            if (!this.isIntroSkipped) {
+                this.logger.info('Intro skipped by user click');
+                this.skipIntro(titleText, subtitleText);
+            }
+        }, { once: true });
+
         // Szekvenciális írógép effekt
         this.typewriter.type(titleEl, titleText, {
             speed: 25,
@@ -305,6 +320,9 @@ export class LeetPuzzle {
                         onComplete: () => {
                             mainGrid.classList.add('visible');
                             footer.classList.add('visible');
+                            // Automatikus súgó bezárás, ha nyitva lenne
+                            this.element.querySelector('.dkv-leet__help-overlay')?.classList.remove('open');
+                            
                             this.setupInputLogic();
                             this.startScrambleAnimation();
                             this.setupHelpLogic();
@@ -313,8 +331,30 @@ export class LeetPuzzle {
                 }, 300);
             }
         });
+    }
 
-        this.executeBtn.addEventListener('click', () => this.handleExecute());
+    /**
+     * Bevezető animáció átugrása.
+     */
+    skipIntro(titleText, subtitleText) {
+        if (this.isIntroSkipped) return;
+        this.isIntroSkipped = true;
+        this.typewriter.stop();
+
+        const titleEl = this.element.querySelector('.dkv-leet__title');
+        const subtitleEl = this.element.querySelector('.dkv-leet__subtitle');
+        const mainGrid = this.element.querySelector('.dkv-leet__main-grid');
+        const footer = this.element.querySelector('.dkv-leet__footer');
+
+        if (titleEl) titleEl.innerHTML = titleText;
+        if (subtitleEl) subtitleEl.innerHTML = subtitleText;
+
+        mainGrid.classList.add('visible');
+        footer.classList.add('visible');
+        this.element.querySelector('.dkv-leet__help-overlay')?.classList.remove('open');
+
+        this.setupInputLogic();
+        this.startScrambleAnimation();
     }
 
     /**
@@ -326,7 +366,8 @@ export class LeetPuzzle {
         const closeBtn = this.element.querySelector('.dkv-leet__help-close');
 
         if (helpBtn && helpOverlay) {
-            helpBtn.addEventListener('click', () => {
+            helpBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 helpOverlay.classList.add('open');
             });
 

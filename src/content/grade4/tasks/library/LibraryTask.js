@@ -146,7 +146,7 @@ export class LibraryTask {
                     </div>
                 </div>
 
-                <div class="dkv-library__main-viewport">
+                <div class="dkv-library__game-area">
                     <div class="dkv-library__stage-tracker">
                         <span>METAADAT CIKLUS:</span>
                         <div class="dkv-library__stage-dots">
@@ -154,12 +154,14 @@ export class LibraryTask {
                         </div>
                         <span class="dkv-library__stage-text">1/${this.taskCount}</span>
                     </div>
-                    <div class="dkv-library__content-wrapper">
-                        <div class="dkv-library__image-container">
-                             <img class="dkv-library__task-image" src="" alt="Task image">
-                        </div>
-                        <div class="dkv-library__cards-container">
-                            <!-- Cards will be injected here -->
+                    <div class="dkv-library__main-viewport">
+                        <div class="dkv-library__content-wrapper">
+                            <div class="dkv-library__image-container">
+                                <img class="dkv-library__task-image" src="" alt="Task image">
+                            </div>
+                            <div class="dkv-library__cards-container">
+                                <!-- Cards will be injected here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -318,6 +320,7 @@ export class LibraryTask {
             this.logger.info('Starting first round, making viewport visible');
             const viewport = this.element.querySelector('.dkv-library__main-viewport');
             viewport?.classList.add('visible');
+            this.element.querySelector('.dkv-library__stage-tracker')?.classList.add('visible');
         }
 
         // Biztonsági overlay bezárás, ha nyitva maradt volna egy timeout lejárta miatt
@@ -519,7 +522,8 @@ export class LibraryTask {
         const closeBtn = this.element.querySelector('.dkv-library__help-close');
 
         if (helpBtn && helpOverlay) {
-            helpBtn.addEventListener('click', () => {
+            helpBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 helpOverlay.classList.add('open');
             });
 
