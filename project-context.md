@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-04-30T02:54:04+02:00'
+date: '2026-05-01T21:09:21+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.44.0 (v0.44.0)
+- **Version:** 0.47.0 (v0.47.0)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
 - **Last Updated:** 2026-05-01
-- **Current Mission:** Grade 4 Finale UI Refinement (v0.44.0)
+- **Current Mission:** Grade 4 Full Functional Synchronization (v0.47.0)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -174,3 +174,4 @@ optimized_for_llm: true
 - [x] Grade 4: FinaleTask Milestone: UI Stabilization & Code Audit (v0.40.0)
 - [x] Grade 4: Onboarding Navigation & Scoring Logic Fixes (v0.42.0)
 - [x] Grade 3: Audio Control Refinement (v0.43.0)
+- [x] Grade 4: All stations (1-5) functional unification & Scripture audit (v0.47.0)

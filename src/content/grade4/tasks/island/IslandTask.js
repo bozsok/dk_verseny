@@ -175,6 +175,11 @@ export class IslandTask {
         });
     }
 
+    /**
+     * Bevezető animáció átugrása.
+     * @param {string} titleText - A megjelenítendő főcím.
+     * @param {string} subtitleText - A megjelenítendő alcím.
+     */
     skipIntro(titleText, subtitleText) {
         if (this.isIntroSkipped) return;
         this.isIntroSkipped = true;

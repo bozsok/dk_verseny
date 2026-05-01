@@ -5,21 +5,29 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.47.0] - 2026-05-01
+
+### Hozzáadva
+- **Grade 4 teljes funkcionális egységesítése**: Befejeztük az összes állomás (1–5. feladat) interakciós logikájának szinkronizálását. Mostantól minden modul egységesen támogatja az egykattintásos intro-átugrást, miközben a Súgó-gomb védett maradt az interferenciáktól (`stopPropagation`).
+
+### Megváltoztatva
+- **Szentírás-konformitási audit**: Minden állomás (1–5.) megkapta a kötelező magyar nyelvű JSDoc-dokumentációt és a biztonságos életciklus-kezelést (timeouts cleanup), megfelelve a `project-context.md` szigorú előírásainak.
+
 ## [0.46.0] - 2026-05-01
 
 ### Hozzáadva
-- **Teljes körű játéktér (Game-Area) architektúra**: Kiterjesztettük a `dkv-xxx__game-area` konténert az összes Grade 4 feladatra (1-5. állomás), megteremtve a teljes strukturális egyezőséget és a jövőbeli bővíthetőséget.
+- **Teljes körű játéktér (Game-Area) architektúra**: Kiterjesztettük a `dkv-xxx__game-area` konténert az összes Grade 4 feladatra (1–5. állomás), megteremtve a teljes strukturális egyezőséget és a jövőbeli bővíthetőséget.
 
 ### Megváltoztatva
-- **Ciklus-indikátorok (Stage tracker) láthatósági szinkronja**: A trackerek mostantól nem jelennek meg azonnal a feladat indulásakor, hanem a viewport inicializálásával egy időben úsznak be, megőrizve a narratív/írógép szekvencia integritását.
-- **Rétegződés (Z-index) optimalizálás**: Standardizáltuk a `game-area` rétegrendjét (`z-index: 5`) minden állomáson, ami megoldotta a `scanline` effekt miatti kattinthatatlansági hibát az 1. állomáson.
+- **Ciklusindikátorok (Stage tracker) láthatósági szinkronja**: A trackerek mostantól nem jelennek meg azonnal a feladat indulásakor, hanem a viewport inicializálásával egy időben úsznak be, megőrizve a narratív/írógép szekvencia integritását.
+- **Rétegződés (Z-index) optimalizálása**: Standardizáltuk a `game-area` rétegrendjét (`z-index: 5`) minden állomáson, ami megoldotta a `scanline` effekt miatti kattinthatatlansági hibát az 1. állomáson.
 - **Súgó (Help) UI kényelmi funkció**: Bevezettük az automatikus súgó-bezárást minden feladatnál; ha a felhasználó az intro alatt megnyitja a segítséget, az a játéktér élesedésekor magától eltűnik.
 
 ### Javítva
 - **MemoryTask (2. állomás) kritikus hiba**: Megszüntettük a modul indulásakor fellépő `textContent of null` hibát, amit a BEM-átállás során elmaradt DOM-lekérdezési frissítés okozott.
 - **LeetPuzzle (1. állomás) interaktivitás**: Helyreállítottuk a beviteli mezők kattinthatóságát az új architektúra mellett.
-- **Súgó (Help) interakció javítása**: Megszüntettük a Súgó gomb és az intro-átugrás közötti interferenciát (`stopPropagation`). A segítség megnyitása mostantól nem szakítja meg az írógép effektust, de az ablak továbbra is automatikusan bezárul a feladat kezdetekor.
-- **Intro-átugrás (Skip) szinkronizálása**: Pótoltuk a hiányzó "kattints bárhová" átugrási funkciót az 1., 2. és 5. állomásokon, így az összes Grade 4 feladat konzisztensen kezelhetővé vált. Az 1. feladatnál (LeetPuzzle) helyreállítottuk a Súgó gomb elérhetőségét is az intro animáció alatt.
+- **Súgó (Help) interakció javítása**: Megszüntettük a Súgó-gomb és az intro-átugrás közötti interferenciát (`stopPropagation`). A segítség megnyitása mostantól nem szakítja meg az írógép effektust, de az ablak továbbra is automatikusan bezárul a feladat kezdetekor.
+- **Intro-átugrás (Skip) szinkronizálása**: Pótoltuk a hiányzó „kattints bárhová” átugrási funkciót az 1., 2. és 5. állomásokon, így az összes Grade 4 feladat konzisztensen kezelhetővé vált. Az 1. feladatnál (LeetPuzzle) helyreállítottuk a Súgó-gomb elérhetőségét is az intro-animáció alatt.
 
 ## [0.45.0] - 2026-05-01
 

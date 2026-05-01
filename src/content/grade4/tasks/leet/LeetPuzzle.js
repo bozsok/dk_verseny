@@ -83,6 +83,8 @@ export class LeetPuzzle {
         this.isProcessing = false;
         /** @type {boolean} - Átugrották-e az intrót */
         this.isIntroSkipped = false;
+        /** @type {Array<number>} - Aktív időzítők listája */
+        this.timeouts = [];
         /** @type {Typewriter} */
         this.typewriter = new Typewriter();
 
@@ -335,6 +337,8 @@ export class LeetPuzzle {
 
     /**
      * Bevezető animáció átugrása.
+     * @param {string} titleText - A megjelenítendő főcím.
+     * @param {string} subtitleText - A megjelenítendő alcím.
      */
     skipIntro(titleText, subtitleText) {
         if (this.isIntroSkipped) return;
@@ -635,6 +639,11 @@ export class LeetPuzzle {
     destroy() {
         this.stopGlitchEffects();
         this.typewriter.stop();
+
+        // Időzítők megállítása a memóriaszivárgás ellen (Scripture compliance)
+        this.timeouts.forEach(t => clearTimeout(t));
+        this.timeouts = [];
+
         if (this.element) {
             this.element.remove();
         }
