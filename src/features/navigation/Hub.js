@@ -1,10 +1,10 @@
 /**
- * Hub - Központi navigációs oldal
+ * Hub - Központi navigációs oldal (Új Cyber-Magic Design)
  * 
- * A játék központi hub-ja, ahol a diákok kiválaszthatják az évfolyamot
- * vagy folytathatják a már megkezdett játékot.
+ * A játék központi hub-ja, ahol a diákok kiválaszthatják az évfolyamot.
+ * Implementálja a splash_2 tervet: sugaras elrendezés, nebula háttér,
+ * Glowing Portal hover effekt és scanline animációk.
  */
-import Card from '../../ui/components/Card.js';
 
 class Hub {
   constructor(options = {}) {
@@ -17,7 +17,7 @@ class Hub {
       onContinueGame: options.onContinueGame || null
     };
 
-    this.gradeCards = new Map();
+    this.levelButtons = new Map(); // Gombok tárolása a frissítéshez
     this.eventListeners = new Map();
     this.clickCount = 0;
     this.lastClickTime = 0;
@@ -36,219 +36,215 @@ class Hub {
   init() {
     this.createElement();
     this.setupEventListeners();
-    this.renderGradeCards();
     this.updateProgress();
 
     if (this.options.logger) {
-      this.options.logger.info('Hub initialized');
+      this.options.logger.info('Hub initialized with new Cyber-Magic design');
     }
   }
 
   /**
-   * DOM elem létrehozása
+   * DOM elem létrehozása és rétegek felépítése
    */
   createElement() {
     this.element = document.createElement('div');
     this.element.className = 'dkv-hub';
     this.element.id = 'dkv-hub';
 
-    this.createHeader();
+    // 1. Háttér rétegek
+    const bgLayers = document.createElement('div');
+    bgLayers.className = 'dkv-hub-bg-layers';
+    
+    // Nebula kép
+    const nebula = document.createElement('img');
+    nebula.className = 'dkv-hub-nebula';
+    nebula.src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBGW3y1amoOFhyby0WW9VJ53plEJjqIQ2vwtVf4UXKeyqxT7kKVDcNUx3FLlj1XtB7C4SBTc8odX1WaY3w6Tjvl0LvG7-2BlHGI7xFxOpjnDaTalidV6qamwIffUnlXMEFEmkE4ngiktvWFE1WTyzQifeiBF8AXM-6T1TJW6VvMVrycQjn_WU4Q65Yn0kp0XZn2EtDA39iJDFbn9In7f1IsOkp4PGwHQ_LiRfA6fZgQxvAjcHNAG7cOShEYImKcuEe8TbXFBBsTVxIJ';
+    
+    const gradient = document.createElement('div');
+    gradient.className = 'dkv-hub-gradient';
+    
+    const dots = document.createElement('div');
+    dots.className = 'dkv-hub-dots';
+    
+    const grid = document.createElement('div');
+    grid.className = 'dkv-hub-grid';
+    
+    bgLayers.appendChild(nebula);
+    bgLayers.appendChild(gradient);
+    bgLayers.appendChild(dots);
+    bgLayers.appendChild(grid);
+    this.element.appendChild(bgLayers);
+
+    // 2. Scanlines
+    const scanlines = document.createElement('div');
+    scanlines.className = 'dkv-hub-scanlines';
+    const scanlineMove = document.createElement('div');
+    scanlineMove.className = 'dkv-hub-scanline-move';
+    this.element.appendChild(scanlines);
+    this.element.appendChild(scanlineMove);
+
+    // 3. Fő tartalom
     this.createMainContent();
-    // this.createFooter(); // Footer removed
   }
 
   /**
-   * Fejléc létrehozása
-   */
-  createHeader() {
-    const header = document.createElement('header');
-    header.className = 'dkv-hub-header';
-
-    const container = document.createElement('div');
-    container.className = 'dkv-container';
-
-    const title = document.createElement('h1');
-    title.className = 'dkv-hub-title';
-    title.textContent = 'Digitális Kultúra Verseny';
-    title.style.cursor = 'default';
-    title.style.userSelect = 'none';
-
-    // Titkos trigger: 5 kattintás
-    title.addEventListener('click', () => {
-      const now = Date.now();
-      if (now - this.lastClickTime > 2000) this.clickCount = 0; // Reset ha túl sok idő telt el
-      this.clickCount++;
-      this.lastClickTime = now;
-
-      if (this.clickCount === 5) {
-        this.isMasterMode = !this.isMasterMode;
-
-        if (this.options.stateManager) {
-          this.options.stateManager.setSystemFlag('master_mode', this.isMasterMode);
-        }
-
-        this.clickCount = 0;
-
-        if (this.options.logger) {
-          this.options.logger.info(`Master Mode ${this.isMasterMode ? 'Enabled' : 'Disabled'}`);
-        }
-
-        // UI frissítése gomb hozzáadásával/eltávolításával
-        this.toggleAdminButton();
-      }
-    });
-
-    const selectionTitle = document.createElement('h2');
-    selectionTitle.className = 'dkv-hub-selection-title';
-    selectionTitle.textContent = 'Válaszd ki az osztályodat!';
-
-    const subtitle = document.createElement('p');
-    subtitle.className = 'dkv-hub-subtitle';
-    subtitle.textContent = 'Egy fantasy kaland vár, tele rejtvényekkel és kódolási feladatokkal!';
-
-    container.appendChild(title);
-    container.appendChild(selectionTitle);
-    container.appendChild(subtitle);
-
-    // Admin gomb konténer
-    const adminContainer = document.createElement('div');
-    adminContainer.id = 'dkv-admin-group';
-    adminContainer.className = 'dkv-admin-group';
-    container.appendChild(adminContainer);
-
-    header.appendChild(container);
-
-    this.element.appendChild(header);
-
-    // Gomb inicializálása ha már aktív a mód
-    setTimeout(() => this.toggleAdminButton(), 0);
-  }
-
-  /**
-   * Fő tartalom létrehozása
+   * Fő tartalom (Cím, Sugaras UI, Footer) létrehozása
    */
   createMainContent() {
     const main = document.createElement('main');
     main.className = 'dkv-hub-main';
 
-    const container = document.createElement('div');
-    container.className = 'dkv-container';
+    // Cím szekció
+    const titleSection = document.createElement('div');
+    titleSection.className = 'dkv-hub-title-section';
+    
+    const title = document.createElement('h2');
+    title.textContent = 'VÁLASSZ SZINTET';
+    title.style.cursor = 'pointer';
+    title.style.userSelect = 'none';
+    
+    title.addEventListener('click', () => {
+      const now = Date.now();
+      if (now - this.lastClickTime > 2000) this.clickCount = 0;
+      this.clickCount++;
+      this.lastClickTime = now;
 
-    // Progress summary
-    // Progress summary removed
-    // this.createProgressSummary(container);
+      if (this.clickCount === 5) {
+        this.isMasterMode = !this.isMasterMode;
+        if (this.options.stateManager) {
+          this.options.stateManager.setSystemFlag('master_mode', this.isMasterMode);
+        }
+        this.clickCount = 0;
+        if (this.options.logger) this.options.logger.info(`Master Mode ${this.isMasterMode ? 'Enabled' : 'Disabled'}`);
+      }
+    });
 
-    // Grade selection section
-    this.createGradeSection(container);
+    const titleLine = document.createElement('div');
+    titleLine.className = 'dkv-hub-title-line';
+    
+    titleSection.appendChild(title);
+    titleSection.appendChild(titleLine);
+    main.appendChild(titleSection);
 
-    main.appendChild(container);
+    // Sugaras UI
+    this.createRadialUI(main);
+
+    // Footer szekció
+    const footer = document.createElement('div');
+    footer.className = 'dkv-hub-footer';
+    
+    const hint = document.createElement('p');
+    hint.textContent = 'NYOMD MEG AZ EGYIK SZINTET AZ INDÍTÁSHOZ';
+    
+    const dotsContainer = document.createElement('div');
+    dotsContainer.className = 'dkv-hub-status-dots';
+    for (let i = 0; i < 3; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dkv-hub-dot';
+      dotsContainer.appendChild(dot);
+    }
+    
+    footer.appendChild(hint);
+    footer.appendChild(dotsContainer);
+    main.appendChild(footer);
+
     this.element.appendChild(main);
   }
 
-
-
   /**
-   * Évfolyam szekció létrehozása
+   * Sugaras kiválasztó felület létrehozása
    */
-  createGradeSection(parent) {
-    const gradeSection = document.createElement('section');
-    gradeSection.className = 'dkv-hub-grades';
+  createRadialUI(parent) {
+    const radialContainer = document.createElement('div');
+    radialContainer.className = 'dkv-hub-radial-container';
 
-    // Removed section title as requested
+    // Gyűrűk
+    const outerRing = document.createElement('div');
+    outerRing.className = 'dkv-hub-ring dkv-hub-ring-outer';
+    const innerRing = document.createElement('div');
+    innerRing.className = 'dkv-hub-ring dkv-hub-ring-inner';
+    
+    radialContainer.appendChild(outerRing);
+    radialContainer.appendChild(innerRing);
 
-    const gradeGrid = document.createElement('div');
-    gradeGrid.className = 'dkv-grades-grid';
-    gradeGrid.id = 'dkv-grades-grid';
+    // Központi mag
+    const core = document.createElement('div');
+    core.className = 'dkv-hub-core';
+    const coreIcon = document.createElement('span');
+    coreIcon.className = 'material-symbols-outlined';
+    coreIcon.textContent = 'token';
+    core.appendChild(coreIcon);
+    radialContainer.appendChild(core);
 
-    gradeSection.appendChild(gradeGrid);
-
-    parent.appendChild(gradeSection);
-  }
-
-
-
-  /**
-   * Évfolyam kártyák renderelése
-   */
-  renderGradeCards() {
-    const gradeGrid = this.element.querySelector('#dkv-grades-grid');
-    if (!gradeGrid) return;
-
-    // Hatékony törlés
-    while (gradeGrid.firstChild) {
-      gradeGrid.removeChild(gradeGrid.firstChild);
-    }
-    this.gradeCards.clear();
-
-    const fragment = document.createDocumentFragment();
-
-    // Grade configurations
+    // Szint gombok (Grade 3-6)
     const grades = [
-      {
-        grade: 3,
-        title: '3. osztály',
-        description: 'A Kód Királyság titka',
-        icon: '<svg viewBox="0 0 24 24"><path d="M21 10h-8.35A5.99 5.99 0 0 0 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6a5.99 5.99 0 0 0 5.65-4H17v4h4v-4h2v-4zM7 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>',
-        unlocked: true,
-        style: {
-          background: '#00636e',
-          border: '2px solid #00eaff',
-          boxShadow: '0 0 15px rgba(0, 234, 255, 0.3)',
-          titleFont: 'Impact, sans-serif',
-          descFont: '"Source Code Pro", monospace',
-          descFontSize: '1.1rem',
-          color: '#ffffff'
-        }
-      },
-      {
-        grade: 4,
-        title: '4. osztály',
-        description: 'A rejtett frissítés kódja',
-        icon: '<svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>',
-        unlocked: true
-      },
-      {
-        grade: 5,
-        title: '5. osztály',
-        description: 'A töréspont rejtélye',
-        icon: '<svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>',
-        unlocked: false
-      },
-      {
-        grade: 6,
-        title: '6. osztály',
-        description: 'A fragmentumok tükre',
-        icon: '<svg viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2zm0 3l7.53 12H4.47L12 5z"/></svg>',
-        unlocked: false
-      }
+      { grade: 3, pos: 'top', icon: 'school' },
+      { grade: 4, pos: 'right', icon: 'shield' },
+      { grade: 5, pos: 'bottom', icon: 'swords' },
+      { grade: 6, pos: 'left', icon: 'castle' }
     ];
 
-    grades.forEach(gradeConfig => {
-      const card = new Card({
-        ...gradeConfig,
-        variant: 'grade',
-        clickable: true,
-        eventBus: this.options.eventBus,
-        logger: this.options.logger,
-        onClick: (e) => this.handleGradeClick(e, gradeConfig.grade)
-      });
+    grades.forEach(cfg => {
+      const item = document.createElement('div');
+      item.className = 'dkv-hub-level-item';
+      item.setAttribute('data-pos', cfg.pos);
+      item.id = `grade-btn-${cfg.grade}`;
 
-      this.gradeCards.set(gradeConfig.grade, card);
-      fragment.appendChild(card.getElement());
+      const btn = document.createElement('button');
+      btn.className = 'dkv-hub-level-btn';
+      btn.innerHTML = `
+        <span class="material-symbols-outlined">${cfg.icon}</span>
+        <span class="level-label">${cfg.grade}. OSZTÁLY</span>
+      `;
+      
+      btn.onclick = (e) => this.handleGradeClick(e, cfg.grade);
+      
+      item.appendChild(btn);
+      radialContainer.appendChild(item);
+      
+      this.levelButtons.set(cfg.grade, item);
     });
 
-    gradeGrid.appendChild(fragment);
+    parent.appendChild(radialContainer);
+  }
+
+  /**
+   * Évfolyam kártyák renderelése (Kompatibilitási fallback a Main.js-hez)
+   */
+  renderGradeCards() {
+    this.updateProgress();
+  }
+
+  /**
+   * Évfolyam választás animáció (Kompatibilitási fallback a Main.js-hez)
+   */
+  animateGradeSelection(grade) {
+    const item = this.levelButtons.get(grade);
+    if (item) {
+      const btn = item.querySelector('.dkv-hub-level-btn');
+      if (btn) {
+        btn.animate([
+          { transform: 'scale(1)', boxShadow: '0 0 20px rgba(255, 0, 127, 0.2)' },
+          { transform: 'scale(1.2)', boxShadow: '0 0 40px rgba(255, 0, 127, 0.8)' },
+          { transform: 'scale(1)', boxShadow: '0 0 20px rgba(255, 0, 127, 0.2)' }
+        ], { duration: 600, easing: 'ease-in-out' });
+      }
+    }
   }
 
   /**
    * Évfolyam kattintás kezelése
    */
   handleGradeClick(event, grade) {
-    if (this.options.logger) {
-      this.options.logger.info('Grade selected', { grade });
+    const item = this.levelButtons.get(grade);
+    if (item && item.classList.contains('locked')) {
+      if (this.options.logger) this.options.logger.warn('Grade is locked');
+      return;
     }
 
-    // State update
+    if (this.options.logger) this.options.logger.info('Grade selected', { grade });
+
+    // State frissítés
     if (this.options.stateManager) {
       this.options.stateManager.updateState({
         currentGrade: grade,
@@ -256,238 +252,104 @@ class Hub {
       });
     }
 
-    // Custom callback
+    // Callback hívása
     if (this.options.onGradeSelect) {
       this.options.onGradeSelect(grade);
     }
 
-    // Event emit
+    // Esemény küldése
     if (this.options.eventBus) {
       this.options.eventBus.emit('hub:grade-selected', { grade });
     }
 
-    // Visual feedback
-    this.animateGradeSelection(grade);
-
-    // Enter fullscreen mode on user interaction
+    // Teljes képernyő kérése (felhasználói interakcióhoz kötve)
     if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen()
-        .catch(err => {
-          if (this.options.logger) {
-            this.options.logger.warn(`Fullscreen error: ${err.message}`);
-          }
-        });
+      document.documentElement.requestFullscreen().catch(() => {});
     }
   }
 
   /**
-   * Évfolyam választás animáció
-   */
-  animateGradeSelection(grade) {
-    const card = this.gradeCards.get(grade);
-    if (card) {
-      card.animate('pulse');
-    }
-  }
-
-  /**
-   * Progress frissítése
+   * Haladás és állapot frissítése
    */
   updateProgress() {
     if (!this.options.stateManager) return;
 
     const state = this.options.stateManager.getState();
-    const progress = state.progress || {};
     const grades = state.grades || {};
 
-    // Summary cards frissítése
-    if (this.summaryCards) {
-      this.summaryCards.score.textContent = (progress.totalScore || 0).toString();
-      this.summaryCards.levels.textContent = (progress.completedLevels || []).length.toString();
-      this.summaryCards.time.textContent = this.formatTime(progress.timeSpent || 0);
-      this.summaryCards.achievements.textContent = (progress.achievements || []).length.toString();
-    }
-
-    // Grade cards progress frissítése
-    this.gradeCards.forEach((card, grade) => {
-      const gradeData = grades[grade] || { progress: 0, bestScore: 0, unlocked: false };
-
-      card.setBestScore(gradeData.bestScore);
-      card.setUnlocked(gradeData.unlocked);
+    // Gombok állapotának frissítése (unlocked)
+    this.levelButtons.forEach((item, grade) => {
+      const gradeData = grades[grade] || { unlocked: grade <= 4 }; // Alapértelmezetten 3-4 nyitva
+      
+      if (!gradeData.unlocked) {
+        item.classList.add('locked');
+      } else {
+        item.classList.remove('locked');
+      }
+      
+      // Best score megjelenítése ha van (opcionális extra a splash_2-höz képest)
+      if (gradeData.bestScore > 0) {
+        const label = item.querySelector('.level-label');
+        if (label) label.title = `Legjobb pontszám: ${gradeData.bestScore}`;
+      }
     });
-  }
-
-  /**
-   * Idő formázása
-   */
-  formatTime(seconds) {
-    if (seconds < 60) {
-      return `${Math.floor(seconds)} mp`;
-    } else if (seconds < 3600) {
-      return `${Math.floor(seconds / 60)} perc`;
-    } else {
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      return `${hours}ó ${minutes}perc`;
-    }
   }
 
   /**
    * Eseménykezelők beállítása
    */
   setupEventListeners() {
-    // State updates
     if (this.options.stateManager) {
       this.options.stateManager.addListener('state:updated', () => {
         this.updateProgress();
       });
     }
 
-    // Keyboard navigation
-    this.addEventListener('keydown', (event) => {
-      this.handleKeyboardNavigation(event);
+    // Keyboard navigáció (opcionális, de megtartjuk a kompatibilitást)
+    this.element.addEventListener('keydown', (event) => {
+      if (event.key.startsWith('Arrow')) {
+        event.preventDefault();
+        // Egyszerű fókusz váltás a gombok között
+        const grades = [3, 4, 5, 6];
+        const currentFocus = document.activeElement;
+        const currentBtn = Array.from(this.levelButtons.values()).find(item => item.contains(currentFocus));
+        let nextIdx = 0;
+        
+        if (currentBtn) {
+            const currentGrade = parseInt(currentBtn.id.split('-').pop());
+            const currentIdx = grades.indexOf(currentGrade);
+            nextIdx = (currentIdx + 1) % grades.length;
+        }
+        
+        const nextBtn = this.levelButtons.get(grades[nextIdx]).querySelector('button');
+        if (nextBtn) nextBtn.focus();
+      }
     });
   }
 
-  /**
-   * Billentyűzet navigáció
-   */
-  handleKeyboardNavigation(event) {
-    const cards = Array.from(this.gradeCards.values());
-    const currentFocus = document.activeElement;
-
-    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-      event.preventDefault();
-      this.focusNextCard(cards, currentFocus);
-    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-      event.preventDefault();
-      this.focusPreviousCard(cards, currentFocus);
-    }
-  }
-
-  /**
-   * Következő kártya fókuszálása
-   */
-  focusNextCard(cards, currentFocus) {
-    const currentIndex = cards.findIndex(card => card.getElement() === currentFocus);
-    const nextIndex = (currentIndex + 1) % cards.length;
-    cards[nextIndex].getElement().focus();
-  }
-
-  /**
-   * Előző kártya fókuszálása
-   */
-  focusPreviousCard(cards, currentFocus) {
-    const currentIndex = cards.findIndex(card => card.getElement() === currentFocus);
-    const prevIndex = currentIndex === 0 ? cards.length - 1 : currentIndex - 1;
-    cards[prevIndex].getElement().focus();
-  }
-
-  /**
-   * Eseménykezelő hozzáadása
-   */
-  addEventListener(event, handler) {
-    this.element.addEventListener(event, handler);
-    this.eventListeners.set(handler, event);
-  }
-
-  /**
-   * Eseménykezelő eltávolítása
-   */
-  removeEventListener(handler) {
-    const event = this.eventListeners.get(handler);
-    if (event) {
-      this.element.removeEventListener(event, handler);
-      this.eventListeners.delete(handler);
-    }
-  }
-
-  /**
-   * Hub megjelenítése
-   */
   show() {
     if (this.element) {
-      this.element.style.display = 'block';
+      this.element.style.display = 'flex';
       this.updateProgress();
     }
   }
 
-  /**
-   * Hub elrejtése
-   */
   hide() {
     if (this.element) {
       this.element.style.display = 'none';
     }
   }
 
-  /**
-   * Hub eltávolítása
-   */
   destroy() {
-    // Event listeners cleanup
-    this.eventListeners.forEach((event, handler) => {
-      this.element.removeEventListener(event, handler);
-    });
-    this.eventListeners.clear();
-
-    // Cards cleanup
-    this.gradeCards.forEach(card => card.destroy());
-    this.gradeCards.clear();
-
-    // DOM cleanup
     if (this.element && this.element.parentNode) {
       this.element.parentNode.removeChild(this.element);
     }
-
+    this.levelButtons.clear();
     this.element = null;
-
-    if (this.options.logger) {
-      this.options.logger.info('Hub destroyed');
-    }
   }
 
-  /**
-   * Admin gomb megjelenítése/elrejtése
-   */
-  toggleAdminButton() {
-    const container = this.element.querySelector('#dkv-admin-group');
-    if (!container) return;
-
-    if (this.isMasterMode) {
-      if (container.querySelector('#dkv-admin-btn')) return;
-
-      const btn = document.createElement('button');
-      btn.id = 'dkv-admin-btn';
-      btn.className = 'dkv-btn dkv-btn-admin';
-      btn.innerHTML = '🎯 Ranglista és Adminisztráció';
-      btn.onclick = () => window.open('./ranglista/', '_blank');
-
-      container.appendChild(btn);
-
-      // Animáció
-      btn.animate([
-        { opacity: 0, transform: 'scale(0.8)' },
-        { opacity: 1, transform: 'scale(1)' }
-      ], { duration: 300, easing: 'ease-out' });
-    } else {
-      const btn = container.querySelector('#dkv-admin-btn');
-      if (btn) btn.remove();
-    }
-  }
-
-  /**
-   * DOM elem lekérése
-   */
   getElement() {
     return this.element;
-  }
-
-  /**
-   * Évfolyam kártyák lekérése
-   */
-  getGradeCards() {
-    return new Map(this.gradeCards);
   }
 }
 

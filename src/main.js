@@ -32,6 +32,7 @@ import { SLIDE_TYPES } from './core/engine/slides-config.js';
 import { FinaleIntroTask } from './content/grade4/tasks/finale/FinaleIntroTask.js';
 import { puzzleService } from './features/puzzles/PuzzleService.js';
 import './ui/styles/design-system.css';
+import './ui/styles/Hub.css';
 import './ui/styles/Tutorial.css';
 import './ui/styles/Portal.css';
 import './ui/styles/Glitch.css';

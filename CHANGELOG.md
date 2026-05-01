@@ -5,6 +5,21 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.48.0] - 2026-05-02
+
+### Hozzáadva
+- **Új HUB vizuális rendszer**: Teljesen megújult navigációs felület a `splash_2` design alapján. Sugárirányú (radial) elrendezés, üveg-effektusok (glassmorphism), neon-cian és magenta színpaletta.
+- **Glowing Portal hover effektus**: Dinamikus, animált pulzálás és örvénylő nebula-hatás a szintválasztó gombokon.
+- **Környezeti animációk**: Scanline effektus, rácsos padló (grid floor) és animált nebula háttér a magával ragadó cyber-fantasy hangulatért.
+
+### Megváltoztatva
+- **Hub navigációs feliratok**: A gombok feliratait a korábbi „SZINT X” helyett „X. OSZTÁLY” formátumra cseréltük a magyar szaknyelvi konvencióknak megfelelően.
+- **Gombméretek optimalizálása**: Megnöveltük a szintválasztó gombok méretét és finomhangoltuk a betűméretet, hogy a hosszabb feliratok is kényelmesen elférjenek.
+
+### Javítva
+- **Oldalfrissítési villódzás (FOBC)**: Megszüntettük a régi kék örvényes háttérkép felvillanását `Ctrl+Shift+R` (hard refresh) esetén a globális body háttérkép eltávolításával és a HUB sötétkék alapjának beállításával.
+- **Admin felület (dkv-admin-group) kivezetése**: Eltávolítottuk a régi, inkonzisztens admin gomb csoportot a HUB láblécéből. A Master Mode titkos trigger (5 kattintás a címre) továbbra is elérhető a fejlesztők számára.
+
 ## [0.47.0] - 2026-05-01
 
 ### Hozzáadva

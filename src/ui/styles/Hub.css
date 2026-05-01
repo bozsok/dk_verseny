@@ -1,0 +1,493 @@
+/**
+ * Hub - New Cyber-Magic UI
+ * 
+ * Baser on spalsh_2 design plan.
+ * Featuring: Radial layout, Scanlines, Grid Floor, and Glowing Portal hover.
+ */
+
+:root {
+  --hub-primary: #ff007f;
+  /* Magenta neon from splash_2 */
+  --hub-primary-glow: rgba(255, 0, 127, 0.6);
+  --hub-bg: #080e1d;
+  --hub-surface: rgba(25, 31, 48, 0.7);
+  --hub-font-pixel: 'Press Start 2P', cursive;
+  --hub-font-display: 'Lexend', sans-serif;
+  --hub-font-label: 'Space Grotesk', sans-serif;
+}
+
+.dkv-hub {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--hub-bg);
+  color: #dde2f9;
+  font-family: var(--hub-font-display);
+  overflow: hidden;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === BACKGROUND LAYERS === */
+.dkv-hub-bg-layers {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.dkv-hub-nebula {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  filter: hue-rotate(-20deg);
+  /* Adjust to match splash_2 magenta */
+}
+
+.dkv-hub-gradient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255, 0, 127, 0.15) 0%, var(--hub-bg) 70%);
+}
+
+.dkv-hub-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--hub-primary) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.2;
+}
+
+.dkv-hub-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 0, 127, 0.1) 1px, transparent 1px),
+    linear-gradient(rgba(255, 0, 127, 0.1) 1px, transparent 1px);
+  background-size: 100px 100px;
+  transform: perspective(500px) rotateX(60deg);
+  transform-origin: bottom;
+  opacity: 0.5;
+}
+
+/* === SCANLINES === */
+.dkv-hub-scanlines {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(255, 0, 127, 0.03) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.dkv-hub-scanline-move {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 0, 127, 0.15);
+  animation: dkv-scanline-anim 8s linear infinite;
+  z-index: 101;
+  pointer-events: none;
+}
+
+@keyframes dkv-scanline-anim {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+/* === MAIN CONTENT === */
+.dkv-hub-main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.dkv-hub-title-section {
+  text-align: center;
+  margin-bottom: 8rem;
+  animation: dkv-fade-in-up 0.8s ease-out;
+}
+
+.dkv-hub-title-section h2 {
+  font-family: var(--hub-font-pixel);
+  color: var(--hub-primary);
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 0 0 15px var(--hub-primary-glow);
+  margin: 0;
+  animation: dkv-pulse-glow 2s infinite ease-in-out;
+}
+
+.dkv-hub-title-line {
+  height: 2px;
+  width: 200px;
+  background: linear-gradient(to right, transparent, var(--hub-primary), transparent);
+  margin: 1rem auto 0;
+  opacity: 0.6;
+}
+
+/* === RADIAL SELECTION === */
+.dkv-hub-radial-container {
+  position: relative;
+  width: clamp(300px, 60vw, 500px);
+  height: clamp(300px, 60vw, 500px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Background Rings */
+.dkv-hub-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 0, 127, 0.15);
+  pointer-events: none;
+}
+
+.dkv-hub-ring-outer {
+  width: 100%;
+  height: 100%;
+  border-width: 4px;
+  animation: dkv-rotate 20s linear infinite;
+}
+
+.dkv-hub-ring-inner {
+  width: 85%;
+  height: 85%;
+  border-style: dashed;
+  animation: dkv-rotate 15s linear infinite reverse;
+}
+
+@keyframes dkv-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Central Core */
+.dkv-hub-core {
+  position: relative;
+  width: clamp(100px, 20vw, 160px);
+  height: clamp(100px, 20vw, 160px);
+  background: rgba(255, 0, 127, 0.1);
+  border: 4px solid var(--hub-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  box-shadow: 0 0 40px var(--hub-primary-glow);
+  overflow: hidden;
+}
+
+.dkv-hub-core::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--hub-primary) 0%, transparent 70%);
+  animation: dkv-core-pulse 2s infinite ease-in-out;
+}
+
+.dkv-hub-core span {
+  font-size: clamp(3rem, 8vw, 5rem);
+  color: #fff;
+  z-index: 2;
+  filter: drop-shadow(0 0 10px #fff);
+}
+
+@keyframes dkv-core-pulse {
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* Level Items */
+.dkv-hub-level-item {
+  position: absolute;
+  width: clamp(90px, 18vw, 130px);
+  height: clamp(90px, 18vw, 130px);
+  z-index: 20;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Positions */
+.dkv-hub-level-item[data-pos="top"] {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.dkv-hub-level-item[data-pos="right"] {
+  top: 50%;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.dkv-hub-level-item[data-pos="bottom"] {
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.dkv-hub-level-item[data-pos="left"] {
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.dkv-hub-level-btn {
+  width: 100%;
+  height: 100%;
+  background: var(--hub-surface);
+  border: 2px solid var(--hub-primary);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  cursor: pointer;
+  transition: inherit;
+  color: #fff;
+  padding: 8px;
+  box-shadow: 0 0 20px rgba(255, 0, 127, 0.2);
+  backdrop-filter: blur(8px);
+}
+
+.dkv-hub-level-btn span.material-symbols-outlined {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  color: var(--hub-primary);
+}
+
+.dkv-hub-level-btn .level-label {
+  font-family: var(--hub-font-pixel);
+  font-size: clamp(8px, 1.5vw, 10px);
+  white-space: nowrap;
+}
+
+/* === NEW HOVER EFFECT: GLOWING PORTAL === */
+.dkv-hub-level-item:hover {
+  z-index: 100;
+  transform: scale(1.15) translate(var(--hover-off-x, 0), var(--hover-off-y, 0));
+}
+
+.dkv-hub-level-item[data-pos="top"]:hover {
+  transform: translate(-50%, -60%) scale(1.15);
+}
+
+.dkv-hub-level-item[data-pos="right"]:hover {
+  transform: translate(60%, -50%) scale(1.15);
+}
+
+.dkv-hub-level-item[data-pos="bottom"]:hover {
+  transform: translate(-50%, 60%) scale(1.15);
+}
+
+.dkv-hub-level-item[data-pos="left"]:hover {
+  transform: translate(-60%, -50%) scale(1.15);
+}
+
+.dkv-hub-level-btn:hover {
+  background: rgba(255, 0, 127, 0.25);
+  border-color: #fff;
+  box-shadow:
+    0 0 30px var(--hub-primary-glow),
+    0 0 60px rgba(255, 255, 255, 0.2),
+    inset 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Swirling nebula inside button on hover */
+.dkv-hub-level-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--hub-primary) 0%, transparent 80%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: inherit;
+}
+
+.dkv-hub-level-btn:hover::after {
+  opacity: 0.6;
+  animation: dkv-swirl 3s linear infinite;
+}
+
+@keyframes dkv-swirl {
+  from {
+    filter: hue-rotate(0deg);
+    transform: scale(1.2) rotate(0deg);
+  }
+
+  to {
+    filter: hue-rotate(360deg);
+    transform: scale(1.5) rotate(360deg);
+  }
+}
+
+.dkv-hub-level-btn:hover span.material-symbols-outlined {
+  color: #fff;
+  animation: dkv-heartbeat 1s infinite ease-in-out;
+}
+
+@keyframes dkv-heartbeat {
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px #fff);
+  }
+
+  50% {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 15px var(--hub-primary));
+  }
+}
+
+/* Locked State */
+.dkv-hub-level-item.locked {
+  filter: grayscale(1) brightness(0.6);
+  cursor: not-allowed;
+}
+
+.dkv-hub-level-item.locked:hover {
+  transform: none;
+}
+
+/* === FOOTER INFO === */
+.dkv-hub-footer {
+  margin-top: 8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: dkv-fade-in 1.2s ease-out;
+}
+
+.dkv-hub-footer p {
+  font-family: var(--hub-font-label);
+  color: rgba(221, 226, 249, 0.6);
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 400px;
+}
+
+.dkv-hub-status-dots {
+  display: flex;
+  gap: 12px;
+}
+
+.dkv-hub-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--hub-primary);
+  border-radius: 50%;
+  animation: dkv-ping 1.5s infinite ease-in-out;
+}
+
+.dkv-hub-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dkv-hub-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dkv-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: scale(1.8);
+    opacity: 1;
+    box-shadow: 0 0 10px var(--hub-primary);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
+
+/* === GENERIC ANIMATIONS === */
+@keyframes dkv-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dkv-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dkv-pulse-glow {
+
+  0%,
+  100% {
+    text-shadow: 0 0 10px var(--hub-primary-glow);
+  }
+
+  50% {
+    text-shadow: 0 0 25px var(--hub-primary), 0 0 40px var(--hub-primary-glow);
+  }
+}
+
+/* RESPONSIVE ADAPTATIONS */
+@media (max-height: 700px) {
+  .dkv-hub-title-section {
+    margin-bottom: 2rem;
+  }
+
+  .dkv-hub-footer {
+    margin-top: 2rem;
+  }
+}

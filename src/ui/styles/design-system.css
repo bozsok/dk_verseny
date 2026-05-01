@@ -117,12 +117,12 @@ body {
 
 body {
   font-family: var(--th-font-main, var(--dkv-font-sans));
-  background-color: var(--dkv-bg-dark);
+  background-color: #080e1d; /* Új HUB sötét alap színe */
   color: var(--dkv-text-main);
   line-height: 1.6;
 
-  /* Background Image Setup */
-  background-image: url('../../../public/assets/hub-bg.jpg');
+  /* Background Image Setup - Globális kép eltávolítva a villogás elkerülése végett */
+  background-image: none;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
