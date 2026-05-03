@@ -5,6 +5,16 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.49.0] - 2026-05-03
+
+### Hozzáadva
+- **Finálé beugró feladat HUD szinkronizáció**: A 4. osztályos finálé puzzle beugró feladata mostantól helyesen frissíti a látható pontszámot (HUD) és a végső oklevél adatait is a `Main.js` vezérlőn keresztül.
+
+### Megváltoztatva
+- **Finálé pontozási egyensúly**: 
+    - A beugró puzzle feladat pontszáma 10-ről **6 pontra** módosult.
+    - A végső feladat (Neon Terminal) pontszáma 6-ról **10 pontra** emelkedett a kiegyensúlyozottabb játékélmény érdekében.
+
 ## [0.48.0] - 2026-05-02
 
 ### Hozzáadva

@@ -6,7 +6,7 @@ import './FinaleTask.css';
 /**
  * @class FinaleTask
  * @description A Grade 4 modul záró feladata (Neon Terminal).
- * - Verzió: 0.42.0
+ * - Verzió: 0.49.0
  * - Állapot: Győzelmi szekvencia véglegesítve
  * A versenyzőnek a Mátrix-esőben kell megtalálnia az indító kód karaktereit.
  */
@@ -330,8 +330,8 @@ execute_override();`;
             // Azonnali befejezés jelezése a keretrendszernek, átadva saját magát (this)
             this.onComplete({
                 success: true,
-                points: 6,
-                maxPoints: 6,
+                points: 10,
+                maxPoints: 10,
                 timeElapsed: (Date.now() - this.startTime) / 1000
             }, this);
         }, 2000); // 2 másodperces "kiélvezhető" glitch

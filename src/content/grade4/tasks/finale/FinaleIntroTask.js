@@ -289,7 +289,7 @@ export class FinaleIntroTask {
         if (this.isCompleted) return; this.isCompleted = true;
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.overlayEl.style.display = 'none'; this.fullImageCanvas.style.opacity = '1';
-        setTimeout(() => { this.onComplete({ success: true, timeElapsed: this.timerSeconds, points: 10, maxPoints: 10 }); }, 1500);
+        setTimeout(() => { this.onComplete({ success: true, timeElapsed: this.timerSeconds, points: 6, maxPoints: 6 }); }, 1500);
     }
 
     /**

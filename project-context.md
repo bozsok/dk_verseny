@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-05-01T21:09:21+02:00'
+date: '2026-05-03T20:32:01+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.47.0 (v0.47.0)
+- **Version:** 0.49.0 (v0.49.0)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
-- **Last Updated:** 2026-05-01
-- **Current Mission:** Grade 4 Full Functional Synchronization (v0.47.0)
+- **Last Updated:** 2026-05-03
+- **Current Mission:** Grade 4 Finale Scoring Balancing & HUB Modernization (v0.49.0)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -175,3 +175,5 @@ optimized_for_llm: true
 - [x] Grade 4: Onboarding Navigation & Scoring Logic Fixes (v0.42.0)
 - [x] Grade 3: Audio Control Refinement (v0.43.0)
 - [x] Grade 4: All stations (1-5) functional unification & Scripture audit (v0.47.0)
+- [x] Grade 4: HUB visual modernization (Glassmorphism, Radial layout) (v0.48.0)
+- [x] Grade 4: Finale tasks scoring balancing (6/10 pts) and HUD sync (v0.49.0)

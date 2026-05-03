@@ -1302,12 +1302,16 @@ class DigitalKulturaVerseny {
               { ...result, title: 'SIKERES FRISSÍTŐSZKRIPT ÖSSZEILLESZTÉS' },
               () => {
                 // Pontok jóváírása és dia megjelölése befejezettként
+                const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+                this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
+                
                 this.stateManager?.updateProgress({
                   level: slide.id,
                   score: result.points || 0,
                   completed: true
                 });
                 this.stateManager?.markSlideCompleted(slide.id);
+                this.activeGameInterface?.updateHUD(this.stateManager?.getState());
 
                 this.activeGameInterface.hideTaskModal();
                 this.playAudio(audioSrc, () => {
