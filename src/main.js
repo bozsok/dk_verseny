@@ -98,6 +98,7 @@ class DigitalKulturaVerseny {
     this.currentGlitchTransition = null;
     this.currentCountdownAnimation = null;
     this._activeTimers = new Set();
+    this.activeTaskInstance = null; // Aktuális feladat példánya a takarításhoz
     this._isDestroyed = false;
 
     // Energiacsík állapot (Grade 4 Quantum Terminal)
@@ -871,6 +872,20 @@ class DigitalKulturaVerseny {
     this.lastNavDirection = direction; // Irány elmentése
     if (!slide) return;
 
+    // JAVÍTÁS: Ha slide váltás van, az esetlegesen nyitva maradt feladatot megsemmisítjük
+    if (this.activeTaskInstance) {
+      if (this.logger) this.logger.info('Cleaning up active task instance during slide transition');
+      if (typeof this.activeTaskInstance.destroy === 'function') {
+        this.activeTaskInstance.destroy();
+      }
+      this.activeTaskInstance = null;
+    }
+
+    // Továbbá a feladat modalt is bezárjuk, ha véletlenül nyitva maradt volna
+    if (this.activeGameInterface) {
+      this.activeGameInterface.hideTaskModal();
+    }
+
     // --- Változók inicializálása a függvény elején (Standard SEL mintát követve) ---
     const slides = this.slideManager.slides;
     const totalSlides = slides.length;
@@ -1450,7 +1465,11 @@ class DigitalKulturaVerseny {
     }
 
     overlay.appendChild(modal);
-    document.body.appendChild(overlay);
+    
+    // JAVÍTÁS: Ne a body-hoz, hanem az app konténerhez adjuk, 
+    // hogy a Hub-ra váltáskor (app.innerHTML='') automatikusan kitakarítódjon.
+    const appContainer = document.getElementById('app') || document.body;
+    appContainer.appendChild(overlay);
 
     requestAnimationFrame(() => overlay.classList.add('open'));
 
@@ -1894,6 +1913,22 @@ class DigitalKulturaVerseny {
       if (this.timerDisplay) {
         this.timerDisplay.hide();
       }
+
+      // JAVÍTÁS: Aktív feladat megsemmisítése, ha még futna valahol a háttérben
+      if (this.activeTaskInstance) {
+        if (this.logger) this.logger.info('Destroying active task instance before showing Hub');
+        if (typeof this.activeTaskInstance.destroy === 'function') {
+          this.activeTaskInstance.destroy();
+        }
+        this.activeTaskInstance = null;
+      }
+
+      // JAVÍTÁS: Elárvult, body-ra akasztott modálok kényszerített törlése
+      const lingeringOverlays = document.querySelectorAll('.maze-result-overlay, .dkv-g4-result-overlay');
+      lingeringOverlays.forEach(el => {
+        if (this.logger) this.logger.info('Cleaning up lingering result overlay');
+        el.remove();
+      });
 
       if (this.logger) {
         this.logger.info('Hub displayed (re-initialized and fresh render)');
@@ -2612,16 +2647,23 @@ class DigitalKulturaVerseny {
       this.showMazeResultModal(
         { ...result, title: customTitle },
         () => {
-          if (slide.id === 'final_2' && instance && typeof instance.runWinSequence === 'function') {
-            instance.runWinSequence(() => this.handleNext());
+          if (slide.id === 'final_2' && this.activeTaskInstance && typeof this.activeTaskInstance.runWinSequence === 'function') {
+            this.activeTaskInstance.runWinSequence(() => this.handleNext());
           } else {
             this.handleNext();
           }
         },
         () => {
-          const hasWinSequence = instance && typeof instance.runWinSequence === 'function';
+          const hasWinSequence = this.activeTaskInstance && typeof this.activeTaskInstance.runWinSequence === 'function';
           if (!hasWinSequence) {
             this.activeGameInterface.hideTaskModal();
+            // JAVÍTÁS: Megsemmisítjük a példányt a sikeres befejezés után
+            if (this.activeTaskInstance) {
+              if (typeof this.activeTaskInstance.destroy === 'function') {
+                this.activeTaskInstance.destroy();
+              }
+              this.activeTaskInstance = null;
+            }
           }
         }
       );
@@ -2649,6 +2691,16 @@ class DigitalKulturaVerseny {
         modalClass: taskConfig.type === 'finale' ? 'finale-modal' : '',
         helpContent: taskConfig.helpContent
       };
+      
+      // JAVÍTÁS: Ha már fut egy feladat, azt megsemmisítjük az új előtt
+      if (this.activeTaskInstance) {
+        if (this.logger) this.logger.info(`Destroying previous task instance before launching ${taskConfig.type}`);
+        if (typeof this.activeTaskInstance.destroy === 'function') {
+          this.activeTaskInstance.destroy();
+        }
+        this.activeTaskInstance = null;
+      }
+
       this.activeGameInterface.showTaskModal(taskContainer, null, modalOptions);
 
       // Opciók összeállítása
@@ -2667,7 +2719,7 @@ class DigitalKulturaVerseny {
           ?? 16;
       }
 
-      const gameInstance = new GameClass(taskContainer, gameOptions);
+      this.activeTaskInstance = new GameClass(taskContainer, gameOptions);
 
       // Speciális kezelés gombokhoz (FinaleGame OK gomb)
       const okBtn = document.querySelector('.dkv-task-ok-btn');

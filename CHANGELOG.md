@@ -5,6 +5,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.50.0] - 2026-05-04
+
+### Hozzáadva
+- **Központosított feladat-életciklus kezelés**: Bevezettük az `activeTaskInstance` nyomkövetést a `Main.js`-ben, amely garantálja az összes aszinkron feladat (időzítők, eseménykezelők) biztonságos leállítását navigációkor.
+
+### Javítva
+- **Ranglista adatintegritás (Race condition fix)**: Implementáltuk a `LOCK_EX` exkluzív fájlzárolást a `manage_leaderboard.php` fájlban, megakadályozva az egyidejű mentések során fellépő adatvesztést.
+- **Modális ablak takarítási hiba**: A feladatok végeredményét mutató ablakokat az `#app` konténerbe helyeztük át, így a HUB-ra való visszatéréskor (amely üríti a konténert) ezek automatikusan és véglegesen törlődnek a DOM-ból.
+- **Beragadó feladat-időzítők**: A HUB inicializálása (`showHub`) és minden diaváltás (`renderSlide`) mostantól explicit módon megsemmisíti az aktív feladatpéldányokat, megelőzve a 15 perces időkorlát váratlan lefutását a menüben.
+- **DOM szivárgás**: A `GameInterface.js` `hideTaskModal` metódusa mostantól fizikailag is üríti a modális ablak tartalmát, megakadályozva a korábbi feladatok maradványainak felhalmozódását.
+- **HUB rejtett ranglista trigger**: Helyreállítottuk a HUB címére való 5 kattintással elérhető ranglista átirányítást, és javítottuk a kódhibát, amely megakadályozta a működését.
+- **Ranglista betöltési optimalizálás**: A `Chart.js` betöltése mostantól nem blokkolja az oldal megjelenítését (`defer`), valamint bevezettük a „Betöltés...” állapotot a statisztikai kártyákon és a táblázatban a jobb felhasználói élmény érdekében.
+
 ## [0.49.0] - 2026-05-03
 
 ### Hozzáadva

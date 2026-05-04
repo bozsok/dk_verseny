@@ -105,17 +105,17 @@ class Hub {
     
     title.addEventListener('click', () => {
       const now = Date.now();
-      if (now - this.lastClickTime > 2000) this.clickCount = 0;
+      if (now - this.lastClickTime > 3000) this.clickCount = 0;
       this.clickCount++;
       this.lastClickTime = now;
 
+      if (this.options.logger) this.options.logger.info(`Hub title click: ${this.clickCount}/5`);
+
       if (this.clickCount === 5) {
-        this.isMasterMode = !this.isMasterMode;
-        if (this.options.stateManager) {
-          this.options.stateManager.setSystemFlag('master_mode', this.isMasterMode);
-        }
         this.clickCount = 0;
-        if (this.options.logger) this.options.logger.info(`Master Mode ${this.isMasterMode ? 'Enabled' : 'Disabled'}`);
+        if (this.options.logger) this.options.logger.info('Leaderboard trigger activated - Redirecting...');
+        // Navigáció a ranglistára (abszolút útvonal a biztonság kedvéért)
+        window.location.href = window.location.origin + '/ranglista/';
       }
     });
 

@@ -639,6 +639,11 @@ class GameInterface {
         if (this.taskModalOverlay) {
             this.taskModalOverlay.classList.remove('open');
             this.taskOkBtn.classList.remove('visible');
+            
+            // Takarítás: ürítsük a tartalom konténert is
+            if (this.taskModalBody) {
+                this.taskModalBody.innerHTML = '';
+            }
         }
     }
 
