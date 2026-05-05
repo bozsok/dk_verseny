@@ -36,6 +36,7 @@ export class PuzzleGame {
         window.removeEventListener('resize', this._onResize);
         window.removeEventListener('scroll', this._onResize, true);
         if (this.timerInterval) clearInterval(this.timerInterval);
+        if (this.winTimeout) clearTimeout(this.winTimeout);
 
         this.polyPieces.forEach(pp => {
             if (pp.instance) pp.instance.destroy();
@@ -473,22 +474,27 @@ export class PuzzleGame {
     }
 
     handleWin() {
+        if (this.gameState !== 'playing') return;
+        
         clearInterval(this.timerInterval);
         this.gameState = 'won';
         this.isCompleted = true;
 
-        // Hide overlay, fade in full image
+        // Hide overlay, fade in full image (1.5s transition in CSS)
         this.overlayEl.style.display = 'none';
         this.fullImageCanvas.style.opacity = '1';
 
-        if (this.onComplete) {
-            this.onComplete({
-                success: true,
-                timeElapsed: this.timer,
-                points: 5,
-                maxPoints: 5
-            });
-        }
+        // 3 seconds delay to allow admiration of the completed puzzle
+        this.winTimeout = setTimeout(() => {
+            if (this.onComplete) {
+                this.onComplete({
+                    success: true,
+                    timeElapsed: this.timer,
+                    points: 5,
+                    maxPoints: 5
+                });
+            }
+        }, 3000);
     }
 
     handleLose() {

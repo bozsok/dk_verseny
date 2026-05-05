@@ -181,7 +181,7 @@ export class FinaleIntroTask {
         img.onerror = () => {
             if (loaded) return;
             loaded = true;
-            console.error('Hiba a puzzle kép betöltésekor:', this.imagePath);
+            console.error('Hiba a puzzle kép betöltésekor:', this.imagePath); // eslint-disable-line no-console
             // Fallback: üres canvas vagy hibaüzenet (itt most megállunk)
         };
 
@@ -189,7 +189,7 @@ export class FinaleIntroTask {
         setTimeout(() => {
             if (!loaded) {
                 loaded = true;
-                console.warn('Képbetöltési időtúllépés, fallback indítása...');
+                console.warn('Képbetöltési időtúllépés, fallback indítása...'); // eslint-disable-line no-console
                 this.prepareGame(img); // Megpróbáljuk betölteni amit tudunk
             }
         }, 3000);
@@ -250,7 +250,8 @@ export class FinaleIntroTask {
         const idx = this.polyPieces.findIndex(p => p.id === id); if (idx === -1) return;
         const moved = this.polyPieces[idx]; moved.position = pos || moved.position;
         const others = this.polyPieces.filter(p => p.id !== id), dirs = [{ dx: 1, dy: 0 }, { dx: -1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: -1 }];
-        let merged = false, mp = [...moved.pieces], mpos = { ...moved.position }, mz = moved.zIndex, tod = [];
+        let merged = false, mp = [...moved.pieces], mpos = { ...moved.position }, mz = moved.zIndex;
+        const tod = [];
 
         const pass = (list, pieces, position, z) => {
             for (const o of list) {
@@ -271,8 +272,13 @@ export class FinaleIntroTask {
         };
 
         let currentList = others;
-        while (true) {
-            const res = pass(currentList, mp, mpos, mz); if (!res) break;
+        let searching = true;
+        while (searching) {
+            const res = pass(currentList, mp, mpos, mz); 
+            if (!res) {
+                searching = false;
+                break;
+            }
             mp = res.newG.pieces; mpos = res.newG.position; mz = res.newG.z; tod.push(res.oldId); currentList = res.newList; merged = true;
         }
 

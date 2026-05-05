@@ -27,14 +27,14 @@ export class MatrixRain {
         this.container.innerHTML = '';
         
         for (let i = 0; i < this.columnCount; i++) {
-            this.createColumn(i);
+            this.createColumn();
         }
     }
 
     /**
      * Létrehoz egy oszlopot a rácsban.
      */
-    createColumn(index) {
+    createColumn() {
         const col = document.createElement('div');
         col.className = 'dkv-finale-task__matrix-column';
         

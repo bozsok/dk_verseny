@@ -181,7 +181,7 @@ export class PolyPiece {
                 try { 
                     ctx.drawImage(this.puzzle.gameCanvas, srcx, srcy, srcw, srch, 0, 0, srcw, srch); 
                 } catch (e) { 
-                    console.error('Canvas draw error', e); 
+                    console.error('Canvas draw error', e); // eslint-disable-line no-console
                 }
             } else {
                 ctx.fillStyle = '#8884'; 
@@ -192,7 +192,7 @@ export class PolyPiece {
         
         // Outline
         ctx.save();
-        let borderColor = 'rgba(0, 242, 255, 0.2)'; // Finálé ciánkék, 0.2 opacity
+        const borderColor = 'rgba(0, 242, 255, 0.2)'; // Finálé ciánkék, 0.2 opacity
         
         ctx.lineJoin = 'round'; 
         ctx.lineCap = 'round'; 
@@ -372,7 +372,7 @@ export class PolyPiece {
             
             if (this.onDragEnd) this.onDragEnd(this.id, { x: fx, y: fy });
         } catch (err) { 
-            console.warn('onDragEnd error', err); 
+            console.warn('onDragEnd error', err); // eslint-disable-line no-console
         }
         
         document.body.style.overflow = this.prevBodyOverflow; 

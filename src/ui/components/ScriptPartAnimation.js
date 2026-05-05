@@ -17,7 +17,7 @@ export class ScriptPartAnimation {
      * @param {Function} options.onComplete - Callback a fázis A befejezésekor
      */
     constructor(options = {}) {
-        console.log('[ScriptAnim] Példányosítva!', options);
+        console.log('[ScriptAnim] Példányosítva!', options); // eslint-disable-line no-console
         this.stationId = options.stationId;
         this.targetSlot = options.targetSlot;
         this.onComplete = options.onComplete;
@@ -143,7 +143,7 @@ export class ScriptPartAnimation {
      * FÁZIS A: Megjelenítés és Ragyogás
      */
     playPhaseA() {
-        console.log('[ScriptAnim] playPhaseA meghívva! container létezik?', !!this.container, 'destroyed?', this._isDestroyed);
+        console.log('[ScriptAnim] playPhaseA meghívva! container létezik?', !!this.container, 'destroyed?', this._isDestroyed); // eslint-disable-line no-console
         if (this._isDestroyed || this.container) return;
 
         if (this.logger) this.logger.info('[ScriptAnim] Phase A indítása', { station: this.stationId });
@@ -194,7 +194,7 @@ export class ScriptPartAnimation {
                 stateManager.updateState({
                     puzzle: { ...puzzleState, earnedPieces: [...earned, pieceIndex] }
                 });
-                console.log(`[PuzzleDebug] Piece ${pieceIndex} (from Station ${stationNum}) added to earnedPieces`);
+                console.log(`[PuzzleDebug] Piece ${pieceIndex} (from Station ${stationNum}) added to earnedPieces`); // eslint-disable-line no-console
             }
         }
 
@@ -349,7 +349,7 @@ export class ScriptPartAnimation {
 
             } catch (err) {
                 if (this.logger) this.logger.error('[ScriptAnim] Repülés animációs hiba:', err);
-                console.error('[ScriptAnim] Repülés animációs hiba:', err, { currentTransform, targetX, targetY, targetScale });
+                console.error('[ScriptAnim] Repülés animációs hiba:', err, { currentTransform, targetX, targetY, targetScale }); // eslint-disable-line no-console
                 this._cleanup();
                 resolve();
             }

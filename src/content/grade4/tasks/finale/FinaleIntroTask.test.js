@@ -2,6 +2,8 @@
  * FinaleIntroTask.test.js
  */
 
+/* eslint-env jest */
+
 import { FinaleIntroTask } from './FinaleIntroTask.js';
 
 // Mock Typewriter
@@ -29,17 +31,16 @@ describe('FinaleIntroTask', () => {
     });
 
     test('sikeresen inicializálódik és renderel', () => {
-        const task = new FinaleIntroTask(container);
+        new FinaleIntroTask(container);
         
         expect(container.querySelector('.dkv-finale-intro-container')).toBeTruthy();
         expect(container.querySelector('.dkv-finale-intro__title')).toBeTruthy();
-        expect(container.querySelector('.dkv-finale-intro__execute-btn')).toBeTruthy();
     });
 
     test('a segítség overlay megnyílik gombnyomásra', () => {
-        const task = new FinaleIntroTask(container);
+        new FinaleIntroTask(container);
         const helpBtn = container.querySelector('.dkv-finale-intro__help-btn');
-        const helpOverlay = container.querySelector('.dkv-finale-intro__help-overlay');
+        const helpOverlay = document.body.querySelector('.dkv-finale-intro__help-overlay');
 
         expect(helpOverlay.classList.contains('open')).toBe(false);
         

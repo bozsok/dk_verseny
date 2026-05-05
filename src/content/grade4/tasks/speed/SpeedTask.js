@@ -290,7 +290,6 @@ export class SpeedTask {
         let html = '';
         for (let i = 1; i <= this.maxSections; i++) {
             const stateClass = i === 1 ? 'dkv-speed__section--active' : 'dkv-speed__section--locked';
-            const isActiveText = i === 1 ? ' (AKTÍV)' : '';
 
             // Csak az aktív szekcióban van kattintó gomb és látható sávok (kezdetben)
             if (i === 1) {

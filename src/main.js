@@ -1310,7 +1310,7 @@ class DigitalKulturaVerseny {
         if (this.logger) this.logger.info('Finale Intro Modal triggered, blocking narration.');
 
         const taskContainer = document.createElement('div');
-        const finaleTask = new FinaleIntroTask(taskContainer, {
+        new FinaleIntroTask(taskContainer, {
           onComplete: (result) => {
             // Egyedi című összegző ablak megjelenítése
             this.showMazeResultModal(
@@ -1319,7 +1319,7 @@ class DigitalKulturaVerseny {
                 // Pontok jóváírása és dia megjelölése befejezettként
                 const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
                 this.stateManager?.updateState({ score: currentScore + (result.points || 0) });
-                
+
                 this.stateManager?.updateProgress({
                   level: slide.id,
                   score: result.points || 0,
@@ -1465,7 +1465,7 @@ class DigitalKulturaVerseny {
     }
 
     overlay.appendChild(modal);
-    
+
     // JAVÍTÁS: Ne a body-hoz, hanem az app konténerhez adjuk, 
     // hogy a Hub-ra váltáskor (app.innerHTML='') automatikusan kitakarítódjon.
     const appContainer = document.getElementById('app') || document.body;
@@ -1637,7 +1637,6 @@ class DigitalKulturaVerseny {
       // --- ANIMÁCIÓ BEKÖTÉSE (FÁZIS B) ---
       const stationId = currentSlide?.metadata?.section; // pl. 'station_1'
       const isSummarySlide = currentSlide?.metadata?.step === 3; // CSAK az összegző dián!
-      const hasItem = this.stateManager && this.stateManager.hasKey(stationId);
 
       let animationPromise = Promise.resolve();
 
@@ -2592,7 +2591,7 @@ class DigitalKulturaVerseny {
     // --- Feladat megnevezése ---
     const taskLabel = slide.id === 'final_2' ? 'Nagy Zár – Végjáték' : (slide.title || slide.id);
 
-    const onTaskComplete = (result, instance) => {
+    const onTaskComplete = (result) => {
       const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
       if (!alreadyDone) {
         const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
@@ -2691,7 +2690,7 @@ class DigitalKulturaVerseny {
         modalClass: taskConfig.type === 'finale' ? 'finale-modal' : '',
         helpContent: taskConfig.helpContent
       };
-      
+
       // JAVÍTÁS: Ha már fut egy feladat, azt megsemmisítjük az új előtt
       if (this.activeTaskInstance) {
         if (this.logger) this.logger.info(`Destroying previous task instance before launching ${taskConfig.type}`);

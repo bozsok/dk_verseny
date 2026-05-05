@@ -176,14 +176,22 @@ class TaskSlide {
             // Body-hoz adjuk, hogy a HUD felett lehessen (vagy gameInterface-be)
             this.gameInterface.element.appendChild(settingsPanel);
 
-            // Click-outside
-            document.addEventListener('mousedown', (e) => {
+            const clickOutsideHandler = (e) => {
                 if (settingsPanel.classList.contains('open') &&
                     !settingsPanel.contains(e.target) &&
                     !e.target.closest('button[title="Hangbeállítások"]')) {
                     settingsPanel.classList.remove('open');
                 }
+            };
+            document.addEventListener('mousedown', clickOutsideHandler);
+
+            const observer = new MutationObserver(() => {
+                if (!document.body.contains(settingsPanel)) {
+                    document.removeEventListener('mousedown', clickOutsideHandler);
+                    observer.disconnect();
+                }
             });
+            observer.observe(document.body, { childList: true, subtree: true });
 
             void settingsPanel.offsetWidth;
         }

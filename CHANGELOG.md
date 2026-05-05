@@ -5,6 +5,21 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.50.3] - 2026-05-05
+
+### Hozzáadva
+- **Grade 3 Puzzle győzelmi animáció késleltetés**: Bevezettünk egy 3 másodperces mesterséges várakozást a puzzle kirakása és a végeredmény-modal megjelenése közé. Ez lehetővé teszi, hogy a diákok végignézzék a tiszta kép 1.5 másodperces beúszását, és legyen idejük megtekinteni a kész művet az ablak felugrása előtt.
+
+### Javítva
+- **Puzzle életciklus-biztonság (Rule 104)**: A `PuzzleGame.js` komponens `destroy()` metódusa mostantól explicit módon törli a győzelmi késleltetéshez használt `winTimeout`-ot, megakadályozva a memóriaszivárgást és a navigáció utáni esetleges "szellem-modal" felugrásokat.
+
+## [0.50.2] - 2026-05-05
+
+### Javítva
+- **Unit Teszt Hiba**: A `FinaleIntroTask.test.js` elbukott tesztje javítva lett. A hiba abból fakadt, hogy az UI átrendezésekor az `execute-btn` eltávolításra került, illetve a `help-overlay` a DOM hierarchiában a `document.body`-ba lett áthelyezve (a korábbi stacking context probléma megoldásaként), a teszt viszont még a régi állapotot kereste. A módosításokkal a tesztlefedettség újra 100%-os.
+- **CSS Globális Névtér Audit**: A `Summary.css`-ben található elárvult, globális `.btn-continue` gomb osztályát átneveztük a BEM konvencióknak megfelelő `.dkv-summary__btn-continue` névre. Bár ez az osztály jelenleg használaton kívül van, az átnevezés megelőzi a jövőbeli esetleges UI ütközéseket.
+- **Z-Index Standardizálás**: A `Summary.css` fájlban alkalmazott keménykódolt (hard-coded) z-index értékeket (pl. `9999`, `10`, `5`) lecseréltük a hivatalos CSS változóinkra (pl. `var(--z-result-modal)`, `var(--z-inner-elements)`) a `z-index-guide.md` előírásainak megfelelően, ezzel biztosítva a rétegrendszer egységességét.
+
 ## [0.50.1] - 2026-05-05
 
 ### Javítva

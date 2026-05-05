@@ -400,12 +400,12 @@ execute_override();`;
             onNext();
             
             // 2. Feladat bezárása és takarítás
-            const t2 = setTimeout(() => {
+            setTimeout(() => {
                 if (this.options.gameInterface) this.options.gameInterface.hideTaskModal();
                 this.destroy();
                 
                 // 3. Elsötétítés (blackout) eltávolítása (fokozatosan)
-                const t3 = setTimeout(() => {
+                setTimeout(() => {
                     if (this.winBlackoutEl) {
                         this.winBlackoutEl.classList.remove('is-active');
                         setTimeout(() => this.winBlackoutEl.remove(), 1000);

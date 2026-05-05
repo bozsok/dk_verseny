@@ -28,7 +28,7 @@ export class AssetLoader {
                 };
 
                 img.onerror = () => {
-                    console.warn(`[AssetLoader] Failed to load image: ${src}`);
+                    console.warn(`[AssetLoader] Failed to load image: ${src}`); // eslint-disable-line no-console
                     resolve(null); // Nem fagyasztjuk le a folyamatot hiba miatt
                 };
 

@@ -146,7 +146,7 @@ class StorySlide {
                 startPlayback();
             } else {
                 this.videoElement.addEventListener('canplaythrough', startPlayback, { once: true });
-                
+
                 // Biztonsági időzítő: ha 5mp alatt nem jön meg a canplaythrough, próbáljuk meg elindítani
                 setTimeout(() => {
                     if (this.videoElement && this.videoElement.paused) {
@@ -165,7 +165,7 @@ class StorySlide {
             this.imageLayer.style.opacity = '0';
             this.imageLayer.style.pointerEvents = 'none';
             if (this.logger) this.logger.info(`[StorySlide] Image layer hidden.`);
-            
+
             // 0.2mp után el is távolítjuk a DOM-ból, hogy ne zavarjon
             setTimeout(() => {
                 if (this.imageLayer && this.imageLayer.parentNode) {

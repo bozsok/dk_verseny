@@ -297,12 +297,12 @@ export class PuzzleService {
      * @returns {Array<{text:string,type:string}>}
      */
     tokenizeSnippet(text, weights) {
-        const parts = text.split(/(\/\*.*?\*\/|\/\/.*|0x[0-9A-F]+|0b[01_]+|\s+|[{}()\[\]]|[:;,.=><!\&|+\-*\/%^]+|\w+)/gi).filter(t => t);
+        const parts = text.split(/(\/\*.*?\*\/|\/\/.*|0x[0-9A-F]+|0b[01_]+|\s+|[{}()[\]]|[:;,.=><!&|+*/%^-]+|\w+)/gi).filter(t => t);
         const colorW = weights.cyan + weights.yellow + weights.purple + weights.green;
         return parts.map(token => {
             let type = 'cyan';
             if (token.match(/\/\*|\/\/|::/)) type = 'purple';
-            else if (token.match(/0x|0b|[{}()\[\]]|[:;,.=><!\&|+\-*\/%^]+/)) type = 'yellow';
+            else if (token.match(/0x|0b|[{}()[\]]|[:;,.=><!&|+*/%^-]+/)) type = 'yellow';
             else if (token.match(/if|for|while|function|return|struct|var|case|default|else/i)) type = 'green';
             const weight = weights[type] || 0;
             if (type !== 'cyan' && this.rng.next() > (weight / colorW)) type = 'cyan';

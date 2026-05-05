@@ -155,7 +155,7 @@ class PuzzleGenerator {
             try {
                 const config = JSON.parse(saved);
                 this.applyConfig(config);
-            } catch (e) { }
+            } catch (e) { /* ignore */ }
         }
     }
 
@@ -284,7 +284,6 @@ class PuzzleGenerator {
 
                 for (let l = 0; l < linesInBlock; l++) {
                     const isHeader = (l === 0);
-                    const variance = Math.floor(Math.random() * 6);
 
                     let customHeader = null;
                     if (isHeader && infoIdx < infoLines.length) {
@@ -370,12 +369,12 @@ class PuzzleGenerator {
     }
 
     renderGranularSnippet(container, text, w, totalW, globalFontSize) {
-        const tokens = text.split(/(\/\*.*?\*\/|\/\/.*|0x[0-9A-F]+|0b[01_]+|\s+|[{}()\[\]]|[:;,.=><!&|+\-*\/%^]+|\w+)/gi).filter(t => t);
+        const tokens = text.split(/(\/\*.*?\*\/|\/\/.*|0x[0-9A-F]+|0b[01_]+|\s+|[{}()[\]]|[:;,.=><!&|+*/%^-]+|\w+)/gi).filter(t => t);
         let totalTokenWidth = 0;
         tokens.forEach(token => {
             let type = 'cyan';
             if (token.match(/\/\*|\/\/|::/)) type = 'purple';
-            else if (token.match(/0x|0b|[{}()\[\]]|[:;,.=><!&|+\-*\/%^]+/)) type = 'yellow';
+            else if (token.match(/0x|0b|[{}()[\]]|[:;,.=><!&|+*/%^-]+/)) type = 'yellow';
             else if (token.match(/if|for|while|function|return|struct|var|case|default|else/i)) type = 'green';
             const weight = w[type] || 0;
             const colorW = w.cyan + w.yellow + w.purple + w.green;
@@ -437,7 +436,7 @@ class PuzzleGenerator {
         const bgColor = this.controls.bgColor.value;
         panel.style.display = 'none';
 
-        htmlToImage.toPng(document.body, {
+        window.htmlToImage.toPng(document.body, {
             backgroundColor: bgColor,
             pixelRatio: 2
         })
@@ -449,7 +448,7 @@ class PuzzleGenerator {
                 panel.style.display = 'block';
             })
             .catch(error => {
-                console.error('Hiba a mentés során:', error);
+                console.error('Hiba a mentés során:', error); // eslint-disable-line no-console
                 panel.style.display = 'block';
             });
     }

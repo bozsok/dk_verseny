@@ -17,7 +17,7 @@
     background-color: #000;
     overflow: hidden;
     position: relative;
-    z-index: 9999;
+    z-index: var(--z-result-modal);
 }
 
 .summary-bg-blur {
@@ -30,11 +30,11 @@
     background-position: center;
     filter: blur(9px) brightness(0.7);
     transform: scale(1.1); /* Blur szél-hiba elkerülése */
-    z-index: 0;
+    z-index: 0; /* Alap z-index marad az 0 a blur rétegnek */
 }
 
 .certificate-scaler {
-    z-index: 1;
+    z-index: var(--z-inner-base);
     width: 90%;
     max-width: 1200px;
     aspect-ratio: 3508 / 2480;
@@ -62,7 +62,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: var(--z-inner-base);
 }
 
 .cert-character-container {
@@ -71,7 +71,7 @@
     left: 0;
     width: 1000px;
     height: 1000px;
-    z-index: 5;
+    z-index: var(--z-inner-elements);
 }
 
 #cert-img-summary {
@@ -90,12 +90,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 6;
+    z-index: var(--z-inner-top);
 }
 
 .cert-text {
     position: absolute;
-    z-index: 10;
+    z-index: var(--z-inner-ui);
 }
 
 /* Gratuláció stílus (Krisztián kérése alapján) */
@@ -134,14 +134,14 @@
 }
 
 /* Gombok */
-.summary-actions {
+.dkv-summary__actions {
     position: absolute;
     bottom: 20px;
     right: 20px;
-    z-index: 100;
+    z-index: var(--z-content);
 }
 
-.btn-continue {
+.dkv-summary__btn-continue {
     padding: 15px 40px;
     background: #00636e;
     color: white;
@@ -156,7 +156,7 @@
     transition: all 0.3s ease;
 }
 
-.btn-continue:hover {
+.dkv-summary__btn-continue:hover {
     background: #007582;
     box-shadow: 0 0 30px rgba(0, 234, 255, 0.7);
     transform: translateY(-2px);

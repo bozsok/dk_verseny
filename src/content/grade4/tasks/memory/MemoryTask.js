@@ -178,7 +178,7 @@ export class MemoryTask {
      * VERZIÓ 3.0 - 3-Phase Logic Initialized
      */
     generateGameObjects() {
-        console.log("%c MemoryTask v3.0: 3-Phase Logic Initialized", "color: #00ffff; font-weight: bold;");
+        console.log("%c MemoryTask v3.0: 3-Phase Logic Initialized", "color: #00ffff; font-weight: bold;"); // eslint-disable-line no-console
         const icons = this.shuffle([...AVAILABLE_ICONS]);
         const objects = [];
 
