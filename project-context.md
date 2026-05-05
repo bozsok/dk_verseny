@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-05-04T18:45:00+02:00'
+date: '2026-05-05T15:48:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.50.0 (v0.50.0)
+- **Version:** 0.50.1 (v0.50.1)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
-- **Last Updated:** 2026-05-04
-- **Current Mission:** Adatintegritás és Feladat Életciklus Stabilizáció (v0.50.0)
+- **Last Updated:** 2026-05-05
+- **Current Mission:** Adatintegritás és Feladat Életciklus Stabilizáció (v0.50.1)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -178,4 +178,5 @@ optimized_for_llm: true
 - [x] Grade 4: HUB visual modernization (Glassmorphism, Radial layout) (v0.48.0)
 - [x] Grade 4: Finale tasks scoring balancing (6/10 pts) and HUD sync (v0.49.0)
 - [x] Adatintegritás: PHP ranglista fájlzárolás és atomi írás (v0.50.0)
+- [x] Grade 3: FinaleTask ReferenceError javítás és UI takarítás optimalizálás (v0.50.1)
 - [x] Stabilizáció: Feladat életciklus-kezelés és modális ablak takarítás (v0.50.0)

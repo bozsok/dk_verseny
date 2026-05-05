@@ -5,7 +5,15 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.50.1] - 2026-05-05
+
+### Javítva
+- **Finálé feladat `ReferenceError`**: A 3. osztályos finálé játék végén (Nagy Zár – Végjáték) az "OK" gomb megnyomásakor a háttérben keletkező `gameInstance is not defined` hiba javítva. A hiba miatt az interakció elakadt és a feladatot nem lehetett lezárni.
+- **Feladat megsemmisítésének késleltetése**: A komponens `destroy()` metódusának meghívását eltávolítottuk az OK gomb eseménykezelőjéből, így az értékelő (Result) ablak mögött nem tűnik el a feladat felülete, a tényleges takarítást pedig a Result ablak "Tovább" gombja végzi el.
+- **Ranglista betöltési állapot (UI fix)**: Az admin dashboard betöltésekor a statisztikai kártyák kezdeti értékeit ("0") és a JavaScriptben alkalmazott ideiglenes pontokat ("...") lecseréltük a „Betöltés...” szövegre mind az `index.html`-ben, mind a `dashboard.js`-ben. Ezzel kiküszöböltük a `Chart.js` (külső CDN-ről történő) késleltetett letöltéséből adódó vizuális zavarokat, amikor az adatok és a visszajelzés csak hosszú másodpercek után jelentek meg a felületen.
+
 ## [0.50.0] - 2026-05-04
+
 
 ### Hozzáadva
 - **Központosított feladat-életciklus kezelés**: Bevezettük az `activeTaskInstance` nyomkövetést a `Main.js`-ben, amely garantálja az összes aszinkron feladat (időzítők, eseménykezelők) biztonságos leállítását navigációkor.

@@ -2728,8 +2728,8 @@ class DigitalKulturaVerseny {
           okBtn.style.display = 'block';
           okBtn.disabled = true;
           okBtn.onclick = () => {
-            const result = gameInstance.evaluate();
-            gameInstance.destroy();
+            if (!this.activeTaskInstance) return;
+            const result = this.activeTaskInstance.evaluate();
             onTaskComplete(result);
           };
         } else {
