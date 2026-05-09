@@ -159,6 +159,7 @@ export class IslandTask {
 
         this.typewriter.type(titleEl, titleText, {
             speed: 20,
+            beep: true,
             hideCursorOnComplete: true, // User kérése: a cím végén ne maradjon kurzor
             onComplete: () => {
                 if (this.isIntroSkipped) return;

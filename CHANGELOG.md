@@ -5,6 +5,12 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.51.1] - 2026-05-09
+
+### Hozzáadva
+- **Terminál-csipogás a feladatcímek kiírásakor (Web Audio API)**: A Typewriter osztály új `beep: true` opcióval bővült, amely minden karakter felfedésekor egy rövid (40ms), 880 Hz-es szinuszhullám-csipogást játszik le az `OscillatorNode` és `GainNode` segítségével. A hang halk (6% hangerő), exponenciális lecsengéssel rendelkezik, és szóközöknél nem szól. Az `AudioContext` lazy inicializálódik és újrahasználható a Typewriter példányon belül.
+- **Grade 4 feladatcímek beep aktiválása**: Mind a 7 feladat (`IslandTask`, `LibraryTask`, `LeetPuzzle`, `SpeedTask`, `FinaleIntroTask`, `FinaleTask`, `MemoryTask`) főcímének typewriter hívása megkapta a `beep: true` opciót. Az alcímeknél a csipogás tudatosan kimarad, mivel ott a narrátor hangfájl játszódik le.
+
 ## [0.51.0] - 2026-05-09
 
 ### Hozzáadva

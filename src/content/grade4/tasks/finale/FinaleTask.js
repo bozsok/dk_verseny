@@ -70,6 +70,7 @@ execute_override();`;
 
         this.typewriter.type(titleEl, titleText, {
             speed: 40,
+            beep: true,
             onComplete: () => {
                 const t1 = setTimeout(() => {
                     titleEl.classList.add('is-hidden');

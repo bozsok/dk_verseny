@@ -6,6 +6,11 @@
  * 2. Rekurzívan bejárja, és csak a SZÖVEGES tartalmakat bontja `span`-okra.
  * 3. A formázások (pl <b>, <i>) megmaradnak befoglaló elemként.
  * 4. `play()`: Elindítja a felfedést.
+ * 
+ * Beep funkció (Web Audio API):
+ * A `type()` metódus `beep: true` opciójával aktiválható terminál-stílusú
+ * csipogás minden karakter felfedésekor. Az AudioContext lazy inicializálódik
+ * és újrahasználható a példányon belül.
  */
 class Typewriter {
     constructor() {
@@ -13,6 +18,11 @@ class Typewriter {
         this.cursorElement = null;
         this.activeSpans = []; // Az éppen animált elemek spanjei
         this.currentTarget = null;
+        this._audioCtx = null; // Web Audio API kontextus (lazy init)
+        this._beepEnabled = false;
+        this._beepFrequency = 880; // Hz – terminál-csipogás frekvencia
+        this._beepDuration = 0.04; // másodperc (40ms)
+        this._beepVolume = 0.06; // Halk, nem zavaró hangerő
     }
 
     /**
@@ -59,6 +69,16 @@ class Typewriter {
 
     /**
      * Elindítja az animációt egy már előkészített elemen, VAGY előkészíti és indítja.
+     * @param {HTMLElement} element - A cél DOM elem.
+     * @param {string|null} htmlContent - A kiírandó HTML tartalom.
+     * @param {Object} options - Konfiguráció.
+     * @param {number} [options.speed=30] - Karakterenkénti késleltetés (ms).
+     * @param {boolean} [options.showCursor=true] - Kurzor megjelenítése.
+     * @param {boolean} [options.hideCursorOnComplete=false] - Kurzor elrejtése befejezéskor.
+     * @param {boolean} [options.beep=false] - Terminál-csipogás engedélyezése karakterenként.
+     * @param {number} [options.beepFrequency=880] - Csipogás frekvencia (Hz).
+     * @param {number} [options.beepVolume=0.06] - Csipogás hangerő (0.0–1.0).
+     * @param {Function} [options.onComplete] - Callback befejezéskor.
      */
     type(element, htmlContent, options = {}) {
         // Ha kapunk HTML contentet, akkor újra-initelünk.
@@ -70,6 +90,14 @@ class Typewriter {
         const speed = (options.speed !== undefined && options.speed !== null) ? options.speed : 30;
         const showCursor = options.showCursor !== false;
         const onComplete = options.onComplete || (() => { });
+
+        // Beep konfiguráció
+        this._beepEnabled = options.beep === true;
+        if (this._beepEnabled) {
+            this._beepFrequency = options.beepFrequency || 880;
+            this._beepVolume = options.beepVolume ?? 0.06;
+            this._initAudioContext();
+        }
 
         // Összes rejtett span összegyűjtése az elemen belül
         const charsToReveal = element.querySelectorAll('.dkv-tw-char');
@@ -119,6 +147,11 @@ class Typewriter {
             const span = charsToReveal[index];
             span.style.opacity = '1';
 
+            // Terminál-csipogás (szóközöknél és HTML tageknél nem szól)
+            if (this._beepEnabled && span.textContent.trim().length > 0) {
+                this._beep();
+            }
+
             if (showCursor) {
                 span.classList.add('dkv-cursor-active');
                 lastSpan = span;
@@ -131,6 +164,52 @@ class Typewriter {
 
         const timeoutId = setTimeout(revealNext, speed);
         this.timeouts.push(timeoutId);
+    }
+
+    /**
+     * Web Audio API kontextus inicializálása (lazy, egyszeri).
+     * Csak felhasználói interakció után hívódik (autoplay policy safe).
+     */
+    _initAudioContext() {
+        if (this._audioCtx) return;
+        try {
+            this._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch {
+            // Böngésző nem támogatja – csendes fallback
+            this._beepEnabled = false;
+        }
+    }
+
+    /**
+     * Egyetlen rövid terminál-csipogás lejátszása (OscillatorNode).
+     * Zero-latency, nem igényel külső fájlt.
+     */
+    _beep() {
+        if (!this._audioCtx || this._audioCtx.state === 'closed') return;
+
+        // Suspended állapot feloldása (böngésző autoplay policy)
+        if (this._audioCtx.state === 'suspended') {
+            this._audioCtx.resume().catch(() => {});
+        }
+
+        const ctx = this._audioCtx;
+        const now = ctx.currentTime;
+
+        // Oszcillátor – szinuszhullám
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(this._beepFrequency, now);
+
+        // Hangerő-lecsengés (GainNode)
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(this._beepVolume, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + this._beepDuration);
+
+        // Csatlakoztatás és lejátszás
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + this._beepDuration);
     }
 
     _ensureCursorStyle() {
@@ -163,14 +242,20 @@ class Typewriter {
         }
     }
 
+    /**
+     * Leállítja az animációt és takarítja az erőforrásokat.
+     */
     stop() {
         this.timeouts.forEach(clearTimeout);
         this.timeouts = [];
+        this._beepEnabled = false;
         if (this.cursorElement) {
             this.cursorElement.remove();
             this.cursorElement = null;
         }
+        // AudioContext-et NEM zárjuk, mert újrahasználható a következő type() híváskor
     }
 }
+
 
 export default Typewriter;

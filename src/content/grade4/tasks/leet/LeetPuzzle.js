@@ -320,6 +320,7 @@ export class LeetPuzzle {
         // Szekvenciális írógép effekt
         this.typewriter.type(titleEl, titleText, {
             speed: 25,
+            beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
                 setTimeout(() => {

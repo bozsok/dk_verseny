@@ -231,6 +231,7 @@ export class SpeedTask {
 
         this.typewriter.type(titleEl, titleText, {
             speed: 25,
+            beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
                 const t = setTimeout(() => {

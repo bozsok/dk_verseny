@@ -467,6 +467,7 @@ export class MemoryTask {
                 this.typewriter.stop();
                 this.typewriter.type(titleEl, titleText, {
                     speed: 25,
+                    beep: true,
                     hideCursorOnComplete: true,
                     onComplete: () => {
                         const t4 = setTimeout(() => {

@@ -149,6 +149,7 @@ export class FinaleIntroTask {
         // Szekvenciális írógép effekt
         this.typewriter.type(this.titleEl, titleText, {
             speed: 20,
+            beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
                 setTimeout(() => {

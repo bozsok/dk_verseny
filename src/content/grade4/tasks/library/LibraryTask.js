@@ -208,6 +208,7 @@ export class LibraryTask {
         this.logger.info('Starting intro typewriter sequence');
         this.typewriter.type(titleEl, titleText, {
             speed: 20,
+            beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
                 if (this.isIntroSkipped) return;

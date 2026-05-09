@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-05-09T08:17:00+02:00'
+date: '2026-05-09T08:30:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.51.0 (v0.51.0)
+- **Version:** 0.51.1 (v0.51.1)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
 - **Last Updated:** 2026-05-09
-- **Current Mission:** Grade 4 feladathang szinkronizáció az alcím typewriter effektussal (v0.51.0)
+- **Current Mission:** Grade 4 feladathang és terminál-csipogás szinkronizáció (v0.51.1)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -181,3 +181,4 @@ optimized_for_llm: true
 - [x] Grade 3: FinaleTask ReferenceError javítás és UI takarítás optimalizálás (v0.50.1)
 - [x] Stabilizáció: Feladat életciklus-kezelés és modális ablak takarítás (v0.50.0)
 - [x] Grade 4: Feladathang lejátszás az alcím typewriter szinkronizációjával (v0.51.0)
+- [x] Grade 4: Terminál-csipogás a feladatcímek írógép-effektusához (Web Audio API) (v0.51.1)
