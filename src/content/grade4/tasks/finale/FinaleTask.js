@@ -6,8 +6,8 @@ import './FinaleTask.css';
 /**
  * @class FinaleTask
  * @description A Grade 4 modul záró feladata (Neon Terminal).
- * - Verzió: 0.49.0
- * - Állapot: Győzelmi szekvencia véglegesítve
+ * - Verzió: 0.52.0
+ * - Állapot: Győzelmi szekvencia és hanghatások véglegesítve
  * A versenyzőnek a Mátrix-esőben kell megtalálnia az indító kód karaktereit.
  */
 export class FinaleTask {
@@ -69,8 +69,9 @@ execute_override();`;
         const subtitleText = `Kattints a lehulló fénylő karakterekre, amellyel az indítókódot állíthatod össze. Ha összeállítottad, akkor az ELLENŐRZÉS gombbal kezdeményezheted a Rendszermag újraindítását.`;
 
         this.typewriter.type(titleEl, titleText, {
-            speed: 40,
+            speed: 25,
             beep: true,
+            hideCursorOnComplete: true,
             onComplete: () => {
                 const t1 = setTimeout(() => {
                     titleEl.classList.add('is-hidden');
@@ -357,7 +358,7 @@ execute_override();`;
 
         const t = setTimeout(() => {
             if (this.codeScreen) this.codeScreen.classList.remove('is-glitching');
-            
+
             // Azonnali befejezés jelezése a keretrendszernek, átadva saját magát (this)
             this.onComplete({
                 success: true,
@@ -383,9 +384,11 @@ execute_override();`;
             if (this.rebootOverlay && this.rebootTextEl) {
                 this.rebootOverlay.style.display = 'flex';
                 const rebootHtml = `RENDSZERMAG ÚJRAINDÍTÁS: <span class="dkv-finale-task__reboot-highlight">ELKEZDŐDÖTT</span>`;
-                
+
                 this.typewriter.type(this.rebootTextEl, rebootHtml, {
-                    speed: 40,
+                    speed: 25,
+                    beep: true,
+                    hideCursorOnComplete: true,
                     onComplete: () => {
                         // 3. Várakozás 4 másodpercig a kiírás után
                         const t2 = setTimeout(() => {
@@ -401,23 +404,46 @@ execute_override();`;
     }
 
     /**
-     * Végső visszaszámlálás indítása.
+     * Elindítja a végső 3-2-1 visszaszámlálást a lezárás előtt.
+     * @param {Function} onNext - A lezárás utáni callback.
      */
     startFinalCountdown(onNext) {
-        if (!this.winCountdownEl) { onNext(); return; }
+        if (!this.winCountdownEl) {
+            onNext();
+            return;
+        }
+
         this.winCountdownEl.style.display = 'block';
-        let count = 3;
-        this.winCountdownEl.textContent = count;
-        const interval = setInterval(() => {
-            count--;
-            if (count > 0) {
-                this.winCountdownEl.textContent = count;
+
+        const startTime = performance.now();
+        const duration = 3000;
+        let lastLoggedSecond = -1;
+
+        const update = () => {
+            const now = performance.now();
+            const elapsed = now - startTime;
+            const remaining = Math.max(0, duration - elapsed);
+            const currentSecond = Math.ceil(remaining / 1000);
+
+            // Csak akkor frissítünk és csipogunk, ha változott a másodperc
+            if (currentSecond !== lastLoggedSecond && currentSecond > 0) {
+                this.winCountdownEl.textContent = currentSecond;
+                this.typewriter.playBeep();
+                lastLoggedSecond = currentSecond;
+            }
+
+            if (elapsed < duration) {
+                // UI frissítési ütem (UI refresh trigger) - megfelel a 112. szabálynak
+                const t = setTimeout(update, 50);
+                this.timeouts.push(t);
             } else {
-                clearInterval(interval);
+                // A visszaszámlálás véget ért
                 this.winCountdownEl.style.display = 'none';
                 this.performFinalBlackout(onNext);
             }
-        }, 1000);
+        };
+
+        update();
     }
 
     /**
@@ -425,16 +451,16 @@ execute_override();`;
      */
     performFinalBlackout(onNext) {
         if (this.winBlackoutEl) this.winBlackoutEl.classList.add('is-active');
-        
+
         const t = setTimeout(() => {
             // 1. Diaváltás a háttérben
             onNext();
-            
+
             // 2. Feladat bezárása és takarítás
             setTimeout(() => {
                 if (this.options.gameInterface) this.options.gameInterface.hideTaskModal();
                 this.destroy();
-                
+
                 // 3. Elsötétítés (blackout) eltávolítása (fokozatosan)
                 setTimeout(() => {
                     if (this.winBlackoutEl) {

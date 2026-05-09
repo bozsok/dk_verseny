@@ -167,6 +167,17 @@ class Typewriter {
     }
 
     /**
+     * Manuálisan lejátszik egy terminál-csipogást.
+     * @param {Object} options - Beállítások (frekvencia, hangerő).
+     */
+    playBeep(options = {}) {
+        this._beepFrequency = options.frequency || 880;
+        this._beepVolume = options.volume ?? 0.06;
+        this._initAudioContext();
+        this._beep();
+    }
+
+    /**
      * Web Audio API kontextus inicializálása (lazy, egyszeri).
      * Csak felhasználói interakció után hívódik (autoplay policy safe).
      */
