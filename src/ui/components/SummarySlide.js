@@ -29,33 +29,21 @@ export class SummarySlide {
         const score = this.stateManager.getStateValue('score') || 0;
         const timeMs = this.timeManager.getElapsedTime();
         const avatar = this.stateManager.getStateValue('avatar');
-        const currentGrade = this.stateManager.getStateValue('currentGrade');
-
-        // Évfolyam meghatározása (classId alapján, pl. '4.a' -> '4')
-        const grade = (userProfile.classId && userProfile.classId.charAt(0)) || (currentGrade ? currentGrade.toString() : '3');
-
-        // Karakter kép meghatározása (Grade 4 esetén teljes elérési út, Grade 3 esetén ID)
+        
+        // Karakter kép meghatározása (Grade 3 esetén ID: "b1", "g1")
         let charSrc = '';
-
         if (avatar && typeof avatar === 'string') {
-            if (avatar.includes('/') || avatar.includes('\\')) {
-                // Ha teljes útvonal (Grade 4), konvertáljuk large-ra és _n.jpg-re
-                charSrc = avatar.replace('/small/', '/large/').replace('_k.jpg', '_n.jpg');
-            } else {
-                // Eredeti ID-alapú logika (pl. "b1" -> "boy_1")
-                let charId = 'boy_1';
-                if (avatar.startsWith('b')) {
-                    charId = `boy_${avatar.substring(1)}`;
-                } else if (avatar.startsWith('g')) {
-                    charId = `girl_${avatar.substring(1)}`;
-                } else if (avatar.includes('_')) {
-                    charId = avatar;
-                }
-                charSrc = `assets/images/grade${grade}/karakter/large/${charId}_n.jpg`;
+            let charId = 'boy_1';
+            if (avatar.startsWith('b')) {
+                charId = `boy_${avatar.substring(1)}`;
+            } else if (avatar.startsWith('g')) {
+                charId = `girl_${avatar.substring(1)}`;
+            } else if (avatar.includes('_')) {
+                charId = avatar;
             }
+            charSrc = `assets/images/grade3/karakter/large/${charId}_n.jpg`;
         } else {
-            // Fallback alapértelmezett karakterre
-            charSrc = `assets/images/grade${grade}/karakter/large/boy_1_n.jpg`;
+            charSrc = `assets/images/grade3/karakter/large/boy_1_n.jpg`;
         }
 
         const dateStr = new Date().toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -67,17 +55,15 @@ export class SummarySlide {
             <div class="summary-bg-blur" ${bgStyle}></div>
             <div class="certificate-scaler">
                 <div class="certificate-content">
-                    <img src="assets/images/grade${grade}/slides/gratulaciol_alap_fekvo.jpg" 
+                    <img src="assets/images/grade3/slides/gratulaciol_alap_fekvo.jpg" 
                          class="certificate-bg" 
-                         alt="Háttér" 
-                         onerror="this.src='assets/images/grade3/slides/gratulaciol_alap_fekvo.jpg'; this.onerror=null;">
+                         alt="Háttér">
                     
                     <div class="cert-character-container">
                         <img id="cert-img-summary" src="${charSrc}" alt="Karakter">
                         <img class="cert-character-frame" 
-                             src="assets/images/grade${grade}/slides/oklevel_keret_fekvo.png" 
-                             alt="Keret"
-                             onerror="this.src='assets/images/grade3/slides/oklevel_keret_fekvo.png'; this.onerror=null;">
+                             src="assets/images/grade3/slides/oklevel_keret_fekvo.png" 
+                             alt="Keret">
                     </div>
 
                     <div id="summary-name" class="cert-text">${userProfile.name || 'Hős'}</div>

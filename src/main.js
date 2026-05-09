@@ -20,6 +20,7 @@ import RegistrationSlide from './ui/components/RegistrationSlide.js';
 import CharacterSlide from './ui/components/CharacterSlide.js';
 import StorySlide from './ui/components/StorySlide.js';
 import SummarySlide from './ui/components/SummarySlide.js';
+import { SummarySlideGrade4 } from './ui/components/SummarySlideGrade4.js';
 import GameInterface from './ui/components/GameInterface.js';
 import { GameInterfaceGrade4 } from './ui/components/GameInterfaceGrade4.js';
 import { PortalTransition } from './ui/components/PortalTransition.js';
@@ -1520,7 +1521,14 @@ class DigitalKulturaVerseny {
       case SLIDE_TYPES.VIDEO:
       case SLIDE_TYPES.REWARD: newComponent = new VideoSlide(slide, commonOptions); break;
       case SLIDE_TYPES.TASK: newComponent = new TaskSlide(slide, commonOptions); break;
-      case SLIDE_TYPES.INFO: newComponent = new SummarySlide(slide, commonOptions); break;
+      case SLIDE_TYPES.INFO: 
+        const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
+        if (String(currentGrade) === '4') {
+          newComponent = new SummarySlideGrade4(slide, commonOptions);
+        } else {
+          newComponent = new SummarySlide(slide, commonOptions);
+        }
+        break;
       default:
         if (this.logger) this.logger.warn('Unknown slide type:', { type: slide.type });
         newComponent = new VideoSlide(slide, commonOptions); // Fallback to VideoSlide

@@ -5,7 +5,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
-## [0.51.1] - 2026-05-09
+## [0.52.0] - 2026-05-09
+ 
++### Megváltoztatva
++- **Grade 4 összegző képernyő (SummarySlideGrade4) vizuális finomhangolása**:
++    - **Pixelpontos pozicionálás**: Az összes szöveges elem (név, osztály, pontszám, idő, dátum) helyzetét és méretét a háttérgrafikához igazítottuk a tökéletes illeszkedés érdekében.
++    - **Vibráló türkiz keretek**: A felhasználói karakterkép és a Kingdom illusztráció konténere is megkapta a projektben etalonnak számító élénk türkiz (`#00ffff`) keretet (4px solid).
++    - **Felskálázott ragyogás (Glow)**: A 3508x2480-as nagy felbontású vászonhoz igazodva a ragyogás intenzitását jelentősen megnöveltük (60px és 80px blur), így az aura a hatalmas méretek mellett is jól látható és arányos maradt.
++    - **BEM-konform stílusizoláció**: A Grade 4 összegző diájának stílusait a `.dkv-summary-g4__` névtér alá vontuk, megakadályozva a Grade 3 stílusaival való ütközést.
++
++### Javítva
++- **Felesleges navigációs elemek eltávolítása**: Töröltük a redundáns „VÉGE” gombot a JavaScript-ből, és felszámoltuk a hozzá tartozó elavult CSS szabályokat (`.dkv-summary-g4__actions`, `.dkv-summary-g4__btn-end`), megtisztítva ezzel a kódbázist.
++
+ ## [0.51.1] - 2026-05-09
 
 ### Hozzáadva
 - **Terminál-csipogás a feladatcímek kiírásakor (Web Audio API)**: A Typewriter osztály új `beep: true` opcióval bővült, amely minden karakter felfedésekor egy rövid (40ms), 880 Hz-es szinuszhullám-csipogást játszik le az `OscillatorNode` és `GainNode` segítségével. A hang halk (6% hangerő), exponenciális lecsengéssel rendelkezik, és szóközöknél nem szól. Az `AudioContext` lazy inicializálódik és újrahasználható a Typewriter példányon belül.
