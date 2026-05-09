@@ -323,6 +323,7 @@ export class LeetPuzzle {
             hideCursorOnComplete: true,
             onComplete: () => {
                 setTimeout(() => {
+                    this._playTaskAudio('leet');
                     this.typewriter.type(subtitleEl, subtitleText, {
                         speed: 15,
                         onComplete: () => {
@@ -349,6 +350,12 @@ export class LeetPuzzle {
         if (this.isIntroSkipped) return;
         this.isIntroSkipped = true;
         this.typewriter.stop();
+
+        // Feladathang leállítása átugráskor
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
 
         const titleEl = this.element.querySelector('.dkv-leet__title');
         const subtitleEl = this.element.querySelector('.dkv-leet__subtitle');
@@ -640,11 +647,40 @@ export class LeetPuzzle {
     }
 
     /**
+     * Feladathang lejátszása.
+     * @param {string} filename - A hangfájl neve kiterjesztés nélkül.
+     */
+    _playTaskAudio(filename) {
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
+        const basePath = import.meta.env?.BASE_URL || '/';
+        const cleanBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        const src = `${cleanBase}/assets/audio/grade4/tasks/${filename}.mp3`;
+
+        const audio = new Audio(src);
+        audio.volume = window.DKV_APP?.narrationVolume ?? 1.0;
+        this._taskAudio = audio;
+
+        audio.play().catch(err => {
+            this.logger.warn(`Feladathang lejátszása sikertelen: ${src}`, { error: err.message });
+        });
+    }
+
+    /**
      * Takarítás az objektum megsemmisítésekor.
      */
     destroy() {
         this.stopGlitchEffects();
         this.typewriter.stop();
+
+        // Feladathang takarítás
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
 
         // Időzítők megállítása a memóriaszivárgás ellen (Scripture compliance)
         this.timeouts.forEach(t => clearTimeout(t));

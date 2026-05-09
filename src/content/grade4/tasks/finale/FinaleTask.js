@@ -75,6 +75,7 @@ execute_override();`;
                     titleEl.classList.add('is-hidden');
                     const t2 = setTimeout(() => {
                         titleEl.style.display = 'none';
+                        this._playTaskAudio('finale');
                         this.typewriter.type(subtitleEl, subtitleText, {
                             speed: 25,
                             onComplete: () => {
@@ -103,6 +104,12 @@ execute_override();`;
         this.typewriter.stop();
         this.timeouts.forEach(t => clearTimeout(t));
         this.timeouts = [];
+
+        // Feladathang takarítás
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
 
         if (this.matrix) this.matrix.destroy();
         if (this.element) this.element.remove();
@@ -206,6 +213,29 @@ execute_override();`;
         this.setupHelpLogic();
         this.initCodeSpans();
         this.updateStats();
+    }
+
+    /**
+     * Feladathang lejátszása.
+     * @param {string} filename - A hangfájl neve kiterjesztés nélkül.
+     */
+    _playTaskAudio(filename) {
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
+        const basePath = import.meta.env?.BASE_URL || '/';
+        const cleanBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        const src = `${cleanBase}/assets/audio/grade4/tasks/${filename}.mp3`;
+
+        const audio = new Audio(src);
+        audio.volume = window.DKV_APP?.narrationVolume ?? 1.0;
+        this._taskAudio = audio;
+
+        audio.play().catch(err => {
+            this.logger.warn(`Feladathang lejátszása sikertelen: ${src}`, { error: err.message });
+        });
     }
 
     setupHelpLogic() {

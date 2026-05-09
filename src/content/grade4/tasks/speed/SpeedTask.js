@@ -234,6 +234,7 @@ export class SpeedTask {
             hideCursorOnComplete: true,
             onComplete: () => {
                 const t = setTimeout(() => {
+                    this._playTaskAudio('speed');
                     this.typewriter.type(subtitleEl, subtitleText, {
                         speed: 15,
                         onComplete: () => {
@@ -259,6 +260,12 @@ export class SpeedTask {
         if (this.isIntroSkipped) return;
         this.isIntroSkipped = true;
         this.typewriter.stop();
+
+        // Feladathang leállítása átugráskor
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
 
         const titleEl = this.element.querySelector('.dkv-speed__title');
         const subtitleEl = this.element.querySelector('.dkv-speed__subtitle');
@@ -1067,6 +1074,29 @@ export class SpeedTask {
     /**
      * Erőforrások felszabadítása.
      */
+    /**
+     * Feladathang lejátszása.
+     * @param {string} filename - A hangfájl neve kiterjesztés nélkül.
+     */
+    _playTaskAudio(filename) {
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
+        const basePath = import.meta.env?.BASE_URL || '/';
+        const cleanBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        const src = `${cleanBase}/assets/audio/grade4/tasks/${filename}.mp3`;
+
+        const audio = new Audio(src);
+        audio.volume = window.DKV_APP?.narrationVolume ?? 1.0;
+        this._taskAudio = audio;
+
+        audio.play().catch(err => {
+            this.logger.warn(`Feladathang lejátszása sikertelen: ${src}`, { error: err.message });
+        });
+    }
+
     destroy() {
         // 1. Összes timeout leállítása
         this.timeouts.forEach(t => clearTimeout(t));
@@ -1082,7 +1112,13 @@ export class SpeedTask {
             this.typewriter.stop();
         }
 
-        // 4. Event listener cleanup
+        // 4. Feladathang takarítás
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
+        // 5. Event listener cleanup
         if (this.battleGrid) {
             const activeBtn = this.battleGrid.querySelector('.dkv-speed__click-btn');
             if (activeBtn) {
@@ -1101,7 +1137,7 @@ export class SpeedTask {
         if (closeBtn && this._boundCloseHelp) closeBtn.removeEventListener('click', this._boundCloseHelp);
         if (helpOverlay && this._boundOverlayClick) helpOverlay.removeEventListener('click', this._boundOverlayClick);
 
-        // 5. DOM eltávolítása
+        // 6. DOM eltávolítása
         if (this.element) {
             this.element.remove();
         }

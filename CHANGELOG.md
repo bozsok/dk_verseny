@@ -5,6 +5,13 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.51.0] - 2026-05-09
+
+### Hozzáadva
+- **Grade 4 feladathang lejátszás**: Az összes feladat (7 db) alcím-typewriter indításakor mostantól automatikusan lejátszódik a feladathoz tartozó hangfájl. A hangok a `public/assets/audio/grade4/tasks/` mappából töltődnek be, és a globális narráció hangerőbeállítást (`narrationVolume`) követik.
+- **MemoryTask háromfázisú hangkezelés**: A memóriafeladat három interakciós fázisában (MEGFIGYELÉS → ELLENŐRZÉS → KIVÁLASZTÁS) külön-külön hangfájl (`memory_1.mp3`, `memory_2.mp3`, `memory_3.mp3`) játszódik le, minden ciklusban (Stage 1–3) újra.
+- **Feladathang életciklus-kezelés**: Minden érintett feladatmodul (`IslandTask`, `LibraryTask`, `LeetPuzzle`, `SpeedTask`, `FinaleIntroTask`, `FinaleTask`, `MemoryTask`) `destroy()` metódusa és `skipIntro()` funkciója kiegészült az aktív feladathang biztonságos leállításával, megelőzve a memóriaszivárgást és a háttérben folytatódó lejátszást.
+
 ## [0.50.3] - 2026-05-05
 
 ### Hozzáadva

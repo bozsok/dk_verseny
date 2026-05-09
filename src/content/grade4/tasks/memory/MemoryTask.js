@@ -318,6 +318,12 @@ export class MemoryTask {
         this.isIntroSkipped = true;
         this.typewriter.stop();
 
+        // Feladathang leállítása átugráskor
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
         const titleEl = this.element.querySelector('.dkv-memory__title');
         const subtitleEl = this.element.querySelector('.dkv-memory__subtitle');
         const viewport = this.element.querySelector('.dkv-memory__main-viewport');
@@ -464,6 +470,7 @@ export class MemoryTask {
                     hideCursorOnComplete: true,
                     onComplete: () => {
                         const t4 = setTimeout(() => {
+                            this._playTaskAudio('memory_1');
                             this.typewriter.type(subtitleEl, subtitleText, {
                                 speed: 15,
                                 onComplete: () => {
@@ -485,6 +492,7 @@ export class MemoryTask {
                 titleEl.innerHTML = titleText;
                 subtitleEl.innerHTML = '';
                 this.typewriter.stop();
+                this._playTaskAudio('memory_1');
                 this.typewriter.type(subtitleEl, subtitleText, {
                     speed: 15,
                     onComplete: () => {
@@ -504,6 +512,7 @@ export class MemoryTask {
 
             subtitleEl.innerHTML = '';
             this.typewriter.stop();
+            this._playTaskAudio('memory_2');
             this.typewriter.type(subtitleEl, subtitleText, {
                 speed: 15,
                 onComplete: () => {
@@ -519,6 +528,7 @@ export class MemoryTask {
 
             subtitleEl.innerHTML = '';
             this.typewriter.stop();
+            this._playTaskAudio('memory_3');
             this.typewriter.type(subtitleEl, subtitleText, {
                 speed: 15,
                 onComplete: () => {
@@ -828,6 +838,29 @@ export class MemoryTask {
     }
 
     /**
+     * Feladathang lejátszása.
+     * @param {string} filename - A hangfájl neve kiterjesztés nélkül.
+     */
+    _playTaskAudio(filename) {
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
+        const basePath = import.meta.env?.BASE_URL || '/';
+        const cleanBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        const src = `${cleanBase}/assets/audio/grade4/tasks/${filename}.mp3`;
+
+        const audio = new Audio(src);
+        audio.volume = window.DKV_APP?.narrationVolume ?? 1.0;
+        this._taskAudio = audio;
+
+        audio.play().catch(err => {
+            this.logger.warn(`Feladathang lejátszása sikertelen: ${src}`, { error: err.message });
+        });
+    }
+
+    /**
      * Takarítás az objektum megsemmisítésekor.
      */
     destroy() {
@@ -835,6 +868,12 @@ export class MemoryTask {
         // Időzítők megállítása a memóriaszivárgás ellen
         this.timeouts.forEach(t => clearTimeout(t));
         this.timeouts = [];
+
+        // Feladathang takarítás
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
 
         this.typewriter.stop();
         if (this.element) {

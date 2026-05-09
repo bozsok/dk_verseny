@@ -152,6 +152,7 @@ export class FinaleIntroTask {
             hideCursorOnComplete: true,
             onComplete: () => {
                 setTimeout(() => {
+                    this._playTaskAudio('finaleintro');
                     this.typewriter.type(this.subtitleEl, subtitleText, {
                         speed: 10,
                         onComplete: () => {
@@ -319,6 +320,29 @@ export class FinaleIntroTask {
     }
 
     /**
+     * Feladathang lejátszása.
+     * @param {string} filename - A hangfájl neve kiterjesztés nélkül.
+     */
+    _playTaskAudio(filename) {
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
+        const basePath = import.meta.env?.BASE_URL || '/';
+        const cleanBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        const src = `${cleanBase}/assets/audio/grade4/tasks/${filename}.mp3`;
+
+        const audio = new Audio(src);
+        audio.volume = window.DKV_APP?.narrationVolume ?? 1.0;
+        this._taskAudio = audio;
+
+        audio.play().catch(() => {
+            // Csendes hiba – a FinaleIntroTask-ban nincs logger
+        });
+    }
+
+    /**
      * Megsemmisíti a komponenst és felszabadítja az erőforrásokat.
      */
     destroy() {
@@ -327,6 +351,13 @@ export class FinaleIntroTask {
         });
         this._handlers = [];
         this.typewriter.stop();
+
+        // Feladathang takarítás
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.polyPieces.forEach(pp => { if (pp.instance) pp.instance.destroy(); });
         if (this.helpOverlay && this.helpOverlay.parentNode) {

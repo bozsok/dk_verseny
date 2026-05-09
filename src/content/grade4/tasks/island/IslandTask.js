@@ -162,6 +162,7 @@ export class IslandTask {
             hideCursorOnComplete: true, // User kérése: a cím végén ne maradjon kurzor
             onComplete: () => {
                 if (this.isIntroSkipped) return;
+                this._playTaskAudio('island');
                 this.typewriter.type(subtitleEl, subtitleText, {
                     speed: 10,
                     onComplete: () => {
@@ -184,6 +185,12 @@ export class IslandTask {
         if (this.isIntroSkipped) return;
         this.isIntroSkipped = true;
         this.typewriter.stop();
+
+        // Feladathang leállítása átugráskor
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
 
         const titleEl = this.element.querySelector('.dkv-island__title');
         const subtitleEl = this.element.querySelector('.dkv-island__subtitle');
@@ -745,8 +752,38 @@ export class IslandTask {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    /**
+     * Feladathang lejátszása.
+     * @param {string} filename - A hangfájl neve kiterjesztés nélkül.
+     */
+    _playTaskAudio(filename) {
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
+        const basePath = import.meta.env?.BASE_URL || '/';
+        const cleanBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        const src = `${cleanBase}/assets/audio/grade4/tasks/${filename}.mp3`;
+
+        const audio = new Audio(src);
+        audio.volume = window.DKV_APP?.narrationVolume ?? 1.0;
+        this._taskAudio = audio;
+
+        audio.play().catch(err => {
+            this.logger.warn(`Feladathang lejátszása sikertelen: ${src}`, { error: err.message });
+        });
+    }
+
     destroy() {
         this.typewriter.stop();
+
+        // Feladathang takarítás
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
             this.animationId = null;

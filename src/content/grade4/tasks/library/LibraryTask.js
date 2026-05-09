@@ -211,6 +211,7 @@ export class LibraryTask {
             hideCursorOnComplete: true,
             onComplete: () => {
                 if (this.isIntroSkipped) return;
+                this._playTaskAudio('library');
                 this.typewriter.type(subtitleEl, subtitleText, {
                     speed: 10,
                     onComplete: () => {
@@ -243,6 +244,12 @@ export class LibraryTask {
         this.isIntroSkipped = true;
         this.typewriter.stop();
         if (this.introFallback) clearTimeout(this.introFallback);
+
+        // Feladathang leállítása átugráskor
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
 
         const titleEl = this.element.querySelector('.dkv-library__title');
         const subtitleEl = this.element.querySelector('.dkv-library__subtitle');
@@ -583,12 +590,42 @@ export class LibraryTask {
         });
     }
 
+    /**
+     * Feladathang lejátszása.
+     * @param {string} filename - A hangfájl neve kiterjesztés nélkül.
+     */
+    _playTaskAudio(filename) {
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
+        const basePath = import.meta.env?.BASE_URL || '/';
+        const cleanBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+        const src = `${cleanBase}/assets/audio/grade4/tasks/${filename}.mp3`;
+
+        const audio = new Audio(src);
+        audio.volume = window.DKV_APP?.narrationVolume ?? 1.0;
+        this._taskAudio = audio;
+
+        audio.play().catch(err => {
+            this.logger.warn(`Feladathang lejátszása sikertelen: ${src}`, { error: err.message });
+        });
+    }
+
     destroy() {
         this.stopGlitchEffects();
         this.timeouts.forEach(t => clearTimeout(t));
         this.timeouts = [];
         this.typewriter.stop();
         if (this.introFallback) clearTimeout(this.introFallback);
+
+        // Feladathang takarítás
+        if (this._taskAudio) {
+            this._taskAudio.pause();
+            this._taskAudio = null;
+        }
+
         if (this.element) {
             this.element.remove();
         }
