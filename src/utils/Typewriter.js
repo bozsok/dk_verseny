@@ -171,8 +171,8 @@ class Typewriter {
      * @param {Object} options - Beállítások (frekvencia, hangerő).
      */
     playBeep(options = {}) {
-        this._beepFrequency = options.frequency || 880;
-        this._beepVolume = options.volume ?? 0.06;
+        this._beepFrequency = options.frequency || this._beepFrequency;
+        this._beepVolume = options.volume ?? this._beepVolume;
         this._initAudioContext();
         this._beep();
     }
