@@ -67,6 +67,14 @@ export class GameInterfaceGrade4 {
             <div class="dkv-g4-bg-container">
                 <div class="dkv-g4-bg-image"></div>
                 <div class="dkv-g4-bg-grid"></div>
+                <div class="dkv-g4-storm-overlay">
+                    <div class="dkv-g4-storm-ring dkv-g4-storm-ring--cyan"></div>
+                    <div class="dkv-g4-storm-ring dkv-g4-storm-ring--cyan"></div>
+                    <div class="dkv-g4-storm-ring dkv-g4-storm-ring--red"></div>
+                    <div class="dkv-g4-storm-ring dkv-g4-storm-ring--red"></div>
+                    <div class="dkv-g4-storm-ring dkv-g4-storm-ring--orange"></div>
+                    <div class="dkv-g4-storm-ring dkv-g4-storm-ring--orange"></div>
+                </div>
             </div>
         `;
         this.element.appendChild(bgLayer);
@@ -386,6 +394,27 @@ export class GameInterfaceGrade4 {
                 fill.style.width = '0%';
             }
         });
+
+        // --- DIGITÁLIS VIHAR AUTOMATIKUS AKTIVÁLÁSA ---
+        // A vihar a 'final_2' diánál (Rendszermag újraindítás) indul el.
+        if (slide?.id === 'final_2') {
+            this.toggleStormMode(true);
+        } else {
+            this.toggleStormMode(false);
+        }
+    }
+
+    /**
+     * Digitális vihar (Storm Mode) ki- és bekapcsolása.
+     * @param {boolean} active - true: bekapcsolás, false: kikapcsolás
+     */
+    toggleStormMode(active) {
+        if (!this.element) return;
+        if (active) {
+            this.element.classList.add('dkv-g4-interface--storm');
+        } else {
+            this.element.classList.remove('dkv-g4-interface--storm');
+        }
     }
 
     /**

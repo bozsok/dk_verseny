@@ -1090,3 +1090,151 @@
 .dkv-g4-task-modal-overlay:has(.dkv-finale-task) .dkv-g4-task-modal-body {
     overflow: visible;
 }
+
+/* === DIGITÁLIS VIHAR (FINÁLÉ) EFFEKTUSOK === */
+
+/* Képernyő remegés (Shake) */
+@keyframes dkv-g4-storm-shake {
+    0% { transform: translate(0, 0); }
+    10% { transform: translate(-2px, -1px); }
+    20% { transform: translate(-1px, 2px); }
+    30% { transform: translate(1px, -1px); }
+    40% { transform: translate(-1px, -1px); }
+    50% { transform: translate(2px, 1px); }
+    60% { transform: translate(-2px, -1px); }
+    70% { transform: translate(1px, 2px); }
+    80% { transform: translate(-1px, -1px); }
+    90% { transform: translate(2px, -2px); }
+    100% { transform: translate(0, 0); }
+}
+
+/* Scanline villódzás (Flicker) */
+@keyframes dkv-g4-storm-flicker {
+    0%, 100% { opacity: 0.3; }
+    5% { opacity: 0.15; }
+    10% { opacity: 0.45; }
+    15% { opacity: 0.2; }
+    25% { opacity: 0.5; }
+    30% { opacity: 0.1; }
+    50% { opacity: 0.4; }
+    70% { opacity: 0.25; }
+    85% { opacity: 0.6; }
+    90% { opacity: 0.2; }
+}
+
+/* Rendszermag lüktetés (Pulse Storm Rings) */
+@keyframes dkv-g4-storm-pulse-cyan {
+    0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+    20% { opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1.0); opacity: 0; }
+}
+@keyframes dkv-g4-storm-pulse-red {
+    0% { transform: translate(-50%, -50%) scale(1.0); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+}
+@keyframes dkv-g4-storm-pulse-orange {
+    0% { transform: translate(-50%, -50%) scale(1.0); opacity: 0; }
+    25% { opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+}
+
+/* HUD vibrálás (High Frequency) */
+@keyframes dkv-g4-storm-vibrate {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-1px); }
+    75% { transform: translateY(1px); }
+    100% { transform: translateY(0); }
+}
+
+/* Storm Overlay alapstílus - Pontos pozicionálás a Rendszermaghoz */
+.dkv-g4-storm-overlay {
+    position: absolute;
+    left: 984px;
+    bottom: 609px;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+/* Pulzáló gyűrűk - Alapstílus */
+.dkv-g4-storm-ring {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+}
+
+.dkv-g4-storm-ring--cyan {
+    border: 4px solid #00ffff;
+    box-shadow: 0 0 30px #00ffff, inset 0 0 30px #00ffff;
+}
+
+.dkv-g4-storm-ring--red {
+    border: 5px solid #ff0000;
+    box-shadow: 0 0 40px #ff0000, inset 0 0 20px #ff0000;
+}
+
+.dkv-g4-storm-ring--orange {
+    border: 4px solid #ff8c00;
+    box-shadow: 0 0 35px #ff8c00, inset 0 0 15px #ff8c00;
+}
+
+/* === STORM MÓD AKTIVÁLÁSA === */
+
+/* A háttérkép remegése */
+.dkv-g4-interface--storm .dkv-g4-bg-image {
+    animation: dkv-g4-storm-shake 0.1s infinite;
+}
+
+/* A scanline-ok vadabb villogása */
+.dkv-g4-interface--storm .dkv-g4-scanline {
+    animation: dkv-g4-storm-flicker 0.05s infinite;
+}
+
+/* HUD elemek vibrálása */
+.dkv-g4-interface--storm .dkv-g4-top-hud,
+.dkv-g4-interface--storm .dkv-g4-bottom-hud,
+.dkv-g4-interface--storm .dkv-g4-side-nav {
+    animation: dkv-g4-storm-vibrate 0.04s infinite;
+}
+
+/* A digitális vihar réteg aktiválása */
+.dkv-g4-interface--storm .dkv-g4-storm-overlay {
+    opacity: 1;
+}
+
+/* Gyűrűk animációi - Különböző kezdőméretek és független időzítések */
+
+/* Türkiz (Cyan) */
+.dkv-g4-interface--storm .dkv-g4-storm-ring--cyan:nth-child(1) {
+    width: 1200px; height: 1200px;
+    animation: dkv-g4-storm-pulse-cyan 3s infinite linear;
+}
+.dkv-g4-interface--storm .dkv-g4-storm-ring--cyan:nth-child(2) {
+    width: 800px; height: 800px;
+    animation: dkv-g4-storm-pulse-cyan 3.2s infinite linear 1.1s;
+}
+
+/* Piros (Red) - 680px-nél indul (scale 1.0) */
+.dkv-g4-interface--storm .dkv-g4-storm-ring--red:nth-child(3) {
+    width: 680px; height: 680px;
+    animation: dkv-g4-storm-pulse-red 4.7s infinite ease-out 0.3s;
+}
+.dkv-g4-interface--storm .dkv-g4-storm-ring--red:nth-child(4) {
+    width: 680px; height: 680px;
+    animation: dkv-g4-storm-pulse-red 3.9s infinite ease-out 1.5s;
+}
+
+/* Narancs (Orange) - Szintén 680px kezdőmérettel */
+.dkv-g4-interface--storm .dkv-g4-storm-ring--orange:nth-child(5) {
+    width: 680px; height: 680px;
+    animation: dkv-g4-storm-pulse-orange 5.3s infinite ease-in-out 0.8s;
+}
+.dkv-g4-interface--storm .dkv-g4-storm-ring--orange:nth-child(6) {
+    width: 680px; height: 680px;
+    animation: dkv-g4-storm-pulse-orange 4.1s infinite ease-in-out 2.2s;
+}

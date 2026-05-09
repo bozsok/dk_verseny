@@ -5,6 +5,19 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.53.0] - 2026-05-09
+
+### Hozzáadva
+- **„Digitális Vihar” vizuális effektus a Finálé feladathoz (Grade 4)**: 
+    - Implementáltunk egy rendszerszintű, atmoszférikus vihar-effektust, amely a `final_2` dián (Rendszermag újraindítás) automatikusan aktiválódik.
+    - **Többszörös pulzáló gyűrűk**: Hat darab független, neonfényű gyűrű (türkiz, piros, narancs) tágul kifelé a Rendszermag közepéből (`bal: 984px`, `alul: 609px`).
+    - **Aszinkron lüktetés**: A gyűrűk egyedi időzítésekkel és fázisokkal rendelkeznek a véletlenszerű, viharos hatás elérése érdekében.
+    - **Globális rázkódás és vibráció**: A hatás kiterjed a teljes háttérképre (tremor), a scanline-okra (flicker) és a HUD panelekre is (vibráció), szimulálva a rendszer felpörgését.
+    - **Biztonságos zóna**: A piros és narancs gyűrűk kezdőméretét 680 pixelre korlátoztuk, így azok nem takarják el a Rendszermag belső részét.
+
+### Megváltoztatva
+- **Grade 4 Interfész (GameInterfaceGrade4)**: Kibővítettük a háttérréteget a vihar-overlay elemeivel, és integráltuk az automatikus állapotkezelést a diaváltásokhoz.
+
 ## [0.52.0] - 2026-05-09
  
 +### Megváltoztatva

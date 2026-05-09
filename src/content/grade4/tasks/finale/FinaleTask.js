@@ -6,8 +6,8 @@ import './FinaleTask.css';
 /**
  * @class FinaleTask
  * @description A Grade 4 modul záró feladata (Neon Terminal).
- * - Verzió: 0.52.0
- * - Állapot: Győzelmi szekvencia és hanghatások véglegesítve
+ * - Verzió: 0.53.0
+ * - Állapot: Győzelmi szekvencia, hanghatások és digitális vihar véglegesítve
  * A versenyzőnek a Mátrix-esőben kell megtalálnia az indító kód karaktereit.
  */
 export class FinaleTask {
