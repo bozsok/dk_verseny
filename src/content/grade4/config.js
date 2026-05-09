@@ -1,4 +1,4 @@
-// Grade 4 Config - Version: 1.0.3 (Force update for Vite HMR)
+// Grade 4 Config - Version: 1.0.4 (Force update for Vite HMR)
 import { SLIDE_TYPES } from '../../core/engine/slides-config.js';
 import './styles/main.css';
 import './styles/Registration.css';

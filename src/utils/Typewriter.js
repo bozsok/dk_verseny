@@ -22,7 +22,7 @@ class Typewriter {
         this._beepEnabled = false;
         this._beepFrequency = 880; // Hz – terminál-csipogás frekvencia
         this._beepDuration = 0.04; // másodperc (40ms)
-        this._beepVolume = 0.06; // Halk, nem zavaró hangerő
+        this._beepVolume = 0.15; // Halk, nem zavaró hangerő
     }
 
     /**
@@ -94,8 +94,8 @@ class Typewriter {
         // Beep konfiguráció
         this._beepEnabled = options.beep === true;
         if (this._beepEnabled) {
-            this._beepFrequency = options.beepFrequency || 880;
-            this._beepVolume = options.beepVolume ?? 0.06;
+            this._beepFrequency = options.beepFrequency || this._beepFrequency;
+            this._beepVolume = options.beepVolume ?? this._beepVolume;
             this._initAudioContext();
         }
 
@@ -200,7 +200,7 @@ class Typewriter {
 
         // Suspended állapot feloldása (böngésző autoplay policy)
         if (this._audioCtx.state === 'suspended') {
-            this._audioCtx.resume().catch(() => {});
+            this._audioCtx.resume().catch(() => { });
         }
 
         const ctx = this._audioCtx;

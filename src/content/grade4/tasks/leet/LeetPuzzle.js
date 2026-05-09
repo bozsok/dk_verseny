@@ -319,20 +319,20 @@ export class LeetPuzzle {
 
         // Szekvenciális írógép effekt
         this.typewriter.type(titleEl, titleText, {
-            speed: 25,
+            speed: 45,
             beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
                 setTimeout(() => {
                     this._playTaskAudio('leet');
                     this.typewriter.type(subtitleEl, subtitleText, {
-                        speed: 15,
+                        speed: 45,
                         onComplete: () => {
                             mainGrid.classList.add('visible');
                             footer.classList.add('visible');
                             // Automatikus súgó bezárás, ha nyitva lenne
                             this.element.querySelector('.dkv-leet__help-overlay')?.classList.remove('open');
-                            
+
                             this.setupInputLogic();
                             this.startScrambleAnimation();
                         }

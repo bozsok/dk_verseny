@@ -44,7 +44,7 @@ export class FinaleIntroTask {
     init() {
         this.render();
         this.updateContainerRect();
-        
+
         const onResize = this.updateContainerRect.bind(this);
         window.addEventListener('resize', onResize);
         window.addEventListener('scroll', onResize, true);
@@ -148,14 +148,14 @@ export class FinaleIntroTask {
 
         // Szekvenciális írógép effekt
         this.typewriter.type(this.titleEl, titleText, {
-            speed: 20,
+            speed: 45,
             beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
                 setTimeout(() => {
                     this._playTaskAudio('finaleintro');
                     this.typewriter.type(this.subtitleEl, subtitleText, {
-                        speed: 10,
+                        speed: 45,
                         onComplete: () => {
                             // AUTOMATIKUSAN BEZÁRJUK A SÚGÓT, HA NYITVA VOLNA
                             if (this.helpOverlay) this.helpOverlay.classList.remove('open');
@@ -224,7 +224,7 @@ export class FinaleIntroTask {
         const shuffled = PuzzleGenerator.shuffleArray(initial);
 
         this.polyPieces = shuffled.map(d => {
-            const pp = new PolyPiece(this.overlayEl, { id: d.id, pieces: d.pieces, puzzle: this.puzzleObj, position: d.position, viewportOffset: this.containerRect, zIndex: d.zIndex, onMove: (id, pos) => { const x = this.polyPieces.find(p => p.id === id); if(x) x.position = pos; }, onDragStart: () => { if (!this.timerStarted) this.startTimer(); }, onDragEnd: this.handlePieceDragEnd.bind(this) });
+            const pp = new PolyPiece(this.overlayEl, { id: d.id, pieces: d.pieces, puzzle: this.puzzleObj, position: d.position, viewportOffset: this.containerRect, zIndex: d.zIndex, onMove: (id, pos) => { const x = this.polyPieces.find(p => p.id === id); if (x) x.position = pos; }, onDragStart: () => { if (!this.timerStarted) this.startTimer(); }, onDragEnd: this.handlePieceDragEnd.bind(this) });
             return { ...d, instance: pp };
         });
     }
@@ -237,10 +237,10 @@ export class FinaleIntroTask {
         this.timerInterval = setInterval(() => {
             const currentTime = performance.now();
             this.timerSeconds = Math.floor((currentTime - this.startTime) / 1000);
-            
-            const m = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0'), 
-                  s = (this.timerSeconds % 60).toString().padStart(2, '0');
-            
+
+            const m = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0'),
+                s = (this.timerSeconds % 60).toString().padStart(2, '0');
+
             if (this.timerClockEl) this.timerClockEl.textContent = `${m}:${s}`;
         }, 1000 / 30); // 30 FPS UI frissítés, nem időforrás!
     }
@@ -276,7 +276,7 @@ export class FinaleIntroTask {
         let currentList = others;
         let searching = true;
         while (searching) {
-            const res = pass(currentList, mp, mpos, mz); 
+            const res = pass(currentList, mp, mpos, mz);
             if (!res) {
                 searching = false;
                 break;
@@ -287,7 +287,7 @@ export class FinaleIntroTask {
         if (merged) {
             if (moved.instance) moved.instance.destroy();
             tod.forEach(tid => { const old = this.polyPieces.find(p => p.id === tid); if (old?.instance) old.instance.destroy(); });
-            const nid = `m-${Date.now()}`, npp = new PolyPiece(this.overlayEl, { id: nid, pieces: mp, puzzle: this.puzzleObj, position: mpos, viewportOffset: this.containerRect, zIndex: mz, onMove: (id, pos) => { const x = this.polyPieces.find(p => p.id === id); if(x) x.position = pos; }, onDragStart: () => {}, onDragEnd: this.handlePieceDragEnd.bind(this) });
+            const nid = `m-${Date.now()}`, npp = new PolyPiece(this.overlayEl, { id: nid, pieces: mp, puzzle: this.puzzleObj, position: mpos, viewportOffset: this.containerRect, zIndex: mz, onMove: (id, pos) => { const x = this.polyPieces.find(p => p.id === id); if (x) x.position = pos; }, onDragStart: () => { }, onDragEnd: this.handlePieceDragEnd.bind(this) });
             this.polyPieces = [...currentList, { id: nid, pieces: mp, position: mpos, zIndex: mz, instance: npp }];
             if (this.polyPieces.length === 1) this.handleWin();
         }

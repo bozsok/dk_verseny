@@ -230,14 +230,14 @@ export class SpeedTask {
         const dataStream = this.element.querySelector('.dkv-speed__data-stream');
 
         this.typewriter.type(titleEl, titleText, {
-            speed: 25,
+            speed: 45,
             beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
                 const t = setTimeout(() => {
                     this._playTaskAudio('speed');
                     this.typewriter.type(subtitleEl, subtitleText, {
-                        speed: 15,
+                        speed: 45,
                         onComplete: () => {
                             viewport.classList.add('visible');
                             this.element.querySelector('.dkv-speed__help-overlay')?.classList.remove('open');

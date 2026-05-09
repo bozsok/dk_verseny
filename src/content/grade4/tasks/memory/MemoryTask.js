@@ -334,7 +334,7 @@ export class MemoryTask {
 
         if (titleEl) titleEl.innerHTML = titleText;
         if (subtitleEl) subtitleEl.innerHTML = subtitleText;
-        
+
         viewport.classList.add('visible');
         this.element.querySelector('.dkv-memory__stage-tracker')?.classList.add('visible');
         this.element.querySelector('.dkv-memory__help-overlay')?.classList.remove('open');
@@ -466,14 +466,14 @@ export class MemoryTask {
                 subtitleEl.innerHTML = '';
                 this.typewriter.stop();
                 this.typewriter.type(titleEl, titleText, {
-                    speed: 25,
+                    speed: 45,
                     beep: true,
                     hideCursorOnComplete: true,
                     onComplete: () => {
                         const t4 = setTimeout(() => {
                             this._playTaskAudio('memory_1');
                             this.typewriter.type(subtitleEl, subtitleText, {
-                                speed: 15,
+                                speed: 45,
                                 onComplete: () => {
                                     viewport.classList.add('visible');
                                     this.element.querySelector('.dkv-memory__stage-tracker')?.classList.add('visible');
@@ -495,7 +495,7 @@ export class MemoryTask {
                 this.typewriter.stop();
                 this._playTaskAudio('memory_1');
                 this.typewriter.type(subtitleEl, subtitleText, {
-                    speed: 15,
+                    speed: 45,
                     onComplete: () => {
                         viewport.classList.add('visible');
                         this.element.querySelector('.dkv-memory__stage-tracker')?.classList.add('visible');
@@ -515,7 +515,7 @@ export class MemoryTask {
             this.typewriter.stop();
             this._playTaskAudio('memory_2');
             this.typewriter.type(subtitleEl, subtitleText, {
-                speed: 15,
+                speed: 45,
                 onComplete: () => {
                     this.renderObjects();
                     this.isProcessing = false;
@@ -531,7 +531,7 @@ export class MemoryTask {
             this.typewriter.stop();
             this._playTaskAudio('memory_3');
             this.typewriter.type(subtitleEl, subtitleText, {
-                speed: 15,
+                speed: 45,
                 onComplete: () => {
                     viewport.classList.add('no-grid');
                     this.renderSelectionUI();

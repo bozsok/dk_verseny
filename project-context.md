@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-05-09T20:15:00+02:00'
+date: '2026-05-10T01:06:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.53.0 (v0.53.0)
+- **Version:** 0.55.0 (v0.55.0)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
-- **Last Updated:** 2026-05-09
-- **Current Mission:** „Digitális Vihar” atmoszférikus vizuális effektus és atmoszféra-stabilizáció (v0.53.0)
+- **Last Updated:** 2026-05-10
+- **Current Mission:** Írógép audio-szinkronizáció és „Digitális Vihar” vizuális finomhangolás (v0.55.0)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -184,4 +184,6 @@ optimized_for_llm: true
 - [x] Grade 4: Terminál-csipogás a feladatcímek írógép-effektusához (Web Audio API) (v0.51.1)
 - [x] Grade 4: Összegző képernyő pixelpontos UI stabilizációja és vizuális polírozása (v0.52.0)
 - [x] Grade 4: „Digitális Vihar” atmoszférikus vizuális effektus a Finálé feladathoz (v0.53.0)
+- [x] Grade 4: Írógép audio-szinkronizáció és „Digitális Vihar” vizuális finomhangolás (v0.55.0)
+- [x] Grade 4: Állomásspecifikus dinamikus háttérzene Web Audio API elhalkítással (v0.54.0)
 

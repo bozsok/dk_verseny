@@ -207,14 +207,14 @@ export class LibraryTask {
         // Bevezető animáció
         this.logger.info('Starting intro typewriter sequence');
         this.typewriter.type(titleEl, titleText, {
-            speed: 20,
+            speed: 45,
             beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
                 if (this.isIntroSkipped) return;
                 this._playTaskAudio('library');
                 this.typewriter.type(subtitleEl, subtitleText, {
-                    speed: 10,
+                    speed: 45,
                     onComplete: () => {
                         if (this.isIntroSkipped) return;
                         this.logger.info('Intro sequences completed successfully');

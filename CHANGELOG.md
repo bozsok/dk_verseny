@@ -5,6 +5,26 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.55.0] - 2026-05-10
+
+### Megváltoztatva
+- **Írógép (Typewriter) audio-szinkronizáció**: 
+    - Összehangoltuk a gépelési sebességet (45 ms) és a hanghosszat (40 ms / 0,04 s) az összes Grade 4 feladatmodulban. Ez megakadályozza a hangminták egymásra csúszását (audio stacking) és a torzítást.
+    - Érintett modulok: `SpeedTask`, `MemoryTask`, `LeetPuzzle`, `IslandTask`, `LibraryTask`, `FinaleIntroTask`, `FinaleTask`.
+- **Typewriter-hibajavítás**: 
+    - Megszüntettük a konstruktor értékeit felülíró logikai hibát a `type()` metódusban. Mostantól a globális alapértelmezett hangerő (`_beepVolume`) és frekvencia (`_beepFrequency`) megfelelően érvényesül.
+- **Digitális Vihar vizuális finomhangolása**: 
+    - A piros és narancs pulzáló gyűrűk maximális átlátszóságát (`opacity`) csökkentettük (0,3 és 0,2 értékre) az `Interface.css` fájlban a jobb olvashatóság és a letisztultabb vizuális élmény érdekében.
+
+## [0.54.0] - 2026-05-09
+
+### Hozzáadva
+- **Állomásspecifikus háttérzenék (Grade 4)**: 
+    - Minden állomáshoz (1-5) egyedi, 10 perces atmoszférikus zene került beépítésre.
+    - Új zenék: bevezető fázis (`intro.mp3`), Finálé beugró feladat (`finaleIntro.mp3`) és végső rendszermag javítás (`finale.mp3`).
+    - **Web Audio API alapú elhalkítás**: Professzionális, exponenciális hangerő-görbével megvalósított fade-in és fade-out effektek az állomások közötti váltáskor.
+    - **Szinkronizált átmenetek**: A zene elhalkítása már az állomás elhagyásakor (a tranzíciós animációk alatt) elindul.
+
 ## [0.53.0] - 2026-05-09
 
 ### Hozzáadva

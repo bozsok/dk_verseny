@@ -158,14 +158,14 @@ export class IslandTask {
         }, { once: true });
 
         this.typewriter.type(titleEl, titleText, {
-            speed: 20,
+            speed: 45,
             beep: true,
             hideCursorOnComplete: true, // User kérése: a cím végén ne maradjon kurzor
             onComplete: () => {
                 if (this.isIntroSkipped) return;
                 this._playTaskAudio('island');
                 this.typewriter.type(subtitleEl, subtitleText, {
-                    speed: 10,
+                    speed: 45,
                     onComplete: () => {
                         if (!this.isIntroSkipped) {
                             this.isIntroSkipped = true;

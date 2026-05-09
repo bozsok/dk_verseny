@@ -69,7 +69,7 @@ execute_override();`;
         const subtitleText = `Kattints a lehulló fénylő karakterekre, amellyel az indítókódot állíthatod össze. Ha összeállítottad, akkor az ELLENŐRZÉS gombbal kezdeményezheted a Rendszermag újraindítását.`;
 
         this.typewriter.type(titleEl, titleText, {
-            speed: 25,
+            speed: 45,
             beep: true,
             hideCursorOnComplete: true,
             onComplete: () => {
@@ -79,7 +79,7 @@ execute_override();`;
                         titleEl.style.display = 'none';
                         this._playTaskAudio('finale');
                         this.typewriter.type(subtitleEl, subtitleText, {
-                            speed: 25,
+                            speed: 45,
                             onComplete: () => {
                                 const t3 = setTimeout(() => {
                                     if (container) {
@@ -386,7 +386,7 @@ execute_override();`;
                 const rebootHtml = `RENDSZERMAG ÚJRAINDÍTÁS: <span class="dkv-finale-task__reboot-highlight">ELKEZDŐDÖTT</span>`;
 
                 this.typewriter.type(this.rebootTextEl, rebootHtml, {
-                    speed: 25,
+                    speed: 45,
                     beep: true,
                     hideCursorOnComplete: true,
                     onComplete: () => {
