@@ -364,7 +364,7 @@ execute_override();`;
                 success: true,
                 points: 10,
                 maxPoints: 10,
-                timeElapsed: (Date.now() - this.startTime) / 1000
+                timeElapsed: Math.floor((Date.now() - this.startTime) / 1000)
             }, this);
         }, 2000); // 2 másodperces "kiélvezhető" glitch
         this.timeouts.push(t);

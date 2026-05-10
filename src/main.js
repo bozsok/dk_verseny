@@ -1621,6 +1621,12 @@ class DigitalKulturaVerseny {
 
     const currentSlide = this.slideManager.getCurrentSlide();
 
+    // --- ONBOARDING PONTZÁM RÖGZÍTÉSE (Leaderboard fix) ---
+    // Ha az utolsó onboarding diáról (karakterválasztás) lépünk tovább, rögzítjük az eredményt
+    if (currentSlide?.type === SLIDE_TYPES.CHARACTER) {
+      this._recordOnboardingResult();
+    }
+
     // --- FELADAT MODAL ELINDÍTÁSA A GOMBNYOMÁSRA ---
     // Ha mi egy feladat slide-on vagyunk (step === 2) és még nincs megoldva...
     // A Finálé (final_2) is ide tartozik már!
@@ -2627,6 +2633,33 @@ class DigitalKulturaVerseny {
     } catch (e) {
       if (this.logger) this.logger.warn('System sound error', { error: e.message });
     }
+  }
+
+  /**
+   * Onboarding szakasz eredményének rögzítése a részletes listába
+   */
+  _recordOnboardingResult() {
+    if (!this.taskResults) this.taskResults = [];
+
+    // Ellenőrizzük, hogy rögzítettük-e már ebben a session-ben
+    const alreadyRecorded = this.taskResults.some(r => r.slideId === 'onboarding_summary');
+    if (alreadyRecorded) return;
+
+    const currentScore = this.stateManager ? this.stateManager.getStateValue('score') || 0 : 0;
+
+    if (this.logger) this.logger.info(`[Leaderboard] Recording onboarding results: ${currentScore} points`);
+
+    this.taskResults.push({
+      slideId: 'onboarding_summary',
+      label: 'Onboarding (Regisztráció és Karakter)',
+      success: true,
+      points: currentScore,
+      maxPoints: 4, // Fix 3+1 pont minden évfolyamon
+      timeElapsed: this.timeManager ? Math.round(this.timeManager.getElapsedTime() / 1000) : null
+    });
+
+    // Azonnali mentés a ranglistába (checkpoint)
+    this.saveResultToLeaderboard();
   }
 
   /**

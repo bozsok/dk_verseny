@@ -5,6 +5,29 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.56.0] - 2026-05-10
+
+### Hozzáadva
+- **Onboarding eredmények rögzítése (Checkpoint rendszer)**: 
+    - Implementáltuk a `_recordOnboardingResult` metódust a `main.js`-ben, amely az onboarding szakasz lezárásakor (karakterválasztás után) rögzíti a regisztrációért és karakterválasztásért járó pontokat (3+1 pont).
+    - Bevezettünk egy automatikus mentést a ranglistába az onboarding végén, így a versenyzők már a feladatok megkezdése előtt bekerülnek a rendszerbe.
+- **Retroaktív pontszám-szinkronizáció a Dashboardon**: 
+    - Új logikai réteg a `dashboard.js`-ben, amely automatikusan detektálja és megjeleníti az onboarding pontokat a régebbi rekordoknál is, ahol azok hiányoztak a feladatlistából.
+    - Virtuális sorok generálása „Onboarding (Regisztráció és Karakter) *” névvel, arany szegéllyel és „Automata korrekció” jelzéssel a vizuális konzisztencia érdekében.
+- **Vizuális feladat-nevesítés (Grade 3 & 4)**:
+    - Az eredményeknél a generikus megnevezéseket lecseréltük a történetbe illeszkedő valódi nevekre (pl. Labirintuskert, Üzenetek kriptája) a Dashboard részletes nézetében.
+    - **MTA 12. megfelelőség**: Az állomás megnevezéseket egységesítettük a magyar helyesírás szabályai szerint (kisbetűs „állomás” használata a listaelemekben).
+- **Robusztus évfolyam-detektálás a Dashboardon**: 
+    - Bevezettünk egy intelligens felismerő logikát, amely a hiányzó évfolyam-adatok esetén a versenyző osztálymegnevezéséből (pl. „3.a”) következtet a feladatok típusára. Ez biztosítja a retroaktív javítások megbízható működését a régebbi adatbázis-bejegyzéseknél is.
+
+### Megváltoztatva
+- **PHP ranglista bővítés**: 
+    - Frissítettük a `manage_leaderboard.php` fájlt, hogy az új mentések során a rendszer mostantól explicit módon rögzítse a versenyző évfolyamát (`grade`) is a JSON adatbázisban a stabilabb adatelérés érdekében.
+- **Időformátum stabilizáció**:
+    - Kijavítottuk a 4. osztályos Finálé feladatban a lebegőpontos időmérés hibáját, amely extrém hosszú tizedesjegyeket eredményezett a ranglistán.
+    - Defenzív kerekítést vezettünk be a Dashboard időformázó logikájában is a vizuális anomáliák megelőzése érdekében.
+- **Ranglista adatintegritás**: A részletes feladatpontok összege mostantól minden esetben megegyezik a fejlécben látható összpontszámmal, megszüntetve a korábbi 4 pontos eltérést a Dashboardon.
+
 ## [0.55.0] - 2026-05-10
 
 ### Megváltoztatva
