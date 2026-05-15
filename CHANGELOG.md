@@ -5,6 +5,28 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.57.0] - 2026-05-15
+
+### Hozzáadva
+- **Leaderboard Finálé: Frissítőszkript összeillesztése feladat rögzítése**: 
+    - A 4. osztályos finálé beugrófeladatának (puzzle) sikeres megoldása (6 pont) ezentúl azonnal és véglegesen rögzítésre kerül a `leaderboard.json` állományban a `taskResults` tömbben. Ez biztosítja az 5–6. osztályos versenyek adatintegritását.
+    - Új szkript készült (`fix_leaderboard.js`), amely visszamenőleg (retroaktívan) korrigálta és beillesztette a hiányzó onboarding- (4 pont) és finálébeugró-adatokat (6 pont) a már lejátszott 69 versenyző eredményeibe.
+    - Új szkript (`reorder_leaderboard.js`) gondoskodott a feladatok kronológiai sorrendjének (onboarding -> ... -> beugró -> végjáték) helyreállításáról az adatbázisban.
+
+### Megváltoztatva
+- **Dinamikus feladatnevesítés (adatbázisszinten)**: 
+    - Megszüntettük a „Nagy Zár – Végjáték” beégetett (hardcode) mentését a játékmotorban (`src/main.js`). A motor mostantól az aktuális évfolyamnak (`currentGrade`) megfelelően menti el a feladatok neveit a JSON-állományba. 
+    - Ezzel feleslegessé vált és eltávolításra került a korábbi, a `dashboard.js` fájlban lévő „retroaktív felülíró” vizuális kód, így a ranglista sokkal gyorsabb és robusztusabb lett.
+- **A finálé beugrófeladatának átnevezése**: 
+    - A beugrófeladat neve a JSON-adatbázisban és a ranglistafelületen „Finálé Beugró (Alappontszám)”-ról **„Finálé: Frissítőszkript összeillesztése”** feliratra módosult, illeszkedve a narratívához.
+- **Admin dashboard adatszerkesztése**:
+    - A háttérkiszolgáló szkript (`manage_leaderboard.php`) bővítése: mostantól engedélyezi a dashboardról küldött név (`heroName`), becenév (`nickname`) és osztály (`playerClass`) mezők manuális felülírását és mentését, ami eddig biztonsági okokból blokkolva volt.
+    - Új évfolyam engedélyezése: bekerült a „4.d” a 4. osztályos validációs listába (`config.js`).
+- **Biztonság és adatintegritás (kritikus javítás)**:
+    - Megoldottunk egy versenyhelyzetből (race condition) fakadó kritikus hibát a `manage_leaderboard.php` fájlban, amely több egyidejű kérés (pl. gyors kattintás a Törlés gombra) esetén kiüríthette a `leaderboard.json` tartalmát.
+    - Bevezettük az `execute_with_lock` tranzakciókezelő függvényt, ami a fájl olvasása és írása idejére **kizárólagos zárolást (LOCK_EX)** alkalmaz, teljes mértékben megelőzve az adatsérülést.
+    - Bevezettük a „dashboard optimista törlés” (azonnali vizuális visszajelzés) funkciót, hogy meggátoljuk a véletlen dupla kattintásokat.
+
 ## [0.56.0] - 2026-05-10
 
 ### Hozzáadva

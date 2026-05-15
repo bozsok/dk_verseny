@@ -1364,6 +1364,18 @@ class DigitalKulturaVerseny {
                 this.stateManager?.markSlideCompleted(slide.id);
                 this.activeGameInterface?.updateHUD(this.stateManager?.getState());
 
+                // Rögzítjük a részletes adatokat a leaderboard számára
+                if (!this.taskResults) this.taskResults = [];
+                this.taskResults.push({
+                  slideId: 'finale_beugro',
+                  label: 'Finálé: Frissítőszkript összeillesztése',
+                  success: result.success ?? true,
+                  points: result.points ?? 6,
+                  maxPoints: 6,
+                  timeElapsed: result.timeElapsed ?? null
+                });
+                this.saveResultToLeaderboard();
+
                 this.activeGameInterface.hideTaskModal();
                 this.playAudio(audioSrc, () => {
                   if (this.playedAudioSlides) this.playedAudioSlides.add(slide.id);
@@ -1556,7 +1568,7 @@ class DigitalKulturaVerseny {
       case SLIDE_TYPES.VIDEO:
       case SLIDE_TYPES.REWARD: newComponent = new VideoSlide(slide, commonOptions); break;
       case SLIDE_TYPES.TASK: newComponent = new TaskSlide(slide, commonOptions); break;
-      case SLIDE_TYPES.INFO:
+      case SLIDE_TYPES.INFO: {
         const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
         if (String(currentGrade) === '4') {
           newComponent = new SummarySlideGrade4(slide, commonOptions);
@@ -1564,6 +1576,7 @@ class DigitalKulturaVerseny {
           newComponent = new SummarySlide(slide, commonOptions);
         }
         break;
+      }
       default:
         if (this.logger) this.logger.warn('Unknown slide type:', { type: slide.type });
         newComponent = new VideoSlide(slide, commonOptions); // Fallback to VideoSlide
@@ -2741,8 +2754,30 @@ class DigitalKulturaVerseny {
     if (this.logger) this.logger.info(`[DKV] Dynamic TASK TRIGGERED - Slide: ${slide.id}, Section: ${section}, Type: ${taskConfig.type}`);
 
     // --- Feladat megnevezése ---
-    const taskLabel = slide.id === 'final_2' ? 'Nagy Zár – Végjáték' : (slide.title || slide.id);
-
+    let taskLabel = slide.title || slide.id;
+    const gradeVal = String(this.stateManager?.getStateValue('currentGrade'));
+    
+    if (gradeVal === '3') {
+        const g3Names = {
+            'st1_s3': '1. állomás: Labirintuskert',
+            'st2_s3': '2. állomás: Adat-tenger',
+            'st3_s3': '3. állomás: Tudás Torony',
+            'st4_s3': '4. állomás: Pixel Palota',
+            'st5_s3': '5. állomás: Hangerdő',
+            'final_2': 'Finálé: Nagy Zár - Végjáték'
+        };
+        if (g3Names[slide.id]) taskLabel = g3Names[slide.id];
+    } else if (['4', '5', '6'].includes(gradeVal)) {
+        const g4Names = {
+            'st1_s3': '1. állomás: Üzenetek kriptája',
+            'st2_s3': '2. állomás: Memória tükörterme',
+            'st3_s3': '3. állomás: Logikai könyvtár',
+            'st4_s3': '4. állomás: Anomáliák szigete',
+            'st5_s3': '5. állomás: Bit-folyam zsilip',
+            'final_2': 'Finálé: Rendszermag újraindítása'
+        };
+        if (g4Names[slide.id]) taskLabel = g4Names[slide.id];
+    }
     const onTaskComplete = (result) => {
       const alreadyDone = this.stateManager?.isSlideCompleted(slide.id);
       if (!alreadyDone) {

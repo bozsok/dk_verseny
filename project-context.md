@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-05-10T02:19:00+02:00'
+date: '2026-05-15T21:40:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.56.0 (v0.56.0)
+- **Version:** 0.57.0 (v0.57.0)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
 - **Last Updated:** 2026-05-10
-- **Current Mission:** Onboarding pontszám szinkronizáció és ranglista adat-integritás javítás (v0.56.0)
+- **Current Mission:** Finálé beugró adatainak retroaktív mentése, feladatnevek dinamikus hozzárendelése (v0.57.0)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -188,4 +188,5 @@ optimized_for_llm: true
 - [x] Grade 4: Állomásspecifikus dinamikus háttérzene Web Audio API elhalkítással (v0.54.0)
 - [x] Onboarding: Pontszám szinkronizáció és retroaktív ranglista javítás (v0.56.0)
 - [x] Ranglista: Grade 3 feladatok utólagos nevesítése a dashboardon (v0.56.0)
+- [x] Ranglista: Finálé beugró utólagos mentése és feladatnevek dinamikus hozzárendelése (v0.57.0)
 

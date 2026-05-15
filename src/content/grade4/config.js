@@ -1,4 +1,4 @@
-// Grade 4 Config - Version: 0.56.0 (Onboarding score sync fix)
+// Grade 4 Config - Version: 0.57.0 (Leaderboard Data Integrity & Task Labels)
 import { SLIDE_TYPES } from '../../core/engine/slides-config.js';
 import './styles/main.css';
 import './styles/Registration.css';
@@ -203,7 +203,7 @@ const createConfig = () => {
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
         validation: {
-            allowedClasses: ['4.a', '4.b', '4.c']
+            allowedClasses: ['4.a', '4.b', '4.c', '4.d']
         },
         scoring: {
             name: 1,
