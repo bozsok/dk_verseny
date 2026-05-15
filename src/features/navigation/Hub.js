@@ -276,7 +276,7 @@ class Hub {
 
     // Gombok állapotának frissítése (unlocked)
     this.levelButtons.forEach((item, grade) => {
-      const gradeData = grades[grade] || { unlocked: grade <= 4 }; // Alapértelmezetten 3-4 nyitva
+      const gradeData = grades[grade] || { unlocked: grade <= 6 }; // Alapértelmezetten mind a 4 évfolyam (3-6) nyitva van
       
       if (!gradeData.unlocked) {
         item.classList.add('locked');

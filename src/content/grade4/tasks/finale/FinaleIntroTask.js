@@ -23,6 +23,8 @@ export class FinaleIntroTask {
         this._handlers = [];
 
         // Puzzle állapot
+        this.nx = options.nx || null;
+        this.ny = options.ny || null;
         this.numPieces = options.numPieces || 16;
         this.imagePath = 'assets/images/grade4/finale/prefinale-puzzle.jpg';
         this.polyPieces = [];
@@ -210,7 +212,14 @@ export class FinaleIntroTask {
     prepareGame(img) {
         this.updateContainerRect();
         const VIEW_W = 1200, VIEW_H = 675;
-        const { nx, ny } = PuzzleGenerator.computeGridSize(img.naturalWidth, img.naturalHeight, this.numPieces);
+        let nx = this.nx;
+        let ny = this.ny;
+        
+        if (!nx || !ny) {
+            const size = PuzzleGenerator.computeGridSize(img.naturalWidth, img.naturalHeight, this.numPieces);
+            nx = size.nx;
+            ny = size.ny;
+        }
         const flatPieces = PuzzleGenerator.generatePieces(nx, ny).flat();
         const scaling = PuzzleGenerator.calculateScaling(img.naturalWidth, img.naturalHeight, VIEW_W, VIEW_H, nx, ny);
 

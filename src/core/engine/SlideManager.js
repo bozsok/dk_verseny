@@ -24,13 +24,15 @@ class SlideManager {
      */
     async initForGrade(grade) {
         try {
-            // Dinamikus import a megfelelő mappából
-            const module = await import(`../../content/grade${grade}/config.js`);
+            // Dinamikus import a megfelelő mappából (5-6. osztály is a 4. osztályos configot használja)
+            const isSeniorGrade = ['4', '5', '6'].includes(String(grade));
+            const targetGradeDir = isSeniorGrade ? '4' : grade;
+            const module = await import(`../../content/grade${targetGradeDir}/config.js`);
             const config = module.default || module;
 
             // Új struktúra kezelése
             if (config.getSlides && typeof config.getSlides === 'function') {
-                this.slides = config.getSlides();
+                this.slides = config.getSlides(grade);
                 this.portalColors = config.portalColors || {};
                 this.taskRegistry = config.taskRegistry || {};
             } else if (typeof module.createConfig === 'function') {

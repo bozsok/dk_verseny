@@ -184,7 +184,13 @@ class TutorialManager {
         if (this.isActive) return;
 
         // Évfolyam lekérése a StateManagerből
-        const currentGrade = this.app.stateManager.getStateValue('currentGrade') || '3';
+        let currentGrade = String(this.app.stateManager.getStateValue('currentGrade') || '3');
+        
+        // 5. és 6. osztály a 4. osztályos tutorialt használja
+        if (['5', '6'].includes(currentGrade)) {
+            currentGrade = '4';
+        }
+
         this.steps = this.stepsByGrade[currentGrade] || this.stepsByGrade['3'];
 
         this.isActive = true;

@@ -150,7 +150,7 @@ const NARRATIVE_DATA = {
     }
 };
 
-const createConfig = () => {
+const createConfig = (grade = 4) => {
     const slides = [];
     let idCounter = 1;
 
@@ -189,6 +189,7 @@ const createConfig = () => {
     };
 
     const bgImage = 'assets/images/grade4/onboarding_bg.jpg';
+    const allowedClasses = ['.a', '.b', '.c', '.d'].map(suffix => `${grade}${suffix}`);
 
     addSlide(SLIDE_TYPES.WELCOME, NARRATIVE_DATA.DIA_1.title, NARRATIVE_DATA.DIA_1.text, {
         buttonText: 'Tovább',
@@ -203,7 +204,7 @@ const createConfig = () => {
         buttonText: 'Tovább',
         backgroundUrl: bgImage,
         validation: {
-            allowedClasses: ['4.a', '4.b', '4.c', '4.d']
+            allowedClasses: allowedClasses
         },
         scoring: {
             name: 1,

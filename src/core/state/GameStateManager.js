@@ -46,8 +46,8 @@ class GameStateManager {
       grades: {
         3: { unlocked: true, progress: 0, bestScore: 0 },
         4: { unlocked: true, progress: 0, bestScore: 0 },
-        5: { unlocked: false, progress: 0, bestScore: 0 },
-        6: { unlocked: false, progress: 0, bestScore: 0 }
+        5: { unlocked: true, progress: 0, bestScore: 0 },
+        6: { unlocked: true, progress: 0, bestScore: 0 }
       },
 
       // UI állapot
@@ -429,11 +429,7 @@ class GameStateManager {
         const initialState = this.getInitialState();
         this.state = { ...initialState, ...parsedState };
         
-        // Kényszerített visszazárás 5-6 számára (ha a mentett állásban nyitva maradtak volna)
-        if (this.state.grades) {
-          if (this.state.grades[5]) this.state.grades[5].unlocked = false;
-          if (this.state.grades[6]) this.state.grades[6].unlocked = false;
-        }
+
 
         if (this.logger) {
           this.logger.info('State loaded and decrypted from storage', {

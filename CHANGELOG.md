@@ -5,6 +5,26 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.58.0] - 2026-05-15
+
+### Hozzáadva
+- **5. és 6. osztályos keretrendszer kiterjesztése**: 
+    - A játék mostantól támogatja az 5. és 6. osztályos versenyzőket is a HUB felületén keresztül.
+    - Implementáltuk a **Dinamikus Nehézségi Skálázást**, amely a kiválasztott évfolyam alapján módosítja a feladatok paramétereit anélkül, hogy kódduplikációra lenne szükség (grade4 alapkonfiguráció újrahasznosítása).
+- **Rendszerszintű évfolyam-kezelés**:
+    - Bevezettük az `isSeniorGrade` globális logikát a `main.js`-ben, amely összefogja a 4, 5 és 6. osztályokat, biztosítva a közös keretrendszer stabilitását.
+    - Felszabadítottuk az 5. és 6. évfolyamokat a `GameStateManager.js`-ben, eltávolítva a korábbi kényszerített zárolást.
+    - Dinamikus `RegistrationSlide` placeholder és validáció: az osztályválasztó dropdown és a placeholder mostantól automatikusan alkalmazkodik a választott évfolyamhoz (3.x, 4.x, 5.x, 6.x).
+
+### Megváltoztatva
+- **Feladatok nehézségi skálázása**:
+    - **Logikai Könyvtár (LibraryTask)**: Az adatciklusok száma évfolyamonként növekszik (4. o.: 6, 5. o.: 8, 6. o.: 10), a megszerezhető pontszámok ezzel arányosan skálázódnak.
+    - **Üzenetek Kriptája (LeetPuzzle)**: A titkosítási algoritmus komplexitása fokozódik. 5. osztályban a mássalhangzók 50%-a, 6. osztályban a teljes ábécé kódolásra kerül. Fixáltuk a kódolt szavak megjelenítését: lecsökkentett betűmérettel és sorstörés-gátlással biztosítottuk, hogy a hosszú, 100%-ban kódolt szavak is egy sorban maradjanak.
+    - **Memória Tükörterme (MemoryTask)**: Növeltük a ciklusszámot és a pontozást (5. o.: 4 ciklus/8 pont, 6. o.: 5 ciklus/10 pont). A képek számát egységesen 6-on tartottuk minden évfolyamon a kérésnek megfelelően.
+    - **Finálé: Frissítőszkript összeillesztése (Puzzle)**: A puzzle rácsmérete a nehézségnek megfelelően változik (4. o.: 5x3, 5. o.: 5x4, 6. o.: 6x4).
+- **TutorialManager javítása**: Az 5. és 6. osztályos versenyzők mostantól automatikusan a 4. osztályos (Quantum Terminal) tutorial konfigurációját kapják meg, biztosítva a narráció és a kiemelések szinkronját a modernizált kezelőfelülettel.
+- **SlideManager optimalizáció**: A játékmotor mostantól paraméterezve tölti be a konfigurációkat, így az 5. és 6. osztályos kérések is a validált `grade4` logikát használják, de egyedi nehézségi beállításokkal.
+
 ## [0.57.0] - 2026-05-15
 
 ### Hozzáadva

@@ -100,11 +100,8 @@ class RegistrationSlide {
         form.className = 'dkv-form-container';
 
         // Inputok létrehozása (validációs callbackkel)
-        let classPlaceholder = '4.b';
-        if (this.stateManager) {
-            const currentGrade = this.stateManager.getStateValue('currentGrade');
-            if (currentGrade === 3) classPlaceholder = '3.b';
-        }
+        const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : 4;
+        let classPlaceholder = `${currentGrade || 4}.b`;
 
         this.nameInput = this._createInput('Mi a teljes neved?', 'Kiss Pál', 'name');
         this.nickInput = this._createInput('Hogyan szólíthatunk?', 'Zseni', 'nick');

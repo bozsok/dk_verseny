@@ -913,7 +913,8 @@ class DigitalKulturaVerseny {
 
     // --- GRADE SCOPE ÉS OSZTÁLYOK KEZELÉSE ---
     const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-    const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
+    const isSeniorGrade = ['4', '5', '6'].includes(String(currentGrade));
+    const gradeClass = isSeniorGrade ? 'dkv-grade-4' : (currentGrade ? `dkv-grade-${currentGrade}` : '');
 
     // Az évfolyam osztályt az app-ra tesszük, mert a CSS szelektorok (#app.dkv-grade-4) erre támaszkodnak
     if (this.app && gradeClass) {
@@ -1169,7 +1170,7 @@ class DigitalKulturaVerseny {
    */
   _updateUIAfterRender(slide, currentIndex, totalSlides, isLastSlide, isFullscreen, currentGrade, gradeClass, audioSrc, isTutorialPending) {
     try {
-      const isGrade4 = (String(currentGrade) === '4');
+      const isSeniorGrade = ['4', '5', '6'].includes(String(currentGrade));
 
       // 3. UI Layer Management
       if (!isFullscreen) {
@@ -1178,7 +1179,7 @@ class DigitalKulturaVerseny {
         if (this.stateManager && this.stateManager.getStateValue('gamePhase') !== 'game') {
           this.stateManager.updateState({ gamePhase: 'game' }, false);
         }
-        const ExpectedInterfaceClass = isGrade4 ? GameInterfaceGrade4 : GameInterface;
+        const ExpectedInterfaceClass = isSeniorGrade ? GameInterfaceGrade4 : GameInterface;
 
         // Ha van meglévő interfész, de nem a megfelelő típusú (pl. grade váltás miatt)
         if (this.activeGameInterface && !(this.activeGameInterface instanceof ExpectedInterfaceClass)) {
@@ -1223,7 +1224,7 @@ class DigitalKulturaVerseny {
         this.activeGameInterface.setNarration(narrationText);
 
         // --- ENERGIACSÍK VEZÉRLÉS (Grade 4 Quantum Terminal) ---
-        if (isGrade4 && this.energyBarHud) {
+        if (isSeniorGrade && this.energyBarHud) {
           const isIntro4 = slide.id === 'intro_4';
           const isGameSession = slide.metadata?.section?.startsWith('station_') || slide.metadata?.section === 'final';
           const isSummary = slide.id === 'summary' || slide.type === SLIDE_TYPES.INFO;
@@ -1245,7 +1246,7 @@ class DigitalKulturaVerseny {
         }
 
         // --- GRADE 4 SPECIFIKUS: Háttérzene frissítése (MTA 12) ---
-        if (isGrade4) {
+        if (isSeniorGrade) {
           let musicSrc = `assets/audio/grade4/default_bg.mp3`; // Alapértelmezett
           const section = slide.metadata?.section;
 
@@ -1280,7 +1281,7 @@ class DigitalKulturaVerseny {
           const stationId = slide.metadata.section;
 
           // FOLYAMATOS LEJÁTSZÁS KIKÉNYSZERÍTÉSE: Mindig lejátssza az animációt.
-          if (String(currentGrade) === '4') {
+          if (['4', '5', '6'].includes(String(currentGrade))) {
             this.currentKeyAnimation = new ScriptPartAnimation({
               stationId: stationId,
               targetSlot: null,
@@ -1342,11 +1343,19 @@ class DigitalKulturaVerseny {
 
       // --- SPECIÁLIS FINÁLÉ INDÍTÓ MODAL INTERCEPTOR ---
       // Csak akkor indul, ha ELŐRE navigálunk és még nincs kész
-      if (slide.id === 'final_1' && String(currentGrade) === '4' && !isCompleted && this.lastNavDirection === 'forward') {
+      if (slide.id === 'final_1' && ['4', '5', '6'].includes(String(currentGrade)) && !isCompleted && this.lastNavDirection === 'forward') {
         if (this.logger) this.logger.info('Finale Intro Modal triggered, blocking narration.');
 
         const taskContainer = document.createElement('div');
+        const puzzleConfig = {
+          '4': { nx: 5, ny: 3 },
+          '5': { nx: 5, ny: 4 },
+          '6': { nx: 6, ny: 4 }
+        }[String(currentGrade)] || { nx: 5, ny: 3 };
+
         new FinaleIntroTask(taskContainer, {
+          nx: puzzleConfig.nx,
+          ny: puzzleConfig.ny,
           onComplete: (result) => {
             // Egyedi című összegző ablak megjelenítése
             this.showMazeResultModal(
@@ -1447,13 +1456,13 @@ class DigitalKulturaVerseny {
 
     const overlay = document.createElement('div');
     const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-    const isGrade4 = currentGrade === 4;
-    overlay.className = isGrade4 ? 'dkv-g4-result-overlay' : 'maze-result-overlay';
+    const isSeniorGrade = [4, 5, 6].includes(currentGrade);
+    overlay.className = isSeniorGrade ? 'dkv-g4-result-overlay' : 'maze-result-overlay';
 
     const modal = document.createElement('div');
     const statusClass = result.success ? 'success' : 'failure';
 
-    if (isGrade4) {
+    if (isSeniorGrade) {
       modal.className = `dkv-g4-result-modal ${statusClass}`;
       modal.innerHTML = `
         <div class="dkv-g4-result-header">
@@ -1570,7 +1579,7 @@ class DigitalKulturaVerseny {
       case SLIDE_TYPES.TASK: newComponent = new TaskSlide(slide, commonOptions); break;
       case SLIDE_TYPES.INFO: {
         const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-        if (String(currentGrade) === '4') {
+        if (['4', '5', '6'].includes(String(currentGrade))) {
           newComponent = new SummarySlideGrade4(slide, commonOptions);
         } else {
           newComponent = new SummarySlide(slide, commonOptions);
@@ -1691,7 +1700,7 @@ class DigitalKulturaVerseny {
 
       const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
       const gradeClass = currentGrade ? `dkv-grade-${currentGrade}` : '';
-      let isGrade4 = String(currentGrade) === '4';
+      let isSeniorGrade = ['4', '5', '6'].includes(String(currentGrade));
       const isFullscreen = [SLIDE_TYPES.WELCOME, SLIDE_TYPES.REGISTRATION, SLIDE_TYPES.CHARACTER].includes(nextSlide.type);
 
       // A Portál alatt lévő következő diát ELŐNÉZET módban példányosítjuk (isPreview = true),
@@ -1713,7 +1722,7 @@ class DigitalKulturaVerseny {
         const slots = this.activeGameInterface ? this.activeGameInterface.element.querySelectorAll('.dkv-g4-slot, .dkv-inventory-slot') : [];
         const targetSlot = slots[inventoryCount] || null;
 
-        isGrade4 = String(currentGrade) === '4';
+        isSeniorGrade = ['4', '5', '6'].includes(String(currentGrade));
 
         if (this.currentKeyAnimation) {
           // Ha 'A' fázis már fut, adjuk meg neki a célt és indítsuk a B fázist.
@@ -1729,7 +1738,7 @@ class DigitalKulturaVerseny {
           });
         } else {
           // Biztonsági fallback: ha valamiért nem indult el az A fázis, játsszuk le egyben
-          const AnimClass = isGrade4 ? ScriptPartAnimation : KeyCollectionAnimation;
+          const AnimClass = isSeniorGrade ? ScriptPartAnimation : KeyCollectionAnimation;
           const anim = new AnimClass({
             stationId: stationId,
             targetSlot: targetSlot
@@ -1748,8 +1757,8 @@ class DigitalKulturaVerseny {
 
       // Várjuk meg a kulcs/szkript animációt, majd indulhat a Tranzíció (Portal vagy Glitch)
       animationPromise.then(async () => {
-        // Redundancia eltávolítása: isGrade4 már deklarálva van a metódus elején (1309. sor)
-        if (isGrade4) {
+        // Redundancia eltávolítása: isSeniorGrade már deklarálva van a metódus elején (1309. sor)
+        if (isSeniorGrade) {
           // --- GRADE 4: DELAY BEFORE COUNTDOWN ---
           // Csak ha állomásról jövünk (ahol volt szkriptgyűjtés), várunk 2mp-et, 
           // hogy a játékos lássa az animáció végét. Az intro után azonnal indulhat.
@@ -2336,7 +2345,7 @@ class DigitalKulturaVerseny {
    */
   _checkSolemnMessageTrigger(slide) {
     const currentGrade = this.stateManager ? this.stateManager.getStateValue('currentGrade') : null;
-    if (slide.id === 'final_3' && String(currentGrade) === '4') {
+    if (slide.id === 'final_3' && ['4', '5', '6'].includes(String(currentGrade))) {
       if (this.logger) this.logger.info('Solemn message triggered (centralized check).');
       this._showSolemnMessage();
     }
@@ -2894,7 +2903,8 @@ class DigitalKulturaVerseny {
         ...taskConfig.options,
         timeLimit: globalTimeLimit,
         onComplete: onTaskComplete,
-        gameInterface: this.activeGameInterface // FinaleGame-nek kell
+        gameInterface: this.activeGameInterface, // FinaleGame-nek kell
+        stateManager: this.stateManager
       };
 
       // Nehézség felülírása ha szükséges

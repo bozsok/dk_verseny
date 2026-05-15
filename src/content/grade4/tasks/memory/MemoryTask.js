@@ -114,11 +114,11 @@ export class MemoryTask {
         // Osztályspecifikus alapértékek
         const gradeDefaults = {
             4: { items: 6, removed: 2, options: 3 },
-            5: { items: 8, removed: 2, options: 3 },
-            6: { items: 10, removed: 3, options: 4 }
+            5: { items: 6, removed: 2, options: 3 },
+            6: { items: 6, removed: 2, options: 3 }
         };
 
-        const currentGrade = options.stateManager?.state?.currentGrade || 4;
+        const currentGrade = options.stateManager?.getState('currentGrade') || 4;
         const defaults = gradeDefaults[currentGrade] || gradeDefaults[4];
 
         // Konfiguráció betöltése (Debug Panel prioritás)
@@ -131,7 +131,7 @@ export class MemoryTask {
 
         // Többciklusos (Multi-stage) rendszer inicializálása
         this.currentStage = 1;
-        this.maxStages = 3;
+        this.maxStages = currentGrade === 6 ? 5 : (currentGrade === 5 ? 4 : 3);
         this.totalScore = 0;
         this.totalMaxPoints = 0;
 

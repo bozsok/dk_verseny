@@ -101,11 +101,14 @@
 .glitch-text {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 900;
-    font-size: 6rem;
-    letter-spacing: 0.2em;
+    font-size: 4.5rem;
+    letter-spacing: 0.15em;
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 2px 0 #ff51fa, -2px 0 #00ffff;
     animation: leet-glitch 2s infinite linear alternate-reverse;
+    white-space: nowrap;
+    display: block;
+    text-align: center;
 }
 
 @keyframes leet-glitch {
