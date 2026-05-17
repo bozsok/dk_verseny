@@ -37,6 +37,10 @@ export class GlitchTransition {
         this._resizeHandler = this._handleResize.bind(this);
         this._finishTimer = null;
         this._isDestroyed = false;
+
+        this._audioCtx = null; // Web Audio API kontextus (lazy init)
+        this._noiseSource = null; // AudioBufferSourceNode
+        this._noiseGain = null; // GainNode a hangerőhöz
     }
 
     /**
@@ -102,6 +106,10 @@ export class GlitchTransition {
     start() {
         if (this.logger) this.logger.info('[Glitch] Tranzíció indítása');
         this.startTime = performance.now();
+
+        // Statikus zaj hanghatás indítása
+        this._playStaticNoise();
+
         this._animate();
     }
 
@@ -175,9 +183,140 @@ export class GlitchTransition {
     }
 
     /**
+     * Web Audio API kontextus inicializálása (lazy, egyszeri).
+     */
+    _initAudioContext() {
+        if (this._audioCtx) return;
+        try {
+            this._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            if (this.logger && typeof this.logger.warn === 'function') {
+                this.logger.warn('[Glitch] AudioContext init failed', e);
+            }
+        }
+    }
+
+    /**
+     * Fehér zaj aszinkron pufferelése a főszál tehermentesítése érdekében.
+     * @param {number} durationSec - A tranzíció hossza másodpercben.
+     * @returns {Promise<AudioBuffer>} Az elkészült zaj puffer.
+     * @private
+     */
+    _generateWhiteNoiseBuffer(durationSec) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const ctx = this._audioCtx;
+                if (!ctx) {
+                    resolve(null);
+                    return;
+                }
+                const sampleRate = ctx.sampleRate;
+                const bufferSize = Math.floor(sampleRate * durationSec);
+                const buffer = ctx.createBuffer(1, bufferSize, sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                resolve(buffer);
+            }, 0);
+        });
+    }
+
+    /**
+     * Dinamikus analóg fehér zaj szintetizálása szűrőkkel és aszinkron puffereléssel.
+     */
+    async _playStaticNoise() {
+        this._initAudioContext();
+        if (!this._audioCtx || this._audioCtx.state === 'closed') return;
+
+        if (this._audioCtx.state === 'suspended') {
+            this._audioCtx.resume().catch(() => {});
+        }
+
+        const ctx = this._audioCtx;
+        const durationSec = this.duration / 1000;
+
+        try {
+            // Aszinkron pufferelés a project-context.md Audio szabályainak megfelelően
+            const buffer = await this._generateWhiteNoiseBuffer(durationSec);
+            
+            // Ha a generálás közben a komponenst megsemmisítették, lépjünk ki
+            if (this._isDestroyed || !this._audioCtx) return;
+
+            const now = ctx.currentTime;
+
+            // 2. Buffer forrás inicializálása
+            this._noiseSource = ctx.createBufferSource();
+            this._noiseSource.buffer = buffer;
+            this._noiseSource.loop = false;
+
+            // 3. Hangerő (Gain Node)
+            this._noiseGain = ctx.createGain();
+            this._noiseGain.gain.setValueAtTime(0.001, now);
+            // Gyors felfutás (50ms attack)
+            this._noiseGain.gain.linearRampToValueAtTime(0.18, now + 0.05);
+
+            // Hardveresen gyorsított, natív elhalványítás beütemezése (GC Safety)
+            // A teljes hossz 70%-áig tartja a hangerőt, majd fokozatosan elcsendesedik nullára
+            const fadeStart = now + durationSec * 0.7;
+            const fadeEnd = now + durationSec;
+            
+            this._noiseGain.gain.setValueAtTime(0.18, fadeStart);
+            this._noiseGain.gain.linearRampToValueAtTime(0.001, fadeEnd);
+
+            // 4. Szűrők az igazi "analóg tévé zizegés" (Static Fuzz) eléréséhez
+            const lowpass = ctx.createBiquadFilter();
+            lowpass.type = 'lowpass';
+            lowpass.Q.setValueAtTime(3.5, now); // Markánsabb analóg karakterisztika
+            lowpass.frequency.setValueAtTime(2000, now);
+
+            // Felüláteresztő szűrő (Highpass) - toljuk le 100 Hz-re a nehezebb, testesebb mély búgásért
+            const highpass = ctx.createBiquadFilter();
+            highpass.type = 'highpass';
+            highpass.frequency.setValueAtTime(100, now);
+
+            // Összekötések: Source -> Lowpass -> Highpass -> Gain -> Destination
+            this._noiseSource.connect(lowpass);
+            lowpass.connect(highpass);
+            highpass.connect(this._noiseGain);
+            this._noiseGain.connect(ctx.destination);
+
+            // Indítás
+            this._noiseSource.start(now);
+        } catch (e) {
+            if (this.logger && typeof this.logger.error === 'function') {
+                this.logger.error('[Glitch] Sikertelen zajgenerálás', e);
+            }
+        }
+    }
+
+    /**
+     * Zaj hanghatás leállítása és erőforrások biztonságos lecsatolása.
+     */
+    _stopStaticNoise() {
+        try {
+            if (this._noiseSource) {
+                this._noiseSource.stop();
+                this._noiseSource.disconnect();
+                this._noiseSource = null;
+            }
+            if (this._noiseGain) {
+                this._noiseGain.disconnect();
+                this._noiseGain = null;
+            }
+        } catch (e) {
+            // Csendes fallback
+        }
+    }
+
+    /**
      * Befejezés és takarítás
      */
     finish() {
+        // Hanghatás leállítása
+        this._stopStaticNoise();
+
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
@@ -201,6 +340,9 @@ export class GlitchTransition {
     destroy() {
         if (this.logger) this.logger.info('[Glitch] Megsemmisítés...');
         this._isDestroyed = true;
+
+        // Hanghatás leállítása
+        this._stopStaticNoise();
         
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
@@ -221,5 +363,6 @@ export class GlitchTransition {
         this.container = null;
         this.ctx = null;
         this.canvas = null;
+        this._audioCtx = null;
     }
 }

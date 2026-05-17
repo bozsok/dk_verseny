@@ -72,6 +72,8 @@ export class CountdownAnimation {
             `;
             document.head.appendChild(this.styleTag);
         }
+
+        this._audioCtx = null; // Web Audio API kontextus (lazy init)
     }
 
     /**
@@ -128,6 +130,9 @@ export class CountdownAnimation {
     async _showStep(index) {
         if (this._isDestroyed || index >= this.images.length) return;
 
+        // Dinamikus, kardinálisan eltérő kvantumugrás hanghatás szintetizálása
+        this._playQuantumBeep(index);
+
         const img = document.createElement('img');
         img.src = this.images[index];
         img.className = 'dkv-countdown-image';
@@ -181,6 +186,80 @@ export class CountdownAnimation {
 
         if (this._isDestroyed) return;
         await this._showStep(index + 1);
+    }
+
+    /**
+     * Web Audio API kontextus inicializálása (lazy, egyszeri).
+     */
+    _initAudioContext() {
+        if (this._audioCtx) return;
+        try {
+            this._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            if (this.logger && typeof this.logger.warn === 'function') {
+                this.logger.warn('[Countdown] AudioContext init failed', e);
+            }
+        }
+    }
+
+    /**
+     * Egyedi, dinamikus "kvantumugrás / teleport" sci-fi hanghatás szintetizálása.
+     * Reprezentálja a visszaszámlálást:
+     * - Súlyos, mély cyber sub-drop (basszus boom) minden egyes visszaszámlálási lépésnél (3, 2, 1)
+     * @param {number} index - A visszaszámlálás aktuális lépése (0: "3", 1: "2", 2: "1")
+     */
+    _playQuantumBeep(index) {
+        this._initAudioContext();
+        if (!this._audioCtx || this._audioCtx.state === 'closed') return;
+
+        if (this._audioCtx.state === 'suspended') {
+            this._audioCtx.resume().catch(() => {});
+        }
+
+        const ctx = this._audioCtx;
+        const now = ctx.currentTime;
+
+        // === Súlyos, mély cyber sub-drop (Boom!) minden visszaszámlálási lépésnél ===
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        // Szinusz és háromszög keveréke a rendkívül tiszta és masszív szub-basszusért
+        osc1.type = 'sine';
+        osc2.type = 'triangle';
+
+        const startFreq = 220; // Alap frekvencia (A3)
+        const endFreq = 55; // Sub-bass frekvencia (A1)
+        const duration = 0.8; // Hosszabb, 800ms lecsengés
+
+        // Frekvencia exponenciális csökkenése (sub-drop)
+        osc1.frequency.setValueAtTime(startFreq, now);
+        osc1.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+
+        osc2.frequency.setValueAtTime(startFreq * 1.01, now);
+        osc2.frequency.exponentialRampToValueAtTime(endFreq * 1.01, now + duration);
+
+        // ADSR hangerő burkológörbe: azonnali beütés, hosszú lecsengés
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.22, now + 0.03); // 30ms attack
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        // Szigorú aluláteresztő szűrő (Lowpass), hogy csak a tiszta mély hang zengjen
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.Q.setValueAtTime(4, now); // Kis rezonancia a vágásnál
+        filter.frequency.setValueAtTime(250, now);
+        filter.frequency.exponentialRampToValueAtTime(80, now + duration);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + duration);
+        osc2.stop(now + duration);
     }
 
     _cleanup() {

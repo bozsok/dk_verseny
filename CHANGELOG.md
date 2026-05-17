@@ -5,6 +5,34 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.60.0] - 2026-05-17
+
+### Hozzáadva
+- **Prémium 3D Neon Kiber-Microchip Ikoncsalád és PWA optimalizáció**:
+    - Generáltunk egy ultramodern, rendkívül látványos 3D kiber-microchip logót a Digitális Kultúra Verseny számára, ragyogó neon-kék kerettel, sötétkék alappal és egy tiszta fehér "DK" monogrammal a közepén.
+    - **Valódi PNG kódolás és transzkódolás**: A generált kép belső JPEG fejlécét és szerkezetét egy tiszta, veszteségmentes Windows .NET/PowerShell átalakító segítségével **szabványos, valódi PNG formátumra kódoltuk át**. Ezzel megszüntettük a hibás fejléc miatti kiterjesztés-figyelmeztetéseket, garantálva a tökéletes böngésző- és PWA-kompatibilitást.
+    - Beépítettük a valódi, szabványos és optimalizált PNG ikonokat a [favicon.png](file:///d:/dev/dk_verseny/public/assets/favicon.png), [apple-touch-icon.png](file:///d:/dev/dk_verseny/public/assets/apple-touch-icon.png), [icon-192.png](file:///d:/dev/dk_verseny/public/assets/icon-192.png) és [icon-512.png](file:///d:/dev/dk_verseny/public/assets/icon-512.png) célfájlokba.
+    - **Betöltési sebesség és repó-karcsúsítás**: Végleg töröltük az elavult, nehéz JPG fájlokat, amivel **több mint 1 MB-tal csökkentettük** a projekt és a PWA telepítési csomag méretét.
+
+### Javítva
+- **Favicon betöltési és konzisztencia hiba elhárítása**: Feloldottuk az `index.html` korábbi, nem létező hivatkozásai miatti 404-es hibákat. Az aszimmetrikus, sík SVG favicon helyett közvetlenül a gyönyörű és konzisztens 3D-s neon PNG logóra hivatkozunk, tökéletes vizuális harmóniát teremtve a böngészőfülön és az operációs rendszer felületén.
+- **PWA manifest szinkronizáció**: Átírtuk a [manifest.json](file:///d:/dev/dk_verseny/public/manifest.json) fájlt, hogy a tiszta, valódi PNG formátumú modern kiber-microchip ikonokat használja a JPEG-ek helyett.
+
+## [0.59.0] - 2026-05-17
+
+### Hozzáadva
+- **Kvantumugrás 3-2-1 visszaszámlálás hanghatás (CountdownAnimation)**:
+    - Megvalósítottuk a visszaszámlálás dinamikus, Web Audio API-alapú cyber-hangeffektusait.
+    - Minden visszaszámlálási lépésnél egy monumentális, aluláteresztő szűrővel ellátott cyber sub-bass drop (220 Hz ➔ 55 Hz) hangzik el, tökéletesen megteremtve a teleportáció előtti feszültséget.
+- **GlitchTransition képzaj hanghatás és hangolás**:
+    - Fehér zaj (White Noise) alapú, professzionális és rendkívül élethű analóg tévésziszegés (static fuzz/hiss) generálása.
+    - **Szigorú aszinkron pufferelés**: A fehér zaj buffer generálása Promise-alapú aszinkron mikro-taskként fut le (`setTimeout` segítségével az eseményhurokban), megelőzve az animációindítás és a főszál blokkolását, teljesítve a `project-context.md` Swarm és Audio előírásait.
+    - **GC Safety & Natív Audio Görbék**: A hangerő folyamatos JS-alapú loop állítgatását megszüntettük a nagyfrekvenciás animációs ciklusban. Ehelyett a halkítást (fade-out) előre beprogramoztuk a Web Audio API natív burkológörbéivel (`linearRampToValueAtTime`), tehermentesítve a CPU-t és kiküszöbölve a GC-jank kockázatát.
+    - **Erőteljes, karcos karakterisztika**: A maximális hangerőt megemeltük `0.18`-ra, a lowpass szűrőt kitágítottuk `2000 Hz`-re kifejezett `3.5`-ös rezonancia (Q) értékkel, míg a highpass szűrőt lejjebb vittük `100 Hz`-re a dögösebb, testesebb analóg képcső-összeomlás élményéért.
+
+### Javítva
+- **Architekturális és teljesítménybeli megfelelőség**: Feloldottuk a `project-context.md` szigorú Audio és GC Safety szabályaival való ütközéseket a `GlitchTransition.js` modulban.
+
 ## [0.58.0] - 2026-05-15
 
 ### Hozzáadva

@@ -130,11 +130,11 @@ const NARRATIVE_DATA = {
     },
     DIA_26: {
         title: 'Feladat: Sebességmérés',
-        text: 'A feladatod brutálisan egyszerű, mégis embert próbáló: érd el a lehető leggyorsabb kattintási sebességet a megadott időablakon belül. Ez a beavatkozás szimulálja a következő szkriptrészlet kényszerített extrakcióját a nagysebességű adatfolyamából. Ne hagyd, hogy a nyomás vagy a Zéró-szekvencia zavaró jelei kibillentsenek az ütemből. Minden egyes kattintás közelebb visz a teljes frissítéshez. A zsilip zúgása felerősödik, és egy sebességmérő indikátor jelenik meg a HUD-odon, jelezve az adatfolyam kritikus pontjait.'
+        text: 'A feladatod brutálisan egyszerű, mégis embert próbáló: érd el a lehető leggyorsabb kattintási sebességet a megadott időablakon belül. Ez a beavatkozás szimulálja a következő szkriptrészlet kényszerített extrakcióját a nagysebességű adatfolyamából. Ne hagyd, hogy a nyomás vagy a Zéró-szekvencia zavaró jelei kibillentsenek az ütemből. Minden egyes kattintás közelebb visz a teljes frissítéshez. A zsilip zúgása felerősödik, és egy sebességmérő indikátor jelenik meg a vetített kijelződön, jelezve az adatfolyam kritikus pontjait.'
     },
     DIA_27: {
         title: 'A teljes kód bázisa: 5/5 szkript',
-        text: 'Elképesztő teljesítmény! Sikerült kimentened a következő szkriptet is a zsilip örvényéből, mielőtt a Zéró-szekvencia elpusztíthatta volna. A fénylő bitfolyam lecsendesedett, a zsilip környezete is stabilizálódik. A vadul örvénylő adatfolyam ritmusa kisimul, a falak vibrálása csillapodik, és a levegőben érződik a rendszer megkönnyebbült sóhaja. A Királyság infrastruktúrája érzi, hogy a helyreállítás végre lehetségessé válhat. A Zéró-szekvencia hatalma megrendült.'
+        text: 'Elképesztő teljesítmény! Sikerült kimentened a szkriptet a zsilip örvényéből, mielőtt a Zéró-szekvencia elpusztíthatta volna. A fénylő bitfolyam lecsendesedett, a zsilip környezete is stabilizálódik. A vadul örvénylő adatfolyam ritmusa kisimul, a falak vibrálása csillapodik, és a levegőben érződik a rendszer megkönnyebbült sóhaja. A Királyság infrastruktúrája érzi, hogy a helyreállítás végre lehetségessé válhat. A Zéró-szekvencia hatalma megrendült.'
     },
     DIA_28: {
         title: 'A Rendszermag Kapuja',

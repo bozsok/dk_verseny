@@ -12,7 +12,7 @@ module.exports = {
     '^@ui/(.*)$': '<rootDir>/src/ui/$1'
   },
   transform: {
-    '^.+\\.js$': 'babel-jest'
+    '^.+\\.js$': '<rootDir>/tests/mocks/importMetaTransformer.js'
   },
   setupFilesAfterEnv: [
     '<rootDir>/tests/setup/jest.setup.js'
