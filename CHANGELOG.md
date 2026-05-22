@@ -5,6 +5,30 @@ Minden jelentős változtatás ebben a fájlban lesz dokumentálva.
 A formátum [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) alapján,
 és ez a projekt [Semantic Versioning](https://semver.org/spec/v2.0.0.html) szabványt követi.
 
+## [0.60.1] - 2026-05-22
+
+### Hozzáadva
+- **Kettéválasztott Oklevél és Gratuláció generálási rendszer**: 
+    - A ranglista generálója mostantól megkülönbözteti a dobogósokat: az 1-3. helyezettek automatikusan hivatalos "Oklevél" (Certificate) képet kapnak, míg a 4. helytől lefelé mindenki "Gratuláció" képet kap.
+    - Teljesen szétválasztottuk a HTML, CSS és JS logikát: a `dashboard.js`-ben önálló `generateCertificate` és `generateCongratulation` függvények dolgoznak, a `style.css`-ben pedig különálló azonosítók (`#cert-name`, `#congr-name`, stb.) felelnek a vizuális megjelenésért. Ennek köszönhetően az oklevél és a gratuláció eltérő magassági (vertikális) pozíciói mostantól tökéletesen, egymástól függetlenül szerkeszthetők, anélkül, hogy elrontanák egymást.
+- **Több évfolyamos (4-6. osztály) dinamikus támogatás**:
+    - A generáló rendszer (Admin Dashboard) mostantól automatikusan felismeri a tanuló osztályát (3., 4., 5. vagy 6. évfolyam), és dinamikusan fűzi hozzá a megfelelő CSS osztályokat (pl. `.grade-4`, `.grade-5`) a generáló sablonhoz.
+    - Évfolyamfüggő háttérkép-betöltés: A rendszer pontosan behúzza a megfelelő mappából az évfolyamhoz illő `oklevel_alap_fekvo.jpg` vagy `gratulaciol_alap_fekvo.jpg` fájlokat, továbbá a felsőbb évfolyamok esetén (4-6. osztály) a CSS gondoskodik a megfelelő, eltérő koordináták alkalmazásáról.
+
+### Javítva
+- **Oklevél és Gratuláció generálásának stabilizálása (Tömeges renderelés)**: 
+    - Kijavítottunk egy kritikus aszinkron hibát a `dashboard.js`-ben, amely miatt a tömeges generálás (`html2canvas`) során előfordulhatott, hogy a rendszer a korábbi versenyző karakterképét vagy hátterét "fotózta le" az új helyett.
+    - Bevezettük a `waitForImageLoad` védelmi függvényt, amely a vak, 100 ezredmásodperces várakozás helyett garantáltan megvárja az összes dinamikus képelem (háttér, keret, karakter, királyság) hálózati betöltését. A 4. osztályosok hiányzó kerete miatti lehetséges fagyást (`display: "none"`) is biztonságosan lekezeltük.
+- **Szövegtördelés és pozicionálás az okleveleken**:
+    - **Sortörés letiltása**: A nagyon hosszú idők (pl. "1 óra 11 perc 39 másodperc") okozta sortörési anomáliák megelőzése érdekében bevezettük a `white-space: nowrap` CSS-szabályt az idő- és névmezőkön (`#cert-time`, `#cert-name`, `.congr-time`, `.congr-name`).
+    - **Dinamikus betűméret-skálázás vertikális kompenzációval**: A túl hosszú (pl. 22 karakternél hosszabb) nevek mostantól automatikusan kisebb betűméretet kapnak (`140px`, `120px`, `100px`). A kisebb betűméretből adódó függőleges elcsúszást egy új logikával (`marginTop` kompenzáció) azonnal korrigáljuk, így a nevek minden esetben hajszálpontosan középre zártak maradnak a háttérképen. A `ReferenceError` elkerülése végett az `adjustFontSize` függvényt globális hatókörbe (`window.adjustFontSize`) helyeztük.
+- **Admin Dashboard Favicon**: 
+    - Az Admin Dashboard felülete (`public/ranglista/index.html`) mostantól helyesen hivatkozik a fő projekt faviconjára (`../assets/favicon.png`), megszüntetve a böngészőkonzolban jelentkező `404 Not Found` (`favicon.ico`) hibát.
+- **Kódminőség és Projekt-szabályok érvényesítése (dashboard.js)**:
+    - Lecseréltük a korábbi hibás képbetöltő függvényt egy szigorú `setImageSrcSafe` logikára, amely a 117. szabálynak megfelelően garantálja, hogy az `onload` és `onerror` események regisztrációja a kép `src` megadása előtt történik meg. Bevezettünk egy kötelező 3 másodperces biztonsági időtúllépést (fallback timeout) is, így a rendszer sosem fagyhat le hálózati elakadás miatt.
+    - Az Admin Dashboardban is érvényesítettük a 76. szabályt: megszüntettük a nyers `console.error` hívásokat, és létrehoztunk egy `GameLogger` helyettesítőt, amelyen keresztül naplózzuk a tömeges generálás során felmerülő aszinkron hibákat.
+    - A `html2canvas` hívásokat magában foglaló blokkokat a 45. szabálynak megfelelően átdolgoztuk, implementálva a szigorú `try { let loading = true; ... } catch { GameLogger.error(...) } finally { let loading = false; }` sablont.
+
 ## [0.60.0] - 2026-05-17
 
 ### Hozzáadva

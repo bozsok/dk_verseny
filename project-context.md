@@ -1,7 +1,7 @@
 ---
 project_name: 'dk_verseny'
 user_name: 'Bozsó Krisztián'
-date: '2026-05-17T11:02:00+02:00'
+date: '2026-05-22T23:30:00+02:00'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
@@ -72,7 +72,7 @@ optimized_for_llm: true
 
 - **Coding Standard:** Follow strict ESLint and Prettier configurations. Avoid `var`; use `const` for immutables and `let` for variables.
 - **CSS Naming:** Classes must use **kebab-case** with the `.dkv-` prefix (**BEM style**).
-- **CSS/JS Animation Ownership:** A single DOM element's visual property (`opacity`, `transform`, `visibility`) MUST be controlled by exactly ONE source: either CSS class toggling OR JS inline styles. Mixing both on the same property is **forbidden** — it causes specificity conflicts and race conditions (see: v0.32.4 LibraryTask fix).
+- **CSS/JS Animation Ownership:** A single DOM element's visual property (`opacity`, `transform`, `visibility`) MUST be controlled by exactly ONE source: either CSS class toggling OR JS inline styles. Mixing both on the same property is **forbidden** ”” it causes specificity conflicts and race conditions (see: v0.32.4 LibraryTask fix).
 - **Prohibited Patterns:** `console.log` is forbidden in production; use the built-in `GameLogger`.
 - **Documentation:** Hungarian JSDoc comments are mandatory for all public methods and modules.
 - **Changelog:** Maintain the `CHANGELOG.md` file in Hungarian, following Semantic Versioning (SemVer) principles.
@@ -83,7 +83,7 @@ optimized_for_llm: true
     - Use `feature/`, `bugfix/`, or `task/` prefixes for all branches.
     - **PR Mandate:** Direct commits to `main` are forbidden. All changes must go through a Pull Request or a rigorous simulated review by an AI agent on a separate branch.
 - **Commits & Releases:**
-    - Provide descriptive Hungarian commit messages (e.g., `feat: Karakterválasztó felület implementálása`).
+    - Provide descriptive Hungarian commit messages (e.g., `feat: KaraktervÃ¡lasztÃ³ felÃ¼let implementÃ¡lÃ¡sa`).
     - **Tagging:** Use semantic Git Tags (e.g., `v0.10.0`) for every release candidate or competition milestone.
 - **Environment & QA:**
     - **QA Gate:** Run `npm run lint` and all tests (`npm run test`) before merging any PR.
@@ -102,7 +102,7 @@ optimized_for_llm: true
 
 - **Memory Leaks & Disposal:**
     - NEVER use `setInterval`, `setTimeout`, or `addEventListener` on `window/document` without explicit cleanup in the `destroy()` method.
-    - **Mid-lifecycle Cleanup:** If a component runs in multiple rounds/phases (e.g., multi-round tasks), the `this.timeouts` array MUST be cleared (`clearTimeout` + array reset) at the start of each new round — not only in `destroy()`. Stale timeouts referencing destroyed DOM elements cause silent failures.
+    - **Mid-lifecycle Cleanup:** If a component runs in multiple rounds/phases (e.g., multi-round tasks), the `this.timeouts` array MUST be cleared (`clearTimeout` + array reset) at the start of each new round ”” not only in `destroy()`. Stale timeouts referencing destroyed DOM elements cause silent failures.
     - **GPU Disposal:** Every Three.js resource (`geometries`, `materials`, `textures`) MUST be explicitly `.dispose()`-ed in the `destroy()` method to prevent GPU memory bloat.
 - **State & Timer Integrity:**
     - **Persistence Policy:** Use the **StateManager** for all game-related and user-progress data.
@@ -137,11 +137,11 @@ optimized_for_llm: true
 
 ## Project Status
 
-- **Version:** 0.60.0 (v0.60.0)
+- **Version:** 0.60.1 (v0.60.1)
 - **Status:** Stable
 - **Test Coverage:** ~91% (88/88 tests passing, all animation modules stabilized)
-- **Last Updated:** 2026-05-17
-- **Current Mission:** Prémium vector-perfect SVG favicon integráció és PWA manifest optimalizáció (v0.60.0)
+- **Last Updated:** 2026-05-22
+- **Current Mission:** Oklevél és Gratuláció modulok tömeges generálásának stabilizálása és szétválasztása (v0.60.1)
 - **Internal Tools:**
     - **Puzzle Generator:** `puzzle.html` - Generates high-density nonsense code for puzzle game assets. Accessible via `npm run tool:puzzle`.
 
@@ -179,17 +179,20 @@ optimized_for_llm: true
 - [x] Grade 4: Finale tasks scoring balancing (6/10 pts) and HUD sync (v0.49.0)
 - [x] Adatintegritás: PHP ranglista fájlzárolás és atomi írás (v0.50.0)
 - [x] Grade 3: FinaleTask ReferenceError javítás és UI takarítás optimalizálás (v0.50.1)
-- [x] Stabilizáció: Feladat életciklus-kezelés és modális ablak takarítás (v0.50.0)
+- [x] Stabilizáció: Feladat Ã©letciklus-kezelés és modális ablak takarítás (v0.50.0)
 - [x] Grade 4: Feladathang lejátszás az alcím typewriter szinkronizációjával (v0.51.0)
-- [x] Grade 4: Terminál-csipogás a feladatcímek írógép-effektusához (Web Audio API) (v0.51.1)
+- [x] Grade 4: Terminál-csipogÃ¡s a feladatcímek írógép-effektusához (Web Audio API) (v0.51.1)
 - [x] Grade 4: Összegző képernyő pixelpontos UI stabilizációja és vizuális polírozása (v0.52.0)
-- [x] Grade 4: „Digitális Vihar” atmoszférikus vizuális effektus a Finálé feladathoz (v0.53.0)
-- [x] Grade 4: Írógép audio-szinkronizáció és „Digitális Vihar” vizuális finomhangolás (v0.55.0)
-- [x] Grade 4: Állomásspecifikus dinamikus háttérzene Web Audio API elhalkítással (v0.54.0)
+- [x] Grade 4: „Digitális Vihar”� atmoszférikus vizuális effektus a Finálé feladathoz (v0.53.0)
+- [x] Grade 4: Ã�rÃ³gÃ©p audio-szinkronizáció és „Digitális Vihar”� vizuális finomhangolÃ¡s (v0.55.0)
+- [x] Grade 4: Ã�llomÃ¡sspecifikus dinamikus háttérzene Web Audio API elhalkítással (v0.54.0)
 - [x] Onboarding: Pontszám szinkronizáció és retroaktív ranglista javítás (v0.56.0)
-- [x] Ranglista: Grade 3 feladatok utólagos nevesítése a dashboardon (v0.56.0)
-- [x] Ranglista: Finálé beugró utólagos mentése és feladatnevek dinamikus hozzárendelése (v0.57.0)
+- [x] Ranglista: Grade 3 feladatok utólagos nevesÃ­tése a dashboardon (v0.56.0)
+- [x] Ranglista: Finálé beugró utólagos mentése és feladatnevek dinamikus hozzÃ¡rendelése (v0.57.0)
 - [x] Grade 5-6: Keretrendszer kiterjesztése, nehézségi skálázás és ranglista finomhangolása (v0.58.0)
-- [x] Grade 4: Kvantumugrás 3-2-1 visszaszámlálás cyber-basszus drop (Web Audio API) és GlitchTransition aszinkron zajgenerálás GC Safety és natív AudioParam hangerőütemezéssel (v0.59.0)
+- [x] Grade 4: Kvantumugrás 3-2-1 visszaszámlálás cyber-basszus drop (Web Audio API) és GlitchTransition aszinkron zajgenerálás GC Safety és natÃ­v AudioParam hangerÅ‘Ã¼temezéssel (v0.59.0)
 - [x] Rendszer: Prémium vector-perfect SVG favicon integráció és PWA manifest optimalizáció (v0.60.0)
 
+- [x] Ranglista: Oklevél és Gratuláció modulok szétválasztása és 4-6. osztályos dinamikus támogatás (v0.60.1)
+- [x] Ranglista: Tömeges generálás (html2canvas) aszinkron képbetöltési hibájának javítása (v0.60.1)
+- [x] Ranglista: Dinamikus betűméret-skálázás és sortörés-gátlás az oklevelek és gratulációk adatainál (v0.60.1)
